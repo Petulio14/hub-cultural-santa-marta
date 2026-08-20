@@ -10,7 +10,7 @@ qué crear, con qué valores y en qué orden. **No hay nada que decidir mientras
 
 > ⚡ **Vía rápida: no hace falta construirlo a mano.**
 > [`../figma-plugin/`](../figma-plugin/) contiene un plugin que crea los estilos, los
-> componentes, las 27 pantallas y los 141 enlaces de navegación de una sola pasada. Se
+> componentes, las 27 pantallas y los 145 enlaces de navegación de una sola pasada. Se
 > importa desde *Plugins → Development → Import plugin from manifest…* y se pulsa
 > **Construir**. Instrucciones en [`../figma-plugin/README.md`](../figma-plugin/README.md).
 >
@@ -252,10 +252,10 @@ del 20/08/2026, cuyo informe está en el issue [HU-06](https://github.com/Petuli
 | 7 | Ninguna vista de 360 desborda en horizontal | ✅ ningún desbordamiento |
 | 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
 | 9 | Revisión visual: jerarquía, alineación, legibilidad | ⬜ **no la puede hacer el plugin** |
-| 10 | Enlace anotado en el issue y en el documento 05 | ⬜ |
+| 10 | Enlace anotado en el issue y en el documento 05 | ✅ |
 | 11 | Retroalimentación del asesor registrada en el issue | ⬜ |
 
-**Enlace al archivo de Figma:** *(pendiente)*
+**Prototipo navegable en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1
 
 ---
 
