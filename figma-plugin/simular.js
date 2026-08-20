@@ -138,7 +138,8 @@ function crearNodo(tipo, extra) {
     _caracteres: '',
     fills: [], strokes: [], strokeWeight: 1, strokeAlign: 'INSIDE',
     cornerRadius: 0, dashPattern: [],
-    layoutMode: 'NONE', layoutAlign: 'INHERIT', layoutGrow: 0, layoutWrap: 'NO_WRAP',
+    layoutMode: 'NONE', layoutWrap: 'NO_WRAP',
+    _layoutAlign: 'INHERIT', _layoutGrow: 0,
     primaryAxisSizingMode: 'AUTO', counterAxisSizingMode: 'AUTO',
     primaryAxisAlignItems: 'MIN', counterAxisAlignItems: 'MIN',
     itemSpacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0,
@@ -188,6 +189,33 @@ function crearNodo(tipo, extra) {
       return Promise.resolve();
     }
   }, extra || {});
+
+  // Figma ignora layoutAlign y layoutGrow si el nodo todavía no está dentro de un
+  // contenedor con auto layout. Reproducirlo es lo que delata a los contenedores que
+  // se quedan en su ancho por defecto en lugar de rellenar a su padre.
+  const dentroDeAutoLayout = (nodo) => !!nodo.parent &&
+    (nodo.parent.layoutMode === 'VERTICAL' || nodo.parent.layoutMode === 'HORIZONTAL');
+
+  Object.defineProperty(n, 'layoutAlign', {
+    get() { return this._layoutAlign; },
+    set(v) {
+      if (!dentroDeAutoLayout(this)) {
+        avisos.push('layoutAlign ignorado: "' + (this.name || this.type) + '" aun no esta en un contenedor con auto layout');
+        return;
+      }
+      this._layoutAlign = v; sucio = true;
+    }
+  });
+  Object.defineProperty(n, 'layoutGrow', {
+    get() { return this._layoutGrow; },
+    set(v) {
+      if (!dentroDeAutoLayout(this)) {
+        avisos.push('layoutGrow ignorado: "' + (this.name || this.type) + '" aun no esta en un contenedor con auto layout');
+        return;
+      }
+      this._layoutGrow = v; sucio = true;
+    }
+  });
 
   if (tipo === 'TEXT') {
     Object.defineProperty(n, 'characters', {
