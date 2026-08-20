@@ -4,13 +4,15 @@
 > **Objetivo específico:** 2 — Validar la estructura de navegación antes de escribir código.
 > **Requisitos asociados:** RNF-01, RNF-03, RNF-07.
 
-> ⚠️ **Estado: parcial.** Este documento es la **especificación** del prototipo: mapa de
-> navegación, inventario de vistas, paleta con contrastes verificados y rejilla responsive.
-> El **archivo de Figma** todavía no existe y es lo único que falta para cerrar HU-06.
+> Este documento es la **especificación** del prototipo: mapa de navegación,
+> inventario de vistas, paleta con contrastes verificados y rejilla responsive.
+> Lo construido a partir de ella está en dos sitios:
 >
-> 🖥️ **Maqueta navegable:** [`prototipo/index.html`](prototipo/index.html) — las 9 vistas
-> construidas y conmutables en los tres anchos de RNF-03. Ábrela en el navegador; sirve
-> para validar la navegación con el asesor y para calcar el diseño en Figma.
+> 🎨 **Prototipo en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1 — 27 pantallas navegables, generadas con
+> [`../figma-plugin/`](../figma-plugin/).
+>
+> 🖥️ **Maqueta HTML:** [`prototipo/index.html`](prototipo/index.html) — las mismas
+> 9 vistas conmutables entre los tres anchos de RNF-03, sin salir del navegador.
 
 El prototipo aprobado es condición de la **Definición de Listo** para toda historia con
 componente visual, es decir, para todas las historias de los sprints 3 a 7.
@@ -167,9 +169,12 @@ antes de que lleguen al código.
 | 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ✅ 17 estilos de color y 12 de texto |
 | 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ⬜ |
 | 6 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
-| 7 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ⬜ |
+| 7 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ✅ |
 
-**Enlace al archivo de Figma:** *(pendiente)*
+**Prototipo navegable en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1
+
+Se abre en modo presentación. El punto de entrada es la vista de Inicio; el botón
+compacto del encabezado despliega el menú en los anchos de móvil.
 
 ---
 
