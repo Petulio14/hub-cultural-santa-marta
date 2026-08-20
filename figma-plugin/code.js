@@ -127,7 +127,7 @@ var VISTAS = [
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
 
 // Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
-var VERSION = 'build 4 · 2026-08-20';
+var VERSION = 'build 5 · 2026-08-20';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -212,11 +212,10 @@ function fijarAncho(f, ancho) {
 function estirar(nodo) {
   nodo.layoutAlign = 'STRETCH';
   if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'estirar');
-  // Un contenedor con ajuste de línea necesita además el eje principal fijo:
-  // «rellenar contenedor» por sí solo no basta para que envuelva.
-  if (nodo.layoutMode === 'HORIZONTAL' && nodo.layoutWrap === 'WRAP') {
-    nodo.primaryAxisSizingMode = 'FIXED';
-  }
+  // En un contenedor horizontal el ancho es el eje principal. Si rellena a su padre
+  // pero sigue en «abrazar contenido», Figma colapsa a 1 px a los hijos que rellenan
+  // y no aplica el ajuste de línea. Es la causa de los campos y títulos aplastados.
+  if (nodo.layoutMode === 'HORIZONTAL') nodo.primaryAxisSizingMode = 'FIXED';
   return nodo;
 }
 
@@ -233,9 +232,19 @@ function reaplicarDimensionado(nodo) {
     if (conAuto && h.getPluginData) {
       var quiere = h.getPluginData('dimensionado');
       try {
-        if (quiere === 'estirar') h.layoutAlign = 'STRETCH';
-        else if (quiere === 'crecer') h.layoutGrow = 1;
+        if (quiere === 'estirar') {
+          h.layoutAlign = 'STRETCH';
+          if (h.layoutMode === 'HORIZONTAL') h.primaryAxisSizingMode = 'FIXED';
+        } else if (quiere === 'crecer') {
+          h.layoutGrow = 1;
+        }
       } catch (e) { /* algunos nodos no admiten estas propiedades */ }
+    }
+    // Un hijo que rellena dentro de un contenedor horizontal que abraza su contenido
+    // colapsa a 1 px. Si aparece uno así, se le fija el ancho al contenedor.
+    if (nodo.layoutMode === 'HORIZONTAL' && nodo.primaryAxisSizingMode !== 'FIXED' &&
+        h.layoutGrow > 0) {
+      try { nodo.primaryAxisSizingMode = 'FIXED'; } catch (e) {}
     }
     reaplicarDimensionado(h);
   });
@@ -1422,8 +1431,9 @@ function V9(ancho) {
   ]));
   var c = cuerpo(ancho);
 
-  var enc = pila('encabezado', 'h', {
-    espacio: 16, envolver: true, alinear: 'MAX', ancho: anchoUtil(ancho)
+  var enc = pila('encabezado', esMovil(ancho) ? 'v' : 'h', {
+    espacio: 16, envolver: !esMovil(ancho),
+    alinear: esMovil(ancho) ? 'MIN' : 'MAX', ancho: anchoUtil(ancho)
   });
   estirar(enc);
   var tit = pila('titulo', 'v', { espacio: 4 });
@@ -1709,7 +1719,11 @@ function auditar() {
     function recorrer(nodo) {
       if (!nodo.children) return;
       var conAuto = nodo.layoutMode === 'VERTICAL' || nodo.layoutMode === 'HORIZONTAL';
-      var interior = nodo.width - nodo.paddingLeft - nodo.paddingRight;
+      // Un borde interior descuenta su grosor por cada lado del área de contenido.
+      // Sin restarlo, todo hijo de un contenedor con borde parece 2 px corto.
+      var borde = (nodo.strokes && nodo.strokes.length && nodo.strokeAlign === 'INSIDE')
+        ? (nodo.strokeWeight || 0) * 2 : 0;
+      var interior = nodo.width - nodo.paddingLeft - nodo.paddingRight - borde;
       nodo.children.forEach(function (h) {
         if (conAuto && nodo.layoutMode === 'VERTICAL' &&
             h.layoutAlign === 'STRETCH' && interior > 1 && h.width < interior - 1) {
