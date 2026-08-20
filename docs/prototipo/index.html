@@ -1353,9 +1353,11 @@ table.admin .acciones{display:flex;gap:8px}
   escenario.style.setProperty("--w","1366px");
 
   // anotaciones
-  document.getElementById("tgl-notas").addEventListener("change", function(e){
+  var tgl = document.getElementById("tgl-notas");
+  tgl.addEventListener("change", function(e){
     document.body.classList.toggle("anotado", e.target.checked);
   });
+  document.body.classList.toggle("anotado", tgl.checked);
 
   desdeHash();
 })();
