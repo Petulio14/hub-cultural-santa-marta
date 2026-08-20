@@ -8,6 +8,15 @@ Todas las decisiones de diseño ya están tomadas y verificadas en
 [`prototipo/index.html`](prototipo/index.html). Esta guía es solo la traducción a Figma:
 qué crear, con qué valores y en qué orden. **No hay nada que decidir mientras se sigue.**
 
+> ⚡ **Vía rápida: no hace falta construirlo a mano.**
+> [`../figma-plugin/`](../figma-plugin/) contiene un plugin que crea los estilos, los
+> componentes, las 27 pantallas y los 141 enlaces de navegación de una sola pasada. Se
+> importa desde *Plugins → Development → Import plugin from manifest…* y se pulsa
+> **Construir**. Instrucciones en [`../figma-plugin/README.md`](../figma-plugin/README.md).
+>
+> Esta guía sigue siendo la referencia de **qué valor lleva cada cosa**: el plugin la
+> implementa, y sirve para revisar o retocar a mano lo que el plugin genere.
+
 Ten la maqueta abierta al lado mientras construyes: es la referencia visual exacta y ya
 tiene el contenido cultural redactado, así que los textos se copian de ahí y no hay que
 inventarlos.
@@ -111,8 +120,14 @@ insignias de estado.
 
 ## Paso 4 · Componentes
 
-Constrúyelos en `🧩 Componentes` **antes que las vistas**. Cada uno como componente con
-`Auto Layout`, para que al cambiarlo cambien las siete vistas a la vez.
+Constrúyelos en `🧩 Componentes` **antes que las vistas**. Cada uno con `Auto Layout`, para
+que al cambiarlo cambien las siete vistas a la vez.
+
+> El plugin crea como conjuntos de componentes con variantes los cuatro que se repiten
+> idénticos: **Boton**, **Insignia**, **Chip** y **Campo**. **Tarjeta**, **Cabecera** y
+> **Pie** los genera como frames, porque su composición cambia con el ancho y un componente
+> con tres variantes de tamaño estorba más de lo que ayuda. Si los quieres como
+> componentes, `Ctrl+Alt+K` sobre uno de ellos.
 
 | Componente | Variantes | Medidas clave |
 | --- | --- | --- |
@@ -138,7 +153,8 @@ criterio de aceptación de HU-10. Al construir las variantes móviles, mide.
 
 ## Paso 5 · Las vistas
 
-Un marco por vista y por ancho: **7 × 3 = 21 marcos**. Nómbralos `V-1 · Inicio · 360` y así.
+Un marco por vista y por ancho. Las 7 obligatorias dan **21 marcos**; el plugin construye
+además V-8 y V-9, con lo que quedan **27**. Nómbralos `V-1 · Inicio · 360` y así.
 Aplica a cada uno su estilo de rejilla.
 
 Orden de construcción, elegido para que cada vista reutilice lo de la anterior:
