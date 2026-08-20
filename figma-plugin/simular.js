@@ -17,6 +17,24 @@ let sucio = true;
 
 // ───────────────────────────────────────────────── maquetación aproximada
 
+// Ancho que tendría el nodo si abraza su contenido, sin estirar a nadie.
+// Figma resuelve así el caso circular «padre que abraza con hijos que rellenan»:
+// el padre toma el ancho natural del contenido y los hijos se ajustan a él. Un
+// párrafo largo dentro de un contenedor sin ancho fijo se va a una sola línea.
+function anchoNatural(n) {
+  if (n.type === 'TEXT') return n._anchoNatural || n.width;
+  if (!n.children || n.children.length === 0) return n.width;
+  if (n.layoutMode === 'NONE') return n.width;
+  const h = n.layoutMode === 'HORIZONTAL';
+  const fijo = h ? n.primaryAxisSizingMode === 'FIXED' : n.counterAxisSizingMode === 'FIXED';
+  if (fijo || n._anchoImpuesto) return n.width;
+  const anchos = n.children.map(anchoNatural);
+  const contenido = h
+    ? anchos.reduce((a, b) => a + b, 0) + n.itemSpacing * Math.max(0, anchos.length - 1)
+    : Math.max.apply(null, anchos.concat([0]));
+  return contenido + n.paddingLeft + n.paddingRight;
+}
+
 function disponer(n) {
   if (!n.children || n.children.length === 0) return;
 
@@ -26,6 +44,13 @@ function disponer(n) {
   }
 
   const h = n.layoutMode === 'HORIZONTAL';
+
+  // Si nadie le impuso el ancho, abraza el contenido natural antes de estirar hijos.
+  const anchoFijado = h ? n.primaryAxisSizingMode === 'FIXED' : n.counterAxisSizingMode === 'FIXED';
+  if (!anchoFijado && !n._anchoImpuesto) {
+    n.width = Math.max(0.01, anchoNatural(n));
+  }
+
   const anchoInterno = n.width - n.paddingLeft - n.paddingRight;
 
   // El eje transversal se estira antes de medir a los hijos. Un hijo estirado recibe
@@ -169,8 +194,10 @@ function crearNodo(tipo, extra) {
       get() { return this._caracteres; },
       set(v) {
         this._caracteres = String(v);
-        // estimación: el simulador no mide tipografía real
-        this.width = Math.max(8, Math.min(620, this._caracteres.length * 7));
+        // Estimación: el simulador no mide tipografía real. Sin tope superior, para
+        // que un párrafo largo delate al contenedor que no le fija el ancho.
+        this._anchoNatural = Math.max(8, this._caracteres.length * 6.2);
+        this.width = this._anchoNatural;
         this.height = 20;
         sucio = true;
       }
