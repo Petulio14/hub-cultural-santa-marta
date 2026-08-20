@@ -27,7 +27,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint | Vence | Historias | Estado |
 | --- | --- | --- | --- |
 | Sprint 1 | 17/08/2026 | HU-01, HU-02, HU-03 | Documentación completa. Pendiente registrar la aprobación del asesor. |
-| Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | HU-04 y HU-05 completas. HU-06 especificada y con maqueta navegable; **pendiente el archivo de Figma.** |
+| Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | HU-04 y HU-05 completas. HU-06 con el prototipo ya generado en Figma; **pendiente la revisión visual y la retroalimentación del asesor.** |
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | Configuración adelantada: reglas de seguridad, índices y archivos de despliegue ya en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)) y el proyecto de React. |
 
 ## Configuración en la raíz del repositorio
