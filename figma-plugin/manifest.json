@@ -1,0 +1,12 @@
+{
+  "name": "Hub Cultural — Generador de prototipo",
+  "id": "hub-cultural-santa-marta-prototipo",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "El plugin construye el prototipo con datos incrustados en el propio código. No accede a ninguna red."
+  }
+}
