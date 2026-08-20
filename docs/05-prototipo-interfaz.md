@@ -163,10 +163,11 @@ antes de que lleguen al código.
 | --- | --- | --- |
 | 1 | Especificar navegación, vistas, paleta y rejilla. | ✅ este documento |
 | 2 | Construir las 9 vistas navegables en los 3 anchos. | ✅ `prototipo/index.html` |
-| 3 | Crear el archivo de Figma y trasladar las vistas. | ⬜ paso a paso en [`07-guia-figma.md`](07-guia-figma.md) |
-| 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ⬜ |
-| 5 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
-| 6 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ⬜ |
+| 3 | Crear el archivo de Figma y trasladar las vistas. | ✅ generado con [`../figma-plugin/`](../figma-plugin/) — 27 pantallas |
+| 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ✅ 17 estilos de color y 12 de texto |
+| 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ⬜ |
+| 6 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
+| 7 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ⬜ |
 
 **Enlace al archivo de Figma:** *(pendiente)*
 

@@ -35,7 +35,12 @@ Lo que hayas añadido a mano se conserva, porque solo borra lo que lleva su marc
 | Estilos de rejilla | 3 | 360/4/16, 768/8/24, 1366/12/32 |
 | Conjuntos de componentes | 4 | `Boton` (3 variantes), `Insignia` (3), `Chip` (2), `Campo` (2) |
 | Pantallas | 27 | 9 vistas × 360, 768 y 1366 px |
-| Enlaces de prototipo | 141 | Navegación completa entre pantallas del mismo ancho |
+| Enlaces de prototipo | 130 | Navegación completa entre pantallas del mismo ancho |
+
+Los enlaces son 141 menos 11 que apuntarían a su propia pantalla —la opción activa del
+menú y el «volver al inicio» del pie dentro de Inicio— y que Figma rechaza porque el
+destino de una navegación tiene que ser **otro** marco de primer nivel. El informe los
+cuenta aparte: no son enlaces que falten, son enlaces que no deben existir.
 
 Cada pantalla lleva su rejilla aplicada, contenido cultural real de Santa Marta —el mismo
 de [`../docs/prototipo/index.html`](../docs/prototipo/index.html)— y la adaptación que

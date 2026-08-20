@@ -238,18 +238,22 @@ siempre un camino visible de vuelta al inicio**. Recorre las siete y verifícalo
 
 ## Verificación antes de dar HU-06 por terminada
 
+Las ocho primeras las comprueba el propio plugin y quedaron verificadas en la ejecución
+del 20/08/2026, cuyo informe está en el issue [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6).
+
 | # | Comprobación | Estado |
 | --- | --- | --- |
-| 1 | Existen las 7 vistas obligatorias | ⬜ |
-| 2 | Cada una en 360, 768 y 1366 | ⬜ |
-| 3 | El prototipo navega entre pantallas | ⬜ |
-| 4 | Desde toda vista interna se vuelve al inicio | ⬜ |
-| 5 | Todo color sale de un estilo, ninguno suelto | ⬜ |
-| 6 | En los marcos de 360, ningún control mide menos de 44 × 44 | ⬜ |
-| 7 | Ninguna vista de 360 desborda en horizontal | ⬜ |
-| 8 | Toda imagen tiene previsto su texto alternativo | ⬜ |
-| 9 | Enlace anotado en el issue y en el documento 05 | ⬜ |
-| 10 | Retroalimentación del asesor registrada en el issue | ⬜ |
+| 1 | Existen las 7 vistas obligatorias | ✅ 27 pantallas (9 vistas × 3 anchos) |
+| 2 | Cada una en 360, 768 y 1366 | ✅ ancho exacto en las 27 |
+| 3 | El prototipo navega entre pantallas | ✅ 130 enlaces conectados |
+| 4 | Desde toda vista interna se vuelve al inicio | ✅ enlace en el pie de las 27 |
+| 5 | Todo color sale de un estilo, ninguno suelto | ✅ 17 estilos aplicados |
+| 6 | En los marcos de 360, ningún control mide menos de 44 × 44 | ✅ ninguno por debajo |
+| 7 | Ninguna vista de 360 desborda en horizontal | ✅ ningún desbordamiento |
+| 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
+| 9 | Revisión visual: jerarquía, alineación, legibilidad | ⬜ **no la puede hacer el plugin** |
+| 10 | Enlace anotado en el issue y en el documento 05 | ⬜ |
+| 11 | Retroalimentación del asesor registrada en el issue | ⬜ |
 
 **Enlace al archivo de Figma:** *(pendiente)*
 
