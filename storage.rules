@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Reglas de Firebase Storage — HU-19 · RNF-08
+//
+// Las imágenes de perfiles y publicaciones son públicas en lectura (el catálogo lo es),
+// pero solo su propietario puede escribirlas, y con los límites de HU-19: JPG o PNG,
+// máximo 2 MB.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    function imagenValida() {
+      return request.resource.size <= 2 * 1024 * 1024
+        && request.resource.contentType in ['image/jpeg', 'image/png'];
+    }
+
+    // Imagen de perfil del actor cultural o del hub: la carpeta es su uid.
+    match /perfiles/{uid}/{archivo} {
+      allow read: if true;
+      allow write: if autenticado() && request.auth.uid == uid && imagenValida();
+      allow delete: if autenticado() && request.auth.uid == uid;
+    }
+
+    // Imagen de una publicación: la carpeta es el uid del actor que la creó.
+    match /eventos/{uid}/{archivo} {
+      allow read: if true;
+      allow write: if autenticado() && request.auth.uid == uid && imagenValida();
+      allow delete: if autenticado() && request.auth.uid == uid;
+    }
+
+    match /{ruta=**} {
+      allow read, write: if false;
+    }
+  }
+}
