@@ -127,7 +127,7 @@ var VISTAS = [
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
 
 // Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
-var VERSION = 'build 5 · 2026-08-20';
+var VERSION = 'build 6 · 2026-08-20';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -148,7 +148,8 @@ var estilosColor = {};
 var estilosTexto = {};
 var componentes = {};
 var marcos = {};        // 'V-1@1366' -> FrameNode
-var enlaces = [];       // { desde: node, hacia: 'V-3', ancho: 1366 }
+var auxiliares = {};    // capas que no son pantallas: 'MENU@360' -> FrameNode
+var enlaces = [];       // { desde: node, hacia: 'V-3', ancho: 1366, accion: 'navegar' }
 var fuentesFallidas = [];
 
 function avisar(texto) {
@@ -596,6 +597,7 @@ function cabecera(ancho, seleccion, destinos) {
     hamb.primaryAxisSizingMode = 'FIXED';
     hamb.resize(44, 44);
     f.appendChild(hamb);
+    enlaces.push({ desde: hamb, hacia: 'MENU', ancho: ancho, accion: 'overlay' });
     f.appendChild(logo);
     crecer(logo);
   } else {
@@ -1530,6 +1532,61 @@ function V9(ancho) {
 
 var CONSTRUCTORES = [V1, V2, V3, V4, V5, V6, V7, V8, V9];
 
+// ═══════════════════════════════════════════════════════════ menú desplegable
+
+// El botón compacto del encabezado necesita algo que abrir. Se construye una sola
+// capa por ancho de móvil y todas las pantallas de ese ancho la comparten.
+function menuMovil(ancho) {
+  var f = pila('Menú de navegación · ' + ancho, 'v', {
+    espacio: 0, fondo: 'marca/azul-profundo'
+  });
+  f.counterAxisSizingMode = 'FIXED';
+  f.resize(ancho, f.height);
+  f.setPluginData('generador', MARCA_RAIZ);
+  f.setPluginData('marcoRaiz', 'si');
+  f.setPluginData('vista', 'MENU');
+  f.setPluginData('ancho', String(ancho));
+
+  var cab = pila('cabecera del menú', 'h', {
+    espacio: 16, arriba: 14, abajo: 14, izq: 20, der: 20,
+    alinear: 'CENTER', ancho: ancho
+  });
+  var logo = pila('logo', 'v', { espacio: 1 });
+  logo.appendChild(T('titulo/h3', 'Hub Cultural', 'fondo/blanco'));
+  logo.appendChild(T('cuerpo/pista', 'Santa Marta', 'fondo/blanco'));
+  cab.appendChild(logo);
+  crecer(logo);
+  var cerrar = pila('cerrar el menú', 'v', {
+    radio: 5, alinear: 'CENTER', justificar: 'CENTER', fondo: 'marca/turquesa'
+  });
+  cerrar.appendChild(T('cuerpo/fuerte', '×', 'fondo/blanco'));
+  cerrar.counterAxisSizingMode = 'FIXED';
+  cerrar.primaryAxisSizingMode = 'FIXED';
+  cerrar.resize(44, 44);
+  cab.appendChild(cerrar);
+  f.appendChild(cab);
+  enlaces.push({ desde: cerrar, hacia: null, ancho: ancho, accion: 'cerrar' });
+
+  var lista = pila('opciones', 'v', {
+    espacio: 0, arriba: 8, abajo: 24, izq: 20, der: 20, ancho: ancho
+  });
+  [['Eventos', 'V-2'], ['Actores culturales', 'V-4'],
+   ['Hubs', 'V-5'], ['Mapa', 'V-6'], ['Ingresar', 'V-8']].forEach(function (o) {
+    var item = pila('opción ' + o[0], 'h', {
+      arriba: 14, abajo: 14, alinear: 'CENTER', ancho: ancho - 40
+    });
+    var t = T('cuerpo/normal', o[0], 'fondo/blanco');
+    t.resize(ancho - 40, t.height);
+    item.appendChild(t);
+    item.counterAxisSizingMode = 'FIXED';
+    item.resize(ancho - 40, 52);          // HU-10: muy por encima de 44 px
+    lista.appendChild(item);
+    enlaces.push({ desde: item, hacia: o[1], ancho: ancho, accion: 'navegar' });
+  });
+  f.appendChild(lista);
+  return f;
+}
+
 // ═══════════════════════════════════════════════════════════ fase 5 · prototipo
 
 // A qué pantalla pertenece un nodo, subiendo hasta el marco raíz.
@@ -1568,36 +1625,70 @@ async function conectarPrototipo() {
   var propios = 0;
   for (var i = 0; i < enlaces.length; i++) {
     var e = enlaces[i];
-    var destino = marcos[e.hacia + '@' + e.ancho];
-    if (!destino || !e.desde || e.desde.removed) { omitidos++; continue; }
+    var accion = e.accion || 'navegar';
+    if (!e.desde || e.desde.removed) { omitidos++; continue; }
 
-    // Figma rechaza NAVIGATE hacia el propio marco: el destino tiene que ser otro
-    // marco de primer nivel. Ocurre con la opción seleccionada del menú y con el
-    // «Volver al inicio» del pie dentro de la propia pantalla de Inicio. No es un
-    // enlace que falte: es un enlace que no debe existir.
-    if (pantallaDe(e.desde) === e.hacia + '@' + e.ancho) { propios++; continue; }
-    var reaccion = [{
-      trigger: { type: 'ON_CLICK' },
-      actions: [{
-        type: 'NODE',
-        destinationId: destino.id,
-        navigation: 'NAVIGATE',
-        transition: null,
-        preserveScrollPosition: false
-      }]
-    }];
+    var reaccion;
+    if (accion === 'cerrar') {
+      reaccion = [{ trigger: { type: 'ON_CLICK' }, actions: [{ type: 'CLOSE' }] }];
+    } else {
+      var destino = (e.hacia === 'MENU')
+        ? auxiliares['MENU@' + e.ancho]
+        : marcos[e.hacia + '@' + e.ancho];
+      if (!destino) { omitidos++; continue; }
+
+      // Figma rechaza NAVIGATE hacia el propio marco: el destino tiene que ser otro
+      // marco de primer nivel. Ocurre con la opción seleccionada del menú y con el
+      // «Volver al inicio» del pie dentro de la propia pantalla de Inicio. No es un
+      // enlace que falte: es un enlace que no debe existir.
+      if (pantallaDe(e.desde) === e.hacia + '@' + e.ancho) { propios++; continue; }
+
+      reaccion = [{
+        trigger: { type: 'ON_CLICK' },
+        actions: [{
+          type: 'NODE',
+          destinationId: destino.id,
+          navigation: accion === 'overlay' ? 'OVERLAY' : 'NAVIGATE',
+          transition: null,
+          preserveScrollPosition: false
+        }]
+      }];
+    }
+
     try {
       await fijarReacciones(e.desde, reaccion);
       conectados++;
     } catch (err) {
-      // Segundo intento con el asignador síncrono: en algunas versiones de la API
-      // solo una de las dos vías está disponible.
+      // Reintentos en orden de preferencia: el asignador síncrono, y si la acción
+      // no está disponible en esta versión de la API, su equivalente más simple.
       var segundo = null;
       try {
         e.desde.reactions = reaccion;
         conectados++;
         continue;
       } catch (err2) { segundo = err2; }
+
+      var alternativa = null;
+      if (accion === 'overlay') {
+        alternativa = [{
+          trigger: { type: 'ON_CLICK' },
+          actions: [{
+            type: 'NODE', destinationId: reaccion[0].actions[0].destinationId,
+            navigation: 'NAVIGATE', transition: null, preserveScrollPosition: false
+          }]
+        }];
+      } else if (accion === 'cerrar') {
+        alternativa = [{ trigger: { type: 'ON_CLICK' }, actions: [{ type: 'BACK' }] }];
+      }
+      if (alternativa) {
+        try {
+          await fijarReacciones(e.desde, alternativa);
+          conectados++;
+          incidencias.push('«' + (e.desde.name || '?') + '»: ' + accion +
+            ' no disponible, se usó la alternativa simple');
+          continue;
+        } catch (err3) { /* se reporta abajo */ }
+      }
       incidencias.push(
         'enlace ' + pantallaDe(e.desde) + ' → ' + e.hacia +
         ' | origen: ' + describir(e.desde) +
@@ -1615,6 +1706,10 @@ async function conectarPrototipo() {
 function auditar() {
   var lineas = [];
   var problemas = [];
+  // las comprobaciones miran también las capas auxiliares, como el menú desplegable
+  var todos = {};
+  Object.keys(marcos).forEach(function (k) { todos[k] = marcos[k]; });
+  Object.keys(auxiliares).forEach(function (k) { todos[k] = auxiliares[k]; });
 
   var totalMarcos = Object.keys(marcos).length;
   lineas.push('pantallas construidas : ' + totalMarcos + ' (esperadas 27)');
@@ -1637,8 +1732,8 @@ function auditar() {
   // daría falsos positivos en cuanto hay anidamiento.
   var desbordan = 0;
   var ejemplos = [];
-  Object.keys(marcos).forEach(function (k) {
-    var m = marcos[k];
+  Object.keys(todos).forEach(function (k) {
+    var m = todos[k];
     var caja = m.absoluteBoundingBox;
     if (!caja) return;
     var derecha = caja.x + caja.width + 1;
@@ -1665,7 +1760,7 @@ function auditar() {
 
   // HU-10 · área de toque en las pantallas de 360
   var chicos = [];
-  Object.keys(marcos).forEach(function (k) {
+  Object.keys(todos).forEach(function (k) {
     if (k.indexOf('@360') === -1) return;
     function recorrer(nodo) {
       if (!nodo.children) return;
@@ -1679,7 +1774,7 @@ function auditar() {
         recorrer(h);
       });
     }
-    recorrer(marcos[k]);
+    recorrer(todos[k]);
   });
   lineas.push('área de toque < 44×44 en 360 px : ' + (chicos.length === 0 ? 'ninguna' : chicos.length));
   if (chicos.length) {
@@ -1691,7 +1786,7 @@ function auditar() {
   // nunca envuelve: crece en una sola fila y desborda. Es el fallo que produjo la
   // primera ejecución real, así que se comprueba explícitamente.
   var sinFijar = [];
-  Object.keys(marcos).forEach(function (k) {
+  Object.keys(todos).forEach(function (k) {
     function recorrer(nodo) {
       if (!nodo.children) return;
       nodo.children.forEach(function (h) {
@@ -1702,7 +1797,7 @@ function auditar() {
         recorrer(h);
       });
     }
-    recorrer(marcos[k]);
+    recorrer(todos[k]);
   });
   lineas.push('contenedores con ajuste sin ancho fijo : ' +
     (sinFijar.length === 0 ? 'ninguno' : sinFijar.length));
@@ -1715,7 +1810,7 @@ function auditar() {
   // desborda nada: se queda aplastado y pasa desapercibido. Aquí se comprueba que
   // todo hijo marcado para rellenar su contenedor lo esté rellenando de verdad.
   var aplastados = [];
-  Object.keys(marcos).forEach(function (k) {
+  Object.keys(todos).forEach(function (k) {
     function recorrer(nodo) {
       if (!nodo.children) return;
       var conAuto = nodo.layoutMode === 'VERTICAL' || nodo.layoutMode === 'HORIZONTAL';
@@ -1733,7 +1828,7 @@ function auditar() {
         recorrer(h);
       });
     }
-    recorrer(marcos[k]);
+    recorrer(todos[k]);
   });
   lineas.push('elementos que no rellenan su contenedor : ' +
     (aplastados.length === 0 ? 'ninguno' : aplastados.length));
@@ -1746,7 +1841,7 @@ function auditar() {
   // menos de 40 px se parte letra a letra y no hay forma de leerlo. Da igual qué lo
   // haya causado; si aparece, la pantalla está rota.
   var estrujados = [];
-  Object.keys(marcos).forEach(function (k) {
+  Object.keys(todos).forEach(function (k) {
     function recorrer(nodo) {
       if (!nodo.children) return;
       nodo.children.forEach(function (h) {
@@ -1767,7 +1862,7 @@ function auditar() {
         recorrer(h);
       });
     }
-    recorrer(marcos[k]);
+    recorrer(todos[k]);
   });
   lineas.push('textos partidos letra a letra : ' +
     (estrujados.length === 0 ? 'ninguno' : estrujados.length));
@@ -1776,6 +1871,8 @@ function auditar() {
     estrujados.slice(0, 8).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
+  var capas = Object.keys(auxiliares);
+  lineas.push('capas auxiliares : ' + (capas.length ? capas.join(', ') : 'ninguna'));
   lineas.push('estilos de color : ' + Object.keys(estilosColor).length + ' (esperados 17)');
   lineas.push('estilos de texto : ' + Object.keys(estilosTexto).length + ' (esperados 12)');
   lineas.push('componentes      : ' + Object.keys(componentes).join(', '));
@@ -1793,7 +1890,7 @@ async function construir() {
   var inicio = Date.now();
   incidencias = [];
   estilosColor = {}; estilosTexto = {}; componentes = {};
-  marcos = {}; enlaces = []; fuentesFallidas = [];
+  marcos = {}; auxiliares = {}; enlaces = []; fuentesFallidas = [];
 
   avisar('Limpiando lo generado antes…');
   var borrados = limpiarAnterior();
@@ -1830,9 +1927,21 @@ async function construir() {
     x += maxAncho + 160;
   }
 
+  avisar('Construyendo el menú desplegable…');
+  ANCHOS.filter(esMovil).forEach(function (a) {
+    try {
+      var m = menuMovil(a);
+      m.x = -(a + 200);
+      m.y = 0;
+      figma.currentPage.appendChild(m);
+      auxiliares['MENU@' + a] = m;
+    } catch (e) { incidencias.push('menú de ' + a + ': ' + e.message); }
+  });
+
   avisar('Reaplicando el dimensionado…');
-  Object.keys(marcos).forEach(function (k) {
-    try { reaplicarDimensionado(marcos[k]); }
+  Object.keys(marcos).concat(Object.keys(auxiliares)).forEach(function (k) {
+    var m = marcos[k] || auxiliares[k];
+    try { reaplicarDimensionado(m); }
     catch (e) { incidencias.push('dimensionado en ' + k + ': ' + e.message); }
   });
 
@@ -1849,6 +1958,7 @@ async function construir() {
 
   var lista = [];
   Object.keys(marcos).forEach(function (k) { lista.push(marcos[k]); });
+  Object.keys(auxiliares).forEach(function (k) { lista.push(auxiliares[k]); });
   if (lista.length) figma.viewport.scrollAndZoomIntoView(lista);
 
   var a = auditar();
