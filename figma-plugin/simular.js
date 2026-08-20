@@ -193,6 +193,9 @@ function crearNodo(tipo, extra) {
         if (!x.trigger || !x.actions) throw new Error('reacción mal formada');
         x.actions.forEach((a) => {
           if (a.type === 'NODE' && !a.destinationId) throw new Error('acción NODE sin destino');
+          if (['NODE', 'CLOSE', 'BACK', 'URL'].indexOf(a.type) === -1) {
+            throw new Error('tipo de acción desconocido: ' + a.type);
+          }
         });
       });
       this.reactions = r;
