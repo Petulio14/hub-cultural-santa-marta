@@ -1,8 +1,9 @@
 // Banco de pruebas: ejecuta code.js contra una API de Figma simulada.
 //
-// No valida el aspecto visual —el simulador no implementa auto layout— pero sí atrapa
-// lo que de verdad rompe un plugin: métodos inexistentes, propiedades asignadas en el
-// orden equivocado, nodos usados después de borrarlos y excepciones sin capturar.
+// Implementa auto layout de forma aproximada —ejes, relleno, separación, ajuste de línea
+// y crecimiento— para que la auditoría del plugin mida algo real. No reproduce el render
+// de Figma: los anchos de texto son una estimación. Sirve para atrapar métodos
+// inexistentes, ejes confundidos, contenedores que no envuelven y excepciones sin capturar.
 
 const fs = require('fs');
 const path = require('path');
@@ -12,6 +13,92 @@ const RUTA = path.join(__dirname, 'code.js');
 
 let contadorId = 0;
 const avisos = [];
+let sucio = true;
+
+// ───────────────────────────────────────────────── maquetación aproximada
+
+function disponer(n) {
+  if (!n.children || n.children.length === 0) return;
+
+  if (n.layoutMode === 'NONE') {
+    n.children.forEach(disponer);
+    return;
+  }
+
+  const h = n.layoutMode === 'HORIZONTAL';
+  const anchoInterno = n.width - n.paddingLeft - n.paddingRight;
+
+  // El eje transversal se estira antes de medir a los hijos. Un hijo estirado recibe
+  // su ancho del padre: marcarlo evita que luego vuelva a abrazar su contenido, que es
+  // lo que hace Figma con «rellenar contenedor».
+  n.children.forEach((c) => {
+    if (c.layoutAlign === 'STRETCH' && !h) {
+      c.width = Math.max(0.01, anchoInterno);
+      c._anchoImpuesto = true;
+    }
+  });
+
+  n.children.forEach(disponer);
+
+  // Crecimiento en el eje principal (layoutGrow) en contenedores horizontales fijos.
+  if (h && n.primaryAxisSizingMode === 'FIXED') {
+    const crecen = n.children.filter((c) => c.layoutGrow > 0);
+    if (crecen.length) {
+      const fijos = n.children.filter((c) => !c.layoutGrow).reduce((s, c) => s + c.width, 0);
+      const huecos = n.itemSpacing * Math.max(0, n.children.length - 1);
+      const sobra = anchoInterno - fijos - huecos;
+      if (sobra > 0) {
+        crecen.forEach((c) => { c.width = Math.max(0.01, sobra / crecen.length); disponer(c); });
+      }
+    }
+  }
+
+  const envuelve = h && n.layoutWrap === 'WRAP' && n.primaryAxisSizingMode === 'FIXED';
+  const limite = n.paddingLeft + anchoInterno + 0.5;
+
+  let x = n.paddingLeft, y = n.paddingTop;
+  let altoFila = 0, primeroEnFila = true;
+  let maxDerecha = n.paddingLeft, maxAbajo = n.paddingTop;
+
+  n.children.forEach((c) => {
+    if (h) {
+      if (envuelve && !primeroEnFila && x + c.width > limite) {
+        x = n.paddingLeft;
+        y += altoFila + n.itemSpacing;
+        altoFila = 0;
+      }
+      c.x = x; c.y = y;
+      x += c.width + n.itemSpacing;
+      altoFila = Math.max(altoFila, c.height);
+      primeroEnFila = false;
+    } else {
+      c.x = n.paddingLeft; c.y = y;
+      y += c.height + n.itemSpacing;
+    }
+    maxDerecha = Math.max(maxDerecha, c.x + c.width);
+    maxAbajo = Math.max(maxAbajo, c.y + c.height);
+  });
+
+  const anchoContenido = maxDerecha + n.paddingRight;
+  const altoContenido = maxAbajo + n.paddingBottom;
+
+  const anchoLibre = !n._anchoImpuesto;
+  if (h) {
+    if (n.primaryAxisSizingMode !== 'FIXED' && anchoLibre) n.width = Math.max(0.01, anchoContenido);
+    if (n.counterAxisSizingMode !== 'FIXED') n.height = Math.max(0.01, altoContenido);
+  } else {
+    if (n.primaryAxisSizingMode !== 'FIXED') n.height = Math.max(0.01, altoContenido);
+    if (n.counterAxisSizingMode !== 'FIXED' && anchoLibre) n.width = Math.max(0.01, anchoContenido);
+  }
+}
+
+function disponerTodo(pagina) {
+  if (!sucio) return;
+  sucio = false;
+  pagina.children.forEach(disponer);
+}
+
+// ───────────────────────────────────────────────── nodos
 
 function crearNodo(tipo, extra) {
   const n = Object.assign({
@@ -23,6 +110,7 @@ function crearNodo(tipo, extra) {
     parent: null,
     removed: false,
     _datos: {},
+    _caracteres: '',
     fills: [], strokes: [], strokeWeight: 1, strokeAlign: 'INSIDE',
     cornerRadius: 0, dashPattern: [],
     layoutMode: 'NONE', layoutAlign: 'INHERIT', layoutGrow: 0, layoutWrap: 'NO_WRAP',
@@ -33,13 +121,14 @@ function crearNodo(tipo, extra) {
     fillStyleId: '', textStyleId: '',
     reactions: [],
 
-    resize(w, h) {
-      if (!(w >= 0.01) || !(h >= 0.01)) {
-        avisos.push(`resize inválido en "${this.name || this.type}": ${w}×${h}`);
+    resize(w, hh) {
+      if (!(w >= 0.01) || !(hh >= 0.01)) {
+        avisos.push(`resize inválido en "${this.name || this.type}": ${w}×${hh}`);
         w = Math.max(0.01, w || 0.01);
-        h = Math.max(0.01, h || 0.01);
+        hh = Math.max(0.01, hh || 0.01);
       }
-      this.width = w; this.height = h;
+      this.width = w; this.height = hh;
+      sucio = true;
     },
     appendChild(hijo) {
       if (!hijo) throw new Error('appendChild(undefined) en ' + this.name);
@@ -50,17 +139,7 @@ function crearNodo(tipo, extra) {
       }
       hijo.parent = this;
       this.children.push(hijo);
-      // Aproximación de auto layout. Un contenedor con el eje principal en FIXED
-      // conserva su tamaño, igual que en Figma: si esto no se respeta, el simulador
-      // inventa incumplimientos de área de toque que no existen.
-      if (this.layoutMode === 'VERTICAL' && this.primaryAxisSizingMode !== 'FIXED') {
-        this.height = this.paddingTop + this.paddingBottom +
-          this.children.reduce((s, c) => s + c.height, 0) +
-          this.itemSpacing * Math.max(0, this.children.length - 1);
-      } else if (this.layoutMode === 'HORIZONTAL' && this.counterAxisSizingMode !== 'FIXED') {
-        this.height = Math.max(this.height,
-          this.paddingTop + this.paddingBottom + Math.max(...this.children.map(c => c.height), 0));
-      }
+      sucio = true;
     },
     remove() {
       if (this.parent) {
@@ -68,14 +147,15 @@ function crearNodo(tipo, extra) {
         if (i >= 0) this.parent.children.splice(i, 1);
       }
       this.removed = true;
+      sucio = true;
     },
     getPluginData(k) { return this._datos[k] || ''; },
     setPluginData(k, v) { this._datos[k] = v; },
     setReactionsAsync(r) {
       if (!Array.isArray(r)) throw new Error('reacciones no es un array');
-      r.forEach(x => {
+      r.forEach((x) => {
         if (!x.trigger || !x.actions) throw new Error('reacción mal formada');
-        x.actions.forEach(a => {
+        x.actions.forEach((a) => {
           if (a.type === 'NODE' && !a.destinationId) throw new Error('acción NODE sin destino');
         });
       });
@@ -84,8 +164,22 @@ function crearNodo(tipo, extra) {
     }
   }, extra || {});
 
+  if (tipo === 'TEXT') {
+    Object.defineProperty(n, 'characters', {
+      get() { return this._caracteres; },
+      set(v) {
+        this._caracteres = String(v);
+        // estimación: el simulador no mide tipografía real
+        this.width = Math.max(8, Math.min(620, this._caracteres.length * 7));
+        this.height = 20;
+        sucio = true;
+      }
+    });
+  }
+
   Object.defineProperty(n, 'absoluteBoundingBox', {
     get() {
+      disponerTodo(pagina);
       let x = 0, y = 0, p = this;
       while (p) { x += p.x || 0; y += p.y || 0; p = p.parent; }
       return { x, y, width: this.width, height: this.height };
@@ -114,10 +208,7 @@ const mensajesUI = [];
 
 const figma = {
   showUI() {},
-  ui: {
-    postMessage(m) { mensajesUI.push(m); },
-    onmessage: null
-  },
+  ui: { postMessage(m) { mensajesUI.push(m); }, onmessage: null },
   notify(t) { mensajesUI.push({ tipo: 'notify', texto: t }); },
   closePlugin() {},
   currentPage: pagina,
@@ -128,7 +219,7 @@ const figma = {
   createEllipse: () => nuevo('ELLIPSE'),
   createComponent: () => nuevo('COMPONENT'),
   createText: () => {
-    const t = nuevo('TEXT', { characters: '', textAutoResize: 'NONE', fontName: { family: 'Inter', style: 'Regular' } });
+    const t = nuevo('TEXT', { textAutoResize: 'NONE', fontName: { family: 'Inter', style: 'Regular' } });
     t.height = 20;
     return t;
   },
@@ -148,14 +239,14 @@ const figma = {
   },
 
   combineAsVariants(nodos, padre) {
-    nodos.forEach(n => {
-      if (!/^[\w áéíóú]+=[\w áéíóú]+$/i.test(n.name)) {
+    nodos.forEach((n) => {
+      if (!/^[\w áéíóúñ]+=[\w áéíóúñ]+$/i.test(n.name)) {
         avisos.push('combineAsVariants: nombre sin formato propiedad=valor -> "' + n.name + '"');
       }
     });
     const set = crearNodo('COMPONENT_SET');
     padre.appendChild(set);
-    nodos.forEach(n => set.appendChild(n));
+    nodos.forEach((n) => set.appendChild(n));
     return set;
   }
 };
@@ -181,14 +272,12 @@ if (typeof figma.ui.onmessage !== 'function') {
   process.exit(1);
 }
 
-// dispara la construcción igual que el botón de la interfaz
 figma.ui.onmessage({ tipo: 'construir' });
 
 setTimeout(() => {
-  const informe = mensajesUI.filter(m => m.tipo === 'informe').pop();
-  console.log('mensajes de progreso :', mensajesUI.filter(m => m.tipo === 'progreso').length);
+  const informe = mensajesUI.filter((m) => m.tipo === 'informe').pop();
+  console.log('mensajes de progreso :', mensajesUI.filter((m) => m.tipo === 'progreso').length);
   console.log('nodos creados        :', contadorId);
-  console.log('hijos de la página   :', pagina.children.length);
   console.log('');
 
   if (!informe) {
@@ -201,11 +290,10 @@ setTimeout(() => {
 
   if (avisos.length) {
     console.log('\navisos del simulador (' + avisos.length + '):');
-    [...new Set(avisos)].slice(0, 12).forEach(a => console.log('  - ' + a));
+    [...new Set(avisos)].slice(0, 12).forEach((a) => console.log('  - ' + a));
   } else {
     console.log('\nsin avisos del simulador');
   }
 
-  const fatal = informe.texto.indexOf('ERROR FATAL') === 0;
-  process.exit(fatal ? 1 : 0);
+  process.exit(informe.texto.indexOf('ERROR FATAL') === 0 ? 1 : 0);
 }, 2500);

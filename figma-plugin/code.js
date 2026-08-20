@@ -178,15 +178,35 @@ function pila(nombre, direccion, opciones) {
   f.paddingRight = o.der === undefined ? p : o.der;
   f.counterAxisAlignItems = o.alinear || 'MIN';
   f.primaryAxisAlignItems = o.justificar || 'MIN';
+  // El ajuste de línea solo actúa si el eje principal tiene ancho fijo. Se consigue
+  // con `ancho:` o con estirar() dentro de un padre vertical; la auditoría comprueba
+  // al final que ninguno se quedó abrazando su contenido.
   if (o.envolver) f.layoutWrap = 'WRAP';
   if (o.radio) f.cornerRadius = o.radio;
   if (o.fondo) aplicarRelleno(f, o.fondo); else f.fills = [];
   if (o.borde) aplicarBorde(f, o.borde, o.grosorBorde);
-  if (o.ancho) { f.resize(o.ancho, f.height); f.counterAxisSizingMode = 'FIXED'; }
+  if (o.ancho) fijarAncho(f, o.ancho);
   return f;
 }
 
-function estirar(nodo) { nodo.layoutAlign = 'STRETCH'; return nodo; }
+// Fija el ancho respetando qué eje es cuál: en un frame horizontal el ancho es el
+// eje principal, en uno vertical es el transversal. Confundirlos deja el ancho en
+// «abrazar contenido» y el resize se deshace solo.
+function fijarAncho(f, ancho) {
+  if (f.layoutMode === 'HORIZONTAL') f.primaryAxisSizingMode = 'FIXED';
+  else if (f.layoutMode === 'VERTICAL') f.counterAxisSizingMode = 'FIXED';
+  f.resize(Math.max(0.01, ancho), Math.max(0.01, f.height));
+}
+
+function estirar(nodo) {
+  nodo.layoutAlign = 'STRETCH';
+  // Un contenedor con ajuste de línea necesita además el eje principal fijo:
+  // «rellenar contenedor» por sí solo no basta para que envuelva.
+  if (nodo.layoutMode === 'HORIZONTAL' && nodo.layoutWrap === 'WRAP') {
+    nodo.primaryAxisSizingMode = 'FIXED';
+  }
+  return nodo;
+}
 function crecer(nodo) { nodo.layoutGrow = 1; return nodo; }
 
 // Crea un texto con su estilo y su color.
@@ -614,7 +634,7 @@ function insignia(estado) {
   return f;
 }
 
-function campo(etiqueta, valor, error, anchoCaja) {
+function campo(etiqueta, valor, error, anchoCaja, multilinea) {
   var f = pila('campo ' + etiqueta, 'v', { espacio: 5 });
   f.appendChild(estirar(T('cuerpo/fuerte', etiqueta, 'texto/negro')));
   var caja = pila('caja', 'h', {
@@ -622,10 +642,18 @@ function campo(etiqueta, valor, error, anchoCaja) {
     fondo: 'fondo/blanco', alinear: 'CENTER'
   });
   aplicarBorde(caja, error ? 'estado/terracota' : 'linea/borde', 1.5);
-  caja.appendChild(T('cuerpo/normal', valor, 'texto/cuerpo'));
-  caja.counterAxisSizingMode = 'FIXED';
+  var valorTexto = T('cuerpo/normal', valor, 'texto/cuerpo');
+  caja.appendChild(valorTexto);
+  // el texto rellena la caja: si abraza su contenido, un valor largo la desborda
+  crecer(valorTexto);
   caja.primaryAxisSizingMode = 'FIXED';
-  caja.resize(anchoCaja || 260, 44);
+  if (multilinea) {
+    caja.counterAxisSizingMode = 'AUTO';       // crece con el texto, como un área de texto
+    caja.resize(anchoCaja || 260, Math.max(44, caja.height));
+  } else {
+    caja.counterAxisSizingMode = 'FIXED';
+    caja.resize(anchoCaja || 260, 44);
+  }
   estirar(caja);
   f.appendChild(caja);
   if (error) f.appendChild(estirar(T('cuerpo/meta', '▲  ' + error, 'estado/terracota')));
@@ -698,7 +726,7 @@ function rejillaEventos(ancho, lista, conDescripcion) {
   var n = columnas(ancho);
   var espacio = esEscritorio(ancho) ? 20 : (esMovil(ancho) ? 16 : 18);
   var col = anchoColumna(ancho, n, espacio);
-  var r = pila('rejilla', 'h', { espacio: espacio, envolver: true });
+  var r = pila('rejilla', 'h', { espacio: espacio, envolver: true, ancho: anchoUtil(ancho) });
   estirar(r);
   lista.forEach(function (ev) { r.appendChild(tarjetaEvento(ev, col, conDescripcion)); });
   return r;
@@ -755,13 +783,18 @@ function V1(ancho) {
     espacio: 14, relleno: esMovil(ancho) ? 24 : 40, radio: 8,
     fondo: 'fondo/blanco', borde: 'linea/borde'
   });
+  fijarAncho(heroe, anchoUtil(ancho));
   estirar(heroe);
   heroe.appendChild(estirar(T('etiqueta/eyebrow', 'Plataforma pública de descubrimiento', 'marca/turquesa-oscuro')));
   heroe.appendChild(estirar(T(h1(ancho), 'La cultura de Santa Marta, toda en un mismo lugar', 'texto/negro')));
   heroe.appendChild(estirar(T('cuerpo/normal',
     'Encuentra talleres, rutas, música y saberes que sostienen las comunidades del Magdalena, publicados por quienes los llevan a cabo. Sin intermediarios y sin registro para consultar.',
     'texto/cuerpo')));
-  var acciones = pila('acciones', 'h', { espacio: 10, envolver: true });
+  var rellenoHeroe = esMovil(ancho) ? 24 : 40;
+  var acciones = pila('acciones', 'h', {
+    espacio: 10, envolver: true, ancho: anchoUtil(ancho) - rellenoHeroe * 2
+  });
+  estirar(acciones);
   var bCatalogo = boton('Ver la oferta cultural', 'principal', ancho);
   acciones.appendChild(bCatalogo);
   enlaces.push({ desde: bCatalogo, hacia: 'V-2', ancho: ancho });
@@ -776,7 +809,9 @@ function V1(ancho) {
   var nCols = esMovil(ancho) ? 2 : 4;
   var espacio = esMovil(ancho) ? 12 : 16;
   var colAcceso = anchoColumna(ancho, nCols, espacio);
-  var accesos = pila('accesos', 'h', { espacio: espacio, envolver: true });
+  var accesos = pila('accesos', 'h', {
+    espacio: espacio, envolver: true, ancho: anchoUtil(ancho)
+  });
   estirar(accesos);
   [['Eventos', 'Qué pasa y cuándo', 'V-2'],
    ['Actores culturales', 'Quién está detrás', 'V-4'],
@@ -828,7 +863,9 @@ function V2(ancho) {
   });
   c.appendChild(filtros);
 
-  var activos = pila('filtros activos', 'h', { espacio: 8, envolver: true, alinear: 'CENTER' });
+  var activos = pila('filtros activos', 'h', {
+    espacio: 8, envolver: true, alinear: 'CENTER', ancho: anchoUtil(ancho)
+  });
   estirar(activos);
   activos.appendChild(chip('Saberes ancestrales  ×', true));
   activos.appendChild(chip('20–31 ago  ×', true));
@@ -975,7 +1012,9 @@ function V4(ancho) {
   datos.appendChild(estirar(T('cuerpo/normal',
     'Ocho tejedoras de Bonda y Masinga que enseñan el oficio y sostienen la cadena de la mochila desde la fibra hasta la venta directa. Desde 2019 acompañan a jóvenes del corregimiento en un proceso de transmisión intergeneracional.',
     'texto/cuerpo')));
-  var acc = pila('acciones', 'h', { espacio: 10, envolver: true });
+  var anchoDatos = horizontal ? anchoUtil(ancho) - lado - 24 : anchoUtil(ancho);
+  var acc = pila('acciones', 'h', { espacio: 10, envolver: true, ancho: anchoDatos });
+  estirar(acc);
   acc.appendChild(boton('Contactar', 'principal', ancho));
   acc.appendChild(boton('Editar perfil', 'secundario', ancho));
   datos.appendChild(acc);
@@ -1063,7 +1102,9 @@ function V6(ancho) {
   enc.appendChild(estirar(T(h1(ancho), 'Qué hay cerca de ti', 'texto/negro')));
   c.appendChild(enc);
 
-  var filtros = pila('filtros de categoria', 'h', { espacio: 8, envolver: true, alinear: 'CENTER' });
+  var filtros = pila('filtros de categoria', 'h', {
+    espacio: 8, envolver: true, alinear: 'CENTER', ancho: anchoUtil(ancho)
+  });
   estirar(filtros);
   ['Todas', 'Música y danza', 'Saberes ancestrales', 'Gastronomía', 'Patrimonio'].forEach(function (t, i) {
     filtros.appendChild(chip(t, i === 0));
@@ -1114,7 +1155,7 @@ function V7(ancho) {
 
   var nCif = esMovil(ancho) ? 2 : 4;
   var colCif = anchoColumna(ancho, nCif, 12);
-  var cifras = pila('cifras', 'h', { espacio: 12, envolver: true });
+  var cifras = pila('cifras', 'h', { espacio: 12, envolver: true, ancho: anchoUtil(ancho) });
   estirar(cifras);
   [['7', 'Pendientes'], ['52', 'Aprobadas'], ['3', 'Devueltas'], ['6', 'Categorías']].forEach(function (d) {
     var caja = pila('cifra ' + d[1], 'v', {
@@ -1215,7 +1256,7 @@ function V7(ancho) {
   devolver.appendChild(estirar(T(h2(ancho), 'Devolver publicación', 'texto/negro')));
   var obs = campo('Observación para el actor cultural',
     'Explica qué debe corregirse antes de volver a enviar.',
-    'La observación es obligatoria para devolver una publicación.', anchoUtil(ancho) - 36);
+    'La observación es obligatoria para devolver una publicación.', anchoUtil(ancho) - 36, true);
   estirar(obs);
   devolver.appendChild(obs);
   var accD = pila('acciones', 'h', { espacio: 10 });
@@ -1326,7 +1367,9 @@ function V9(ancho) {
   ]));
   var c = cuerpo(ancho);
 
-  var enc = pila('encabezado', 'h', { espacio: 16, envolver: true, alinear: 'MAX' });
+  var enc = pila('encabezado', 'h', {
+    espacio: 16, envolver: true, alinear: 'MAX', ancho: anchoUtil(ancho)
+  });
   estirar(enc);
   var tit = pila('titulo', 'v', { espacio: 4 });
   crecer(tit);
@@ -1380,7 +1423,7 @@ function V9(ancho) {
   var interno = anchoForm - (esMovil(ancho) ? 40 : 48);
   form.appendChild(estirar(T(h2(ancho), 'Nueva publicación', 'texto/negro')));
   form.appendChild(estirar(campo('Título', EVENTOS[5].t, null, interno)));
-  form.appendChild(estirar(campo('Descripción', EVENTOS[5].d, null, interno)));
+  form.appendChild(estirar(campo('Descripción', EVENTOS[5].d, null, interno, true)));
   form.appendChild(estirar(campo('Categoría', 'Artesanía', null, interno)));
   // el par inicio/fin se apila en móvil: dos campos de fecha no bajan de su ancho intrínseco
   var par = pila('par de fechas', esMovil(ancho) ? 'v' : 'h', { espacio: 12 });
@@ -1424,28 +1467,74 @@ var CONSTRUCTORES = [V1, V2, V3, V4, V5, V6, V7, V8, V9];
 
 // ═══════════════════════════════════════════════════════════ fase 5 · prototipo
 
+// A qué pantalla pertenece un nodo, subiendo hasta el marco raíz.
+function pantallaDe(nodo) {
+  var p = nodo;
+  var n = 0;
+  while (p && n < 40) {
+    if (p.getPluginData && p.getPluginData('marcoRaiz') === 'si') {
+      return p.getPluginData('vista') + '@' + p.getPluginData('ancho');
+    }
+    p = p.parent;
+    n++;
+  }
+  return '(fuera de una pantalla)';
+}
+
+function describir(nodo) {
+  if (!nodo) return '(nulo)';
+  var cadena = [];
+  var p = nodo;
+  var n = 0;
+  while (p && n < 4) { cadena.push(p.name || p.type); p = p.parent; n++; }
+  return nodo.type + ' «' + cadena.join(' ← ') + '»';
+}
+
+function textoDelError(err) {
+  if (!err) return 'error sin contenido';
+  if (typeof err === 'string') return err;
+  if (err.message) return err.message;
+  try { return JSON.stringify(err); } catch (e) { return String(err); }
+}
+
 async function conectarPrototipo() {
   var conectados = 0;
+  var omitidos = 0;
   for (var i = 0; i < enlaces.length; i++) {
     var e = enlaces[i];
     var destino = marcos[e.hacia + '@' + e.ancho];
-    if (!destino || !e.desde || e.desde.removed) continue;
+    if (!destino || !e.desde || e.desde.removed) { omitidos++; continue; }
+    var reaccion = [{
+      trigger: { type: 'ON_CLICK' },
+      actions: [{
+        type: 'NODE',
+        destinationId: destino.id,
+        navigation: 'NAVIGATE',
+        transition: null,
+        preserveScrollPosition: false
+      }]
+    }];
     try {
-      await fijarReacciones(e.desde, [{
-        trigger: { type: 'ON_CLICK' },
-        actions: [{
-          type: 'NODE',
-          destinationId: destino.id,
-          navigation: 'NAVIGATE',
-          transition: null,
-          preserveScrollPosition: false
-        }]
-      }]);
+      await fijarReacciones(e.desde, reaccion);
       conectados++;
     } catch (err) {
-      incidencias.push('enlace hacia ' + e.hacia + ' (' + e.ancho + '): ' + err.message);
+      // Segundo intento con el asignador síncrono: en algunas versiones de la API
+      // solo una de las dos vías está disponible.
+      var segundo = null;
+      try {
+        e.desde.reactions = reaccion;
+        conectados++;
+        continue;
+      } catch (err2) { segundo = err2; }
+      incidencias.push(
+        'enlace ' + pantallaDe(e.desde) + ' → ' + e.hacia +
+        ' | origen: ' + describir(e.desde) +
+        ' | error: ' + textoDelError(err) +
+        (segundo ? ' | reintento: ' + textoDelError(segundo) : '')
+      );
     }
   }
+  if (omitidos) incidencias.push(omitidos + ' enlaces omitidos por falta de destino');
   return conectados;
 }
 
@@ -1524,6 +1613,30 @@ function auditar() {
   if (chicos.length) {
     problemas.push(chicos.length + ' controles por debajo de 44×44 en móvil');
     chicos.slice(0, 6).forEach(function (c) { lineas.push('    · ' + c); });
+  }
+
+  // Un contenedor con ajuste de línea cuyo eje principal siga abrazando el contenido
+  // nunca envuelve: crece en una sola fila y desborda. Es el fallo que produjo la
+  // primera ejecución real, así que se comprueba explícitamente.
+  var sinFijar = [];
+  Object.keys(marcos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      nodo.children.forEach(function (h) {
+        if (h.layoutWrap === 'WRAP' && h.layoutMode === 'HORIZONTAL' &&
+            h.primaryAxisSizingMode !== 'FIXED') {
+          sinFijar.push(k + ' · ' + h.name);
+        }
+        recorrer(h);
+      });
+    }
+    recorrer(marcos[k]);
+  });
+  lineas.push('contenedores con ajuste sin ancho fijo : ' +
+    (sinFijar.length === 0 ? 'ninguno' : sinFijar.length));
+  if (sinFijar.length) {
+    problemas.push(sinFijar.length + ' contenedores con ajuste de línea no envolverán');
+    sinFijar.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
   lineas.push('estilos de color : ' + Object.keys(estilosColor).length + ' (esperados 17)');
