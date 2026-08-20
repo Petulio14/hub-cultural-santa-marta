@@ -11,6 +11,8 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [04-modelo-datos.md](04-modelo-datos.md) | [HU-05](https://github.com/Petulio14/hub-cultural-santa-marta/issues/5) | 2 | Las 7 colecciones de Firestore con tipos, obligatoriedad, relaciones e índices compuestos. |
 | [05-prototipo-interfaz.md](05-prototipo-interfaz.md) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Mapa de navegación, inventario de 9 vistas, paleta con contrastes WCAG verificados y rejilla responsive. |
 | [prototipo/index.html](prototipo/index.html) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Maqueta navegable de las 9 vistas, conmutable entre 360, 768 y 1366 px. Se abre haciendo doble clic. |
+| [06-puesta-en-marcha.md](06-puesta-en-marcha.md) | [HU-08](https://github.com/Petulio14/hub-cultural-santa-marta/issues/8), [HU-11](https://github.com/Petulio14/hub-cultural-santa-marta/issues/11) | 3 | Creación de los proyectos de Firebase y Vercel paso a paso, con la verificación de las reglas de seguridad. |
+| [07-guia-figma.md](07-guia-figma.md) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Traducción de la especificación a Figma: estilos, componentes, orden de construcción y enlaces de navegación. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -25,7 +27,18 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | --- | --- | --- | --- |
 | Sprint 1 | 17/08/2026 | HU-01, HU-02, HU-03 | Documentación completa. Pendiente registrar la aprobación del asesor. |
 | Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | HU-04 y HU-05 completas. HU-06 especificada y con maqueta navegable; **pendiente el archivo de Figma.** |
-| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | No iniciado. Primer código: proyecto React, despliegue en Vercel y reglas de seguridad. |
+| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | Configuración adelantada: reglas de seguridad, índices y archivos de despliegue ya en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)) y el proyecto de React. |
+
+## Configuración en la raíz del repositorio
+
+| Archivo | Para qué | Historia |
+| --- | --- | --- |
+| `firestore.rules` | Reglas de seguridad de las 7 colecciones. | HU-11 |
+| `firestore.indexes.json` | Los 6 índices compuestos. Generado desde [04 §10](04-modelo-datos.md). | HU-05, HU-26 |
+| `storage.rules` | Lectura pública, escritura del propietario, JPG/PNG ≤ 2 MB. | HU-19 |
+| `firebase.json` | Enlaza reglas e índices; configura los emuladores locales. | HU-11 |
+| `vercel.json` | Build de Vite, reescritura de rutas y cabeceras de seguridad. | HU-08 |
+| `.env.example` | Las seis variables del SDK de Firebase. | HU-08 |
 
 ## Cómo se lee esta documentación
 
