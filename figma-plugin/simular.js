@@ -51,7 +51,9 @@ function disponer(n) {
     n.width = Math.max(0.01, anchoNatural(n));
   }
 
-  const anchoInterno = n.width - n.paddingLeft - n.paddingRight;
+  const borde = (n.strokes && n.strokes.length && n.strokeAlign === 'INSIDE')
+    ? (n.strokeWeight || 0) * 2 : 0;
+  const anchoInterno = n.width - n.paddingLeft - n.paddingRight - borde;
 
   // El eje transversal se estira antes de medir a los hijos. Un hijo estirado recibe
   // su ancho del padre: marcarlo evita que luego vuelva a abrazar su contenido, que es
@@ -64,6 +66,14 @@ function disponer(n) {
   });
 
   n.children.forEach(disponer);
+
+  // Figma colapsa a 1 px a los hijos que rellenan cuando el contenedor horizontal
+  // abraza su contenido. Reproducirlo delata los titulos y campos aplastados.
+  if (h && n.primaryAxisSizingMode !== 'FIXED') {
+    n.children.forEach((c) => {
+      if (c.layoutGrow > 0) { c.width = 1; c._anchoImpuesto = true; }
+    });
+  }
 
   // Crecimiento en el eje principal (layoutGrow) en contenedores horizontales fijos.
   if (h && n.primaryAxisSizingMode === 'FIXED') {
@@ -138,7 +148,8 @@ function crearNodo(tipo, extra) {
     _caracteres: '',
     fills: [], strokes: [], strokeWeight: 1, strokeAlign: 'INSIDE',
     cornerRadius: 0, dashPattern: [],
-    layoutMode: 'NONE', layoutAlign: 'INHERIT', layoutGrow: 0, layoutWrap: 'NO_WRAP',
+    layoutMode: 'NONE', layoutWrap: 'NO_WRAP',
+    _layoutAlign: 'INHERIT', _layoutGrow: 0,
     primaryAxisSizingMode: 'AUTO', counterAxisSizingMode: 'AUTO',
     primaryAxisAlignItems: 'MIN', counterAxisAlignItems: 'MIN',
     itemSpacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0,
@@ -182,12 +193,42 @@ function crearNodo(tipo, extra) {
         if (!x.trigger || !x.actions) throw new Error('reacción mal formada');
         x.actions.forEach((a) => {
           if (a.type === 'NODE' && !a.destinationId) throw new Error('acción NODE sin destino');
+          if (['NODE', 'CLOSE', 'BACK', 'URL'].indexOf(a.type) === -1) {
+            throw new Error('tipo de acción desconocido: ' + a.type);
+          }
         });
       });
       this.reactions = r;
       return Promise.resolve();
     }
   }, extra || {});
+
+  // Figma ignora layoutAlign y layoutGrow si el nodo todavía no está dentro de un
+  // contenedor con auto layout. Reproducirlo es lo que delata a los contenedores que
+  // se quedan en su ancho por defecto en lugar de rellenar a su padre.
+  const dentroDeAutoLayout = (nodo) => !!nodo.parent &&
+    (nodo.parent.layoutMode === 'VERTICAL' || nodo.parent.layoutMode === 'HORIZONTAL');
+
+  Object.defineProperty(n, 'layoutAlign', {
+    get() { return this._layoutAlign; },
+    set(v) {
+      if (!dentroDeAutoLayout(this)) {
+        avisos.push('layoutAlign ignorado: "' + (this.name || this.type) + '" aun no esta en un contenedor con auto layout');
+        return;
+      }
+      this._layoutAlign = v; sucio = true;
+    }
+  });
+  Object.defineProperty(n, 'layoutGrow', {
+    get() { return this._layoutGrow; },
+    set(v) {
+      if (!dentroDeAutoLayout(this)) {
+        avisos.push('layoutGrow ignorado: "' + (this.name || this.type) + '" aun no esta en un contenedor con auto layout');
+        return;
+      }
+      this._layoutGrow = v; sucio = true;
+    }
+  });
 
   if (tipo === 'TEXT') {
     Object.defineProperty(n, 'characters', {
@@ -196,7 +237,9 @@ function crearNodo(tipo, extra) {
         this._caracteres = String(v);
         // Estimación: el simulador no mide tipografía real. Sin tope superior, para
         // que un párrafo largo delate al contenedor que no le fija el ancho.
-        this._anchoNatural = Math.max(8, this._caracteres.length * 6.2);
+        // mismo estimador que usa la auditoría del plugin, para que ambos coincidan
+        const tam = parseFloat(this._datos['tam']) || 15;
+        this._anchoNatural = Math.max(8, this._caracteres.length * tam * 0.5);
         this.width = this._anchoNatural;
         this.height = 20;
         sucio = true;

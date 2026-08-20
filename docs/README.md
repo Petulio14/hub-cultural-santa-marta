@@ -13,7 +13,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [prototipo/index.html](prototipo/index.html) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Maqueta navegable de las 9 vistas, conmutable entre 360, 768 y 1366 px. Se abre haciendo doble clic. |
 | [06-puesta-en-marcha.md](06-puesta-en-marcha.md) | [HU-08](https://github.com/Petulio14/hub-cultural-santa-marta/issues/8), [HU-11](https://github.com/Petulio14/hub-cultural-santa-marta/issues/11) | 3 | Creación de los proyectos de Firebase y Vercel paso a paso, con la verificación de las reglas de seguridad. |
 | [07-guia-figma.md](07-guia-figma.md) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Traducción de la especificación a Figma: estilos, componentes, orden de construcción y enlaces de navegación. |
-| [../figma-plugin/](../figma-plugin/) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Plugin que construye el prototipo dentro de Figma: estilos, componentes, 27 pantallas y 141 enlaces, de una sola pasada. |
+| [../figma-plugin/](../figma-plugin/) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Plugin que construye el prototipo dentro de Figma: estilos, componentes, 27 pantallas y 145 enlaces, de una sola pasada. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -27,7 +27,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint | Vence | Historias | Estado |
 | --- | --- | --- | --- |
 | Sprint 1 | 17/08/2026 | HU-01, HU-02, HU-03 | Documentación completa. Pendiente registrar la aprobación del asesor. |
-| Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | HU-04 y HU-05 completas. HU-06 con el prototipo ya generado en Figma; **pendiente la revisión visual y la retroalimentación del asesor.** |
+| Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | HU-04 y HU-05 completas. HU-06 con el [prototipo publicado en Figma](https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1); **pendiente la retroalimentación del asesor.** |
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | Configuración adelantada: reglas de seguridad, índices y archivos de despliegue ya en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)) y el proyecto de React. |
 
 ## Configuración en la raíz del repositorio

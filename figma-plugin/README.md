@@ -35,12 +35,18 @@ Lo que hayas añadido a mano se conserva, porque solo borra lo que lleva su marc
 | Estilos de rejilla | 3 | 360/4/16, 768/8/24, 1366/12/32 |
 | Conjuntos de componentes | 4 | `Boton` (3 variantes), `Insignia` (3), `Chip` (2), `Campo` (2) |
 | Pantallas | 27 | 9 vistas × 360, 768 y 1366 px |
-| Enlaces de prototipo | 130 | Navegación completa entre pantallas del mismo ancho |
+| Capa de menú | 1 | `Menú de navegación · 360`, que abre el botón compacto del encabezado |
+| Enlaces de prototipo | 145 | Navegación completa entre pantallas del mismo ancho |
 
-Los enlaces son 141 menos 11 que apuntarían a su propia pantalla —la opción activa del
-menú y el «volver al inicio» del pie dentro de Inicio— y que Figma rechaza porque el
-destino de una navegación tiene que ser **otro** marco de primer nivel. El informe los
-cuenta aparte: no son enlaces que falten, son enlaces que no deben existir.
+Se descartan además 11 enlaces que apuntarían a su propia pantalla —la opción activa del
+menú y el «volver al inicio» del pie dentro de Inicio—, que Figma rechaza porque el destino
+de una navegación tiene que ser **otro** marco de primer nivel. El informe los cuenta
+aparte: no son enlaces que falten, son enlaces que no deben existir.
+
+En los anchos de móvil el botón compacto del encabezado abre `Menú de navegación · 360`
+como capa superpuesta, con sus cinco opciones enlazadas y un botón de cierre. Si la versión
+de la API no admitiera capas superpuestas, el plugin cae automáticamente a una navegación
+normal —el menú se ve a pantalla completa— y lo anota en el informe.
 
 Cada pantalla lleva su rejilla aplicada, contenido cultural real de Santa Marta —el mismo
 de [`../docs/prototipo/index.html`](../docs/prototipo/index.html)— y la adaptación que
