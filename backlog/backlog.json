@@ -1,0 +1,619 @@
+{
+ "repo": "Petulio14/hub-cultural-santa-marta",
+ "labels": [
+  {
+   "name": "historia",
+   "color": "0E8A16",
+   "description": "Historia de usuario orientada a un rol final"
+  },
+  {
+   "name": "habilitadora",
+   "color": "5319E7",
+   "description": "Historia técnica habilitadora del desarrollo"
+  },
+  {
+   "name": "prioridad:debe",
+   "color": "B60205",
+   "description": "MoSCoW: imprescindible para el MVP"
+  },
+  {
+   "name": "prioridad:deberia",
+   "color": "D93F0B",
+   "description": "MoSCoW: importante, puede posponerse"
+  },
+  {
+   "name": "prioridad:podria",
+   "color": "FBCA04",
+   "description": "MoSCoW: deseable si la capacidad lo permite"
+  },
+  {
+   "name": "epica:E0",
+   "color": "1D76DB",
+   "description": "E0 — Fundación del proyecto y habilitadoras técnicas"
+  },
+  {
+   "name": "epica:E1",
+   "color": "1D76DB",
+   "description": "E1 — Acceso y gestión de cuentas"
+  },
+  {
+   "name": "epica:E2",
+   "color": "1D76DB",
+   "description": "E2 — Perfiles de actores culturales y hubs"
+  },
+  {
+   "name": "epica:E3",
+   "color": "1D76DB",
+   "description": "E3 — Publicación y moderación de contenido"
+  },
+  {
+   "name": "epica:E4",
+   "color": "1D76DB",
+   "description": "E4 — Descubrimiento y contacto"
+  },
+  {
+   "name": "epica:E5",
+   "color": "1D76DB",
+   "description": "E5 — Mapa interactivo"
+  },
+  {
+   "name": "epica:E6",
+   "color": "1D76DB",
+   "description": "E6 — Calidad, accesibilidad y medición"
+  },
+  {
+   "name": "epica:E7",
+   "color": "1D76DB",
+   "description": "E7 — Cierre, despliegue y documentación"
+  },
+  {
+   "name": "puntos:1",
+   "color": "C5DEF5",
+   "description": "Estimación: 1 puntos de historia"
+  },
+  {
+   "name": "puntos:2",
+   "color": "C5DEF5",
+   "description": "Estimación: 2 puntos de historia"
+  },
+  {
+   "name": "puntos:3",
+   "color": "C5DEF5",
+   "description": "Estimación: 3 puntos de historia"
+  },
+  {
+   "name": "puntos:5",
+   "color": "C5DEF5",
+   "description": "Estimación: 5 puntos de historia"
+  },
+  {
+   "name": "puntos:8",
+   "color": "C5DEF5",
+   "description": "Estimación: 8 puntos de historia"
+  }
+ ],
+ "milestones": [
+  {
+   "titulo": "Sprint 1",
+   "descripcion": "Requisitos, backlog y alcance",
+   "vence": "2026-08-17"
+  },
+  {
+   "titulo": "Sprint 2",
+   "descripcion": "Arquitectura, modelo de datos y prototipo de interfaz",
+   "vence": "2026-09-01"
+  },
+  {
+   "titulo": "Sprint 3",
+   "descripcion": "Entorno de desarrollo, estructura base y despliegue continuo",
+   "vence": "2026-09-15"
+  },
+  {
+   "titulo": "Sprint 4",
+   "descripcion": "Autenticación, roles y tratamiento de datos personales",
+   "vence": "2026-09-29"
+  },
+  {
+   "titulo": "Sprint 5",
+   "descripcion": "Perfiles, publicación de contenido y moderación",
+   "vence": "2026-10-13"
+  },
+  {
+   "titulo": "Sprint 6",
+   "descripcion": "Descubrimiento, filtros, contacto y mapa interactivo",
+   "vence": "2026-10-27"
+  },
+  {
+   "titulo": "Sprint 7",
+   "descripcion": "Validaciones, accesibilidad, indicadores y pruebas",
+   "vence": "2026-11-10"
+  },
+  {
+   "titulo": "Sprint 8",
+   "descripcion": "Despliegue final, documentación e informe de validación",
+   "vence": "2026-11-30"
+  }
+ ],
+ "issues": [
+  {
+   "id": "HU-01",
+   "titulo": "HU-01 · Especificación de requisitos del sistema",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos levantar y documentar los requisitos funcionales y no funcionales del sistema, para delimitar con precisión qué se va a construir y evitar la ampliación no controlada del alcance.\n\n## Criterios de aceptación\n- [ ] Dado que se ha realizado la revisión documental del contexto, cuando se consolide el análisis, entonces cada limitación identificada debe estar asociada al menos a un requisito.\n- [ ] Dado el catálogo de requisitos, cuando se revise, entonces cada requisito funcional debe tener un código único, una redacción verificable y una prioridad asignada.\n- [ ] Dado el catálogo de requisitos no funcionales, cuando se revise, entonces cada uno debe contar con un criterio de verificación medible.\n- [ ] Dado el documento finalizado, cuando se presente al asesor, entonces debe recibir su aprobación antes de iniciar el diseño.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-01 a RF-15; RNF-01 a RNF-10 |\n| Objetivo específico | Objetivo 1 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 8 puntos de historia |\n| Sprint | Sprint 1 |\n| Dependencias | — |\n\n**Notas técnicas:** El catálogo se documenta en el capítulo de desarrollo del proyecto y es la base de la matriz de trazabilidad.\n\n<sub>Historia HU-01 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:8"
+   ],
+   "sprint": 1
+  },
+  {
+   "id": "HU-02",
+   "titulo": "HU-02 · Construcción y priorización del Product Backlog",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Product Owner\n\n## Historia\nComo Product Owner, necesito traducir los requisitos en historias de usuario estimadas y priorizadas, para poder planificar los sprints con base en el valor entregado y no en el orden de aparición de las tareas.\n\n## Criterios de aceptación\n- [ ] Dado el catálogo de requisitos, cuando se redacten las historias, entonces cada una debe seguir el formato «como / necesito / para» y contar con criterios de aceptación.\n- [ ] Dado el conjunto de historias, cuando se estime en planning poker, entonces cada historia debe tener un valor en puntos de la escala de Fibonacci adoptada.\n- [ ] Dado el backlog, cuando se priorice con el método MoSCoW, entonces las historias clasificadas como «Debe» deben cubrir el ciclo completo de publicar, moderar, descubrir y contactar.\n- [ ] Dado el backlog priorizado, cuando se cierre el Sprint 1, entonces debe estar publicado en el tablero de GitHub Projects.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-01 a RF-15 |\n| Objetivo específico | Objetivo 1 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 1 |\n| Dependencias | HU-01 |\n\n**Notas técnicas:** El resultado es el presente documento y el Product Backlog del marco metodológico.\n\n<sub>Historia HU-02 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 1
+  },
+  {
+   "id": "HU-03",
+   "titulo": "HU-03 · Delimitación del alcance del producto mínimo viable",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Product Owner\n\n## Historia\nComo Product Owner, necesito declarar de forma explícita las inclusiones, exclusiones y restricciones del prototipo, para proteger el alcance frente al tiempo académico disponible y al tamaño del equipo.\n\n## Criterios de aceptación\n- [ ] Dado el backlog priorizado, cuando se defina el alcance, entonces debe existir una lista escrita de funcionalidades excluidas con su justificación.\n- [ ] Dado el alcance definido, cuando se identifique una funcionalidad fuera de él, entonces debe registrarse como trabajo futuro y no incorporarse a ningún sprint.\n- [ ] Dado el alcance, cuando se revise con el asesor, entonces debe quedar constancia de su aceptación.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | — |\n| Objetivo específico | Objetivo 1 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 1 |\n| Dependencias | HU-02 |\n\n**Notas técnicas:** Corresponde a los apartados de inclusiones, exclusiones y restricciones del marco metodológico.\n\n<sub>Historia HU-03 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 1
+  },
+  {
+   "id": "HU-04",
+   "titulo": "HU-04 · Diseño de la arquitectura de la solución",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos definir la arquitectura por capas del sistema, para establecer las responsabilidades de cada componente y permitir que el software evolucione sin rediseños completos.\n\n## Criterios de aceptación\n- [ ] Dado el alcance aprobado, cuando se diseñe la arquitectura, entonces debe quedar documentada en un diagrama con sus capas y las relaciones entre ellas.\n- [ ] Dada la arquitectura, cuando se revise, entonces la capa de presentación no debe acceder a datos sin pasar por la capa de servicios.\n- [ ] Dada la arquitectura, cuando se documente, entonces debe indicar explícitamente qué tecnología resuelve cada capa.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 8 puntos de historia |\n| Sprint | Sprint 2 |\n| Dependencias | HU-03 |\n\n**Notas técnicas:** React en presentación; Firebase como backend como servicio; Vercel, GitHub y OpenStreetMap como servicios externos.\n\n<sub>Historia HU-04 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:8"
+   ],
+   "sprint": 2
+  },
+  {
+   "id": "HU-05",
+   "titulo": "HU-05 · Diseño del modelo de datos en Cloud Firestore",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos diseñar la estructura de colecciones y documentos, para organizar la información de usuarios, actores culturales, hubs, eventos y moderaciones de forma consistente y consultable.\n\n## Criterios de aceptación\n- [ ] Dado el catálogo de requisitos, cuando se diseñe el modelo, entonces cada entidad debe tener su colección con los campos necesarios y sus tipos definidos.\n- [ ] Dado el modelo, cuando se revise, entonces las relaciones entre colecciones deben resolverse mediante identificadores de referencia.\n- [ ] Dado el modelo, cuando se documente, entonces debe indicar qué campos son obligatorios y cuáles admiten valor nulo.\n- [ ] Dado el modelo, cuando se implemente, entonces debe permitir consultar los eventos filtrando por categoría y por rango de fechas.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-03 a RF-11 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 8 puntos de historia |\n| Sprint | Sprint 2 |\n| Dependencias | HU-04 |\n\n**Notas técnicas:** Colecciones previstas: usuarios, actoresCulturales, hubs, eventos, categorias, moderaciones e interacciones.\n\n<sub>Historia HU-05 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:8"
+   ],
+   "sprint": 2
+  },
+  {
+   "id": "HU-06",
+   "titulo": "HU-06 · Prototipo de interfaz en Figma",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos construir el prototipo visual navegable de las pantallas principales, para validar la estructura de navegación antes de escribir código y reducir el retrabajo.\n\n## Criterios de aceptación\n- [ ] Dado el alcance funcional, cuando se diseñe el prototipo, entonces deben existir las vistas de inicio, catálogo, detalle de evento, perfil de actor, directorio de hubs, mapa y panel de administración.\n- [ ] Dado el prototipo, cuando se revise, entonces debe ser navegable entre pantallas mediante enlaces.\n- [ ] Dado el prototipo, cuando se defina la paleta, entonces los contrastes de color deben cumplir la relación mínima exigida por las pautas WCAG 2.1.\n- [ ] Dado el prototipo, cuando se presente en la Sprint Review, entonces debe recibir la retroalimentación del asesor antes de iniciar la construcción.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-01, RNF-03, RNF-07 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 2 |\n| Dependencias | HU-04 |\n\n**Notas técnicas:** El prototipo aprobado es condición de la Definición de Listo para toda historia con componente visual.\n\n<sub>Historia HU-06 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 2
+  },
+  {
+   "id": "HU-07",
+   "titulo": "HU-07 · Configuración del proyecto y estructura de rutas",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos crear el proyecto en React con su estructura de carpetas, rutas y componentes, para disponer de una base ordenada sobre la cual construir los módulos funcionales.\n\n## Criterios de aceptación\n- [ ] Dado el proyecto creado, cuando se ejecute en local, entonces debe iniciar sin errores en consola.\n- [ ] Dada la estructura de carpetas, cuando se revise, entonces debe separar componentes, vistas, servicios y utilidades.\n- [ ] Dado el enrutador, cuando se navegue a una ruta inexistente, entonces debe mostrarse una página de error controlada.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 3 |\n| Dependencias | HU-04 |\n\n**Notas técnicas:** React con enrutamiento del lado del cliente.\n\n<sub>Historia HU-07 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 3
+  },
+  {
+   "id": "HU-08",
+   "titulo": "HU-08 · Repositorio versionado y despliegue continuo",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos conectar el repositorio de GitHub con Vercel, para que cada integración en la rama principal genere automáticamente un despliegue verificable.\n\n## Criterios de aceptación\n- [ ] Dado el repositorio, cuando se integre un cambio en la rama principal, entonces Vercel debe generar un despliegue sin intervención manual.\n- [ ] Dado un despliegue, cuando finalice, entonces debe existir una dirección pública accesible desde cualquier navegador.\n- [ ] Dada la rama principal, cuando se intente integrar sin revisión del otro integrante, entonces la integración debe quedar bloqueada.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-08, RNF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 3 |\n| Dependencias | HU-07 |\n\n**Notas técnicas:** Ramas de trabajo por historia de usuario; revisión cruzada obligatoria según la Definición de Terminado.\n\n<sub>Historia HU-08 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 3
+  },
+  {
+   "id": "HU-09",
+   "titulo": "HU-09 · Estructura base de navegación y página de inicio",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante, necesito encontrar desde la página de inicio los accesos a eventos, actores culturales, hubs y mapa, para orientarme en la plataforma sin conocimiento previo de su estructura.\n\n## Criterios de aceptación\n- [ ] Dada la página de inicio, cuando se cargue, entonces debe presentar el propósito de la plataforma y los cuatro accesos principales.\n- [ ] Dado el menú de navegación, cuando se seleccione una opción, entonces debe conducir a la vista correspondiente en menos de dos segundos.\n- [ ] Dada cualquier vista interna, cuando se consulte, entonces debe existir siempre una forma visible de regresar al inicio.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 3 |\n| Dependencias | HU-06, HU-07 |\n\n\n<sub>Historia HU-09 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 3
+  },
+  {
+   "id": "HU-10",
+   "titulo": "HU-10 · Diseño responsive de la estructura base",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que consulta la plataforma desde el teléfono durante mi viaje, necesito que la interfaz se adapte a la pantalla de mi dispositivo, para poder usarla sin ampliar ni desplazar horizontalmente.\n\n## Criterios de aceptación\n- [ ] Dada la interfaz, cuando se visualice en anchos de 360, 768 y 1366 píxeles, entonces el contenido debe permanecer legible y sin desbordamiento horizontal.\n- [ ] Dado el menú, cuando el ancho sea inferior a 768 píxeles, entonces debe presentarse en su versión compacta.\n- [ ] Dados los elementos interactivos, cuando se visualicen en móvil, entonces su área de toque no debe ser inferior a 44 por 44 píxeles.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-03 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 3 |\n| Dependencias | HU-09 |\n\n**Notas técnicas:** Verificable con la emulación de dispositivos del navegador.\n\n<sub>Historia HU-10 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 3
+  },
+  {
+   "id": "HU-11",
+   "titulo": "HU-11 · Reglas de seguridad iniciales de la base de datos",
+   "cuerpo": "**Épica:** E0 — Fundación del proyecto y habilitadoras técnicas  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos configurar las reglas de seguridad de Cloud Firestore, para impedir desde el primer incremento que cualquier persona lea o escriba datos que no le corresponden.\n\n## Criterios de aceptación\n- [ ] Dada una sesión no autenticada, cuando se intente escribir en cualquier colección, entonces la operación debe ser rechazada.\n- [ ] Dado un usuario autenticado, cuando intente modificar un documento que no le pertenece, entonces la operación debe ser rechazada.\n- [ ] Dada la colección de eventos, cuando se consulte sin autenticación, entonces solo deben ser legibles los documentos con estado aprobado.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-05, RNF-08 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 3 |\n| Dependencias | HU-05 |\n\n**Notas técnicas:** Las reglas se amplían en cada sprint conforme se incorporan colecciones.\n\n<sub>Historia HU-11 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "habilitadora",
+    "epica:E0",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 3
+  },
+  {
+   "id": "HU-12",
+   "titulo": "HU-12 · Registro de actor cultural",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Actor cultural\n\n## Historia\nComo gestor cultural de Santa Marta, necesito crear una cuenta en la plataforma, para poder publicar mis experiencias culturales y ser visible para los visitantes.\n\n## Criterios de aceptación\n- [ ] Dado el formulario de registro, cuando ingrese un correo válido y una contraseña de al menos ocho caracteres, entonces la cuenta debe crearse y quedar asociada al rol de actor cultural.\n- [ ] Dado el formulario, cuando ingrese un correo ya registrado, entonces debe mostrarse un mensaje claro y no crearse una cuenta duplicada.\n- [ ] Dado el formulario, cuando algún campo obligatorio esté vacío, entonces el envío debe bloquearse indicando el campo faltante.\n- [ ] Dado un registro exitoso, cuando finalice, entonces debe iniciarse la sesión automáticamente y redirigirse al perfil.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-01 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-11 |\n\n**Notas técnicas:** Firebase Authentication con proveedor de correo y contraseña.\n\n<sub>Historia HU-12 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-13",
+   "titulo": "HU-13 · Inicio y cierre de sesión",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Usuario registrado\n\n## Historia\nComo usuario registrado, necesito iniciar y cerrar sesión, para acceder a mis funciones y proteger mi cuenta cuando uso un equipo compartido.\n\n## Criterios de aceptación\n- [ ] Dadas credenciales correctas, cuando inicie sesión, entonces debe accederse a la vista correspondiente a mi rol.\n- [ ] Dadas credenciales incorrectas, cuando intente iniciar sesión, entonces debe mostrarse un mensaje de error que no revele si el correo existe.\n- [ ] Dada una sesión activa, cuando cierre sesión, entonces debe perderse el acceso a las vistas privadas.\n- [ ] Dada una sesión activa, cuando recargue la página, entonces la sesión debe mantenerse.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-02 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-12 |\n\n\n<sub>Historia HU-13 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-14",
+   "titulo": "HU-14 · Recuperación de contraseña",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Usuario registrado\n\n## Historia\nComo usuario registrado que olvidó su contraseña, necesito restablecerla desde mi correo, para recuperar el acceso sin depender del administrador.\n\n## Criterios de aceptación\n- [ ] Dado un correo registrado, cuando solicite el restablecimiento, entonces debe recibirse un mensaje con el enlace correspondiente.\n- [ ] Dado un correo no registrado, cuando se solicite, entonces la respuesta visible debe ser la misma para no revelar la existencia de la cuenta.\n- [ ] Dado el enlace recibido, cuando se defina una nueva contraseña válida, entonces debe poderse iniciar sesión con ella.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-02 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debería |\n| Estimación | 2 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-13 |\n\n**Notas técnicas:** Funcionalidad nativa de Firebase Authentication.\n\n<sub>Historia HU-14 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:deberia",
+    "puntos:2"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-15",
+   "titulo": "HU-15 · Diferenciación de roles y permisos",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Administrador\n\n## Historia\nComo administrador, necesito que cada cuenta tenga un rol asociado que determine lo que puede hacer, para garantizar que solo quien corresponde publique, modere o consulte información sensible.\n\n## Criterios de aceptación\n- [ ] Dada una cuenta con rol de actor cultural, cuando intente acceder al panel de administración, entonces el acceso debe ser denegado.\n- [ ] Dada una cuenta con rol de administrador, cuando inicie sesión, entonces debe acceder al panel de moderación.\n- [ ] Dado un visitante sin cuenta, cuando navegue por la plataforma, entonces debe poder consultar el contenido aprobado sin registrarse.\n- [ ] Dado cualquier intento de acceso indebido, cuando se produzca, entonces debe ser rechazado también por las reglas de la base de datos y no solo por la interfaz.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-01, RNF-08 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-12, HU-11 |\n\n**Notas técnicas:** El control debe existir en las dos capas: interfaz y reglas de seguridad.\n\n<sub>Historia HU-15 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-16",
+   "titulo": "HU-16 · Consentimiento de tratamiento de datos personales",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Usuario registrado\n\n## Historia\nComo persona que entrega sus datos a la plataforma, necesito conocer y aceptar de forma expresa la política de tratamiento, para que el uso de mi información se ajuste a la ley colombiana.\n\n## Criterios de aceptación\n- [ ] Dado el formulario de registro, cuando se presente, entonces debe incluir un enlace visible a la política de tratamiento de datos.\n- [ ] Dado el formulario, cuando no se marque la casilla de aceptación, entonces el registro no debe completarse.\n- [ ] Dada una cuenta creada, cuando se consulte en la base de datos, entonces debe existir el registro de la aceptación con su fecha.\n- [ ] Dada una solicitud de supresión, cuando el usuario la presente, entonces debe existir un canal documentado para atenderla.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-06 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-12 |\n\n**Notas técnicas:** Cumplimiento de la Ley 1581 de 2012 y del Decreto 1377 de 2013.\n\n<sub>Historia HU-16 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-17",
+   "titulo": "HU-17 · Gestión de categorías culturales",
+   "cuerpo": "**Épica:** E1 — Acceso y gestión de cuentas  \n**Rol:** Administrador\n\n## Historia\nComo administrador, necesito crear y editar el catálogo de categorías culturales, para que las publicaciones se clasifiquen de forma coherente y los filtros resulten útiles.\n\n## Criterios de aceptación\n- [ ] Dado el panel de administración, cuando cree una categoría, entonces debe quedar disponible de inmediato en los formularios de publicación.\n- [ ] Dada una categoría con publicaciones asociadas, cuando intente eliminarla, entonces el sistema debe advertirlo e impedir la pérdida de la clasificación.\n- [ ] Dado el listado de categorías, cuando se consulte, entonces debe mostrar el número de publicaciones asociadas a cada una.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-07, RF-14 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 4 |\n| Dependencias | HU-15 |\n\n\n<sub>Historia HU-17 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E1",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 4
+  },
+  {
+   "id": "HU-18",
+   "titulo": "HU-18 · Creación y edición del perfil de actor cultural",
+   "cuerpo": "**Épica:** E2 — Perfiles de actores culturales y hubs  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural, necesito describir quién soy y qué manifestación represento, para que los visitantes comprendan el valor de mi propuesta antes de contactarme.\n\n## Criterios de aceptación\n- [ ] Dado el formulario de perfil, cuando complete nombre, manifestación, descripción, categoría y datos de contacto, entonces el perfil debe guardarse y quedar asociado a mi cuenta.\n- [ ] Dado mi perfil guardado, cuando lo edite, entonces los cambios deben reflejarse en la vista pública sin requerir una nueva aprobación de la cuenta.\n- [ ] Dado el campo de descripción, cuando supere el límite establecido, entonces debe advertirse antes del envío.\n- [ ] Dado el perfil de otro actor, cuando intente editarlo, entonces la operación debe ser rechazada.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-03, RF-06 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-15 |\n\n\n<sub>Historia HU-18 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E2",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-19",
+   "titulo": "HU-19 · Carga de imagen en el perfil",
+   "cuerpo": "**Épica:** E2 — Perfiles de actores culturales y hubs  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural, necesito subir una imagen que represente mi trabajo, para que mi perfil resulte reconocible y atractivo en el catálogo.\n\n## Criterios de aceptación\n- [ ] Dado el formulario, cuando cargue una imagen en formato JPG o PNG de hasta dos megabytes, entonces debe almacenarse y mostrarse en el perfil.\n- [ ] Dado un archivo de formato o tamaño no permitido, cuando se intente cargar, entonces debe rechazarse con un mensaje explicativo.\n- [ ] Dado un perfil sin imagen, cuando se consulte, entonces debe mostrarse una imagen predeterminada.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-03 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debería |\n| Estimación | 2 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-18 |\n\n**Notas técnicas:** Firebase Storage con reglas de acceso por propietario.\n\n<sub>Historia HU-19 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E2",
+    "prioridad:deberia",
+    "puntos:2"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-20",
+   "titulo": "HU-20 · Perfil y directorio de hubs de innovación",
+   "cuerpo": "**Épica:** E2 — Perfiles de actores culturales y hubs  \n**Rol:** Hub de innovación\n\n## Historia\nComo responsable de un hub de innovación, necesito registrar el espacio y sus líneas de trabajo, para ser localizable por actores culturales y entidades interesadas en articularse.\n\n## Criterios de aceptación\n- [ ] Dado el formulario del hub, cuando complete nombre, descripción, líneas de trabajo, dirección y contacto, entonces el perfil debe guardarse.\n- [ ] Dado el directorio público, cuando se consulte, entonces deben listarse todos los hubs aprobados con su información básica.\n- [ ] Dado un hub con dirección registrada, cuando se guarde, entonces deben almacenarse sus coordenadas para su representación en el mapa.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-04, RF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-15 |\n\n\n<sub>Historia HU-20 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E2",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-21",
+   "titulo": "HU-21 · Publicación de un evento o experiencia cultural",
+   "cuerpo": "**Épica:** E3 — Publicación y moderación de contenido  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural, necesito publicar mis eventos y experiencias con toda su información, para que los visitantes sepan qué ofrezco, cuándo y dónde.\n\n## Criterios de aceptación\n- [ ] Dado el formulario de publicación, cuando complete título, descripción, categoría, fecha, lugar e imagen, entonces la publicación debe guardarse con estado «pendiente de aprobación».\n- [ ] Dado el formulario, cuando la fecha de inicio sea posterior a la de finalización, entonces el envío debe bloquearse con un mensaje explicativo.\n- [ ] Dada una publicación guardada, cuando se consulte el catálogo público, entonces no debe aparecer hasta ser aprobada.\n- [ ] Dada una publicación creada, cuando se revise en la base de datos, entonces debe conservar el identificador del actor que la creó y la fecha de creación.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-05, RF-07 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-17, HU-18 |\n\n\n<sub>Historia HU-21 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E3",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-22",
+   "titulo": "HU-22 · Georreferenciación de la publicación",
+   "cuerpo": "**Épica:** E3 — Publicación y moderación de contenido  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural, necesito indicar el lugar exacto donde ocurre mi experiencia, para que el visitante pueda ubicarla en el mapa y llegar sin dificultad.\n\n## Criterios de aceptación\n- [ ] Dado el formulario de publicación, cuando seleccione un punto en el mapa, entonces deben capturarse y guardarse su latitud y longitud.\n- [ ] Dada una publicación sin coordenadas, cuando se intente guardar, entonces debe advertirse que no aparecerá en el mapa.\n- [ ] Dadas unas coordenadas guardadas, cuando se edite la publicación, entonces debe poder modificarse el punto seleccionado.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-08 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-21 |\n\n**Notas técnicas:** Selector de punto basado en Leaflet sobre cartografía de OpenStreetMap.\n\n<sub>Historia HU-22 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E3",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-23",
+   "titulo": "HU-23 · Edición y eliminación de publicaciones propias",
+   "cuerpo": "**Épica:** E3 — Publicación y moderación de contenido  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural, necesito corregir o retirar mis publicaciones, para mantener actualizada la información que ven los visitantes.\n\n## Criterios de aceptación\n- [ ] Dada una publicación propia, cuando la edite, entonces los cambios deben guardarse y la publicación debe volver a estado «pendiente de aprobación».\n- [ ] Dada una publicación propia, cuando la elimine, entonces debe solicitarse confirmación antes de proceder.\n- [ ] Dada una publicación de otro actor, cuando intente editarla o eliminarla, entonces la operación debe ser rechazada tanto por la interfaz como por las reglas de seguridad.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-06 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-21 |\n\n\n<sub>Historia HU-23 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E3",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-24",
+   "titulo": "HU-24 · Moderación de publicaciones",
+   "cuerpo": "**Épica:** E3 — Publicación y moderación de contenido  \n**Rol:** Administrador\n\n## Historia\nComo administrador, necesito revisar cada publicación antes de que sea visible, para garantizar que la información sea pertinente, respetuosa con las comunidades portadoras y esté completa.\n\n## Criterios de aceptación\n- [ ] Dado el panel de moderación, cuando se cargue, entonces deben listarse todas las publicaciones pendientes ordenadas por fecha de creación.\n- [ ] Dada una publicación pendiente, cuando la apruebe, entonces debe pasar a estado «aprobada» y hacerse visible en el catálogo y en el mapa.\n- [ ] Dada una publicación pendiente, cuando la devuelva, entonces debe exigirse una observación escrita y notificarse al actor cultural.\n- [ ] Dada cualquier decisión de moderación, cuando se registre, entonces debe quedar constancia del administrador, la decisión, la observación y la fecha.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-13 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 5 |\n| Dependencias | HU-15, HU-21 |\n\n**Notas técnicas:** Las decisiones se persisten en la colección de moderaciones.\n\n<sub>Historia HU-24 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E3",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 5
+  },
+  {
+   "id": "HU-25",
+   "titulo": "HU-25 · Exploración del catálogo público",
+   "cuerpo": "**Épica:** E4 — Descubrimiento y contacto  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que planifica su estancia, necesito ver en un solo lugar toda la oferta cultural disponible, para descubrir opciones que no conocía.\n\n## Criterios de aceptación\n- [ ] Dado el catálogo, cuando se cargue, entonces deben listarse únicamente las publicaciones aprobadas.\n- [ ] Dado el listado, cuando se presente cada elemento, entonces debe mostrar imagen, título, categoría, fecha y lugar.\n- [ ] Dado un catálogo con más de doce elementos, cuando se recorra, entonces debe existir paginación o carga progresiva.\n- [ ] Dado un catálogo vacío tras aplicar criterios, cuando se muestre, entonces debe presentarse un mensaje orientador y no una pantalla en blanco.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-09 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-24 |\n\n\n<sub>Historia HU-25 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E4",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-26",
+   "titulo": "HU-26 · Filtrado por categoría cultural y por fecha",
+   "cuerpo": "**Épica:** E4 — Descubrimiento y contacto  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante con pocos días en la ciudad, necesito filtrar la oferta por tipo de manifestación y por las fechas de mi estancia, para encontrar rápidamente lo que puedo hacer mientras estoy aquí.\n\n## Criterios de aceptación\n- [ ] Dado el catálogo, cuando aplique un filtro de categoría, entonces deben mostrarse únicamente las publicaciones de esa categoría.\n- [ ] Dado el catálogo, cuando aplique un rango de fechas, entonces deben mostrarse solo las publicaciones vigentes en ese rango.\n- [ ] Dados dos filtros aplicados simultáneamente, cuando se combinen, entonces el resultado debe satisfacer ambas condiciones.\n- [ ] Dados filtros aplicados, cuando los limpie, entonces debe restituirse el catálogo completo.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-10 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-25 |\n\n**Notas técnicas:** Requiere índices compuestos en Firestore para la consulta por categoría y fecha.\n\n<sub>Historia HU-26 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E4",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-27",
+   "titulo": "HU-27 · Búsqueda por palabra clave",
+   "cuerpo": "**Épica:** E4 — Descubrimiento y contacto  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que ya sabe qué busca, necesito escribir una palabra y encontrar coincidencias, para no recorrer todo el catálogo.\n\n## Criterios de aceptación\n- [ ] Dado el campo de búsqueda, cuando escriba un término, entonces deben mostrarse las publicaciones cuyo título o descripción lo contengan.\n- [ ] Dada una búsqueda sin resultados, cuando se ejecute, entonces debe informarse con un mensaje y sugerirse limpiar los filtros.\n- [ ] Dada una búsqueda, cuando se escriba con o sin tildes y en mayúsculas o minúsculas, entonces el resultado debe ser equivalente.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-10 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debería |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-25 |\n\n**Notas técnicas:** Búsqueda sobre el conjunto cargado en cliente, dado el alcance del prototipo.\n\n<sub>Historia HU-27 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E4",
+    "prioridad:deberia",
+    "puntos:3"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-28",
+   "titulo": "HU-28 · Consulta del detalle de una publicación",
+   "cuerpo": "**Épica:** E4 — Descubrimiento y contacto  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante interesado en una experiencia, necesito ver toda su información en una vista propia, para decidir si quiero participar.\n\n## Criterios de aceptación\n- [ ] Dado un elemento del catálogo, cuando lo seleccione, entonces debe abrirse su vista de detalle con descripción, fechas, lugar, categoría, imagen y actor responsable.\n- [ ] Dada la vista de detalle, cuando se cargue, entonces debe incluir un acceso al perfil del actor cultural.\n- [ ] Dada una publicación con coordenadas, cuando se consulte su detalle, entonces debe mostrarse su ubicación en un mapa reducido.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-09, RF-11 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 2 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-25 |\n\n\n<sub>Historia HU-28 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E4",
+    "prioridad:debe",
+    "puntos:2"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-29",
+   "titulo": "HU-29 · Contacto directo con el actor cultural",
+   "cuerpo": "**Épica:** E4 — Descubrimiento y contacto  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que quiere participar de una experiencia, necesito comunicarme directamente con quien la ofrece, para resolver mis dudas sin intermediarios.\n\n## Criterios de aceptación\n- [ ] Dada la vista de detalle, cuando seleccione la opción de contacto, entonces deben mostrarse los canales que el actor cultural haya autorizado.\n- [ ] Dado un canal de contacto, cuando lo seleccione, entonces debe abrirse la aplicación correspondiente con el mensaje inicial prellenado.\n- [ ] Dado un contacto realizado, cuando se produzca, entonces debe registrarse la interacción de forma anonimizada para los indicadores de uso.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-12, RF-15 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-28 |\n\n**Notas técnicas:** No se almacena información personal del visitante; solo el evento de interacción.\n\n<sub>Historia HU-29 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E4",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-30",
+   "titulo": "HU-30 · Mapa interactivo de la oferta cultural",
+   "cuerpo": "**Épica:** E5 — Mapa interactivo  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que se desplaza por la ciudad, necesito ver la oferta cultural situada sobre un mapa, para elegir según dónde me encuentro.\n\n## Criterios de aceptación\n- [ ] Dado el mapa, cuando se cargue, entonces debe mostrar un marcador por cada publicación aprobada con coordenadas registradas.\n- [ ] Dado un marcador, cuando lo seleccione, entonces debe desplegarse una ficha con el título, la categoría y el acceso al detalle.\n- [ ] Dado el mapa, cuando aplique un filtro de categoría, entonces deben mostrarse únicamente los marcadores correspondientes.\n- [ ] Dado el mapa, cuando se abra en un teléfono, entonces debe permitir desplazamiento y acercamiento táctil sin bloquear el desplazamiento de la página.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-11, RF-10 |\n| Objetivo específico | Objetivo 2 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 8 puntos de historia |\n| Sprint | Sprint 6 |\n| Dependencias | HU-22, HU-26 |\n\n**Notas técnicas:** Leaflet como componente de React sobre teselas de OpenStreetMap; agrupación de marcadores si la densidad lo exige.\n\n<sub>Historia HU-30 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E5",
+    "prioridad:debe",
+    "puntos:8"
+   ],
+   "sprint": 6
+  },
+  {
+   "id": "HU-31",
+   "titulo": "HU-31 · Validación de formularios y manejo de errores",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Usuario registrado\n\n## Historia\nComo usuario que introduce información, necesito que el sistema me indique con claridad qué está mal, para corregirlo sin perder lo que ya escribí.\n\n## Criterios de aceptación\n- [ ] Dado cualquier formulario, cuando un campo obligatorio esté vacío, entonces debe señalarse el campo específico y no mostrarse un error genérico.\n- [ ] Dado un formulario con error, cuando se muestre el mensaje, entonces la información ya ingresada debe conservarse.\n- [ ] Dado un fallo de conexión con el servicio de datos, cuando ocurra, entonces debe mostrarse un mensaje comprensible y no un error técnico.\n- [ ] Dado un envío en curso, cuando se procese, entonces el botón debe deshabilitarse para evitar envíos duplicados.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-01 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-21 |\n\n\n<sub>Historia HU-31 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-32",
+   "titulo": "HU-32 · Accesibilidad conforme a las pautas WCAG 2.1",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Usuario con discapacidad visual o motriz\n\n## Historia\nComo persona que navega con lector de pantalla o solo con teclado, necesito poder usar la plataforma completa, para acceder a la oferta cultural en igualdad de condiciones.\n\n## Criterios de aceptación\n- [ ] Dada cualquier imagen de contenido, cuando se inspeccione, entonces debe contar con texto alternativo descriptivo.\n- [ ] Dada la navegación, cuando se recorra únicamente con teclado, entonces debe poderse completar el registro, la publicación y la consulta del catálogo.\n- [ ] Dado cualquier texto sobre su fondo, cuando se mida, entonces la relación de contraste no debe ser inferior a 4,5 a 1.\n- [ ] Dado un elemento con foco, cuando se navegue con teclado, entonces el foco debe ser visualmente identificable.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-07 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debería |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-09 |\n\n**Notas técnicas:** Referente: WCAG 2.1 nivel AA en los criterios aplicables al alcance.\n\n<sub>Historia HU-32 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:deberia",
+    "puntos:5"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-33",
+   "titulo": "HU-33 · Optimización final del diseño responsive",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Turista o visitante\n\n## Historia\nComo visitante que usa la plataforma desde el teléfono, necesito que todas las vistas —incluidos el mapa y el panel de administración— funcionen correctamente en pantalla pequeña.\n\n## Criterios de aceptación\n- [ ] Dadas todas las vistas del sistema, cuando se recorran en 360 píxeles de ancho, entonces ninguna debe presentar desbordamiento horizontal.\n- [ ] Dadas las tablas del panel de administración, cuando se visualicen en móvil, entonces deben adaptarse a un formato legible.\n- [ ] Dado el mapa, cuando se abra en móvil, entonces debe ocupar una altura útil que permita su manipulación.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-03 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-30 |\n\n\n<sub>Historia HU-33 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-34",
+   "titulo": "HU-34 · Indicadores básicos de uso de la plataforma",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Administrador\n\n## Historia\nComo administrador, necesito conocer cuántas publicaciones existen por categoría y cuáles se consultan más, para orientar la gestión de la oferta cultural del destino.\n\n## Criterios de aceptación\n- [ ] Dado el panel de indicadores, cuando se cargue, entonces debe mostrar el total de publicaciones por estado y por categoría.\n- [ ] Dado el panel, cuando se consulte, entonces debe listar las publicaciones con mayor número de consultas.\n- [ ] Dados los registros de interacción, cuando se almacenen, entonces no deben contener datos personales identificables del visitante.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RF-15, RNF-06 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Podría |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-29 |\n\n**Notas técnicas:** Agregaciones calculadas sobre la colección de interacciones.\n\n<sub>Historia HU-34 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:podria",
+    "puntos:5"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-35",
+   "titulo": "HU-35 · Ejecución de las pruebas funcionales y de permisos",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos ejecutar los casos de prueba derivados de los criterios de aceptación, para determinar objetivamente la cobertura funcional alcanzada.\n\n## Criterios de aceptación\n- [ ] Dado el conjunto de historias, cuando se diseñen los casos de prueba, entonces cada criterio de aceptación debe tener al menos un caso asociado.\n- [ ] Dada la ejecución de las pruebas, cuando concluya, entonces la cobertura de historias de prioridad «Debe» que superan todos sus casos no debe ser inferior al 90 %.\n- [ ] Dadas las pruebas de permisos, cuando se ejecuten con cada rol, entonces el 100 % de los accesos no autorizados debe ser rechazado.\n- [ ] Dado cualquier caso fallido, cuando se registre, entonces debe crearse el hallazgo correspondiente con su severidad.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-08; todos los RF |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-31 |\n\n**Notas técnicas:** Resultados consolidados en la matriz de trazabilidad requisitos–pruebas.\n\n<sub>Historia HU-35 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-36",
+   "titulo": "HU-36 · Pruebas de usabilidad con usuarios representativos",
+   "cuerpo": "**Épica:** E6 — Calidad, accesibilidad y medición  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos evaluar la plataforma con usuarios reales de cada rol, para verificar que resulta utilizable por quienes no participaron en su construcción.\n\n## Criterios de aceptación\n- [ ] Dada la sesión de prueba, cuando se inicie, entonces debe obtenerse el consentimiento informado del participante.\n- [ ] Dado el conjunto de tareas guiadas, cuando se ejecuten sin asistencia, entonces debe registrarse si se completan, el tiempo empleado y las dificultades observadas.\n- [ ] Dado el cuestionario SUS, cuando se aplique a al menos ocho participantes, entonces el puntaje promedio debe ser igual o superior a 68.\n- [ ] Dado un puntaje inferior al umbral, cuando se obtenga, entonces los hallazgos deben incorporarse al backlog y repetirse la medición tras su corrección.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-01 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 7 |\n| Dependencias | HU-33 |\n\n**Notas técnicas:** Instrumento: System Usability Scale (Brooke, 1996).\n\n<sub>Historia HU-36 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E6",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 7
+  },
+  {
+   "id": "HU-37",
+   "titulo": "HU-37 · Despliegue de la versión final del prototipo",
+   "cuerpo": "**Épica:** E7 — Cierre, despliegue y documentación  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos publicar la versión final del prototipo en un entorno accesible, para que el jurado, el asesor y los actores culturales puedan verificarla.\n\n## Criterios de aceptación\n- [ ] Dada la versión final, cuando se despliegue, entonces debe existir una dirección pública estable y documentada.\n- [ ] Dado el prototipo desplegado, cuando se consulte desde un dispositivo externo, entonces debe cargar sin errores y con datos de demostración cargados.\n- [ ] Dada la versión desplegada, cuando se contraste con el repositorio, entonces debe corresponder a una etiqueta de versión identificada.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-08 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 3 puntos de historia |\n| Sprint | Sprint 8 |\n| Dependencias | HU-35, HU-36 |\n\n\n<sub>Historia HU-37 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E7",
+    "prioridad:debe",
+    "puntos:3"
+   ],
+   "sprint": 8
+  },
+  {
+   "id": "HU-38",
+   "titulo": "HU-38 · Manual de usuario",
+   "cuerpo": "**Épica:** E7 — Cierre, despliegue y documentación  \n**Rol:** Actor cultural\n\n## Historia\nComo actor cultural sin formación técnica, necesito una guía sencilla de uso, para registrarme y publicar sin necesidad de acompañamiento.\n\n## Criterios de aceptación\n- [ ] Dado el manual, cuando se elabore, entonces debe cubrir el registro, la creación del perfil, la publicación de un evento y la consulta del catálogo.\n- [ ] Dado cada procedimiento, cuando se describa, entonces debe acompañarse de capturas de pantalla numeradas.\n- [ ] Dado el manual, cuando se valide con un usuario ajeno al equipo, entonces este debe completar las tareas siguiéndolo sin ayuda adicional.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-01 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 8 |\n| Dependencias | HU-37 |\n\n\n<sub>Historia HU-38 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E7",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 8
+  },
+  {
+   "id": "HU-39",
+   "titulo": "HU-39 · Documentación técnica del prototipo",
+   "cuerpo": "**Épica:** E7 — Cierre, despliegue y documentación  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos documentar la arquitectura, el modelo de datos y los procedimientos de despliegue, para que el proyecto pueda ser retomado o auditado por terceros.\n\n## Criterios de aceptación\n- [ ] Dada la documentación, cuando se elabore, entonces debe incluir el diagrama de arquitectura, la estructura de colecciones y las reglas de seguridad aplicadas.\n- [ ] Dada la documentación, cuando se revise, entonces debe describir el procedimiento completo para desplegar el proyecto desde cero.\n- [ ] Dado el repositorio, cuando se consulte, entonces debe contener el archivo de documentación actualizado a la versión final.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-09 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 8 |\n| Dependencias | HU-37 |\n\n\n<sub>Historia HU-39 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E7",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 8
+  },
+  {
+   "id": "HU-40",
+   "titulo": "HU-40 · Informe de validación del prototipo",
+   "cuerpo": "**Épica:** E7 — Cierre, despliegue y documentación  \n**Rol:** Equipo de desarrollo\n\n## Historia\nComo equipo de desarrollo, necesitamos consolidar en un solo informe los resultados de las pruebas, para sustentar el cumplimiento del tercer objetivo específico ante el jurado.\n\n## Criterios de aceptación\n- [ ] Dado el informe, cuando se elabore, entonces debe presentar la cobertura funcional alcanzada, el puntaje SUS obtenido y la verificación frente a las características de calidad.\n- [ ] Dado el informe, cuando se revise, entonces debe incluir la matriz de trazabilidad entre requisitos, historias de usuario y casos de prueba.\n- [ ] Dado el registro de hallazgos, cuando se cierre el proyecto, entonces no debe existir ningún hallazgo de severidad alta sin resolver.\n- [ ] Dado el informe finalizado, cuando se entregue, entonces debe alimentar directamente el capítulo de resultados y discusión del trabajo de grado.\n\n## Definición de Terminado\n- [ ] Código integrado en `master` y revisado por el otro integrante\n- [ ] La funcionalidad supera la totalidad de sus casos de prueba\n- [ ] Verificado en resolución de escritorio y en dispositivo móvil\n- [ ] Sin errores en consola ni advertencias críticas de seguridad en Firebase\n- [ ] Formularios con validación de entrada y manejo de errores\n- [ ] Documentación de la historia y manual de usuario actualizados\n- [ ] Incremento desplegado y accesible en Vercel\n\n## Ficha\n| Campo | Valor |\n| --- | --- |\n| Requisitos asociados | RNF-01 a RNF-10 |\n| Objetivo específico | Objetivo 3 |\n| Prioridad (MoSCoW) | Debe |\n| Estimación | 5 puntos de historia |\n| Sprint | Sprint 8 |\n| Dependencias | HU-35, HU-36 |\n\n\n<sub>Historia HU-40 del Anexo A del trabajo de grado.</sub>",
+   "labels": [
+    "historia",
+    "epica:E7",
+    "prioridad:debe",
+    "puntos:5"
+   ],
+   "sprint": 8
+  }
+ ]
+}
