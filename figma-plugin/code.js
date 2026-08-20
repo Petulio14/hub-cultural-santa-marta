@@ -198,8 +198,13 @@ function fijarAncho(f, ancho) {
   f.resize(Math.max(0.01, ancho), Math.max(0.01, f.height));
 }
 
+// `layoutAlign` y `layoutGrow` solo tienen efecto cuando el nodo ya está dentro de un
+// contenedor con auto layout, y aquí casi siempre se piden antes de añadirlo. Se deja
+// la intención anotada y reaplicarDimensionado() la vuelve a aplicar al final, con el
+// árbol ya montado. Sin eso el nodo se queda en los 100 px por defecto de Figma.
 function estirar(nodo) {
   nodo.layoutAlign = 'STRETCH';
+  if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'estirar');
   // Un contenedor con ajuste de línea necesita además el eje principal fijo:
   // «rellenar contenedor» por sí solo no basta para que envuelva.
   if (nodo.layoutMode === 'HORIZONTAL' && nodo.layoutWrap === 'WRAP') {
@@ -207,7 +212,27 @@ function estirar(nodo) {
   }
   return nodo;
 }
-function crecer(nodo) { nodo.layoutGrow = 1; return nodo; }
+
+function crecer(nodo) {
+  nodo.layoutGrow = 1;
+  if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'crecer');
+  return nodo;
+}
+
+function reaplicarDimensionado(nodo) {
+  if (!nodo.children) return;
+  var conAuto = nodo.layoutMode === 'VERTICAL' || nodo.layoutMode === 'HORIZONTAL';
+  nodo.children.forEach(function (h) {
+    if (conAuto && h.getPluginData) {
+      var quiere = h.getPluginData('dimensionado');
+      try {
+        if (quiere === 'estirar') h.layoutAlign = 'STRETCH';
+        else if (quiere === 'crecer') h.layoutGrow = 1;
+      } catch (e) { /* algunos nodos no admiten estas propiedades */ }
+    }
+    reaplicarDimensionado(h);
+  });
+}
 
 // Crea un texto con su estilo y su color.
 function T(estilo, contenido, color, opciones) {
@@ -635,7 +660,9 @@ function insignia(estado) {
 }
 
 function campo(etiqueta, valor, error, anchoCaja, multilinea) {
-  var f = pila('campo ' + etiqueta, 'v', { espacio: 5 });
+  // El marco exterior también lleva ancho: si abraza su contenido, la caja que lo
+  // rellena se encoge hasta el ancho de la etiqueta y el campo queda aplastado.
+  var f = pila('campo ' + etiqueta, 'v', { espacio: 5, ancho: anchoCaja || 260 });
   f.appendChild(estirar(T('cuerpo/fuerte', etiqueta, 'texto/negro')));
   var caja = pila('caja', 'h', {
     arriba: 10, abajo: 10, izq: 12, der: 12, radio: 5,
@@ -1648,6 +1675,33 @@ function auditar() {
     sinFijar.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
+  // La auditoría solo miraba desbordamiento, y un contenedor demasiado ESTRECHO no
+  // desborda nada: se queda aplastado y pasa desapercibido. Aquí se comprueba que
+  // todo hijo marcado para rellenar su contenedor lo esté rellenando de verdad.
+  var aplastados = [];
+  Object.keys(marcos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      var conAuto = nodo.layoutMode === 'VERTICAL' || nodo.layoutMode === 'HORIZONTAL';
+      var interior = nodo.width - nodo.paddingLeft - nodo.paddingRight;
+      nodo.children.forEach(function (h) {
+        if (conAuto && nodo.layoutMode === 'VERTICAL' &&
+            h.layoutAlign === 'STRETCH' && interior > 1 && h.width < interior - 1) {
+          aplastados.push(k + ' · ' + h.name + ' ' +
+            Math.round(h.width) + ' de ' + Math.round(interior) + ' px');
+        }
+        recorrer(h);
+      });
+    }
+    recorrer(marcos[k]);
+  });
+  lineas.push('elementos que no rellenan su contenedor : ' +
+    (aplastados.length === 0 ? 'ninguno' : aplastados.length));
+  if (aplastados.length) {
+    problemas.push(aplastados.length + ' elementos quedaron más estrechos que su contenedor');
+    aplastados.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
   lineas.push('estilos de color : ' + Object.keys(estilosColor).length + ' (esperados 17)');
   lineas.push('estilos de texto : ' + Object.keys(estilosTexto).length + ' (esperados 12)');
   lineas.push('componentes      : ' + Object.keys(componentes).join(', '));
@@ -1701,6 +1755,12 @@ async function construir() {
     }
     x += maxAncho + 160;
   }
+
+  avisar('Reaplicando el dimensionado…');
+  Object.keys(marcos).forEach(function (k) {
+    try { reaplicarDimensionado(marcos[k]); }
+    catch (e) { incidencias.push('dimensionado en ' + k + ': ' + e.message); }
+  });
 
   avisar('Conectando el prototipo…');
   var red = { conectados: 0, propios: 0, aplicables: 0 };
