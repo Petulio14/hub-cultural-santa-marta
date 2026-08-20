@@ -6,8 +6,11 @@
 
 > ⚠️ **Estado: parcial.** Este documento es la **especificación** del prototipo: mapa de
 > navegación, inventario de vistas, paleta con contrastes verificados y rejilla responsive.
-> El **archivo navegable de Figma** todavía no existe y es lo único que falta para cerrar
-> HU-06. Este documento es el insumo directo para construirlo.
+> El **archivo de Figma** todavía no existe y es lo único que falta para cerrar HU-06.
+>
+> 🖥️ **Maqueta navegable:** [`prototipo/index.html`](prototipo/index.html) — las 9 vistas
+> construidas y conmutables en los tres anchos de RNF-03. Ábrela en el navegador; sirve
+> para validar la navegación con el asesor y para calcar el diseño en Figma.
 
 El prototipo aprobado es condición de la **Definición de Listo** para toda historia con
 componente visual, es decir, para todas las historias de los sprints 3 a 7.
@@ -120,16 +123,50 @@ Condiciones que el archivo de Figma debe reflejar para no arrastrar deuda a HU-3
   **no borran lo ya escrito** (HU-31).
 - Tamaño base de texto: 16 px; ningún texto de contenido por debajo de 14 px.
 
-## 6. Qué falta para cerrar HU-06
+## 6. Maqueta navegable
 
-| # | Tarea | Responsable | Estado |
-| --- | --- | --- | --- |
-| 1 | Crear el archivo de Figma del proyecto. | Equipo | ⬜ |
-| 2 | Diseñar las 7 vistas obligatorias en los 3 anchos. | Equipo | ⬜ |
-| 3 | Enlazar las pantallas para que el prototipo sea **navegable**. | Equipo | ⬜ |
-| 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | Equipo | ⬜ |
-| 5 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | Equipo | ⬜ |
-| 6 | Añadir el enlace del archivo en este documento y en el issue HU-06. | Equipo | ⬜ |
+[`prototipo/index.html`](prototipo/index.html) es un solo archivo autónomo, sin
+dependencias ni servidor: se abre haciendo doble clic. Contiene las nueve vistas de la
+sección 2 con contenido cultural real de Santa Marta, no texto de relleno.
+
+Cómo usarla:
+
+- **Rail izquierdo:** cambia de vista. Cada entrada muestra su código y las historias que
+  dependen de ella.
+- **Selector 360 / 768 / 1366:** redimensiona el lienzo al ancho exacto de RNF-03. La
+  adaptación es real —está resuelta con *container queries* sobre el lienzo—, así que lo
+  que se ve es el comportamiento que tendrá el componente en React, no una simulación.
+- **Anotaciones:** superpone la referencia de historia sobre cada elemento que la implementa.
+- **Panel inferior:** qué revisar en la vista activa.
+
+### Verificación automatizada ejecutada sobre la maqueta
+
+Recorriendo las 9 vistas en los 3 anchos:
+
+| Comprobación | Resultado |
+| --- | --- |
+| Desbordamiento horizontal (RNF-03, HU-33) | **0 px** en las 27 combinaciones |
+| Área de toque mínima 44 × 44 px en 360 px (HU-10) | **0 elementos** por debajo del umbral |
+| Menú compacto por debajo de 768 px (HU-10) | correcto en el punto exacto |
+| Tabla del panel como tarjetas apiladas en móvil (HU-33) | correcta |
+| Contrastes de la paleta (HU-06, HU-32) | todos ≥ 4,5 : 1, sección 3 |
+
+Tres defectos reales aparecieron durante esa verificación y quedaron corregidos: el par de
+campos *inicio / fin* desbordaba 10 px a 360 px, los chips de filtro y la paginación no
+alcanzaban los 44 px de alto en móvil, y el punto de corte de 768 px no disparaba por 2 px
+a causa del borde del contenedor. Son exactamente los hallazgos que HU-06 debe anticipar
+antes de que lleguen al código.
+
+## 7. Qué falta para cerrar HU-06
+
+| # | Tarea | Estado |
+| --- | --- | --- |
+| 1 | Especificar navegación, vistas, paleta y rejilla. | ✅ este documento |
+| 2 | Construir las 9 vistas navegables en los 3 anchos. | ✅ `prototipo/index.html` |
+| 3 | Crear el archivo de Figma y trasladar las vistas. | ⬜ |
+| 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ⬜ |
+| 5 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
+| 6 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ⬜ |
 
 **Enlace al archivo de Figma:** *(pendiente)*
 

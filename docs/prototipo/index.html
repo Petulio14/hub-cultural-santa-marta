@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipo Hub Cultural</title>
+<meta name="description" content="Maqueta navegable de las nueve vistas del prototipo, en los tres anchos de RNF-03.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   HUB CULTURAL SANTA MARTA — maqueta navegable
+   HU-06 · Sprint 2 · insumo para el archivo de Figma
+
+   Dos sistemas de color deliberadamente distintos:
+   · el ENTORNO (barra, rail, lienzo) es frío y neutro: es una
+     herramienta de revisión y debe desaparecer;
+   · el ARTBOARD usa la paleta documentada en docs/05-prototipo-
+     interfaz.md §3, que es justamente lo que se somete a revisión,
+     y por eso no cambia con el tema del visor.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ---------- entorno: tema claro ---------- */
+:root{
+  --e-fondo:#E9EBEE;
+  --e-panel:#FFFFFF;
+  --e-panel-2:#F3F5F7;
+  --e-texto:#1B2126;
+  --e-apagado:#59636E;
+  --e-borde:#C9D0D7;
+  --e-acento:#0A5F5E;
+  --e-acento-suave:#D6E6E5;
+  --e-sombra:0 1px 2px rgba(20,24,28,.06), 0 8px 24px rgba(20,24,28,.07);
+  --e-lienzo:#DFE3E8;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --e-fondo:#14181C;
+    --e-panel:#1C2227;
+    --e-panel-2:#232B31;
+    --e-texto:#E6EAED;
+    --e-apagado:#98A3AE;
+    --e-borde:#2C343B;
+    --e-acento:#3FB8B5;
+    --e-acento-suave:#1E3A39;
+    --e-sombra:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --e-lienzo:#0E1114;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --e-fondo:#14181C;
+  --e-panel:#1C2227;
+  --e-panel-2:#232B31;
+  --e-texto:#E6EAED;
+  --e-apagado:#98A3AE;
+  --e-borde:#2C343B;
+  --e-acento:#3FB8B5;
+  --e-acento-suave:#1E3A39;
+  --e-sombra:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --e-lienzo:#0E1114;
+  color-scheme:dark;
+}
+
+/* ---------- artboard: paleta documentada (fija) ---------- */
+:root{
+  --azul:#0B3C5D;
+  --turquesa-osc:#0A5F5E;
+  --turquesa:#0E7C7B;
+  --terracota:#B04A2F;
+  --ocre:#8A5A17;
+  --arena:#F7F3EC;
+  --blanco:#FFFFFF;
+  --gris-texto:#3A3F45;
+  --negro-texto:#14181C;
+  --gris-borde:#D5CFC4;
+
+  --cat-musica:#B04A2F;
+  --cat-saberes:#8A5A17;
+  --cat-patrimonio:#0B3C5D;
+  --cat-gastronomia:#0A5F5E;
+  --cat-artes:#0E7C7B;
+  --cat-artesania:#6E4A2E;
+
+  --paso:8px;
+  --radio:6px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--e-fondo);
+  color:var(--e-texto);
+  font-family:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--e-acento);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+/* ═══════════ BARRA SUPERIOR ═══════════ */
+.bar{
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  padding:12px 20px;
+  background:var(--e-panel);
+  border-bottom:1px solid var(--e-borde);
+  position:sticky;top:0;z-index:20;
+}
+.marca{display:flex;flex-direction:column;gap:1px;margin-right:auto}
+.marca b{
+  font-family:Archivo,system-ui,sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:-.01em;
+}
+.marca span{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--e-apagado);
+  letter-spacing:.02em;
+}
+.grupo{display:flex;align-items:center;gap:10px}
+.grupo > .etq{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--e-apagado);
+}
+.anchos{display:flex;background:var(--e-panel-2);border:1px solid var(--e-borde);border-radius:var(--radio);padding:2px;gap:2px}
+.anchos button{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;
+  border:0;background:transparent;color:var(--e-apagado);
+  padding:5px 11px;border-radius:4px;cursor:pointer;
+  transition:background .15s,color .15s;
+  min-height:32px;
+}
+.anchos button:hover{color:var(--e-texto)}
+.anchos button[aria-pressed="true"]{background:var(--e-acento);color:#fff;font-weight:500}
+.interruptor{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:13px;color:var(--e-apagado);user-select:none;
+}
+.interruptor input{accent-color:var(--e-acento);width:16px;height:16px;cursor:pointer}
+.interruptor:hover{color:var(--e-texto)}
+
+/* ═══════════ ESPACIO DE TRABAJO ═══════════ */
+.trabajo{display:flex;min-height:calc(100vh - 57px);align-items:flex-start}
+
+.rail{
+  width:246px;flex:none;
+  background:var(--e-panel);
+  border-right:1px solid var(--e-borde);
+  padding:16px 12px 32px;
+  position:sticky;top:57px;
+  max-height:calc(100vh - 57px);overflow-y:auto;
+}
+.rail h2{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--e-apagado);
+  margin:0 0 8px 8px;
+}
+.rail h2 + ul{margin-bottom:20px}
+.rail ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.rail a{
+  display:grid;grid-template-columns:34px 1fr;align-items:baseline;gap:6px;
+  padding:7px 8px;border-radius:5px;
+  color:var(--e-texto);text-decoration:none;font-size:13.5px;line-height:1.35;
+  transition:background .12s;
+}
+.rail a:hover{background:var(--e-panel-2)}
+.rail a code{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--e-apagado);
+}
+.rail a[aria-current="page"]{background:var(--e-acento-suave);font-weight:600}
+.rail a[aria-current="page"] code{color:var(--e-acento)}
+
+/* el lienzo desplaza en horizontal en lugar de encoger el marco: el ancho
+   pedido tiene que ser exacto, porque es justamente lo que se verifica */
+.escenario{flex:1;min-width:0;padding:28px 28px 64px;background:var(--e-lienzo);overflow-x:auto}
+.escenario-cab{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  margin:0 auto 16px;max-width:1366px;
+}
+.escenario-cab h1{
+  font-family:Archivo,sans-serif;font-weight:600;font-size:18px;margin:0;
+  letter-spacing:-.01em;
+}
+.escenario-cab .meta{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--e-apagado);
+}
+.escenario-cab .meta a{color:var(--e-acento)}
+
+/* marco del artboard */
+.marco{
+  width:var(--w,1366px);
+  margin:0 auto;
+  background:var(--arena);
+  /* outline y no border: un borde restaría 2 px al ancho del contenedor y
+     las consultas @container de 768 px no dispararían en el punto exacto */
+  outline:1px solid var(--e-borde);
+  border-radius:8px;
+  box-shadow:var(--e-sombra);
+  overflow:hidden;
+  /* sin transition sobre width: un width alimentado por var() no interpola
+     y el marco se queda congelado en el ancho anterior */
+  container-type:inline-size;
+}
+.regla{
+  width:var(--w,1366px);margin:0 auto 6px;
+  display:flex;justify-content:space-between;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--e-apagado);
+}
+
+.notas{
+  width:var(--w,1366px);margin:20px auto 0;
+  background:var(--e-panel);border:1px solid var(--e-borde);
+  border-radius:var(--radio);padding:16px 18px;
+}
+.notas h3{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--e-apagado);
+  margin:0 0 8px;
+}
+.notas ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.notas li{font-size:13.5px}
+.notas code{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;
+  background:var(--e-panel-2);padding:1px 5px;border-radius:3px;
+}
+
+/* anotaciones HU */
+.hu{
+  display:none;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;font-weight:500;
+  background:var(--terracota);color:#fff;
+  padding:1px 5px;border-radius:3px;vertical-align:middle;
+  margin-left:6px;white-space:nowrap;
+}
+body.anotado .hu{display:inline-block}
+
+/* ═══════════════════════════════════════════════════════════
+   ARTBOARD — la interfaz bajo revisión
+   ═══════════════════════════════════════════════════════════ */
+.app{
+  color:var(--gris-texto);
+  font-size:15px;
+  min-height:520px;
+  display:flex;flex-direction:column;
+}
+.app *:focus-visible{outline:2px solid var(--turquesa-osc);outline-offset:2px}
+.vista{display:none;flex-direction:column;flex:1}
+.vista.activa{display:flex}
+
+/* — cabecera del producto — */
+.p-cab{
+  background:var(--azul);color:#fff;
+  display:flex;align-items:center;gap:16px;
+  padding:14px 20px;
+}
+.p-logo{font-family:Archivo,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.01em;margin-right:auto;color:#fff}
+.p-logo small{display:block;font-family:"Source Sans 3",sans-serif;font-weight:400;font-size:11px;opacity:.8;letter-spacing:0}
+.p-nav{display:none;gap:4px}
+.p-nav a{
+  color:#fff;text-decoration:none;font-size:14px;padding:8px 12px;border-radius:5px;
+  transition:background .15s;
+}
+.p-nav a:hover{background:rgba(255,255,255,.14)}
+.p-nav a.sel{background:rgba(255,255,255,.18);font-weight:600}
+.p-hamb{
+  width:44px;height:44px;flex:none;display:grid;place-items:center;
+  background:rgba(255,255,255,.12);border:0;border-radius:5px;cursor:pointer;
+}
+.p-hamb span{display:block;width:18px;height:2px;background:#fff;box-shadow:0 -6px 0 #fff,0 6px 0 #fff}
+.p-sesion{display:none}
+.p-sesion .btn-fantasma{
+  background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;
+  padding:7px 14px;border-radius:5px;font-size:14px;cursor:pointer;font-family:inherit;
+  min-height:36px;
+}
+@container (min-width:768px){
+  .p-nav{display:flex}
+  .p-hamb{display:none}
+  .p-sesion{display:block}
+}
+
+.p-cuerpo{padding:20px;flex:1;display:flex;flex-direction:column;gap:24px}
+@container (min-width:768px){ .p-cuerpo{padding:24px} }
+@container (min-width:1200px){ .p-cuerpo{padding:32px 40px} }
+
+/* — tipografía del producto — */
+.app h1,.app h2,.app h3{
+  font-family:Archivo,sans-serif;color:var(--negro-texto);
+  margin:0;text-wrap:balance;letter-spacing:-.015em;
+}
+.app h1{font-size:26px;font-weight:700;line-height:1.15}
+.app h2{font-size:19px;font-weight:600}
+.app h3{font-size:16px;font-weight:600}
+@container (min-width:768px){ .app h1{font-size:32px} .app h2{font-size:21px} }
+.app p{margin:0;max-width:64ch}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--turquesa-osc);
+  font-weight:500;
+}
+
+/* — controles — */
+.btn{
+  font-family:inherit;font-size:15px;font-weight:600;
+  background:var(--turquesa-osc);color:#fff;border:0;
+  padding:11px 20px;border-radius:5px;cursor:pointer;
+  min-height:44px;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  transition:background .15s;text-decoration:none;
+}
+.btn:hover{background:#084948}
+.btn.sec{background:transparent;color:var(--turquesa-osc);border:1.5px solid var(--turquesa-osc)}
+.btn.sec:hover{background:rgba(10,95,94,.08)}
+.btn.peq{font-size:13.5px;padding:8px 14px;min-height:36px}
+.btn.riesgo{background:var(--terracota)}
+.btn.riesgo:hover{background:#943D26}
+
+.campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+/* el par inicio/fin se apila en móvil: dos input[type=date] lado a lado
+   no bajan de su ancho intrínseco y desbordan el formulario a 360 px */
+.par-fechas{display:grid;gap:12px;grid-template-columns:1fr}
+@container (min-width:768px){ .par-fechas{grid-template-columns:1fr 1fr} }
+.campo label{font-size:13.5px;font-weight:600;color:var(--negro-texto)}
+.campo .pista{font-size:12.5px;color:#5C666F}
+.campo input,.campo select,.campo textarea{
+  font-family:inherit;font-size:15px;color:var(--gris-texto);
+  background:var(--blanco);border:1.5px solid var(--gris-borde);
+  border-radius:5px;padding:10px 12px;min-height:44px;width:100%;
+}
+.campo textarea{min-height:96px;resize:vertical}
+.campo.error input,.campo.error textarea{border-color:var(--terracota)}
+.campo .msg-error{
+  font-size:13px;color:var(--terracota);font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+.campo .msg-error::before{content:"▲";font-size:9px}
+
+/* — insignias de estado (color + texto, nunca solo color) — */
+.estado{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;
+  border:1px solid;white-space:nowrap;
+}
+.estado::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.estado.pendiente{color:var(--ocre);border-color:#D9BE86;background:#FBF4E6}
+.estado.aprobado{color:var(--turquesa-osc);border-color:#9CC7C6;background:#E9F4F4}
+.estado.devuelto{color:var(--terracota);border-color:#E0B0A2;background:#FBEDE9}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;background:var(--blanco);border:1px solid var(--gris-borde);
+  border-radius:99px;padding:5px 12px;color:var(--gris-texto);
+  min-height:32px;
+}
+.chip.activo{background:var(--turquesa-osc);border-color:var(--turquesa-osc);color:#fff;font-weight:600}
+.chip button{
+  border:0;background:none;color:inherit;cursor:pointer;font-size:15px;line-height:1;padding:0;
+}
+
+/* — tarjetas — */
+.rejilla{display:grid;gap:16px;grid-template-columns:1fr}
+@container (min-width:768px){ .rejilla{grid-template-columns:repeat(2,1fr);gap:18px} }
+@container (min-width:1200px){ .rejilla{grid-template-columns:repeat(3,1fr);gap:20px} }
+
+.tarjeta{
+  background:var(--blanco);border:1px solid var(--gris-borde);
+  border-radius:8px;overflow:hidden;display:flex;flex-direction:column;
+}
+.miniatura{
+  aspect-ratio:16/10;position:relative;
+  background:linear-gradient(140deg,var(--tinte,#0B3C5D),color-mix(in srgb,var(--tinte,#0B3C5D) 55%,#F7F3EC));
+}
+.miniatura::after{
+  content:attr(data-alt);position:absolute;inset:auto 0 0 0;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:rgba(255,255,255,.9);
+  padding:6px 10px;background:linear-gradient(transparent,rgba(0,0,0,.45));
+  letter-spacing:.02em;
+}
+.tarjeta-cuerpo{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tarjeta-cuerpo h3{font-size:16.5px;line-height:1.25}
+.tarjeta-meta{
+  display:flex;flex-wrap:wrap;gap:4px 12px;
+  font-size:13px;color:#5C666F;font-variant-numeric:tabular-nums;
+}
+.tarjeta-meta .cat{color:var(--turquesa-osc);font-weight:600}
+
+/* — barra de filtros — */
+.filtros{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:16px;display:grid;gap:12px;grid-template-columns:1fr;
+}
+@container (min-width:768px){
+  .filtros{grid-template-columns:1.6fr 1fr 1fr auto;align-items:end;gap:14px}
+}
+
+/* — accesos del inicio — */
+.accesos{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+@container (min-width:768px){ .accesos{grid-template-columns:repeat(4,1fr);gap:16px} }
+.acceso{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:16px;display:flex;flex-direction:column;gap:6px;
+  text-decoration:none;color:var(--gris-texto);min-height:44px;
+  border-top:3px solid var(--turquesa-osc);
+  transition:transform .15s,box-shadow .15s;
+}
+.acceso:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(11,60,93,.1)}
+.acceso strong{font-family:Archivo,sans-serif;font-size:16px;color:var(--negro-texto)}
+.acceso span{font-size:13.5px;color:#5C666F}
+
+.heroe{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:28px 20px;display:flex;flex-direction:column;gap:14px;
+}
+@container (min-width:768px){ .heroe{padding:40px 32px} }
+
+/* — mapa — */
+.mapa{
+  position:relative;background:#DCE5E4;border:1px solid var(--gris-borde);
+  border-radius:8px;overflow:hidden;height:340px;
+}
+@container (min-width:768px){ .mapa{height:440px} }
+.mapa.chico{height:200px}
+.mapa svg{position:absolute;inset:0;width:100%;height:100%}
+.marcador{
+  position:absolute;width:26px;height:26px;transform:translate(-50%,-100%);
+  cursor:pointer;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));
+}
+.mapa-credito{
+  position:absolute;right:6px;bottom:6px;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  background:rgba(255,255,255,.86);color:#3A3F45;padding:2px 7px;border-radius:3px;
+}
+.ficha{
+  position:absolute;left:12px;bottom:12px;width:min(260px,calc(100% - 24px));
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:12px 14px;display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 6px 20px rgba(11,60,93,.18);
+}
+.ficha h3{font-size:14.5px}
+
+/* — tabla del panel — */
+.tabla-envoltura{overflow-x:auto;border:1px solid var(--gris-borde);border-radius:8px;background:var(--blanco)}
+table.admin{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+table.admin th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.08em;color:#5C666F;
+  text-align:left;padding:10px 14px;border-bottom:1.5px solid var(--gris-borde);
+}
+table.admin td{padding:12px 14px;border-bottom:1px solid #EDE8DF;vertical-align:middle}
+table.admin tr:last-child td{border-bottom:0}
+table.admin .acciones{display:flex;gap:8px}
+/* en móvil la tabla se reordena como tarjetas apiladas (HU-33) */
+@container (max-width:767px){
+  .tabla-envoltura{border:0;background:transparent;overflow:visible}
+  table.admin{min-width:0;display:block}
+  table.admin thead{display:none}
+  table.admin tbody,table.admin tr,table.admin td{display:block;width:100%}
+  table.admin tr{
+    background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+    padding:12px 14px;margin-bottom:12px;
+  }
+  table.admin td{border:0;padding:4px 0;display:flex;justify-content:space-between;gap:16px}
+  table.admin td::before{
+    content:attr(data-etq);font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#5C666F;
+    flex:none;padding-top:3px;
+  }
+  table.admin td.acciones-td{justify-content:flex-start;padding-top:10px}
+  table.admin td.acciones-td::before{content:""}
+}
+
+.pestanas{display:flex;gap:2px;border-bottom:1.5px solid var(--gris-borde);overflow-x:auto}
+.pestanas button{
+  font-family:inherit;font-size:14.5px;border:0;background:none;cursor:pointer;
+  padding:11px 16px;color:#5C666F;border-bottom:2.5px solid transparent;
+  margin-bottom:-1.5px;white-space:nowrap;min-height:44px;
+}
+.pestanas button[aria-selected="true"]{color:var(--turquesa-osc);border-bottom-color:var(--turquesa-osc);font-weight:600}
+
+/* — indicadores — */
+.cifras{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+@container (min-width:768px){ .cifras{grid-template-columns:repeat(4,1fr)} }
+.cifra{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.cifra b{
+  font-family:Archivo,sans-serif;font-size:28px;font-weight:700;color:var(--azul);
+  font-variant-numeric:tabular-nums;line-height:1.1;
+}
+.cifra span{font-size:12.5px;color:#5C666F}
+.barras{display:flex;flex-direction:column;gap:10px}
+.barra-fila{display:grid;grid-template-columns:minmax(96px,1fr) 3fr 34px;gap:12px;align-items:center;font-size:13.5px}
+.barra-pista{background:#E7E1D6;border-radius:99px;height:9px;overflow:hidden}
+.barra-valor{height:100%;border-radius:99px;background:var(--tinte,#0A5F5E)}
+.barra-fila em{font-style:normal;font-variant-numeric:tabular-nums;text-align:right;color:#5C666F;font-size:13px}
+
+/* — perfil — */
+.perfil-cab{display:flex;gap:16px;flex-direction:column}
+@container (min-width:768px){ .perfil-cab{flex-direction:row;align-items:flex-start;gap:24px} }
+.retrato{
+  width:100%;aspect-ratio:1;flex:none;border-radius:8px;
+  background:linear-gradient(140deg,var(--tinte,#B04A2F),color-mix(in srgb,var(--tinte,#B04A2F) 50%,#F7F3EC));
+}
+@container (min-width:768px){ .retrato{width:168px} }
+
+.lista-lisa{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.hub{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;padding:16px 18px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.lineas{display:flex;flex-wrap:wrap;gap:6px}
+
+.vacio{
+  background:var(--blanco);border:1.5px dashed var(--gris-borde);border-radius:8px;
+  padding:36px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;
+}
+
+.paginacion{display:flex;justify-content:center;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.paginacion button{
+  font-family:inherit;font-size:14px;min-width:40px;min-height:40px;
+  border:1px solid var(--gris-borde);background:var(--blanco);color:var(--gris-texto);
+  border-radius:5px;cursor:pointer;
+}
+.paginacion button[aria-current="page"]{background:var(--azul);border-color:var(--azul);color:#fff;font-weight:600}
+
+.p-pie{
+  background:var(--azul);color:rgba(255,255,255,.9);padding:18px 20px;
+  font-size:13px;display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center;margin-top:auto;
+}
+.p-pie a{color:#fff}
+
+.formulario{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:20px;display:flex;flex-direction:column;gap:16px;max-width:520px;
+}
+@container (min-width:768px){ .formulario{padding:28px} }
+.consentimiento{
+  display:flex;gap:10px;align-items:flex-start;font-size:13.5px;
+  background:var(--arena);border:1px solid var(--gris-borde);border-radius:6px;padding:12px 14px;
+}
+.consentimiento input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--turquesa-osc)}
+.consentimiento a{color:var(--turquesa-osc);font-weight:600}
+
+.dos-col{display:grid;gap:16px;grid-template-columns:1fr}
+@container (min-width:1000px){ .dos-col{grid-template-columns:1.55fr 1fr;gap:28px;align-items:start} }
+.panel-lat{
+  background:var(--blanco);border:1px solid var(--gris-borde);border-radius:8px;
+  padding:18px;display:flex;flex-direction:column;gap:12px;
+}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* HU-10 · en móvil ningún elemento interactivo baja de 44 × 44 px.
+   Va al final del bloque del artboard para ganar a las reglas base por orden. */
+@container (max-width:767px){
+  .btn.peq{min-height:44px;padding:10px 16px}
+  .chip{min-height:44px;padding-left:16px;padding-right:16px}
+  .lineas .chip{min-height:32px;padding-left:12px;padding-right:12px} /* etiquetas, no controles */
+  .chip:has(button){padding-right:0}
+  .chip button{width:44px;height:44px;display:grid;place-items:center;font-size:18px}
+  .paginacion button{min-width:44px;min-height:44px}
+  .pestanas button{min-height:48px}
+}
+
+/* ═══════════ responsive del entorno ═══════════ */
+@media (max-width:900px){
+  .rail{
+    position:static;width:100%;max-height:none;
+    border-right:0;border-bottom:1px solid var(--e-borde);
+    padding:12px;
+  }
+  .trabajo{flex-direction:column}
+  .rail ul{flex-direction:row;flex-wrap:wrap;gap:4px}
+  .rail a{grid-template-columns:auto;padding:6px 10px;border:1px solid var(--e-borde);border-radius:99px}
+  .rail a code{display:none}
+  .escenario{width:100%;padding:16px 12px 48px}
+  .bar{gap:12px;padding:10px 14px}
+}
+</style>
+</head>
+<body class="anotado">
+
+<header class="bar">
+  <div class="marca">
+    <b>Hub Cultural Santa Marta</b>
+    <span class="mono">HU-06 · maqueta navegable · sprint 2</span>
+  </div>
+
+  <div class="grupo">
+    <span class="etq">Ancho</span>
+    <div class="anchos" role="group" aria-label="Ancho de la pantalla">
+      <button type="button" data-w="360" aria-pressed="false">360</button>
+      <button type="button" data-w="768" aria-pressed="false">768</button>
+      <button type="button" data-w="1366" aria-pressed="true">1366</button>
+    </div>
+  </div>
+
+  <label class="interruptor">
+    <input type="checkbox" id="tgl-notas" checked>
+    Anotaciones
+  </label>
+</header>
+
+<div class="trabajo">
+
+  <nav class="rail" aria-label="Vistas del prototipo">
+    <h2>Vistas obligatorias</h2>
+    <ul>
+      <li><a href="#v1" data-v="v1"><code>V-1</code> Inicio</a></li>
+      <li><a href="#v2" data-v="v2"><code>V-2</code> Catálogo</a></li>
+      <li><a href="#v3" data-v="v3"><code>V-3</code> Detalle de evento</a></li>
+      <li><a href="#v4" data-v="v4"><code>V-4</code> Perfil de actor</a></li>
+      <li><a href="#v5" data-v="v5"><code>V-5</code> Directorio de hubs</a></li>
+      <li><a href="#v6" data-v="v6"><code>V-6</code> Mapa interactivo</a></li>
+      <li><a href="#v7" data-v="v7"><code>V-7</code> Panel de administración</a></li>
+    </ul>
+    <h2>Vistas de soporte</h2>
+    <ul>
+      <li><a href="#v8" data-v="v8"><code>V-8</code> Ingreso y registro</a></li>
+      <li><a href="#v9" data-v="v9"><code>V-9</code> Mis publicaciones</a></li>
+    </ul>
+  </nav>
+
+  <main class="escenario">
+    <div class="escenario-cab">
+      <h1 id="titulo-vista">Inicio</h1>
+      <span class="meta mono" id="meta-vista">V-1 · HU-09, HU-10</span>
+    </div>
+
+    <p class="regla"><span class="mono" id="regla-izq">1366 px · escritorio</span><span class="mono">RNF-03</span></p>
+
+    <div class="marco" id="marco">
+      <div class="app" id="app">
+
+        <!-- ══════════ V-1 · INICIO ══════════ -->
+        <section class="vista activa" id="v1">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav">
+              <a href="#v2" class="sel">Eventos</a>
+              <a href="#v4">Actores culturales</a>
+              <a href="#v5">Hubs</a>
+              <a href="#v6">Mapa</a>
+            </nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div class="heroe">
+              <span class="eyebrow">Plataforma pública de descubrimiento</span>
+              <h1>La cultura de Santa Marta, toda en un mismo lugar<span class="hu">HU-09</span></h1>
+              <p>Encuentra talleres, rutas, música y saberes que sostienen las comunidades del Magdalena, publicados por quienes los llevan a cabo. Sin intermediarios y sin registro para consultar.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <a class="btn" href="#v2">Ver la oferta cultural</a>
+                <a class="btn sec" href="#v8">Soy actor cultural</a>
+              </div>
+            </div>
+
+            <div>
+              <h2 style="margin-bottom:12px">Cuatro formas de empezar<span class="hu">HU-09</span></h2>
+              <div class="accesos">
+                <a class="acceso" href="#v2"><strong>Eventos</strong><span>Qué pasa y cuándo</span></a>
+                <a class="acceso" href="#v4"><strong>Actores culturales</strong><span>Quién está detrás</span></a>
+                <a class="acceso" href="#v5"><strong>Hubs</strong><span>Espacios de innovación</span></a>
+                <a class="acceso" href="#v6"><strong>Mapa</strong><span>Qué hay cerca de ti</span></a>
+              </div>
+            </div>
+
+            <div>
+              <h2 style="margin-bottom:12px">Esta semana</h2>
+              <div class="rejilla">
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-musica)" data-alt="Tambores de cumbia en el Parque de los Novios"></div>
+                  <div class="tarjeta-cuerpo">
+                    <h3>Cumbia y tambora: noche abierta</h3>
+                    <div class="tarjeta-meta"><span class="cat">Música y danza</span><span>21 ago</span><span>Parque de los Novios</span></div>
+                  </div>
+                </article>
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-saberes)" data-alt="Manos tejiendo una mochila en telar"></div>
+                  <div class="tarjeta-cuerpo">
+                    <h3>Taller de tejido en telar de cintura</h3>
+                    <div class="tarjeta-meta"><span class="cat">Saberes ancestrales</span><span>23 ago</span><span>Bonda</span></div>
+                  </div>
+                </article>
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-gastronomia)" data-alt="Granos de cacao secándose al sol"></div>
+                  <div class="tarjeta-cuerpo">
+                    <h3>Ruta del cacao: de la mazorca a la taza</h3>
+                    <div class="tarjeta-meta"><span class="cat">Gastronomía</span><span>24 ago</span><span>Minca</span></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <footer class="p-pie">
+            <span>Trabajo de grado · Tecnológico de Antioquia</span>
+            <a href="#v1">Política de tratamiento de datos</a>
+            <a href="#v1">Volver al inicio</a>
+          </footer>
+        </section>
+
+        <!-- ══════════ V-2 · CATÁLOGO ══════════ -->
+        <section class="vista" id="v2">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav">
+              <a href="#v2" class="sel">Eventos</a><a href="#v4">Actores culturales</a><a href="#v5">Hubs</a><a href="#v6">Mapa</a>
+            </nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div>
+              <span class="eyebrow">Catálogo</span>
+              <h1>Oferta cultural<span class="hu">HU-25</span></h1>
+            </div>
+
+            <div class="filtros">
+              <div class="campo">
+                <label for="f-busq">Buscar<span class="hu">HU-27</span></label>
+                <input id="f-busq" type="search" placeholder="cumbia, tejido, cacao…" value="">
+              </div>
+              <div class="campo">
+                <label for="f-cat">Categoría<span class="hu">HU-26</span></label>
+                <select id="f-cat">
+                  <option>Todas</option><option selected>Saberes ancestrales</option>
+                  <option>Música y danza</option><option>Gastronomía</option>
+                  <option>Artes visuales</option><option>Patrimonio</option><option>Artesanía</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="f-desde">Desde</label>
+                <input id="f-desde" type="date" value="2026-08-20">
+              </div>
+              <div class="campo">
+                <label for="f-hasta">Hasta</label>
+                <input id="f-hasta" type="date" value="2026-08-31">
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+              <span class="chip activo">Saberes ancestrales <button type="button" aria-label="Quitar filtro de categoría">×</button></span>
+              <span class="chip activo">20–31 ago <button type="button" aria-label="Quitar filtro de fechas">×</button></span>
+              <button class="btn sec peq" type="button">Limpiar filtros</button>
+              <span style="margin-left:auto;font-size:13.5px;color:#5C666F" class="mono">14 resultados</span>
+            </div>
+
+            <div class="rejilla">
+              <article class="tarjeta">
+                <div class="miniatura" style="--tinte:var(--cat-saberes)" data-alt="Manos tejiendo una mochila en telar de cintura"></div>
+                <div class="tarjeta-cuerpo">
+                  <h3>Taller de tejido en telar de cintura</h3>
+                  <div class="tarjeta-meta"><span class="cat">Saberes ancestrales</span><span>23 ago</span><span>Bonda</span></div>
+                  <p style="font-size:13.5px">Tres horas con tejedoras de la Sierra para aprender el punto base de la mochila.</p>
+                </div>
+              </article>
+              <article class="tarjeta">
+                <div class="miniatura" style="--tinte:var(--cat-saberes)" data-alt="Círculo de personas escuchando a un mamo kogui"></div>
+                <div class="tarjeta-cuerpo">
+                  <h3>Palabra de mamo: círculo de saberes</h3>
+                  <div class="tarjeta-meta"><span class="cat">Saberes ancestrales</span><span>26 ago</span><span>Quebrada Valencia</span></div>
+                  <p style="font-size:13.5px">Encuentro guiado sobre la lectura del territorio en la cosmovisión kogui.</p>
+                </div>
+              </article>
+              <article class="tarjeta">
+                <div class="miniatura" style="--tinte:var(--cat-artesania)" data-alt="Vasijas de barro cocido sobre una estera"></div>
+                <div class="tarjeta-cuerpo">
+                  <h3>Alfarería tairona: barro y memoria</h3>
+                  <div class="tarjeta-meta"><span class="cat">Saberes ancestrales</span><span>29 ago</span><span>Taganga</span></div>
+                  <p style="font-size:13.5px">Modelado a mano con arcilla local y quema tradicional a cielo abierto.</p>
+                </div>
+              </article>
+            </div>
+
+            <div class="paginacion">
+              <button type="button" aria-label="Página anterior">‹</button>
+              <button type="button" aria-current="page">1</button>
+              <button type="button">2</button>
+              <button type="button">3</button>
+              <button type="button" aria-label="Página siguiente">›</button>
+            </div>
+
+            <div class="vacio">
+              <strong style="font-family:Archivo,sans-serif;font-size:16px;color:var(--negro-texto)">Así se ve cuando ningún resultado coincide<span class="hu">HU-25</span></strong>
+              <p style="font-size:14px">No encontramos experiencias de <b>Saberes ancestrales</b> entre el 20 y el 31 de agosto. Prueba ampliando el rango de fechas o quitando la categoría.</p>
+              <button class="btn sec peq" type="button">Limpiar filtros</button>
+            </div>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-3 · DETALLE ══════════ -->
+        <section class="vista" id="v3">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav"><a href="#v2" class="sel">Eventos</a><a href="#v4">Actores culturales</a><a href="#v5">Hubs</a><a href="#v6">Mapa</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <a href="#v2" style="font-size:14px;color:var(--turquesa-osc);font-weight:600;text-decoration:none">‹ Volver al catálogo</a>
+
+            <div class="dos-col">
+              <div style="display:flex;flex-direction:column;gap:18px">
+                <div class="miniatura" style="--tinte:var(--cat-saberes);aspect-ratio:16/9;border-radius:8px" data-alt="Tejedora de la Sierra trabajando una mochila sobre telar de cintura"></div>
+                <div>
+                  <span class="eyebrow">Saberes ancestrales</span>
+                  <h1>Taller de tejido en telar de cintura<span class="hu">HU-28</span></h1>
+                </div>
+                <div class="tarjeta-meta" style="font-size:14.5px;gap:6px 20px">
+                  <span><b>23 de agosto de 2026</b>, 9:00 a 12:00</span>
+                  <span>Casa de la Cultura de Bonda</span>
+                </div>
+                <p>Tres horas de trabajo con tejedoras de la Sierra Nevada para aprender el punto base de la mochila y entender qué significa cada figura. No se necesita experiencia previa: los materiales están incluidos y cada participante se lleva lo que teja.</p>
+                <p>El taller hace parte de un proceso de transmisión intergeneracional que el colectivo sostiene desde 2019 con jóvenes de Bonda y Masinga.</p>
+
+                <div>
+                  <h2 style="margin-bottom:10px">Dónde es<span class="hu">HU-28</span></h2>
+                  <div class="mapa chico">
+                    <svg viewBox="0 0 400 200" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                      <rect width="400" height="200" fill="#DCE5E4"/>
+                      <path d="M0 150 Q90 128 170 142 T400 120 L400 200 L0 200Z" fill="#C3D6D4"/>
+                      <g stroke="#B6C6C4" stroke-width="1.4" fill="none">
+                        <path d="M40 0 L60 200"/><path d="M150 0 L138 200"/><path d="M260 0 L282 200"/>
+                        <path d="M0 60 L400 48"/><path d="M0 108 L400 96"/>
+                      </g>
+                      <g stroke="#A9BDBB" stroke-width="2.2" fill="none"><path d="M0 82 L400 70"/></g>
+                    </svg>
+                    <svg class="marcador" style="left:52%;top:56%" viewBox="0 0 24 24" aria-label="Ubicación del taller"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#B04A2F"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+                    <span class="mapa-credito">Leaflet · © OpenStreetMap</span>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="panel-lat">
+                <h2>Quién lo ofrece</h2>
+                <div style="display:flex;gap:12px;align-items:center">
+                  <div class="retrato" style="--tinte:var(--cat-saberes);width:56px;height:56px;aspect-ratio:1;border-radius:50%"></div>
+                  <div>
+                    <a href="#v4" style="font-family:Archivo,sans-serif;font-weight:600;font-size:15.5px;color:var(--negro-texto);text-decoration:none">Colectivo Kankuama Tejer<span class="hu">HU-28</span></a>
+                    <div style="font-size:13px;color:#5C666F">Tejido tradicional · Bonda</div>
+                  </div>
+                </div>
+                <p style="font-size:14px">Ocho tejedoras que enseñan el oficio y sostienen la cadena de la mochila desde la fibra hasta la venta directa.</p>
+                <button class="btn" type="button">Contactar<span class="hu">HU-29</span></button>
+                <div style="border-top:1px solid var(--gris-borde);padding-top:12px;display:flex;flex-direction:column;gap:8px">
+                  <span class="eyebrow">Canales autorizados</span>
+                  <a class="btn sec peq" href="#v3">WhatsApp · 300 ••• ••42</a>
+                  <a class="btn sec peq" href="#v3">Correo</a>
+                  <p style="font-size:12.5px;color:#5C666F">Solo se muestran los canales que el actor cultural habilitó. La plataforma no guarda tus datos.</p>
+                </div>
+                <a href="#v4" style="font-size:14px;color:var(--turquesa-osc);font-weight:600">Ver perfil completo ›</a>
+              </aside>
+            </div>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-4 · PERFIL DE ACTOR ══════════ -->
+        <section class="vista" id="v4">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav"><a href="#v2">Eventos</a><a href="#v4" class="sel">Actores culturales</a><a href="#v5">Hubs</a><a href="#v6">Mapa</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Mi cuenta</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div class="perfil-cab">
+              <div class="retrato" style="--tinte:var(--cat-saberes)"></div>
+              <div style="display:flex;flex-direction:column;gap:10px;flex:1">
+                <span class="eyebrow">Saberes ancestrales</span>
+                <h1>Colectivo Kankuama Tejer<span class="hu">HU-18</span></h1>
+                <p><b>Manifestación:</b> tejido tradicional en telar de cintura y fique.</p>
+                <p>Ocho tejedoras de Bonda y Masinga que enseñan el oficio y sostienen la cadena de la mochila desde la fibra hasta la venta directa. Desde 2019 acompañan a jóvenes del corregimiento en un proceso de transmisión intergeneracional.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <button class="btn" type="button">Contactar</button>
+                  <button class="btn sec" type="button">Editar perfil<span class="hu">HU-18</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 style="margin-bottom:12px">Sus publicaciones</h2>
+              <div class="rejilla">
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-saberes)" data-alt="Manos tejiendo una mochila en telar de cintura"></div>
+                  <div class="tarjeta-cuerpo"><h3>Taller de tejido en telar de cintura</h3>
+                  <div class="tarjeta-meta"><span class="cat">Saberes ancestrales</span><span>23 ago</span></div></div>
+                </article>
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-artesania)" data-alt="Madejas de fique teñidas con tintes naturales"></div>
+                  <div class="tarjeta-cuerpo"><h3>Tintes naturales: el color del monte</h3>
+                  <div class="tarjeta-meta"><span class="cat">Artesanía</span><span>6 sep</span></div></div>
+                </article>
+                <article class="tarjeta">
+                  <div class="miniatura" style="--tinte:var(--cat-patrimonio)" data-alt="Mochilas terminadas colgadas en una feria"></div>
+                  <div class="tarjeta-cuerpo"><h3>Feria de la mochila de Bonda</h3>
+                  <div class="tarjeta-meta"><span class="cat">Patrimonio</span><span>19 sep</span></div></div>
+                </article>
+              </div>
+            </div>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-5 · DIRECTORIO DE HUBS ══════════ -->
+        <section class="vista" id="v5">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav"><a href="#v2">Eventos</a><a href="#v4">Actores culturales</a><a href="#v5" class="sel">Hubs</a><a href="#v6">Mapa</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div>
+              <span class="eyebrow">Directorio</span>
+              <h1>Hubs de innovación<span class="hu">HU-20</span></h1>
+              <p style="margin-top:8px">Espacios que articulan proyectos culturales con formación, financiación y tecnología. Escríbeles directamente.</p>
+            </div>
+
+            <ul class="lista-lisa">
+              <li class="hub">
+                <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
+                  <h3>Hub Creativo Bahía</h3>
+                  <span class="estado aprobado">Aprobado</span>
+                </div>
+                <p style="font-size:14.5px">Laboratorio de economía creativa en el Centro Histórico. Acompaña colectivos en formalización, portafolio y acceso a convocatorias del sector.</p>
+                <div class="lineas">
+                  <span class="chip">Economía creativa</span><span class="chip">Formalización</span><span class="chip">Convocatorias</span>
+                </div>
+                <div class="tarjeta-meta"><span>Calle 17 #3-45, Centro Histórico</span><span>contacto@hubbahia.co</span></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sec peq" href="#v6">Ver en el mapa<span class="hu">HU-20</span></a></div>
+              </li>
+              <li class="hub">
+                <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
+                  <h3>Nodo Tairona de Innovación</h3>
+                  <span class="estado aprobado">Aprobado</span>
+                </div>
+                <p style="font-size:14.5px">Espacio universitario de prototipado. Trabaja con comunidades de la Sierra en registro digital de saberes y turismo comunitario.</p>
+                <div class="lineas">
+                  <span class="chip">Prototipado</span><span class="chip">Turismo comunitario</span><span class="chip">Patrimonio digital</span>
+                </div>
+                <div class="tarjeta-meta"><span>Carrera 32 #22-08, Mamatoco</span><span>nodo@tairona.edu.co</span></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sec peq" href="#v6">Ver en el mapa</a></div>
+              </li>
+              <li class="hub">
+                <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
+                  <h3>Casa Ancla · Cowork Cultural</h3>
+                  <span class="estado aprobado">Aprobado</span>
+                </div>
+                <p style="font-size:14.5px">Coworking y sala de ensayo en Taganga. Programa residencias cortas para artistas y gestores del Caribe.</p>
+                <div class="lineas">
+                  <span class="chip">Residencias</span><span class="chip">Sala de ensayo</span><span class="chip">Redes del Caribe</span>
+                </div>
+                <div class="tarjeta-meta"><span>Vía Taganga km 2</span><span>hola@casaancla.org</span></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sec peq" href="#v6">Ver en el mapa</a></div>
+              </li>
+            </ul>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-6 · MAPA ══════════ -->
+        <section class="vista" id="v6">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav"><a href="#v2">Eventos</a><a href="#v4">Actores culturales</a><a href="#v5">Hubs</a><a href="#v6" class="sel">Mapa</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div>
+              <span class="eyebrow">Mapa interactivo</span>
+              <h1>Qué hay cerca de ti<span class="hu">HU-30</span></h1>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span class="chip activo">Todas</span>
+              <span class="chip">Música y danza</span>
+              <span class="chip">Saberes ancestrales</span>
+              <span class="chip">Gastronomía</span>
+              <span class="chip">Patrimonio</span>
+              <span style="margin-left:auto;font-size:13px;color:#5C666F" class="mono">18 marcadores</span>
+            </div>
+
+            <div class="mapa">
+              <svg viewBox="0 0 800 440" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <rect width="800" height="440" fill="#DCE5E4"/>
+                <path d="M0 0 L250 0 Q210 90 250 170 T190 300 Q220 380 180 440 L0 440Z" fill="#BBD4DA"/>
+                <path d="M0 330 Q160 300 320 322 T620 296 T800 310 L800 440 L0 440Z" fill="#C8D8C6"/>
+                <g stroke="#B0C2C0" stroke-width="1.5" fill="none">
+                  <path d="M300 0 L330 440"/><path d="M430 0 L410 440"/><path d="M560 0 L590 440"/><path d="M690 0 L672 440"/>
+                  <path d="M250 96 L800 78"/><path d="M250 200 L800 186"/><path d="M260 280 L800 268"/>
+                </g>
+                <g stroke="#9FB6B4" stroke-width="3" fill="none"><path d="M252 148 L800 130"/><path d="M366 0 L392 440"/></g>
+              </svg>
+              <svg class="marcador" style="left:38%;top:36%" viewBox="0 0 24 24" aria-label="Cumbia y tambora"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#B04A2F"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+              <svg class="marcador" style="left:56%;top:52%" viewBox="0 0 24 24" aria-label="Taller de tejido"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#8A5A17"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+              <svg class="marcador" style="left:71%;top:30%" viewBox="0 0 24 24" aria-label="Ruta del cacao"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#0A5F5E"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+              <svg class="marcador" style="left:47%;top:70%" viewBox="0 0 24 24" aria-label="Museo del Oro Tairona"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#0B3C5D"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+              <svg class="marcador" style="left:33%;top:62%" viewBox="0 0 24 24" aria-label="Alfarería tairona"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#6E4A2E"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+
+              <div class="ficha">
+                <span class="eyebrow">Saberes ancestrales</span>
+                <h3>Taller de tejido en telar de cintura</h3>
+                <div class="tarjeta-meta"><span>23 ago · Bonda</span></div>
+                <a class="btn peq" href="#v3">Ver detalle<span class="hu">HU-30</span></a>
+              </div>
+              <span class="mapa-credito">Leaflet · © OpenStreetMap</span>
+            </div>
+
+            <p style="font-size:13px;color:#5C666F">El mapa no captura el desplazamiento vertical de la página: se hace zoom con dos dedos o con la rueda sobre el mapa.</p>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-7 · PANEL DE ADMINISTRACIÓN ══════════ -->
+        <section class="vista" id="v7">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Panel de administración</small></div>
+            <nav class="p-nav"><a href="#v7" class="sel">Moderación</a><a href="#v7">Categorías</a><a href="#v7">Indicadores</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Cerrar sesión</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div>
+              <span class="eyebrow">Administrador</span>
+              <h1>Cola de moderación<span class="hu">HU-24</span></h1>
+            </div>
+
+            <div class="cifras">
+              <div class="cifra"><b>7</b><span>Pendientes</span></div>
+              <div class="cifra"><b>52</b><span>Aprobadas</span></div>
+              <div class="cifra"><b>3</b><span>Devueltas</span></div>
+              <div class="cifra"><b>6</b><span>Categorías</span></div>
+            </div>
+
+            <div class="pestanas" role="tablist">
+              <button type="button" role="tab" aria-selected="true">Moderación</button>
+              <button type="button" role="tab" aria-selected="false">Categorías</button>
+              <button type="button" role="tab" aria-selected="false">Indicadores</button>
+            </div>
+
+            <div class="tabla-envoltura">
+              <table class="admin">
+                <thead>
+                  <tr><th>Publicación</th><th>Actor</th><th>Categoría</th><th>Creada</th><th>Estado</th><th><span class="sr">Acciones</span></th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-etq="Publicación"><b>Alfarería tairona: barro y memoria</b></td>
+                    <td data-etq="Actor">Colectivo Kankuama Tejer</td>
+                    <td data-etq="Categoría">Saberes ancestrales</td>
+                    <td data-etq="Creada">18 ago</td>
+                    <td data-etq="Estado"><span class="estado pendiente">Pendiente</span></td>
+                    <td class="acciones-td"><div class="acciones"><button class="btn peq" type="button">Aprobar</button><button class="btn sec peq" type="button">Devolver</button></div></td>
+                  </tr>
+                  <tr>
+                    <td data-etq="Publicación"><b>Noche de vallenato en La Puntica</b></td>
+                    <td data-etq="Actor">Fundación Son de Río</td>
+                    <td data-etq="Categoría">Música y danza</td>
+                    <td data-etq="Creada">18 ago</td>
+                    <td data-etq="Estado"><span class="estado pendiente">Pendiente</span></td>
+                    <td class="acciones-td"><div class="acciones"><button class="btn peq" type="button">Aprobar</button><button class="btn sec peq" type="button">Devolver</button></div></td>
+                  </tr>
+                  <tr>
+                    <td data-etq="Publicación"><b>Mural colectivo del Callejón</b></td>
+                    <td data-etq="Actor">Brigada Muralista SM</td>
+                    <td data-etq="Categoría">Artes visuales</td>
+                    <td data-etq="Creada">17 ago</td>
+                    <td data-etq="Estado"><span class="estado devuelto">Devuelto</span></td>
+                    <td class="acciones-td"><div class="acciones"><button class="btn sec peq" type="button">Ver observación</button></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="panel-lat" style="max-width:520px">
+              <h2>Devolver publicación<span class="hu">HU-24</span></h2>
+              <div class="campo error">
+                <label for="obs">Observación para el actor cultural</label>
+                <textarea id="obs" placeholder="Explica qué debe corregirse antes de volver a enviar."></textarea>
+                <span class="msg-error">La observación es obligatoria para devolver una publicación.</span>
+              </div>
+              <div style="display:flex;gap:10px"><button class="btn riesgo" type="button">Devolver</button><button class="btn sec" type="button">Cancelar</button></div>
+              <p style="font-size:12.5px;color:#5C666F">Queda registro del administrador, la decisión, la observación y la fecha.</p>
+            </div>
+
+            <div>
+              <h2 style="margin-bottom:12px">Publicaciones por categoría<span class="hu">HU-34</span></h2>
+              <div class="barras">
+                <div class="barra-fila"><span>Música y danza</span><span class="barra-pista"><span class="barra-valor" style="width:88%;--tinte:var(--cat-musica)"></span></span><em>15</em></div>
+                <div class="barra-fila"><span>Saberes ancestrales</span><span class="barra-pista"><span class="barra-valor" style="width:70%;--tinte:var(--cat-saberes)"></span></span><em>12</em></div>
+                <div class="barra-fila"><span>Gastronomía</span><span class="barra-pista"><span class="barra-valor" style="width:53%;--tinte:var(--cat-gastronomia)"></span></span><em>9</em></div>
+                <div class="barra-fila"><span>Patrimonio</span><span class="barra-pista"><span class="barra-valor" style="width:41%;--tinte:var(--cat-patrimonio)"></span></span><em>7</em></div>
+                <div class="barra-fila"><span>Artes visuales</span><span class="barra-pista"><span class="barra-valor" style="width:35%;--tinte:var(--cat-artes)"></span></span><em>6</em></div>
+                <div class="barra-fila"><span>Artesanía</span><span class="barra-pista"><span class="barra-valor" style="width:29%;--tinte:var(--cat-artesania)"></span></span><em>5</em></div>
+              </div>
+            </div>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-8 · INGRESO Y REGISTRO ══════════ -->
+        <section class="vista" id="v8">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Santa Marta</small></div>
+            <nav class="p-nav"><a href="#v2">Eventos</a><a href="#v4">Actores culturales</a><a href="#v5">Hubs</a><a href="#v6">Mapa</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Ingresar</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div>
+              <span class="eyebrow">Crear cuenta</span>
+              <h1>Publica tu trabajo cultural<span class="hu">HU-12</span></h1>
+              <p style="margin-top:8px">Solo los actores culturales y los hubs necesitan cuenta. Para consultar el catálogo no hace falta registrarse.</p>
+            </div>
+
+            <form class="formulario" onsubmit="return false">
+              <div class="campo">
+                <label for="r-nombre">Nombre del actor o colectivo</label>
+                <input id="r-nombre" type="text" value="Colectivo Kankuama Tejer">
+              </div>
+              <div class="campo error">
+                <label for="r-correo">Correo electrónico</label>
+                <input id="r-correo" type="email" value="tejer@kankuama.co" aria-describedby="e-correo">
+                <span class="msg-error" id="e-correo">Ya existe una cuenta con este correo. Puedes ingresar o recuperar tu contraseña.<span class="hu">HU-12</span></span>
+              </div>
+              <div class="campo">
+                <label for="r-clave">Contraseña</label>
+                <input id="r-clave" type="password" value="········">
+                <span style="font-size:12.5px;color:#5C666F">Mínimo ocho caracteres.</span>
+              </div>
+              <div class="campo">
+                <label for="r-rol">Tipo de cuenta</label>
+                <select id="r-rol"><option selected>Actor cultural</option><option>Hub de innovación</option></select>
+              </div>
+
+              <label class="consentimiento" for="r-consent">
+                <input id="r-consent" type="checkbox">
+                <span>Autorizo el tratamiento de mis datos personales conforme a la <a href="#v8">política de tratamiento</a>, con fines académicos y de validación del prototipo.<span class="hu">HU-16</span></span>
+              </label>
+
+              <button class="btn" type="submit">Crear cuenta</button>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:14px">
+                <a href="#v8" style="color:var(--turquesa-osc);font-weight:600">Ya tengo cuenta</a>
+                <a href="#v8" style="color:var(--turquesa-osc);font-weight:600">Olvidé mi contraseña<span class="hu">HU-14</span></a>
+              </div>
+            </form>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+        <!-- ══════════ V-9 · MIS PUBLICACIONES ══════════ -->
+        <section class="vista" id="v9">
+          <header class="p-cab">
+            <button class="p-hamb" type="button" aria-label="Abrir menú"><span></span></button>
+            <div class="p-logo">Hub Cultural<small>Mi espacio</small></div>
+            <nav class="p-nav"><a href="#v9" class="sel">Mis publicaciones</a><a href="#v4">Mi perfil</a><a href="#v2">Catálogo</a></nav>
+            <div class="p-sesion"><button class="btn-fantasma" type="button">Cerrar sesión</button></div>
+          </header>
+
+          <div class="p-cuerpo">
+            <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end">
+              <div>
+                <span class="eyebrow">Colectivo Kankuama Tejer</span>
+                <h1>Mis publicaciones<span class="hu">HU-23</span></h1>
+              </div>
+              <button class="btn" type="button">Publicar experiencia<span class="hu">HU-21</span></button>
+            </div>
+
+            <ul class="lista-lisa">
+              <li class="hub" style="flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px">
+                <div style="flex:1;min-width:200px"><h3>Taller de tejido en telar de cintura</h3><div class="tarjeta-meta"><span>23 ago</span><span>Bonda</span></div></div>
+                <span class="estado aprobado">Aprobado</span>
+                <div class="acciones" style="display:flex;gap:8px"><button class="btn sec peq" type="button">Editar</button><button class="btn sec peq" type="button">Eliminar</button></div>
+              </li>
+              <li class="hub" style="flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px">
+                <div style="flex:1;min-width:200px"><h3>Alfarería tairona: barro y memoria</h3><div class="tarjeta-meta"><span>29 ago</span><span>Taganga</span></div></div>
+                <span class="estado pendiente">Pendiente</span>
+                <div class="acciones" style="display:flex;gap:8px"><button class="btn sec peq" type="button">Editar</button><button class="btn sec peq" type="button">Eliminar</button></div>
+              </li>
+              <li class="hub" style="flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px">
+                <div style="flex:1;min-width:200px"><h3>Tintes naturales: el color del monte</h3><div class="tarjeta-meta"><span>6 sep</span><span>Bonda</span><span style="color:var(--terracota);font-weight:600">Falta la fotografía principal</span></div></div>
+                <span class="estado devuelto">Devuelto</span>
+                <div class="acciones" style="display:flex;gap:8px"><button class="btn sec peq" type="button">Editar</button><button class="btn sec peq" type="button">Eliminar</button></div>
+              </li>
+            </ul>
+
+            <div class="dos-col">
+              <form class="formulario" style="max-width:none" onsubmit="return false">
+                <h2>Nueva publicación<span class="hu">HU-21</span></h2>
+                <div class="campo"><label for="n-tit">Título</label><input id="n-tit" type="text" value="Tintes naturales: el color del monte"></div>
+                <div class="campo"><label for="n-desc">Descripción</label><textarea id="n-desc">Recorrido por las plantas tintóreas de Bonda y sesión práctica de teñido de fique.</textarea>
+                  <span style="font-size:12.5px;color:#5C666F">412 de 1.000 caracteres.</span></div>
+                <div class="campo"><label for="n-cat">Categoría</label><select id="n-cat"><option>Saberes ancestrales</option><option selected>Artesanía</option><option>Música y danza</option></select></div>
+                <div class="par-fechas">
+                  <div class="campo"><label for="n-ini">Inicio</label><input id="n-ini" type="date" value="2026-09-06"></div>
+                  <div class="campo error"><label for="n-fin">Fin</label><input id="n-fin" type="date" value="2026-09-05">
+                    <span class="msg-error">La fecha de fin no puede ser anterior a la de inicio.<span class="hu">HU-21</span></span></div>
+                </div>
+                <div class="campo"><label for="n-img">Imagen</label><input id="n-img" type="file">
+                  <span style="font-size:12.5px;color:#5C666F">JPG o PNG, máximo 2 MB.<span class="hu">HU-19</span></span></div>
+                <button class="btn" type="submit" disabled style="opacity:.55;cursor:not-allowed">Guardar como pendiente</button>
+              </form>
+
+              <div class="panel-lat">
+                <h2>Ubicación<span class="hu">HU-22</span></h2>
+                <p style="font-size:14px">Toca el mapa para marcar dónde ocurre la experiencia.</p>
+                <div class="mapa chico">
+                  <svg viewBox="0 0 400 200" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                    <rect width="400" height="200" fill="#DCE5E4"/>
+                    <path d="M0 140 Q100 120 190 134 T400 112 L400 200 L0 200Z" fill="#C3D6D4"/>
+                    <g stroke="#B6C6C4" stroke-width="1.4" fill="none"><path d="M70 0 L88 200"/><path d="M200 0 L186 200"/><path d="M300 0 L318 200"/><path d="M0 70 L400 58"/></g>
+                  </svg>
+                  <svg class="marcador" style="left:47%;top:52%" viewBox="0 0 24 24" aria-label="Punto seleccionado"><path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#6E4A2E"/><circle cx="12" cy="9" r="3.4" fill="#F7F3EC"/></svg>
+                  <span class="mapa-credito">Leaflet · © OpenStreetMap</span>
+                </div>
+                <div class="tarjeta-meta mono" style="font-size:12.5px"><span>11.2408 N</span><span>−74.1990 W</span></div>
+                <p style="font-size:12.5px;color:#5C666F">Sin coordenadas la publicación no aparece en el mapa.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="p-pie"><span>Trabajo de grado · Tecnológico de Antioquia</span><a href="#v1">Volver al inicio</a></footer>
+        </section>
+
+      </div><!-- /.app -->
+    </div><!-- /.marco -->
+
+    <aside class="notas">
+      <h3>Qué revisar en esta vista</h3>
+      <ul id="lista-notas"></ul>
+    </aside>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var VISTAS = {
+    v1:{titulo:"Inicio", hu:"HU-09, HU-10", notas:[
+      "Los <b>cuatro accesos principales</b> —eventos, actores, hubs y mapa— están sobre el pliegue en los tres anchos.",
+      "En 360 px el menú pasa a su versión compacta y los accesos se reordenan en dos columnas.",
+      "El pie repite el enlace de regreso al inicio: desde cualquier vista interna hay siempre una salida visible."
+    ]},
+    v2:{titulo:"Catálogo", hu:"HU-25, HU-26, HU-27", notas:[
+      "Los filtros activos se muestran como <b>chips removibles</b>, para que se vea qué está aplicado sin abrir el panel.",
+      "Solo aparecen publicaciones aprobadas. La paginación entra a partir de 12 elementos.",
+      "Al final se incluye el <b>estado vacío</b> como parte del diseño, no como caso de borde: dice qué se filtró y ofrece limpiar."
+    ]},
+    v3:{titulo:"Detalle de evento", hu:"HU-28, HU-29", notas:[
+      "El acceso al perfil del actor aparece dos veces: en la ficha lateral y como enlace explícito al final.",
+      "El mapa reducido muestra la ubicación sin sacar al visitante de la vista.",
+      "Los canales de contacto son solo los que el actor autorizó; el número va parcialmente oculto hasta que se elige el canal."
+    ]},
+    v4:{titulo:"Perfil de actor cultural", hu:"HU-18, HU-19", notas:[
+      "El botón <i>Editar perfil</i> solo se muestra al propietario de la cuenta; para el visitante la vista es de lectura.",
+      "El retrato pasa de ancho completo en móvil a una columna fija de 168 px desde 768 px.",
+      "Un perfil sin imagen muestra la imagen predeterminada, nunca un hueco."
+    ]},
+    v5:{titulo:"Directorio de hubs", hu:"HU-20", notas:[
+      "Las líneas de trabajo se presentan como etiquetas, que es como se van a filtrar más adelante.",
+      "Cada hub enlaza al mapa: la dirección registrada se guarda con sus coordenadas.",
+      "Solo se listan los hubs en estado aprobado."
+    ]},
+    v6:{titulo:"Mapa interactivo", hu:"HU-30, HU-33", notas:[
+      "Un marcador por publicación aprobada con coordenadas. El color del marcador repite el de la categoría.",
+      "La ficha emergente lleva título, categoría y acceso al detalle; se ancla abajo a la izquierda para no tapar el centro en móvil.",
+      "El mapa <b>no captura el desplazamiento vertical</b> de la página, requisito explícito de HU-30."
+    ]},
+    v7:{titulo:"Panel de administración", hu:"HU-17, HU-24, HU-34", notas:[
+      "La cola se ordena por fecha de creación ascendente: lo más antiguo primero.",
+      "Devolver exige observación escrita; el formulario muestra el error de campo vacío tal como debe verse.",
+      "A 360 px la tabla se reordena como <b>tarjetas apiladas</b> con la etiqueta de cada dato al lado. Prueba el ancho de 360 en esta vista."
+    ]},
+    v8:{titulo:"Ingreso y registro", hu:"HU-12, HU-14, HU-16", notas:[
+      "El error de correo duplicado se muestra <b>en el campo</b>, conservando lo ya escrito.",
+      "La casilla de consentimiento está sin marcar y el registro no se completa hasta que se marque.",
+      "El mensaje de recuperación de contraseña será el mismo exista o no la cuenta, para no revelar si el correo está registrado."
+    ]},
+    v9:{titulo:"Mis publicaciones", hu:"HU-21, HU-22, HU-23", notas:[
+      "Cada publicación muestra su estado con <b>color y texto</b>; el color nunca es el único portador de la información.",
+      "La publicación devuelta muestra la observación del administrador junto al título.",
+      "El botón de guardar está deshabilitado mientras haya un error de validación, y el rango de fechas invertido se señala en el campo de fin."
+    ]}
+  };
+
+  var app = document.getElementById("app");
+  var marco = document.getElementById("marco");
+  var escenario = document.querySelector(".escenario");
+  var titulo = document.getElementById("titulo-vista");
+  var meta = document.getElementById("meta-vista");
+  var reglaIzq = document.getElementById("regla-izq");
+  var listaNotas = document.getElementById("lista-notas");
+  var enlaces = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+
+  var ETIQUETA_ANCHO = {"360":"360 px · móvil","768":"768 px · tableta","1366":"1366 px · escritorio"};
+
+  function mostrar(id){
+    if(!VISTAS[id]) id = "v1";
+    Array.prototype.forEach.call(app.querySelectorAll(".vista"), function(s){
+      s.classList.toggle("activa", s.id === id);
+    });
+    enlaces.forEach(function(a){
+      if(a.getAttribute("data-v") === id) a.setAttribute("aria-current","page");
+      else a.removeAttribute("aria-current");
+    });
+    var v = VISTAS[id];
+    titulo.textContent = v.titulo;
+    meta.textContent = id.toUpperCase().replace("V","V-") + " · " + v.hu;
+    listaNotas.innerHTML = "";
+    v.notas.forEach(function(n){
+      var li = document.createElement("li");
+      li.innerHTML = n;
+      listaNotas.appendChild(li);
+    });
+    escenario.scrollTop = 0;
+  }
+
+  function desdeHash(){
+    var h = (location.hash || "#v1").replace("#","");
+    mostrar(h);
+  }
+  window.addEventListener("hashchange", desdeHash);
+
+  // ancho del artboard
+  var botones = Array.prototype.slice.call(document.querySelectorAll(".anchos button"));
+  botones.forEach(function(b){
+    b.addEventListener("click", function(){
+      var w = b.getAttribute("data-w");
+      botones.forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
+      escenario.style.setProperty("--w", w + "px");
+      reglaIzq.textContent = ETIQUETA_ANCHO[w];
+    });
+  });
+  escenario.style.setProperty("--w","1366px");
+
+  // anotaciones
+  document.getElementById("tgl-notas").addEventListener("change", function(e){
+    document.body.classList.toggle("anotado", e.target.checked);
+  });
+
+  desdeHash();
+})();
+</script>
+</body>
+</html>
