@@ -1,0 +1,198 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore — HU-11, HU-15 · RNF-05, RNF-08
+//
+// El control de acceso vive en dos capas simultáneas: la interfaz oculta lo que el rol no
+// puede usar, y estas reglas rechazan la operación aunque se intente desde fuera de la
+// interfaz. Una sin la otra no satisface RNF-08.
+//
+// Modelo de datos documentado en docs/04-modelo-datos.md.
+// Verificación paso a paso en docs/06-puesta-en-marcha.md §1.6.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------- ayudas
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    function miUid() {
+      return request.auth.uid;
+    }
+
+    function miPerfil() {
+      return get(/databases/$(database)/documents/usuarios/$(miUid())).data;
+    }
+
+    function tengoRol(rol) {
+      return autenticado()
+        && exists(/databases/$(database)/documents/usuarios/$(miUid()))
+        && miPerfil().rol == rol
+        && miPerfil().estado == 'activo';
+    }
+
+    function soyAdmin() {
+      return tengoRol('administrador');
+    }
+
+    // ¿La actualización toca alguno de estos campos?
+    function toca(campos) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny(campos);
+    }
+
+    // El actor cultural identificado por idActor pertenece a quien hace la petición.
+    function soyDuenoDelActor(idActor) {
+      return autenticado()
+        && exists(/databases/$(database)/documents/actoresCulturales/$(idActor))
+        && get(/databases/$(database)/documents/actoresCulturales/$(idActor)).data.uid == miUid();
+    }
+
+    // ---------------------------------------------------------------- usuarios
+    // El id del documento ES el uid de Firebase Authentication (docs/04 §3).
+
+    match /usuarios/{uid} {
+      allow get: if autenticado() && (miUid() == uid || soyAdmin());
+      allow list: if soyAdmin();
+
+      // Solo puedes crear tu propio documento, y el consentimiento es obligatorio (HU-16).
+      allow create: if autenticado()
+        && miUid() == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.rol in ['actor', 'hub', 'administrador']
+        && request.resource.data.estado == 'activo'
+        && request.resource.data.consentimientoDatos.aceptado == true
+        && request.resource.data.fechaRegistro == request.time
+        && request.resource.data.consentimientoDatos.fecha == request.time;
+
+      // Nadie se cambia el rol ni el estado a sí mismo: eso es potestad del administrador.
+      allow update: if (autenticado()
+                        && miUid() == uid
+                        && !toca(['rol', 'estado', 'uid', 'consentimientoDatos', 'fechaRegistro']))
+                    || soyAdmin();
+
+      allow delete: if soyAdmin();
+    }
+
+    // ---------------------------------------------------------------- actoresCulturales
+
+    match /actoresCulturales/{idActor} {
+      // Público solo lo aprobado; el dueño y el administrador ven también lo pendiente.
+      allow read: if resource.data.estado == 'aprobado'
+                  || (autenticado() && resource.data.uid == miUid())
+                  || soyAdmin();
+
+      allow create: if tengoRol('actor')
+        && request.resource.data.uid == miUid()
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.descripcion.size() <= 1000;
+
+      // El perfil se edita sin volver a aprobación (HU-18), pero el dueño no se
+      // autoaprueba: 'estado' solo lo mueve el administrador.
+      allow update: if (autenticado()
+                        && resource.data.uid == miUid()
+                        && !toca(['uid', 'estado'])
+                        && request.resource.data.descripcion.size() <= 1000)
+                    || soyAdmin();
+
+      allow delete: if (autenticado() && resource.data.uid == miUid()) || soyAdmin();
+    }
+
+    // ---------------------------------------------------------------- hubs
+
+    match /hubs/{idHub} {
+      allow read: if resource.data.estado == 'aprobado'
+                  || (autenticado() && resource.data.uid == miUid())
+                  || soyAdmin();
+
+      allow create: if tengoRol('hub')
+        && request.resource.data.uid == miUid()
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.lineasDeTrabajo.size() > 0;
+
+      allow update: if (autenticado()
+                        && resource.data.uid == miUid()
+                        && !toca(['uid', 'estado']))
+                    || soyAdmin();
+
+      allow delete: if (autenticado() && resource.data.uid == miUid()) || soyAdmin();
+    }
+
+    // ---------------------------------------------------------------- eventos
+
+    match /eventos/{idEvento} {
+      // Sin autenticación solo son legibles los documentos aprobados (HU-11).
+      allow read: if resource.data.estadoPublicacion == 'aprobado'
+                  || soyDuenoDelActor(resource.data.idActor)
+                  || soyAdmin();
+
+      // Nace siempre pendiente y con la fecha del servidor (HU-21).
+      allow create: if tengoRol('actor')
+        && soyDuenoDelActor(request.resource.data.idActor)
+        && request.resource.data.estadoPublicacion == 'pendiente'
+        && request.resource.data.contadorConsultas == 0
+        && request.resource.data.fechaCreacion == request.time
+        && request.resource.data.fechaInicio <= request.resource.data.fechaFin;
+
+      // Al editar vuelve a 'pendiente' (HU-23). El autor no se aprueba solo.
+      allow update: if (soyDuenoDelActor(resource.data.idActor)
+                        && !toca(['idActor', 'fechaCreacion', 'contadorConsultas'])
+                        && request.resource.data.estadoPublicacion == 'pendiente'
+                        && request.resource.data.fechaInicio <= request.resource.data.fechaFin)
+                    || soyAdmin();
+
+      allow delete: if soyDuenoDelActor(resource.data.idActor) || soyAdmin();
+    }
+
+    // ---------------------------------------------------------------- categorias
+
+    match /categorias/{idCategoria} {
+      allow read: if true;                 // los filtros públicos las necesitan
+      allow write: if soyAdmin();          // RF-14
+    }
+
+    // ---------------------------------------------------------------- moderaciones
+    // Registro inmutable: se crea, nunca se edita ni se borra (docs/04 §8).
+
+    match /moderaciones/{idModeracion} {
+      allow read: if soyAdmin()
+                  || (exists(/databases/$(database)/documents/eventos/$(resource.data.idEvento))
+                      && soyDuenoDelActor(
+                           get(/databases/$(database)/documents/eventos/$(resource.data.idEvento)).data.idActor));
+
+      allow create: if soyAdmin()
+        && request.resource.data.idAdministrador == miUid()
+        && request.resource.data.decision in ['aprobado', 'devuelto']
+        && request.resource.data.fecha == request.time
+        // devolver exige observación escrita (HU-24)
+        && (request.resource.data.decision == 'aprobado'
+            || (request.resource.data.observaciones is string
+                && request.resource.data.observaciones.size() > 0));
+
+      allow update, delete: if false;
+    }
+
+    // ---------------------------------------------------------------- interacciones
+    // Registro anonimizado. Cualquiera puede añadir uno; solo el administrador los lee.
+    // Nunca debe contener datos personales identificables del visitante (RNF-06, HU-34).
+
+    match /interacciones/{idInteraccion} {
+      allow read: if soyAdmin();
+
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['idInteraccion', 'idEvento', 'tipo', 'fecha'])
+        && request.resource.data.tipo in ['consulta', 'contacto']
+        && request.resource.data.fecha == request.time;
+
+      allow update, delete: if false;
+    }
+
+    // ---------------------------------------------------------------- resto
+    // Cierre por defecto: lo que no esté declarado arriba queda denegado.
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
