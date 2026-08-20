@@ -59,6 +59,11 @@ Al terminar, el plugin audita lo que acaba de construir:
 - **Desbordamiento horizontal**: ningún elemento debe salirse de su pantalla (RNF-03, HU-33).
   Se mide en coordenadas absolutas, no relativas al padre.
 - **Área de toque**: en las pantallas de 360 px, ningún control por debajo de 44 × 44 (HU-10).
+- **Contenedores con ajuste de línea**: que ninguno haya quedado abrazando su contenido.
+  Uno así nunca envuelve —crece en una sola fila y desborda— y es el fallo que produjo la
+  primera ejecución real.
+- **Enlaces de prototipo**: cuántos se conectaron, y para los que fallen, en qué pantalla
+  está el origen, qué nodo es y cuál fue el error exacto.
 - **Fuentes**: si alguna no estuviera disponible, lo dice y sustituye por Inter.
 
 Un informe sin incidencias no significa que el diseño esté aprobado: significa que se
