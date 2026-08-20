@@ -1003,8 +1003,11 @@ function V4(ancho) {
   var retrato = rectangulo('imagen · retrato del Colectivo Kankuama Tejer', lado, lado, null, 8);
   retrato.fills = degradado('saberes');
   cab.appendChild(retrato);
-  var datos = pila('datos', 'v', { espacio: 10 });
-  crecer(datos);
+  // El ancho se fija de forma explícita: en la disposición vertical de móvil,
+  // `crecer` rellena el eje vertical y deja el ancho abrazando el contenido, con lo
+  // que el párrafo largo se va a una sola línea y desborda la pantalla.
+  var anchoDatos = horizontal ? anchoUtil(ancho) - lado - 24 : anchoUtil(ancho);
+  var datos = pila('datos', 'v', { espacio: 10, ancho: anchoDatos });
   datos.appendChild(estirar(T('etiqueta/eyebrow', 'Saberes ancestrales', 'marca/turquesa-oscuro')));
   datos.appendChild(estirar(T(h1(ancho), 'Colectivo Kankuama Tejer', 'texto/negro')));
   datos.appendChild(estirar(T('cuerpo/normal',
@@ -1012,7 +1015,6 @@ function V4(ancho) {
   datos.appendChild(estirar(T('cuerpo/normal',
     'Ocho tejedoras de Bonda y Masinga que enseñan el oficio y sostienen la cadena de la mochila desde la fibra hasta la venta directa. Desde 2019 acompañan a jóvenes del corregimiento en un proceso de transmisión intergeneracional.',
     'texto/cuerpo')));
-  var anchoDatos = horizontal ? anchoUtil(ancho) - lado - 24 : anchoUtil(ancho);
   var acc = pila('acciones', 'h', { espacio: 10, envolver: true, ancho: anchoDatos });
   estirar(acc);
   acc.appendChild(boton('Contactar', 'principal', ancho));
@@ -1500,10 +1502,17 @@ function textoDelError(err) {
 async function conectarPrototipo() {
   var conectados = 0;
   var omitidos = 0;
+  var propios = 0;
   for (var i = 0; i < enlaces.length; i++) {
     var e = enlaces[i];
     var destino = marcos[e.hacia + '@' + e.ancho];
     if (!destino || !e.desde || e.desde.removed) { omitidos++; continue; }
+
+    // Figma rechaza NAVIGATE hacia el propio marco: el destino tiene que ser otro
+    // marco de primer nivel. Ocurre con la opción seleccionada del menú y con el
+    // «Volver al inicio» del pie dentro de la propia pantalla de Inicio. No es un
+    // enlace que falte: es un enlace que no debe existir.
+    if (pantallaDe(e.desde) === e.hacia + '@' + e.ancho) { propios++; continue; }
     var reaccion = [{
       trigger: { type: 'ON_CLICK' },
       actions: [{
@@ -1535,7 +1544,7 @@ async function conectarPrototipo() {
     }
   }
   if (omitidos) incidencias.push(omitidos + ' enlaces omitidos por falta de destino');
-  return conectados;
+  return { conectados: conectados, propios: propios, aplicables: enlaces.length - propios };
 }
 
 // ═══════════════════════════════════════════════════════════ fase 6 · auditoría
@@ -1694,8 +1703,8 @@ async function construir() {
   }
 
   avisar('Conectando el prototipo…');
-  var conectados = 0;
-  try { conectados = await conectarPrototipo(); }
+  var red = { conectados: 0, propios: 0, aplicables: 0 };
+  try { red = await conectarPrototipo(); }
   catch (e) { incidencias.push('prototipo: ' + e.message); }
 
   // punto de entrada del prototipo
@@ -1715,7 +1724,11 @@ async function construir() {
   texto.push('INFORME DE CONSTRUCCIÓN — ' + segundos + ' s');
   texto.push('');
   if (borrados) texto.push('se reemplazaron ' + borrados + ' elementos de una ejecución anterior');
-  texto.push('enlaces de prototipo conectados : ' + conectados + ' de ' + enlaces.length);
+  texto.push('enlaces de prototipo conectados : ' + red.conectados + ' de ' + red.aplicables);
+  if (red.propios) {
+    texto.push('  (' + red.propios + ' descartados por apuntar a su propia pantalla: ' +
+      'la opción activa del menú y el «volver al inicio» del pie en Inicio)');
+  }
   a.lineas.forEach(function (l) { texto.push(l); });
 
   var todosProblemas = a.problemas.concat(incidencias);
