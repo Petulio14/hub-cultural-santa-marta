@@ -51,7 +51,9 @@ function disponer(n) {
     n.width = Math.max(0.01, anchoNatural(n));
   }
 
-  const anchoInterno = n.width - n.paddingLeft - n.paddingRight;
+  const borde = (n.strokes && n.strokes.length && n.strokeAlign === 'INSIDE')
+    ? (n.strokeWeight || 0) * 2 : 0;
+  const anchoInterno = n.width - n.paddingLeft - n.paddingRight - borde;
 
   // El eje transversal se estira antes de medir a los hijos. Un hijo estirado recibe
   // su ancho del padre: marcarlo evita que luego vuelva a abrazar su contenido, que es
@@ -64,6 +66,14 @@ function disponer(n) {
   });
 
   n.children.forEach(disponer);
+
+  // Figma colapsa a 1 px a los hijos que rellenan cuando el contenedor horizontal
+  // abraza su contenido. Reproducirlo delata los titulos y campos aplastados.
+  if (h && n.primaryAxisSizingMode !== 'FIXED') {
+    n.children.forEach((c) => {
+      if (c.layoutGrow > 0) { c.width = 1; c._anchoImpuesto = true; }
+    });
+  }
 
   // Crecimiento en el eje principal (layoutGrow) en contenedores horizontales fijos.
   if (h && n.primaryAxisSizingMode === 'FIXED') {
