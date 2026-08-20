@@ -53,6 +53,10 @@ var TIPOGRAFIA = [
   ['etiqueta/dato', MONO, 'Regular', 12.5, 140, 0, null]
 ];
 
+// Tamaño de cada estilo, para poder estimar el ancho natural de un texto.
+var TAMANO = {};
+TIPOGRAFIA.forEach(function (d) { TAMANO[d[0]] = d[3]; });
+
 var FUENTES = [
   { family: ARCHIVO, style: 'Bold' },
   { family: ARCHIVO, style: 'SemiBold' },
@@ -121,6 +125,9 @@ var VISTAS = [
 ];
 
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
+
+// Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
+var VERSION = 'build 4 · 2026-08-20';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -238,6 +245,7 @@ function reaplicarDimensionado(nodo) {
 function T(estilo, contenido, color, opciones) {
   var o = opciones || {};
   var t = figma.createText();
+  t.setPluginData('tam', String(TAMANO[estilo] || 15));
   var est = estilosTexto[estilo];
   if (est) {
     try { t.textStyleId = est.id; } catch (e) { t.fontName = { family: CUERPO, style: 'Regular' }; }
@@ -660,30 +668,38 @@ function insignia(estado) {
 }
 
 function campo(etiqueta, valor, error, anchoCaja, multilinea) {
-  // El marco exterior también lleva ancho: si abraza su contenido, la caja que lo
-  // rellena se encoge hasta el ancho de la etiqueta y el campo queda aplastado.
-  var f = pila('campo ' + etiqueta, 'v', { espacio: 5, ancho: anchoCaja || 260 });
-  f.appendChild(estirar(T('cuerpo/fuerte', etiqueta, 'texto/negro')));
+  // Todo lleva ancho explícito: etiqueta, caja y texto interior. Depender de
+  // «rellenar contenedor» es lo que dejaba los filtros aplastados a unos 20 px.
+  var w = anchoCaja || 260;
+  var f = pila('campo ' + etiqueta, 'v', { espacio: 5, ancho: w });
+
+  var etq = T('cuerpo/fuerte', etiqueta, 'texto/negro');
+  etq.resize(w, etq.height);
+  f.appendChild(etq);
+
   var caja = pila('caja', 'h', {
     arriba: 10, abajo: 10, izq: 12, der: 12, radio: 5,
     fondo: 'fondo/blanco', alinear: 'CENTER'
   });
   aplicarBorde(caja, error ? 'estado/terracota' : 'linea/borde', 1.5);
   var valorTexto = T('cuerpo/normal', valor, 'texto/cuerpo');
+  valorTexto.resize(Math.max(8, w - 24), valorTexto.height);   // 24 = relleno lateral
   caja.appendChild(valorTexto);
-  // el texto rellena la caja: si abraza su contenido, un valor largo la desborda
-  crecer(valorTexto);
   caja.primaryAxisSizingMode = 'FIXED';
   if (multilinea) {
     caja.counterAxisSizingMode = 'AUTO';       // crece con el texto, como un área de texto
-    caja.resize(anchoCaja || 260, Math.max(44, caja.height));
+    caja.resize(w, Math.max(44, caja.height));
   } else {
     caja.counterAxisSizingMode = 'FIXED';
-    caja.resize(anchoCaja || 260, 44);
+    caja.resize(w, 44);
   }
-  estirar(caja);
   f.appendChild(caja);
-  if (error) f.appendChild(estirar(T('cuerpo/meta', '▲  ' + error, 'estado/terracota')));
+
+  if (error) {
+    var err = T('cuerpo/meta', '▲  ' + error, 'estado/terracota');
+    err.resize(w, err.height);
+    f.appendChild(err);
+  }
   return f;
 }
 
@@ -876,17 +892,19 @@ function V2(ancho) {
   enc.appendChild(estirar(T(h1(ancho), 'Oferta cultural', 'texto/negro')));
   c.appendChild(enc);
 
+  // Ancho explícito en el contenedor y en cada campo. No se depende de rellenar el
+  // contenedor: eso es lo que dejaba los cuatro filtros aplastados a unos 20 px, con
+  // el texto partido letra a letra.
   var filtros = pila('filtros', esMovil(ancho) ? 'v' : 'h', {
     espacio: esMovil(ancho) ? 12 : 14, relleno: 16, radio: 8,
-    fondo: 'fondo/blanco', borde: 'linea/borde', alinear: esMovil(ancho) ? 'MIN' : 'MAX'
+    fondo: 'fondo/blanco', borde: 'linea/borde',
+    alinear: esMovil(ancho) ? 'MIN' : 'MAX', ancho: anchoUtil(ancho)
   });
   estirar(filtros);
   var anchoCampo = esMovil(ancho) ? anchoUtil(ancho) - 32 : Math.floor((anchoUtil(ancho) - 32 - 42) / 4);
   [['Buscar', 'cumbia, tejido, cacao…'], ['Categoría', 'Saberes ancestrales'],
    ['Desde', '20/08/2026'], ['Hasta', '31/08/2026']].forEach(function (d) {
-    var campoNodo = campo(d[0], d[1], null, anchoCampo);
-    if (esMovil(ancho)) estirar(campoNodo); else crecer(campoNodo);
-    filtros.appendChild(campoNodo);
+    filtros.appendChild(campo(d[0], d[1], null, anchoCampo));
   });
   c.appendChild(filtros);
 
@@ -919,15 +937,23 @@ function V2(ancho) {
   c.appendChild(pag);
 
   var vacio = pila('estado vacio', 'v', {
-    espacio: 10, relleno: 32, radio: 8, fondo: 'fondo/blanco', alinear: 'CENTER'
+    espacio: 10, relleno: 32, radio: 8, fondo: 'fondo/blanco',
+    alinear: 'CENTER', ancho: anchoUtil(ancho)
   });
   aplicarBorde(vacio, 'linea/borde', 1.5);
   vacio.dashPattern = [6, 4];
   estirar(vacio);
-  vacio.appendChild(T('titulo/h3', 'Así se ve cuando ningún resultado coincide', 'texto/negro'));
-  vacio.appendChild(estirar(T('cuerpo/pequeno',
+  var anchoVacio = anchoUtil(ancho) - 64;   // 64 = relleno lateral
+  var tituloVacio = T('titulo/h3', 'Así se ve cuando ningún resultado coincide', 'texto/negro');
+  tituloVacio.resize(anchoVacio, tituloVacio.height);
+  tituloVacio.textAlignHorizontal = 'CENTER';
+  vacio.appendChild(tituloVacio);
+  var textoVacio = T('cuerpo/pequeno',
     'No encontramos experiencias de Saberes ancestrales entre el 20 y el 31 de agosto. Prueba ampliando el rango de fechas o quitando la categoría.',
-    'texto/cuerpo')));
+    'texto/cuerpo');
+  textoVacio.resize(anchoVacio, textoVacio.height);
+  textoVacio.textAlignHorizontal = 'CENTER';
+  vacio.appendChild(textoVacio);
   c.appendChild(vacio);
 
   f.appendChild(c);
@@ -1702,6 +1728,40 @@ function auditar() {
     aplastados.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
+  // Comprobación por síntoma y no por mecanismo: un texto de varias letras metido en
+  // menos de 40 px se parte letra a letra y no hay forma de leerlo. Da igual qué lo
+  // haya causado; si aparece, la pantalla está rota.
+  var estrujados = [];
+  Object.keys(marcos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      nodo.children.forEach(function (h) {
+        if (h.type === 'TEXT' && h.characters) {
+          var tam = parseFloat(h.getPluginData('tam')) || 15;
+          var masLarga = 0;
+          h.characters.split(/\s+/).forEach(function (p) {
+            if (p.length > masLarga) masLarga = p.length;
+          });
+          // ancho aproximado de la palabra más larga; por debajo de eso, Figma
+          // parte la palabra por la mitad y el texto deja de leerse
+          var minimo = masLarga * tam * 0.5 * 0.85;
+          if (masLarga > 3 && h.width < minimo) {
+            estrujados.push(k + ' · «' + h.characters.substring(0, 24) + '» en ' +
+              Math.round(h.width) + ' px, necesita ' + Math.round(minimo));
+          }
+        }
+        recorrer(h);
+      });
+    }
+    recorrer(marcos[k]);
+  });
+  lineas.push('textos partidos letra a letra : ' +
+    (estrujados.length === 0 ? 'ninguno' : estrujados.length));
+  if (estrujados.length) {
+    problemas.push(estrujados.length + ' textos quedaron tan estrechos que se parten letra a letra');
+    estrujados.slice(0, 8).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
   lineas.push('estilos de color : ' + Object.keys(estilosColor).length + ' (esperados 17)');
   lineas.push('estilos de texto : ' + Object.keys(estilosTexto).length + ' (esperados 12)');
   lineas.push('componentes      : ' + Object.keys(componentes).join(', '));
@@ -1781,7 +1841,7 @@ async function construir() {
   var segundos = ((Date.now() - inicio) / 1000).toFixed(1);
 
   var texto = [];
-  texto.push('INFORME DE CONSTRUCCIÓN — ' + segundos + ' s');
+  texto.push('INFORME DE CONSTRUCCIÓN — ' + VERSION + ' — ' + segundos + ' s');
   texto.push('');
   if (borrados) texto.push('se reemplazaron ' + borrados + ' elementos de una ejecución anterior');
   texto.push('enlaces de prototipo conectados : ' + red.conectados + ' de ' + red.aplicables);

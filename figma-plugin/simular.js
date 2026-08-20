@@ -224,7 +224,9 @@ function crearNodo(tipo, extra) {
         this._caracteres = String(v);
         // Estimación: el simulador no mide tipografía real. Sin tope superior, para
         // que un párrafo largo delate al contenedor que no le fija el ancho.
-        this._anchoNatural = Math.max(8, this._caracteres.length * 6.2);
+        // mismo estimador que usa la auditoría del plugin, para que ambos coincidan
+        const tam = parseFloat(this._datos['tam']) || 15;
+        this._anchoNatural = Math.max(8, this._caracteres.length * tam * 0.5);
         this.width = this._anchoNatural;
         this.height = 20;
         sucio = true;
