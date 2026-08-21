@@ -10,7 +10,7 @@
 //
 // Es re-ejecutable: borra lo que generó antes y lo vuelve a hacer.
 
-figma.showUI(__html__, { width: 380, height: 480 });
+figma.showUI(__html__, { width: 400, height: 600 });
 
 // ═══════════════════════════════════════════════════════════ constantes
 
@@ -127,7 +127,7 @@ var VISTAS = [
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
 
 // Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
-var VERSION = 'build 7 · 2026-08-21';
+var VERSION = 'build 9 · 2026-08-21';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -151,6 +151,20 @@ var marcos = {};        // 'V-1@1366' -> FrameNode
 var auxiliares = {};    // capas que no son pantallas: 'MENU@360' -> FrameNode
 var enlaces = [];       // { desde: node, hacia: 'V-3', ancho: 1366, accion: 'navegar' }
 var fuentesFallidas = [];
+
+// Imágenes que aporta la persona que ejecuta el plugin, desde el selector de la
+// interfaz. Se guardan en clientStorage —no hay red: `networkAccess` es "none"—
+// así que se piden una vez y sobreviven a los siguientes builds.
+var CLAVE_LOGO = 'hub-cultural/logo-institucional';
+var CLAVE_FONDO = 'hub-cultural/fondo-santa-marta';
+var recursos = { logo: null, fondo: null };   // { nombre, base64 }
+var imagenLogo = null;    // hash de imagen de Figma, o null
+var imagenFondo = null;
+
+// Proporción del logotipo del Tecnológico de Antioquia (ancho ÷ alto). Solo fija el
+// hueco: el relleno va en modo FIT, así que una imagen de otra proporción se ajusta
+// dentro sin deformarse.
+var PROPORCION_LOGO = 4.35;
 
 function avisar(texto) {
   figma.ui.postMessage({ tipo: 'progreso', texto: texto });
@@ -189,7 +203,18 @@ function pila(nombre, direccion, opciones) {
   // El ajuste de línea solo actúa si el eje principal tiene ancho fijo. Se consigue
   // con `ancho:` o con estirar() dentro de un padre vertical; la auditoría comprueba
   // al final que ninguno se quedó abrazando su contenido.
-  if (o.envolver) f.layoutWrap = 'WRAP';
+  if (o.envolver) {
+    f.layoutWrap = 'WRAP';
+    // itemSpacing solo separa los elementos DENTRO de una fila. La separación
+    // ENTRE filas es counterAxisSpacing, y sin fijarla las filas quedan pegadas:
+    // a 1366 se nota poco porque casi todo cabe en una fila, pero a 360 cada
+    // tarjeta ocupa su propia fila y el resultado es una pila sin aire.
+    try {
+      f.counterAxisSpacing = o.espacioFilas === undefined
+        ? (o.espacio === undefined ? 12 : o.espacio)
+        : o.espacioFilas;
+    } catch (e) { /* versiones antiguas de la API no exponen la propiedad */ }
+  }
   if (o.radio) f.cornerRadius = o.radio;
   if (o.fondo) aplicarRelleno(f, o.fondo); else f.fills = [];
   if (o.borde) aplicarBorde(f, o.borde, o.grosorBorde);
@@ -220,10 +245,69 @@ function estirar(nodo) {
   return nodo;
 }
 
+// En un contenedor HORIZONTAL, «rellenar el contenedor» es rellenar el ALTO: el alto
+// es el eje transversal. Es lo que iguala la altura de las tarjetas de una misma fila.
+// Sin esto cada tarjeta abraza su propio texto, y basta con que un título ocupe dos
+// líneas para que su tarjeta sea más alta que la de al lado.
+function igualarAlto(nodo) {
+  nodo.layoutAlign = 'STRETCH';
+  // clave propia y no 'dimensionado': así se combina con crecer(), que fija el
+  // reparto del ancho, sin que una borre a la otra
+  if (nodo.setPluginData) nodo.setPluginData('altoIgual', 'si');
+  return nodo;
+}
+
 function crecer(nodo) {
   nodo.layoutGrow = 1;
   if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'crecer');
   return nodo;
+}
+
+// Fija el alto respetando qué eje es cuál, igual que fijarAncho() con el ancho: en un
+// marco vertical el alto es el eje principal, en uno horizontal es el transversal.
+function fijarAlto(f, alto) {
+  if (f.layoutMode === 'VERTICAL') f.primaryAxisSizingMode = 'FIXED';
+  else if (f.layoutMode === 'HORIZONTAL') f.counterAxisSizingMode = 'FIXED';
+  f.resize(Math.max(0.01, f.width), Math.max(0.01, alto));
+}
+
+// Iguala el alto de las tarjetas marcadas con igualarAlto() que caen en la misma fila.
+//
+// Marcar `layoutAlign = 'STRETCH'` y confiar en que Figma estire no funciona: si el
+// marco sigue abrazando su contenido en el eje del alto, el abrazo gana y la marca no
+// hace nada. Es lo que devolvió el build 8, con las tarjetas del inicio todavía a 81 y
+// 102 px pese a estar marcadas. Así que aquí se hacen las dos cosas: se fija el eje y
+// se aplica la medida, sin depender de cómo interprete Figma la combinación.
+//
+// Se ejecuta con el árbol ya montado porque necesita las alturas resueltas y la `y` de
+// cada hijo, que es lo que dice en qué fila cayó al envolver.
+function igualarFilas(nodo) {
+  if (!nodo.children) return;
+  if (nodo.layoutMode === 'HORIZONTAL') {
+    var filas = {};
+    nodo.children.forEach(function (h) {
+      if (!h.getPluginData || h.getPluginData('altoIgual') !== 'si') return;
+      if (h.layoutPositioning === 'ABSOLUTE') return;
+      var clave = String(Math.round(h.y));
+      if (!filas[clave]) filas[clave] = [];
+      filas[clave].push(h);
+    });
+    Object.keys(filas).forEach(function (clave) {
+      var fila = filas[clave];
+      if (fila.length < 2) return;
+      var alto = 0;
+      fila.forEach(function (h) { if (h.height > alto) alto = h.height; });
+      fila.forEach(function (h) {
+        try {
+          h.layoutAlign = 'STRETCH';
+          fijarAlto(h, alto);
+        } catch (e) {
+          incidencias.push('no se pudo igualar «' + (h.name || '?') + '»: ' + e.message);
+        }
+      });
+    });
+  }
+  nodo.children.forEach(igualarFilas);
 }
 
 function reaplicarDimensionado(nodo) {
@@ -238,6 +322,9 @@ function reaplicarDimensionado(nodo) {
           if (h.layoutMode === 'HORIZONTAL') h.primaryAxisSizingMode = 'FIXED';
         } else if (quiere === 'crecer') {
           h.layoutGrow = 1;
+        }
+        if (nodo.layoutMode === 'HORIZONTAL' && h.getPluginData('altoIgual') === 'si') {
+          h.layoutAlign = 'STRETCH';
         }
       } catch (e) { /* algunos nodos no admiten estas propiedades */ }
     }
@@ -300,6 +387,51 @@ function imagen(nombre, ancho, alto, tinte) {
   r.cornerRadius = 0;
   r.fills = degradado(tinte);
   return r;
+}
+
+// El entorno de los plugins no tiene `atob`. Las versiones recientes de la API sí
+// traen figma.base64Decode; para las que no, el decodificador cabe en diez líneas.
+var ALFABETO_B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+function desdeBase64(texto) {
+  if (typeof figma.base64Decode === 'function') {
+    try { return figma.base64Decode(texto); } catch (e) { /* se usa el manual */ }
+  }
+  var limpio = String(texto).replace(/[^A-Za-z0-9+/]/g, '');
+  var bytes = new Uint8Array(Math.floor(limpio.length * 3 / 4) + 2);
+  var acumulador = 0, bits = 0, escritos = 0;
+  for (var i = 0; i < limpio.length; i++) {
+    acumulador = (acumulador << 6) | ALFABETO_B64.indexOf(limpio.charAt(i));
+    bits += 6;
+    if (bits >= 8) { bits -= 8; bytes[escritos++] = (acumulador >> bits) & 0xFF; }
+  }
+  return bytes.subarray(0, escritos);
+}
+
+async function leerRecursos() {
+  try {
+    recursos.logo = (await figma.clientStorage.getAsync(CLAVE_LOGO)) || null;
+    recursos.fondo = (await figma.clientStorage.getAsync(CLAVE_FONDO)) || null;
+  } catch (e) {
+    incidencias.push('no se pudieron leer las imágenes guardadas: ' + e.message);
+  }
+}
+
+// Convierte lo guardado en un hash de imagen de Figma. Un fallo aquí no detiene la
+// construcción: se dibuja el marcador y el informe lo dice.
+function prepararImagenes() {
+  imagenLogo = null;
+  imagenFondo = null;
+  [['logo', 'imagenLogo'], ['fondo', 'imagenFondo']].forEach(function (par) {
+    var r = recursos[par[0]];
+    if (!r || !r.base64) return;
+    try {
+      var hash = figma.createImage(desdeBase64(r.base64)).hash;
+      if (par[1] === 'imagenLogo') imagenLogo = hash; else imagenFondo = hash;
+    } catch (e) {
+      incidencias.push('no se pudo usar la imagen «' + (r.nombre || par[0]) + '»: ' + e.message);
+    }
+  });
 }
 
 async function fijarReacciones(nodo, reacciones) {
@@ -578,15 +710,62 @@ function esEscritorio(a) { return a >= 1200; }
 function h1(a) { return esMovil(a) ? 'titulo/h1-movil' : 'titulo/h1-escritorio'; }
 function h2(a) { return esMovil(a) ? 'titulo/h2-movil' : 'titulo/h2-escritorio'; }
 
+// Logotipo del Tecnológico de Antioquia, arriba a la izquierda. Va sobre una placa
+// blanca: la marca es verde oscuro y la cabecera es azul profundo, así que sin la
+// placa el logotipo quedaría con un contraste muy por debajo del 4,5 : 1 que exige
+// el tercer criterio de HU-06 para todo lo que se tenga que leer.
+function placaLogo(ancho) {
+  var alto = esMovil(ancho) ? 20 : (esEscritorio(ancho) ? 30 : 26);
+  var anchoImagen = Math.round(alto * PROPORCION_LOGO);
+  var placa = pila('logo Tecnológico de Antioquia', 'h', {
+    espacio: 0, arriba: 5, abajo: 5, izq: 8, der: 8, radio: 5,
+    alinear: 'CENTER', justificar: 'CENTER', fondo: 'fondo/blanco'
+  });
+
+  if (imagenLogo) {
+    var r = figma.createRectangle();
+    // el nombre del nodo es el texto alternativo previsto (documento 05 §5)
+    r.name = 'Tecnológico de Antioquia · Institución Universitaria';
+    r.resize(anchoImagen, alto);
+    r.fills = [{ type: 'IMAGE', scaleMode: 'FIT', imageHash: imagenLogo }];
+    placa.appendChild(r);
+  } else {
+    // Marcador visible a propósito. Un hueco vacío se olvida; un recuadro que dice
+    // lo que falta se corrige. El informe lo anota además como incidencia.
+    var m = pila('logo institucional pendiente', 'h', {
+      espacio: 0, alinear: 'CENTER', justificar: 'CENTER'
+    });
+    m.fills = [];
+    aplicarBorde(m, 'estado/terracota', 1);
+    m.dashPattern = [3, 3];
+    var t = T('cuerpo/meta', 'logo pendiente', 'estado/terracota');
+    t.resize(anchoImagen - 8, t.height);
+    m.appendChild(t);
+    m.counterAxisSizingMode = 'FIXED';
+    m.primaryAxisSizingMode = 'FIXED';
+    m.resize(anchoImagen, alto);
+    placa.appendChild(m);
+  }
+
+  placa.counterAxisSizingMode = 'FIXED';
+  placa.primaryAxisSizingMode = 'FIXED';
+  placa.resize(anchoImagen + 16, alto + 10);
+  return placa;
+}
+
 function cabecera(ancho, seleccion, destinos) {
   var f = pila('Cabecera', 'h', {
-    espacio: 16, arriba: 14, abajo: 14, izq: 20, der: 20,
+    espacio: esMovil(ancho) ? 10 : 16, arriba: 12, abajo: 12,
+    izq: esMovil(ancho) ? 14 : 20, der: esMovil(ancho) ? 14 : 20,
     alinear: 'CENTER', fondo: 'marca/azul-profundo', ancho: ancho
   });
+  f.appendChild(placaLogo(ancho));
   var logo = pila('logo', 'v', { espacio: 1 });
   logo.appendChild(T('titulo/h3', 'Hub Cultural', 'fondo/blanco'));
   logo.appendChild(T('cuerpo/pista', 'Santa Marta', 'fondo/blanco'));
   if (esMovil(ancho)) {
+    f.appendChild(logo);
+    crecer(logo);
     var hamb = pila('menu compacto', 'v', {
       radio: 5, alinear: 'CENTER', justificar: 'CENTER', fondo: 'marca/turquesa'
     });
@@ -598,8 +777,6 @@ function cabecera(ancho, seleccion, destinos) {
     hamb.resize(44, 44);
     f.appendChild(hamb);
     enlaces.push({ desde: hamb, hacia: 'MENU', ancho: ancho, accion: 'overlay' });
-    f.appendChild(logo);
-    crecer(logo);
   } else {
     f.appendChild(logo);
     crecer(logo);
@@ -782,7 +959,7 @@ function rejillaEventos(ancho, lista, conDescripcion) {
   var col = anchoColumna(ancho, n, espacio);
   var r = pila('rejilla', 'h', { espacio: espacio, envolver: true, ancho: anchoUtil(ancho) });
   estirar(r);
-  lista.forEach(function (ev) { r.appendChild(tarjetaEvento(ev, col, conDescripcion)); });
+  lista.forEach(function (ev) { r.appendChild(igualarAlto(tarjetaEvento(ev, col, conDescripcion))); });
   return r;
 }
 
@@ -876,7 +1053,7 @@ function V1(ancho) {
     });
     caja.appendChild(estirar(T('titulo/h3', a[0], 'texto/negro')));
     caja.appendChild(estirar(T('cuerpo/pequeno', a[1], 'texto/apagado')));
-    accesos.appendChild(caja);
+    accesos.appendChild(igualarAlto(caja));
     enlaces.push({ desde: caja, hacia: a[2], ancho: ancho });
   });
   sAccesos.appendChild(accesos);
@@ -1230,7 +1407,7 @@ function V7(ancho) {
     });
     caja.appendChild(T('titulo/h1-escritorio', d[0], 'marca/azul-profundo'));
     caja.appendChild(T('cuerpo/pista', d[1], 'texto/apagado'));
-    cifras.appendChild(caja);
+    cifras.appendChild(igualarAlto(caja));
   });
   c.appendChild(cifras);
 
@@ -1526,7 +1703,13 @@ function V9(ancho) {
   var cIni = campo('Inicio', '06/09/2026', null, esMovil(ancho) ? interno : Math.floor((interno - 12) / 2));
   var cFin = campo('Fin', '05/09/2026', 'La fecha de fin no puede ser anterior a la de inicio.',
     esMovil(ancho) ? interno : Math.floor((interno - 12) / 2));
-  if (esMovil(ancho)) { estirar(cIni); estirar(cFin); } else { crecer(cIni); crecer(cFin); }
+  if (esMovil(ancho)) {
+    estirar(cIni); estirar(cFin);
+  } else {
+    // el campo con mensaje de error es más alto; igualarlos alinea los dos bordes
+    // inferiores y deja el hueco reservado bajo el que no tiene error
+    crecer(igualarAlto(cIni)); crecer(igualarAlto(cFin));
+  }
   par.appendChild(cIni);
   par.appendChild(cFin);
   form.appendChild(par);
@@ -1576,9 +1759,10 @@ function menuMovil(ancho) {
   f.setPluginData('ancho', String(ancho));
 
   var cab = pila('cabecera del menú', 'h', {
-    espacio: 16, arriba: 14, abajo: 14, izq: 20, der: 20,
+    espacio: 10, arriba: 12, abajo: 12, izq: 14, der: 14,
     alinear: 'CENTER', ancho: ancho
   });
+  cab.appendChild(placaLogo(ancho));
   var logo = pila('logo', 'v', { espacio: 1 });
   logo.appendChild(T('titulo/h3', 'Hub Cultural', 'fondo/blanco'));
   logo.appendChild(T('cuerpo/pista', 'Santa Marta', 'fondo/blanco'));
@@ -1613,6 +1797,104 @@ function menuMovil(ancho) {
   });
   f.appendChild(lista);
   return f;
+}
+
+// ═══════════════════════════════════════════════════════ fondo alusivo a la ciudad
+
+// Silueta de la Sierra Nevada cayendo sobre el Caribe: es el perfil que tiene Santa
+// Marta desde la bahía y se reconoce sin necesidad de fotografía. Se dibuja con
+// primitivas para no depender de una imagen con licencia; si se carga una fotografía
+// desde el selector del plugin, se usa esa en su lugar.
+function ilustracionSantaMarta(ancho, alto) {
+  var f = figma.createFrame();
+  f.name = 'fondo · Santa Marta';
+  f.fills = [];
+  f.clipsContent = true;
+  f.resize(Math.max(1, ancho), Math.max(1, alto));
+
+  if (imagenFondo) {
+    var foto = figma.createRectangle();
+    foto.name = 'fotografía de Santa Marta';
+    foto.resize(ancho, alto);
+    foto.fills = [{ type: 'IMAGE', scaleMode: 'FILL', imageHash: imagenFondo }];
+    f.appendChild(foto);
+    foto.x = 0; foto.y = 0;
+    f.opacity = 0.06;
+    return f;
+  }
+
+  var horizonte = alto * 0.66;
+
+  function poner(nodo, x, y, w, h, color) {
+    nodo.resize(Math.max(1, w), Math.max(1, h));
+    aplicarRelleno(nodo, color);
+    f.appendChild(nodo);
+    nodo.x = x; nodo.y = y;
+    return nodo;
+  }
+
+  var mar = figma.createRectangle();
+  mar.name = 'el Caribe';
+  poner(mar, 0, horizonte, ancho, alto - horizonte, 'marca/azul-profundo');
+
+  var sol = figma.createEllipse();
+  sol.name = 'sol';
+  var d = alto * 0.20;
+  poner(sol, ancho * 0.72, horizonte - alto * 0.62, d, d, 'estado/ocre');
+
+  // Tres crestas de la Sierra Nevada, de la más lejana a la más cercana.
+  [[-0.06, 0.62, 0.55, 'marca/azul-profundo'],
+   [0.30, 0.48, 0.42, 'marca/turquesa-oscuro'],
+   [0.66, 0.38, 0.28, 'marca/turquesa']].forEach(function (m, i) {
+    var pico = figma.createPolygon();
+    pico.name = 'cresta ' + (i + 1);
+    try { pico.pointCount = 3; } catch (e) { /* ya es un triángulo por defecto */ }
+    poner(pico, ancho * m[0], horizonte - alto * m[2], ancho * m[1], alto * m[2], m[3]);
+  });
+
+  // Un velero: es lo que se ve desde el Camellón a cualquier hora.
+  var casco = figma.createRectangle();
+  casco.name = 'velero';
+  poner(casco, ancho * 0.16, horizonte + alto * 0.11, ancho * 0.07, alto * 0.02, 'fondo/blanco');
+  var vela = figma.createPolygon();
+  vela.name = 'vela';
+  try { vela.pointCount = 3; } catch (e) {}
+  poner(vela, ancho * 0.18, horizonte + alto * 0.03, ancho * 0.035, alto * 0.08, 'fondo/blanco');
+
+  // Marejada.
+  [[0.08, 0.20], [0.44, 0.26], [0.68, 0.17]].forEach(function (o, i) {
+    var ola = figma.createRectangle();
+    ola.name = 'ola ' + (i + 1);
+    poner(ola, ancho * o[0], horizonte + alto * o[1], ancho * 0.16, Math.max(2, alto * 0.008), 'fondo/blanco');
+    ola.cornerRadius = 4;
+  });
+
+  f.opacity = 0.08;
+  return f;
+}
+
+// Se cuelga como hijo en posición absoluta, por debajo de todo y justo debajo de la
+// cabecera. Al estar fuera del flujo no toca el auto layout: ni desplaza el contenido
+// ni cambia la altura de la pantalla.
+function aplicarFondo(marco, ancho) {
+  if (!marco.children || !marco.children.length) return null;
+  // Se lee de la caja resuelta y no de `height`: la altura de un marco con auto
+  // layout la calcula Figma, y consultarla antes de que la recalcule devuelve el
+  // valor anterior.
+  function alturaDe(nodo) {
+    var caja = nodo.absoluteBoundingBox;
+    return caja ? caja.height : (nodo.height || 0);
+  }
+  var altoCabecera = alturaDe(marco.children[0]);
+  var disponible = alturaDe(marco) - altoCabecera;
+  if (disponible < 160) return null;
+  var fondo = ilustracionSantaMarta(ancho, Math.min(560, disponible));
+  marco.insertChild(0, fondo);
+  // layoutPositioning, como layoutAlign, solo tiene efecto una vez dentro del padre
+  try { fondo.layoutPositioning = 'ABSOLUTE'; } catch (e) { return fondo; }
+  fondo.x = 0;
+  fondo.y = altoCabecera;
+  return fondo;
 }
 
 // ═══════════════════════════════════════════════════════════ fase 5 · prototipo
@@ -1767,6 +2049,8 @@ function auditar() {
     var derecha = caja.x + caja.width + 1;
     function recorrer(nodo) {
       if (!nodo.children) return;
+      // lo que sobresale de un contenedor que recorta no se ve, así que no desborda
+      if (nodo !== m && nodo.clipsContent) return;
       nodo.children.forEach(function (h) {
         var c = h.absoluteBoundingBox;
         if (c && c.x + c.width > derecha) {
@@ -1832,6 +2116,83 @@ function auditar() {
   if (sinFijar.length) {
     problemas.push(sinFijar.length + ' contenedores con ajuste de línea no envolverán');
     sinFijar.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
+  // Un contenedor con ajuste de línea tiene DOS huecos, no uno: itemSpacing separa
+  // los elementos dentro de una fila y counterAxisSpacing separa las filas entre sí.
+  // Fijar solo el primero deja las tarjetas pegadas verticalmente, y a 360 px, donde
+  // cada tarjeta ocupa su propia fila, el catálogo entero queda sin aire.
+  var sinAire = [];
+  Object.keys(todos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      nodo.children.forEach(function (h) {
+        if (h.layoutWrap === 'WRAP' && h.layoutMode === 'HORIZONTAL' &&
+            h.children && h.children.length > 1 && h.itemSpacing > 0 &&
+            !(h.counterAxisSpacing > 0)) {
+          sinAire.push(k + ' · ' + h.name + ' (' + h.children.length + ' elementos)');
+        }
+        recorrer(h);
+      });
+    }
+    recorrer(todos[k]);
+  });
+  lineas.push('contenedores con ajuste sin separación entre filas : ' +
+    (sinAire.length === 0 ? 'ninguno' : sinAire.length));
+  if (sinAire.length) {
+    problemas.push(sinAire.length + ' contenedores dejan las filas pegadas entre sí');
+    sinAire.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
+  // Tarjetas de la misma fila con alturas distintas. En una rejilla de columnas
+  // iguales, que una tarjeta sea más alta que su vecina solo porque su título ocupa
+  // dos líneas se lee como un descuido. Solo se miran las rejillas de verdad —todas
+  // las columnas del mismo ancho—: una fila de botones o de etiquetas tiene anchos
+  // distintos a propósito y ahí la altura desigual no significa nada.
+  var desparejas = [];
+  Object.keys(todos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      if (nodo.layoutMode === 'HORIZONTAL') {
+        var hijos = [];
+        nodo.children.forEach(function (c) {
+          if (c.layoutPositioning !== 'ABSOLUTE') hijos.push(c);
+        });
+        var uniforme = hijos.length > 1;
+        for (var i = 1; i < hijos.length && uniforme; i++) {
+          if (Math.abs(hijos[i].width - hijos[0].width) > 1) uniforme = false;
+        }
+        if (uniforme) {
+          var filas = {};
+          hijos.forEach(function (c) {
+            var y = String(Math.round(c.y));
+            if (!filas[y]) filas[y] = [];
+            filas[y].push(c);
+          });
+          Object.keys(filas).forEach(function (y) {
+            var fila = filas[y];
+            if (fila.length < 2) return;
+            var min = fila[0].height, max = fila[0].height;
+            fila.forEach(function (c) {
+              if (c.height < min) min = c.height;
+              if (c.height > max) max = c.height;
+            });
+            if (max - min > 1) {
+              desparejas.push(k + ' · ' + nodo.name + ': ' + Math.round(min) +
+                ' y ' + Math.round(max) + ' px en la misma fila');
+            }
+          });
+        }
+      }
+      nodo.children.forEach(recorrer);
+    }
+    recorrer(todos[k]);
+  });
+  lineas.push('tarjetas desparejas en una misma fila : ' +
+    (desparejas.length === 0 ? 'ninguna' : desparejas.length));
+  if (desparejas.length) {
+    problemas.push(desparejas.length + ' filas de una rejilla mezclan alturas distintas');
+    desparejas.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
   // La auditoría solo miraba desbordamiento, y un contenedor demasiado ESTRECHO no
@@ -1935,6 +2296,26 @@ function auditar() {
     inalcanzables.slice(0, 9).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
+  var conFondo = 0;
+  Object.keys(marcos).forEach(function (k) {
+    var hijos = marcos[k].children || [];
+    for (var i = 0; i < hijos.length; i++) {
+      if (hijos[i].name === 'fondo · Santa Marta') { conFondo++; break; }
+    }
+  });
+  lineas.push('pantallas con fondo de Santa Marta : ' + conFondo + ' de ' +
+    Object.keys(marcos).length + (imagenFondo ? ' (fotografía cargada)' : ' (ilustración generada)'));
+  if (conFondo < Object.keys(marcos).length) {
+    problemas.push((Object.keys(marcos).length - conFondo) + ' pantallas se quedaron sin fondo');
+  }
+
+  lineas.push('logo institucional : ' + (imagenLogo
+    ? 'cargado — ' + (recursos.logo && recursos.logo.nombre ? recursos.logo.nombre : 'imagen')
+    : 'NO cargado, se dibujó el marcador'));
+  if (!imagenLogo) {
+    problemas.push('falta el logo institucional: cárgalo en el plugin y vuelve a construir');
+  }
+
   var capas = Object.keys(auxiliares);
   lineas.push('capas auxiliares : ' + (capas.length ? capas.join(', ') : 'ninguna'));
   lineas.push('estilos de color : ' + Object.keys(estilosColor).length + ' (esperados 17)');
@@ -1958,6 +2339,10 @@ async function construir() {
 
   avisar('Limpiando lo generado antes…');
   var borrados = limpiarAnterior();
+
+  avisar('Leyendo las imágenes cargadas…');
+  await leerRecursos();
+  prepararImagenes();
 
   avisar('Cargando fuentes…');
   await cargarFuentes();
@@ -2009,6 +2394,21 @@ async function construir() {
     catch (e) { incidencias.push('dimensionado en ' + k + ': ' + e.message); }
   });
 
+  avisar('Igualando el alto de las tarjetas…');
+  Object.keys(marcos).concat(Object.keys(auxiliares)).forEach(function (k) {
+    var m = marcos[k] || auxiliares[k];
+    try { igualarFilas(m); }
+    catch (e) { incidencias.push('alturas en ' + k + ': ' + e.message); }
+  });
+
+  avisar('Colocando el fondo de Santa Marta…');
+  var conFondo = 0;
+  Object.keys(marcos).forEach(function (k) {
+    try {
+      if (aplicarFondo(marcos[k], marcos[k].width)) conFondo++;
+    } catch (e) { incidencias.push('fondo en ' + k + ': ' + e.message); }
+  });
+
   avisar('Conectando el prototipo…');
   var red = { conectados: 0, propios: 0, aplicables: 0 };
   try { red = await conectarPrototipo(); }
@@ -2058,7 +2458,39 @@ async function construir() {
     : 'Construido con ' + todosProblemas.length + ' incidencias. Mira el informe.');
 }
 
+function estadoRecursos() {
+  function resumir(r) {
+    if (!r || !r.base64) return null;
+    return { nombre: r.nombre || 'imagen', kb: Math.round(r.base64.length * 0.75 / 1024) };
+  }
+  figma.ui.postMessage({
+    tipo: 'recursos',
+    logo: resumir(recursos.logo),
+    fondo: resumir(recursos.fondo)
+  });
+}
+
 figma.ui.onmessage = function (msg) {
+  if (msg.tipo === 'estadoRecursos') {
+    leerRecursos().then(estadoRecursos);
+    return;
+  }
+  if (msg.tipo === 'guardarRecurso' || msg.tipo === 'borrarRecurso') {
+    var clave = msg.clave === 'fondo' ? CLAVE_FONDO : CLAVE_LOGO;
+    var valor = msg.tipo === 'guardarRecurso'
+      ? { nombre: msg.nombre, base64: msg.base64 }
+      : undefined;
+    figma.clientStorage.setAsync(clave, valor).then(function () {
+      recursos[msg.clave === 'fondo' ? 'fondo' : 'logo'] = valor || null;
+      estadoRecursos();
+      figma.notify(msg.tipo === 'guardarRecurso'
+        ? 'Imagen guardada. Pulsa Construir para verla en el prototipo.'
+        : 'Imagen retirada.');
+    }).catch(function (e) {
+      figma.notify('No se pudo guardar la imagen: ' + e.message, { error: true });
+    });
+    return;
+  }
   if (msg.tipo === 'construir') {
     construir().catch(function (e) {
       figma.ui.postMessage({
