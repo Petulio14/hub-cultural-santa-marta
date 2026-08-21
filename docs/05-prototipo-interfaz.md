@@ -109,6 +109,9 @@ criterio de aceptación de HU-06 y por HU-32.
   misma medida **entre filas que entre columnas**. Dos tarjetas apiladas necesitan el
   mismo aire que dos tarjetas contiguas; a 360 px, donde cada tarjeta ocupa su propia
   fila, esa separación es la única que hay.
+- **Todas las tarjetas de una misma fila miden lo mismo de alto.** La altura la marca
+  la más alta de la fila; las demás se estiran hasta ella. Que un título ocupe dos
+  líneas no puede hacer que su tarjeta sobresalga sobre la de al lado.
 - Punto de corte del menú compacto: **768 px** (HU-10).
 - Área mínima de toque de todo elemento interactivo en móvil: **44 × 44 px** (HU-10).
 - Ninguna vista debe presentar desbordamiento horizontal a 360 px (HU-33).
@@ -244,15 +247,33 @@ propiedad `gap` de CSS fija los dos huecos a la vez, así que allí el defecto n
 darse. La sección 4 recoge ahora la medida explícitamente, para que la especificación no
 dependa de qué hace por defecto cada herramienta.
 
+**1 bis · Las cuatro tarjetas de «Cuatro formas de empezar» no medían lo mismo.** El
+mismo defecto, en el otro eje. Cada tarjeta abrazaba su propio contenido, así que
+«Actores culturales» —cuyo título ocupa dos líneas en columna estrecha— salía 20 px más
+alta que «Eventos». En una rejilla de columnas iguales eso se lee como un descuido.
+Afectaba también a la rejilla de eventos y al par de campos *inicio / fin* del formulario
+de publicación, donde el campo con mensaje de error era 45 px más alto que su vecino.
+
+Corregido marcando las tarjetas para que rellenen el alto de su fila. La sección 4 lo
+recoge como regla.
+
 **2 · Falta el logotipo institucional.** Añadido arriba a la izquierda en las 27
 pantallas y en el menú desplegable de móvil, con la placa blanca que describe la sección
 4 bis.
 
 **3 · Falta un fondo alusivo a la ciudad.** Añadido según la sección 4 bis.
 
-La auditoría del plugin comprueba ahora las tres cosas: que ningún contenedor con ajuste
-de línea deje las filas pegadas, que las 27 pantallas tengan fondo, y que el logotipo
-esté cargado de verdad y no sea el marcador.
+La auditoría del plugin comprueba ahora las cuatro cosas: que ningún contenedor con
+ajuste de línea deje las filas pegadas, que en una rejilla de columnas iguales no haya
+dos tarjetas de distinta altura en la misma fila, que las 27 pantallas tengan fondo, y
+que el logotipo esté cargado de verdad y no sea el marcador.
+
+Para que el banco de pruebas pudiera reproducir el defecto de las tarjetas hubo que
+enseñarle a **partir el texto en líneas**: mientras estimaba que todo texto ocupaba una
+sola línea, las cuatro tarjetas le salían idénticas y el defecto no podía darse. Con el
+salto de línea modelado, ejecutado contra el código anterior a la corrección, señala
+`V-1@360 · accesos: 78 y 98 px en la misma fila` — que es exactamente lo que se ve en la
+captura del asesor.
 
 ---
 

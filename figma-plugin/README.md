@@ -107,6 +107,8 @@ Al terminar, el plugin audita lo que acaba de construir:
 - **Separación entre filas**: todo contenedor con ajuste de línea tiene que separar sus
   filas, no solo sus columnas. Sin ello las tarjetas se tocan, y a 360 px —una tarjeta por
   fila— la lista entera queda sin aire.
+- **Tarjetas desparejas**: en una rejilla de columnas iguales, que no haya dos tarjetas
+  de distinta altura en la misma fila.
 - **Fondo y logotipo**: que las 27 pantallas lleven fondo y que el logotipo institucional
   sea la imagen real y no el marcador.
 - **Pantallas sin camino desde Inicio**: recorre el grafo de enlaces desde V-1 y avisa
@@ -150,8 +152,19 @@ Banco de pruebas: ejecuta el plugin completo contra una API de Figma simulada.
 node figma-plugin/simular.js
 ```
 
-No valida el aspecto visual —el simulador no implementa auto layout de verdad— pero atrapa
-métodos inexistentes, propiedades asignadas en el orden equivocado, nodos usados después de
-borrarlos y excepciones sin capturar, que es lo que de verdad rompe un plugin. Imprime el
-mismo informe que verías en Figma, así que sirve para comprobar un cambio sin abrir la
-aplicación. Sale con código distinto de cero si la construcción falla.
+Atrapa métodos inexistentes, propiedades asignadas en el orden equivocado, nodos usados
+después de borrarlos y excepciones sin capturar, que es lo que de verdad rompe un plugin.
+Imprime el mismo informe que verías en Figma, así que sirve para comprobar un cambio sin
+abrir la aplicación. Sale con código distinto de cero si la construcción falla.
+
+Su motor de disposición no es Figma, pero ya modela lo suficiente para reproducir los
+defectos que han ido apareciendo: qué eje es el principal en cada dirección, el relleno y
+la separación —las dos, la de dentro de la fila y la de entre filas—, el ajuste de línea,
+el reparto del espacio sobrante, el borde interior, el colapso a 1 px de un hijo que
+rellena dentro de un contenedor que abraza, los hijos en posición absoluta, el salto de
+línea de los textos y la igualación de alturas dentro de una fila. Cada uno se añadió
+después de que un defecto real se escapara por no estar modelado.
+
+Lo que **no** comprueba es el aspecto: tipografía real, color, jerarquía. Eso solo lo ve
+una persona mirando la pantalla, y es de donde han salido cuatro de los defectos de esta
+historia.

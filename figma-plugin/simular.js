@@ -102,6 +102,20 @@ function disponer(n) {
   const entreFilas = n.counterAxisSpacing === null || n.counterAxisSpacing === undefined
     ? 0 : n.counterAxisSpacing;
 
+  // Un texto mas estrecho que su contenido salta de linea y crece a lo alto. Sin
+  // modelarlo, todas las tarjetas de una rejilla salen igual de altas en el
+  // simulador y el defecto que se ve en pantalla -un titulo de dos lineas que
+  // estira su tarjeta- no llega a producirse aqui.
+  flujo.forEach((c) => {
+    if (c.type === 'TEXT' && c._anchoNatural > 0 && c.width > 0) {
+      const lineas = Math.max(1, Math.ceil(c._anchoNatural / c.width - 0.001));
+      c.height = lineas * 20;
+    }
+  });
+
+  const filas = [];
+  let filaActual = null;
+
   flujo.forEach((c) => {
     if (h) {
       if (envuelve && !primeroEnFila && x + c.width > limite) {
@@ -110,15 +124,32 @@ function disponer(n) {
         // counterAxisSpacing, no itemSpacing: son dos huecos distintos
         y += altoFila + entreFilas;
         altoFila = 0;
+        filaActual = null;
       }
       c.x = x; c.y = y;
       x += c.width + n.itemSpacing;
       altoFila = Math.max(altoFila, c.height);
+      if (!filaActual) { filaActual = []; filas.push(filaActual); }
+      filaActual.push(c);
       primeroEnFila = false;
     } else {
       c.x = n.paddingLeft; c.y = y;
       y += c.height + n.itemSpacing;
     }
+  });
+
+  // En un contenedor horizontal el eje transversal es el alto, asi que un hijo
+  // marcado para rellenar toma el alto de su fila. Es lo que iguala las tarjetas.
+  if (h) {
+    filas.forEach((fila) => {
+      const altoDeFila = fila.reduce((m, c) => Math.max(m, c.height), 0);
+      fila.forEach((c) => {
+        if (c.layoutAlign === 'STRETCH') c.height = altoDeFila;
+      });
+    });
+  }
+
+  flujo.forEach((c) => {
     maxDerecha = Math.max(maxDerecha, c.x + c.width);
     maxAbajo = Math.max(maxAbajo, c.y + c.height);
   });
