@@ -127,7 +127,7 @@ var VISTAS = [
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
 
 // Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
-var VERSION = 'build 8 · 2026-08-21';
+var VERSION = 'build 9 · 2026-08-21';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -261,6 +261,53 @@ function crecer(nodo) {
   nodo.layoutGrow = 1;
   if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'crecer');
   return nodo;
+}
+
+// Fija el alto respetando qué eje es cuál, igual que fijarAncho() con el ancho: en un
+// marco vertical el alto es el eje principal, en uno horizontal es el transversal.
+function fijarAlto(f, alto) {
+  if (f.layoutMode === 'VERTICAL') f.primaryAxisSizingMode = 'FIXED';
+  else if (f.layoutMode === 'HORIZONTAL') f.counterAxisSizingMode = 'FIXED';
+  f.resize(Math.max(0.01, f.width), Math.max(0.01, alto));
+}
+
+// Iguala el alto de las tarjetas marcadas con igualarAlto() que caen en la misma fila.
+//
+// Marcar `layoutAlign = 'STRETCH'` y confiar en que Figma estire no funciona: si el
+// marco sigue abrazando su contenido en el eje del alto, el abrazo gana y la marca no
+// hace nada. Es lo que devolvió el build 8, con las tarjetas del inicio todavía a 81 y
+// 102 px pese a estar marcadas. Así que aquí se hacen las dos cosas: se fija el eje y
+// se aplica la medida, sin depender de cómo interprete Figma la combinación.
+//
+// Se ejecuta con el árbol ya montado porque necesita las alturas resueltas y la `y` de
+// cada hijo, que es lo que dice en qué fila cayó al envolver.
+function igualarFilas(nodo) {
+  if (!nodo.children) return;
+  if (nodo.layoutMode === 'HORIZONTAL') {
+    var filas = {};
+    nodo.children.forEach(function (h) {
+      if (!h.getPluginData || h.getPluginData('altoIgual') !== 'si') return;
+      if (h.layoutPositioning === 'ABSOLUTE') return;
+      var clave = String(Math.round(h.y));
+      if (!filas[clave]) filas[clave] = [];
+      filas[clave].push(h);
+    });
+    Object.keys(filas).forEach(function (clave) {
+      var fila = filas[clave];
+      if (fila.length < 2) return;
+      var alto = 0;
+      fila.forEach(function (h) { if (h.height > alto) alto = h.height; });
+      fila.forEach(function (h) {
+        try {
+          h.layoutAlign = 'STRETCH';
+          fijarAlto(h, alto);
+        } catch (e) {
+          incidencias.push('no se pudo igualar «' + (h.name || '?') + '»: ' + e.message);
+        }
+      });
+    });
+  }
+  nodo.children.forEach(igualarFilas);
 }
 
 function reaplicarDimensionado(nodo) {
@@ -2345,6 +2392,13 @@ async function construir() {
     var m = marcos[k] || auxiliares[k];
     try { reaplicarDimensionado(m); }
     catch (e) { incidencias.push('dimensionado en ' + k + ': ' + e.message); }
+  });
+
+  avisar('Igualando el alto de las tarjetas…');
+  Object.keys(marcos).concat(Object.keys(auxiliares)).forEach(function (k) {
+    var m = marcos[k] || auxiliares[k];
+    try { igualarFilas(m); }
+    catch (e) { incidencias.push('alturas en ' + k + ': ' + e.message); }
   });
 
   avisar('Colocando el fondo de Santa Marta…');

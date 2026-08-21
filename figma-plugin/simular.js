@@ -144,7 +144,20 @@ function disponer(n) {
     filas.forEach((fila) => {
       const altoDeFila = fila.reduce((m, c) => Math.max(m, c.height), 0);
       fila.forEach((c) => {
-        if (c.layoutAlign === 'STRETCH') c.height = altoDeFila;
+        if (c.layoutAlign !== 'STRETCH') return;
+        // Lo que enseño el build 8: la marca de estirar no gana al abrazo. Si el
+        // marco sigue abrazando su contenido en el eje del alto, Figma mantiene el
+        // abrazo y la fila queda despareja. El simulador era mas permisivo que
+        // Figma y por eso daba por buena una correccion que alli no hacia nada.
+        const abraza =
+          (c.layoutMode === 'VERTICAL' && c.primaryAxisSizingMode !== 'FIXED') ||
+          (c.layoutMode === 'HORIZONTAL' && c.counterAxisSizingMode !== 'FIXED');
+        if (abraza) {
+          avisos.push('estirado ignorado: "' + (c.name || c.type) +
+            '" sigue abrazando su contenido a lo alto');
+          return;
+        }
+        c.height = altoDeFila;
       });
     });
   }
