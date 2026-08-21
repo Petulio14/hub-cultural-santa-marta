@@ -167,7 +167,7 @@ antes de que lleguen al código.
 | 2 | Construir las 9 vistas navegables en los 3 anchos. | ✅ `prototipo/index.html` |
 | 3 | Crear el archivo de Figma y trasladar las vistas. | ✅ generado con [`../figma-plugin/`](../figma-plugin/) — 27 pantallas |
 | 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ✅ 17 estilos de color y 12 de texto |
-| 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ⬜ |
+| 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ✅ revisado con el asesor el 21/08/2026 — ver más abajo |
 | 6 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
 | 7 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ✅ |
 
@@ -175,6 +175,34 @@ antes de que lleguen al código.
 
 Se abre en modo presentación. El punto de entrada es la vista de Inicio; el botón
 compacto del encabezado despliega el menú en los anchos de móvil.
+
+### Hallazgo de la revisión del 21/08/2026
+
+Al recorrer el prototipo con el asesor apareció que **al panel de administración (V-7) no
+se llegaba**: estaba construido en los tres anchos, pero ningún elemento de ninguna otra
+pantalla enlazaba con él. El mapa de la sección 1 sí lo preveía —`L --> A`, del ingreso al
+panel—; lo que faltaba era el enlace en el archivo.
+
+Dos motivos por los que no se detectó antes:
+
+- **La maqueta HTML no tiene el problema y por eso lo tapó.** Su rail izquierdo lleva a
+  cualquiera de las nueve vistas en un clic, así que V-7 siempre fue accesible ahí. En
+  Figma no hay rail: solo existen los enlaces que se dibujen.
+- **La auditoría del plugin no lo comprobaba.** Medía desbordamiento, áreas de toque,
+  ajuste de línea, elementos aplastados y textos ilegibles: todas preguntas sobre cómo
+  está construida una pantalla, ninguna sobre si se puede llegar a ella. Una vista sin un
+  solo enlace de entrada las pasaba todas sin una queja.
+
+Corregido en el *build 7*: V-8 incorpora un bloque de **acceso de demostración** con dos
+entradas —«Entrar como actor cultural» → V-9 y «Entrar como administrador» → V-7—, porque
+el prototipo no valida credenciales y esa validación es trabajo de HU-12 y HU-15. Y la
+auditoría recorre ahora el grafo de enlaces desde Inicio y falla si alguna vista queda
+fuera del recorrido; ejecutada contra el código anterior, señala las tres pantallas de V-7.
+
+Es el tercer defecto de esta historia que solo aparece mirando el prototipo, después del
+contenedor de filtros aplastado y del botón de menú sin interacción. La comprobación
+automática se amplía cada vez, pero la revisión humana sigue encontrando lo que ninguna
+regla anticipó.
 
 ---
 

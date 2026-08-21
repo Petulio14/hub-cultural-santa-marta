@@ -10,7 +10,7 @@ qué crear, con qué valores y en qué orden. **No hay nada que decidir mientras
 
 > ⚡ **Vía rápida: no hace falta construirlo a mano.**
 > [`../figma-plugin/`](../figma-plugin/) contiene un plugin que crea los estilos, los
-> componentes, las 27 pantallas y los 145 enlaces de navegación de una sola pasada. Se
+> componentes, las 27 pantallas y los 151 enlaces de navegación de una sola pasada. Se
 > importa desde *Plugins → Development → Import plugin from manifest…* y se pulsa
 > **Construir**. Instrucciones en [`../figma-plugin/README.md`](../figma-plugin/README.md).
 >
@@ -217,11 +217,21 @@ mediante enlaces**. En el modo *Prototype*, con los marcos de 1366:
 | todas | logotipo y enlace del pie | V-1 |
 | V-1 | «Ingresar» | V-8 |
 | V-8 | «Crear cuenta» | V-9 |
+| V-8 | «Entrar como actor cultural» | V-9 |
+| V-8 | «Entrar como administrador» | **V-7** |
+
+V-7 es la única vista con rol restringido y por tanto la única que no cuelga de la
+navegación pública. Si no se enlaza desde el ingreso, se queda construida pero sin
+ninguna vía de entrada; es exactamente lo que ocurrió en la revisión del 21/08/2026.
 
 Transición **Instant** en todos. Una animación aquí no aporta nada y ralentiza la revisión.
 
-Comprueba después lo que exige HU-09: **desde cualquier vista interna tiene que haber
-siempre un camino visible de vuelta al inicio**. Recorre las siete y verifícalo.
+Comprueba después dos cosas, no una:
+
+1. Lo que exige HU-09: **desde cualquier vista interna tiene que haber siempre un camino
+   visible de vuelta al inicio**. Recorre las siete y verifícalo.
+2. Lo contrario: **que a cada vista se pueda llegar desde Inicio**. El plugin lo audita
+   recorriendo el grafo de enlaces, pero si construyes a mano hay que comprobarlo a mano.
 
 ---
 
@@ -238,22 +248,23 @@ siempre un camino visible de vuelta al inicio**. Recorre las siete y verifícalo
 
 ## Verificación antes de dar HU-06 por terminada
 
-Las ocho primeras las comprueba el propio plugin y quedaron verificadas en la ejecución
-del 20/08/2026, cuyo informe está en el issue [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6).
+Las nueve primeras las comprueba el propio plugin y quedaron verificadas en la ejecución
+del *build 7* del 21/08/2026, cuyo informe está en el issue [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6).
 
 | # | Comprobación | Estado |
 | --- | --- | --- |
 | 1 | Existen las 7 vistas obligatorias | ✅ 27 pantallas (9 vistas × 3 anchos) |
 | 2 | Cada una en 360, 768 y 1366 | ✅ ancho exacto en las 27 |
-| 3 | El prototipo navega entre pantallas | ✅ 130 enlaces conectados |
+| 3 | El prototipo navega entre pantallas | ✅ 151 de 151 enlaces conectados |
 | 4 | Desde toda vista interna se vuelve al inicio | ✅ enlace en el pie de las 27 |
 | 5 | Todo color sale de un estilo, ninguno suelto | ✅ 17 estilos aplicados |
 | 6 | En los marcos de 360, ningún control mide menos de 44 × 44 | ✅ ninguno por debajo |
 | 7 | Ninguna vista de 360 desborda en horizontal | ✅ ningún desbordamiento |
 | 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
-| 9 | Revisión visual: jerarquía, alineación, legibilidad | ⬜ **no la puede hacer el plugin** |
-| 10 | Enlace anotado en el issue y en el documento 05 | ✅ |
-| 11 | Retroalimentación del asesor registrada en el issue | ⬜ |
+| 9 | A toda vista se puede llegar navegando desde Inicio | ✅ ninguna fuera del recorrido |
+| 10 | Revisión visual: jerarquía, alineación, legibilidad | ✅ con el asesor, 21/08/2026 — **no la puede hacer el plugin** |
+| 11 | Enlace anotado en el issue y en el documento 05 | ✅ |
+| 12 | Retroalimentación del asesor registrada en el issue | 🟡 registrada la del 21/08; falta la de la Sprint Review |
 
 **Prototipo navegable en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1
 
