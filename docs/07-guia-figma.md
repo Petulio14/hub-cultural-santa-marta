@@ -285,11 +285,10 @@ Comprueba después dos cosas, no una:
 
 ## Verificación antes de dar HU-06 por terminada
 
-Las once primeras las comprueba el propio plugin. Las marcadas como *build 7* están
-verificadas contra el archivo real de Figma, con el informe en el issue
-[HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6). Las del
-*build 8* —las tres correcciones de la segunda ronda del asesor— están verificadas
-contra el banco de pruebas y **esperan la ejecución en Figma**.
+Las once primeras las comprueba el propio plugin, todas verificadas contra el archivo
+real de Figma. Los informes de cada ejecución están en el issue
+[HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6); el último es el
+del *build 9* del 21/08/2026, que es el que el asesor aprobó.
 
 | # | Comprobación | Estado |
 | --- | --- | --- |
@@ -302,12 +301,12 @@ contra el banco de pruebas y **esperan la ejecución en Figma**.
 | 7 | Ninguna vista de 360 desborda en horizontal | ✅ ningún desbordamiento |
 | 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
 | 9 | A toda vista se puede llegar navegando desde Inicio | ✅ ninguna fuera del recorrido |
-| 9b | Las filas de tarjetas están separadas, no solo las columnas | 🟡 build 8, pendiente de ejecutar |
-| 9d | En una rejilla, las tarjetas de una fila miden lo mismo de alto | 🟡 build 8, pendiente de ejecutar |
-| 9c | Logotipo institucional y fondo de la ciudad en las 27 pantallas | 🟡 build 8, pendiente de ejecutar |
+| 9b | Las filas de tarjetas están separadas, no solo las columnas | ✅ build 9 |
+| 9c | En una rejilla, las tarjetas de una fila miden lo mismo de alto | ✅ build 9 |
+| 9d | Logotipo institucional y fondo de la ciudad en las 27 pantallas | ✅ build 9 |
 | 10 | Revisión visual: jerarquía, alineación, legibilidad | ✅ con el asesor, 21/08/2026 — **no la puede hacer el plugin** |
 | 11 | Enlace anotado en el issue y en el documento 05 | ✅ |
-| 12 | Retroalimentación del asesor registrada en el issue | 🟡 registrada la del 21/08; falta la de la Sprint Review |
+| 12 | Retroalimentación del asesor registrada en el issue | ✅ dos rondas y la aprobación |
 
 **Prototipo navegable en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1
 
