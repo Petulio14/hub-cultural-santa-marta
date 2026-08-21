@@ -127,7 +127,7 @@ var VISTAS = [
 var MARCA_RAIZ = 'HubCultural';   // prefijo para poder limpiar en la re-ejecución
 
 // Se imprime en el informe: sirve para saber sin ambigüedad qué build lo produjo.
-var VERSION = 'build 6 · 2026-08-20';
+var VERSION = 'build 7 · 2026-08-21';
 
 // ═══════════════════════════════════════════════════════════ utilidades
 
@@ -1419,6 +1419,34 @@ function V8(ancho) {
   form.appendChild(enlacesForm);
   c.appendChild(form);
 
+  // Acceso de demostración. El prototipo no valida credenciales —eso lo resuelven
+  // HU-12 y HU-15—, así que sin estos dos accesos el panel de administración se
+  // queda sin ninguna vía de entrada: es la única vista con rol restringido y el
+  // mapa de navegación de docs/05 §1 la cuelga precisamente de aquí.
+  var demo = pila('acceso de demostración', 'v', {
+    espacio: 12, relleno: esMovil(ancho) ? 18 : 22, radio: 8,
+    fondo: 'fondo/arena', borde: 'linea/borde', ancho: anchoForm
+  });
+  var anchoDemo = anchoForm - (esMovil(ancho) ? 36 : 44);
+  demo.appendChild(estirar(T('etiqueta/eyebrow', 'Acceso de demostración', 'marca/turquesa-oscuro')));
+  var pista = T('cuerpo/pequeno',
+    'El prototipo no valida credenciales. Estos dos accesos abren la sesión de cada rol para poder recorrer las vistas privadas.',
+    'texto/cuerpo');
+  pista.resize(anchoDemo, pista.height);
+  demo.appendChild(estirar(pista));
+
+  var bActor = boton('Entrar como actor cultural', 'secundario', ancho);
+  estirar(bActor);
+  demo.appendChild(bActor);
+  enlaces.push({ desde: bActor, hacia: 'V-9', ancho: ancho });
+
+  var bAdmin = boton('Entrar como administrador', 'secundario', ancho);
+  estirar(bAdmin);
+  demo.appendChild(bAdmin);
+  enlaces.push({ desde: bAdmin, hacia: 'V-7', ancho: ancho });
+
+  c.appendChild(demo);
+
   f.appendChild(c);
   f.appendChild(pie(ancho));
   return f;
@@ -1869,6 +1897,42 @@ function auditar() {
   if (estrujados.length) {
     problemas.push(estrujados.length + ' textos quedaron tan estrechos que se parten letra a letra');
     estrujados.slice(0, 8).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
+  // Alcanzabilidad. Ninguna comprobación anterior mira si a una pantalla se puede
+  // LLEGAR: una vista perfectamente construida y sin un solo enlace de entrada pasa
+  // todas las demás sin una sola queja. Así se nos escapó el panel de administración,
+  // que el asesor encontró abriendo el prototipo. Se recorre el grafo desde Inicio,
+  // no basta con contar enlaces de entrada: una vista solo alcanzable desde otra
+  // inalcanzable sigue estando fuera del recorrido.
+  var inalcanzables = [];
+  ANCHOS.forEach(function (a) {
+    var salidas = {};
+    enlaces.forEach(function (e) {
+      if (e.ancho !== a || !e.hacia || !e.desde || e.desde.removed) return;
+      var origen = pantallaDe(e.desde);
+      if (!origen) return;
+      origen = origen.split('@')[0];
+      if (!salidas[origen]) salidas[origen] = [];
+      salidas[origen].push(e.hacia);
+    });
+    var vistos = { 'V-1': true };
+    var cola = ['V-1'];
+    while (cola.length) {
+      var actual = cola.shift();
+      (salidas[actual] || []).forEach(function (d) {
+        if (!vistos[d]) { vistos[d] = true; cola.push(d); }
+      });
+    }
+    VISTAS.forEach(function (v) {
+      if (!vistos[v.id]) inalcanzables.push(v.id + ' · ' + v.nombre + ' @ ' + a);
+    });
+  });
+  lineas.push('pantallas sin camino desde Inicio : ' +
+    (inalcanzables.length === 0 ? 'ninguna' : inalcanzables.length));
+  if (inalcanzables.length) {
+    problemas.push(inalcanzables.length + ' pantallas no se pueden alcanzar navegando desde Inicio');
+    inalcanzables.slice(0, 9).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
   var capas = Object.keys(auxiliares);
