@@ -36,12 +36,16 @@ Lo que hayas añadido a mano se conserva, porque solo borra lo que lleva su marc
 | Conjuntos de componentes | 4 | `Boton` (3 variantes), `Insignia` (3), `Chip` (2), `Campo` (2) |
 | Pantallas | 27 | 9 vistas × 360, 768 y 1366 px |
 | Capa de menú | 1 | `Menú de navegación · 360`, que abre el botón compacto del encabezado |
-| Enlaces de prototipo | 145 | Navegación completa entre pantallas del mismo ancho |
+| Enlaces de prototipo | 151 | Navegación completa entre pantallas del mismo ancho |
 
 Se descartan además 11 enlaces que apuntarían a su propia pantalla —la opción activa del
 menú y el «volver al inicio» del pie dentro de Inicio—, que Figma rechaza porque el destino
 de una navegación tiene que ser **otro** marco de primer nivel. El informe los cuenta
 aparte: no son enlaces que falten, son enlaces que no deben existir.
+
+El panel de administración se alcanza desde **V-8 · Ingreso**, con el bloque de *acceso
+de demostración*: el prototipo no valida credenciales —eso es HU-12 y HU-15—, así que sin
+esos dos accesos la única vista con rol restringido se quedaba fuera del recorrido.
 
 En los anchos de móvil el botón compacto del encabezado abre `Menú de navegación · 360`
 como capa superpuesta, con sus cinco opciones enlazadas y un botón de cierre. Si la versión
@@ -75,6 +79,10 @@ Al terminar, el plugin audita lo que acaba de construir:
   primera ejecución real.
 - **Enlaces de prototipo**: cuántos se conectaron, y para los que fallen, en qué pantalla
   está el origen, qué nodo es y cuál fue el error exacto.
+- **Pantallas sin camino desde Inicio**: recorre el grafo de enlaces desde V-1 y avisa
+  de toda vista a la que no se pueda llegar navegando (HU-09). Una vista puede estar
+  impecablemente construida y no tener un solo enlace de entrada: ninguna de las
+  comprobaciones anteriores la vería.
 - **Fuentes**: si alguna no estuviera disponible, lo dice y sustituye por Inter.
 
 Un informe sin incidencias no significa que el diseño esté aprobado: significa que se

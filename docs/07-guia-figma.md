@@ -10,7 +10,7 @@ qué crear, con qué valores y en qué orden. **No hay nada que decidir mientras
 
 > ⚡ **Vía rápida: no hace falta construirlo a mano.**
 > [`../figma-plugin/`](../figma-plugin/) contiene un plugin que crea los estilos, los
-> componentes, las 27 pantallas y los 145 enlaces de navegación de una sola pasada. Se
+> componentes, las 27 pantallas y los 151 enlaces de navegación de una sola pasada. Se
 > importa desde *Plugins → Development → Import plugin from manifest…* y se pulsa
 > **Construir**. Instrucciones en [`../figma-plugin/README.md`](../figma-plugin/README.md).
 >
@@ -217,11 +217,21 @@ mediante enlaces**. En el modo *Prototype*, con los marcos de 1366:
 | todas | logotipo y enlace del pie | V-1 |
 | V-1 | «Ingresar» | V-8 |
 | V-8 | «Crear cuenta» | V-9 |
+| V-8 | «Entrar como actor cultural» | V-9 |
+| V-8 | «Entrar como administrador» | **V-7** |
+
+V-7 es la única vista con rol restringido y por tanto la única que no cuelga de la
+navegación pública. Si no se enlaza desde el ingreso, se queda construida pero sin
+ninguna vía de entrada; es exactamente lo que ocurrió en la revisión del 21/08/2026.
 
 Transición **Instant** en todos. Una animación aquí no aporta nada y ralentiza la revisión.
 
-Comprueba después lo que exige HU-09: **desde cualquier vista interna tiene que haber
-siempre un camino visible de vuelta al inicio**. Recorre las siete y verifícalo.
+Comprueba después dos cosas, no una:
+
+1. Lo que exige HU-09: **desde cualquier vista interna tiene que haber siempre un camino
+   visible de vuelta al inicio**. Recorre las siete y verifícalo.
+2. Lo contrario: **que a cada vista se pueda llegar desde Inicio**. El plugin lo audita
+   recorriendo el grafo de enlaces, pero si construyes a mano hay que comprobarlo a mano.
 
 ---
 
