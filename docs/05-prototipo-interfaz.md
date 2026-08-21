@@ -275,6 +275,23 @@ salto de línea modelado, ejecutado contra el código anterior a la corrección,
 `V-1@360 · accesos: 78 y 98 px en la misma fila` — que es exactamente lo que se ve en la
 captura del asesor.
 
+#### La corrección de las alturas falló en el primer intento
+
+El *build 8* se construyó en Figma con las tarjetas marcadas para rellenar el alto de su
+fila, y las tarjetas siguieron desparejas: `81 y 102 px`. **Marcar el relleno no basta si
+el marco sigue abrazando su contenido en ese eje**; el abrazo gana y la marca no hace
+nada. Es el mismo error de razonamiento que produjo el primer defecto de esta historia,
+en el otro eje: confundir qué eje es el principal de un marco según su dirección.
+
+El *build 9* fija el eje del alto y además aplica la medida, en lugar de confiar en cómo
+Figma resuelve la combinación. Y el banco de pruebas incorpora la regla que le faltaba
+—una marca de estirado no gana a un eje que abraza—, con lo que ahora reproduce el fallo
+del build 8 en vez de dar por buena una corrección que en Figma no hacía nada.
+
+Es el segundo caso en el que la **auditoría acertó y la corrección falló**: el informe
+del build 8 señaló las cuatro filas desparejas sin que nadie tuviera que mirar la
+pantalla. La comprobación que se añade con cada defecto sirve justamente para eso.
+
 ---
 
 *Elaboración propia (2026).*

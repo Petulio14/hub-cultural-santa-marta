@@ -188,10 +188,15 @@ Dos vistas de soporte, opcionales para cerrar HU-06 pero necesarias antes del Sp
 | Mapa | alto 340 | 440 | 440 |
 
 **Las tarjetas de una fila se igualan en alto.** Selecciona cada tarjeta de la rejilla y
-en el panel derecho pon su alto en **Fill container** (en la API, `layoutAlign: STRETCH`).
-En un contenedor horizontal el eje transversal es el alto, así que «rellenar» significa
-tomar el alto de la fila. Sin eso cada tarjeta abraza su propio texto y basta con un
-título de dos líneas para desnivelar la fila.
+en el panel derecho pon su alto en **Fill container**. En un contenedor horizontal el eje
+transversal es el alto, así que «rellenar» significa tomar el alto de la fila. Sin eso
+cada tarjeta abraza su propio texto y basta con un título de dos líneas para desnivelar
+la fila.
+
+> Por la API no basta con `layoutAlign = 'STRETCH'`. Si el marco sigue abrazando su
+> contenido en el eje del alto —`primaryAxisSizingMode` en `AUTO` si es vertical—, el
+> abrazo gana y la marca no hace nada. Hay que fijar el eje **y** aplicar la medida.
+> El plugin lo hace en una pasada final, cuando ya conoce el alto de cada fila.
 
 **La separación va en los dos ejes.** En un contenedor con ajuste de línea, Figma
 distingue el hueco *dentro* de la fila (`itemSpacing`, el campo **Gap** del panel) del
