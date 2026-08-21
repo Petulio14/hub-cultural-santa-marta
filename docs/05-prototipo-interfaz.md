@@ -105,12 +105,36 @@ criterio de aceptación de HU-06 y por HU-32.
 | 768 px (tableta) | 8 columnas, margen 24 px | Compacto | 2 por fila |
 | 1366 px (escritorio) | 12 columnas, margen 32 px | Horizontal completo | 3 o 4 por fila |
 
+- Separación entre tarjetas: **16 px** a 360, **18 px** a 768, **20 px** a 1366, y la
+  misma medida **entre filas que entre columnas**. Dos tarjetas apiladas necesitan el
+  mismo aire que dos tarjetas contiguas; a 360 px, donde cada tarjeta ocupa su propia
+  fila, esa separación es la única que hay.
 - Punto de corte del menú compacto: **768 px** (HU-10).
 - Área mínima de toque de todo elemento interactivo en móvil: **44 × 44 px** (HU-10).
 - Ninguna vista debe presentar desbordamiento horizontal a 360 px (HU-33).
 - En móvil, las tablas del panel de administración se reorganizan como tarjetas apiladas.
 - El mapa ocupa una altura útil que permita su manipulación y **no debe capturar el
   desplazamiento vertical de la página** (HU-30).
+
+## 4 bis. Marca institucional y fondo
+
+**Logotipo del Tecnológico de Antioquia**, arriba a la izquierda de la cabecera, en las
+nueve vistas y en los tres anchos. Va sobre una **placa blanca**: la marca es verde
+oscuro y la cabecera es `azul-profundo`, así que sobre el fondo directo quedaría muy por
+debajo del 4,5 : 1 de la sección 3. Alturas: 20 px a 360, 26 a 768 y 30 a 1366.
+
+**Fondo alusivo a la ciudad**, por debajo de todo el contenido y por debajo de la
+cabecera, al **8 % de opacidad**. Es la silueta de la Sierra Nevada cayendo sobre el
+Caribe —el perfil que tiene Santa Marta desde la bahía— dibujada con formas vectoriales.
+Se genera, no se descarga: una fotografía exigiría resolver su licencia antes de que el
+prototipo pueda publicarse, y el trabajo de grado es un documento público.
+
+Si se prefiere una fotografía, el plugin acepta una desde su selector y la usa en lugar
+de la ilustración, al 6 %. En ese caso hay que dejar constancia de la autoría y la
+licencia de la imagen en este documento.
+
+En ambos casos el fondo es **decorativo**: no porta información, y por eso no necesita
+texto alternativo (WCAG 2.1, criterio 1.1.1).
 
 ## 5. Requisitos de accesibilidad del diseño
 
@@ -203,6 +227,32 @@ Es el tercer defecto de esta historia que solo aparece mirando el prototipo, des
 contenedor de filtros aplastado y del botón de menú sin interacción. La comprobación
 automática se amplía cada vez, pero la revisión humana sigue encontrando lo que ninguna
 regla anticipó.
+
+### Segunda ronda de retroalimentación — 21/08/2026
+
+Tres observaciones más del asesor, resueltas en el *build 8*.
+
+**1 · Las tarjetas de evento se tocaban entre filas.** Había separación entre columnas
+pero no entre filas, y a 360 px, donde cada tarjeta ocupa su propia fila, la lista entera
+quedaba sin aire. Un contenedor con ajuste de línea tiene **dos** huecos —`itemSpacing`
+dentro de la fila y `counterAxisSpacing` entre filas— y solo estaba fijado el primero.
+Afectaba a **131 contenedores**: el catálogo, los cuatro accesos del inicio, las cifras
+del panel, los metadatos de cada tarjeta y el pie.
+
+Vuelve a ser un caso en el que la maqueta HTML estaba bien y el archivo de Figma no: la
+propiedad `gap` de CSS fija los dos huecos a la vez, así que allí el defecto no podía
+darse. La sección 4 recoge ahora la medida explícitamente, para que la especificación no
+dependa de qué hace por defecto cada herramienta.
+
+**2 · Falta el logotipo institucional.** Añadido arriba a la izquierda en las 27
+pantallas y en el menú desplegable de móvil, con la placa blanca que describe la sección
+4 bis.
+
+**3 · Falta un fondo alusivo a la ciudad.** Añadido según la sección 4 bis.
+
+La auditoría del plugin comprueba ahora las tres cosas: que ningún contenedor con ajuste
+de línea deje las filas pegadas, que las 27 pantallas tengan fondo, y que el logotipo
+esté cargado de verdad y no sea el marcador.
 
 ---
 

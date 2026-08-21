@@ -7,6 +7,29 @@ No accede a ninguna red. No necesita cuenta de pago ni permisos especiales.
 
 ---
 
+## Antes de la primera ejecución: el logotipo
+
+El plugin no tiene acceso a la red —`networkAccess` está en `none`—, así que el logotipo
+del Tecnológico de Antioquia hay que dárselo desde su propia ventana:
+
+1. Abre el plugin y pulsa **Elegir…** junto a *Logo institucional*.
+2. Selecciona el PNG o el JPG del logotipo.
+3. Queda guardado en el almacenamiento local de tu Figma: **se pide una sola vez** y las
+   siguientes ejecuciones lo reutilizan.
+
+Si no se carga, el prototipo se construye igual pero en su lugar aparece un recuadro
+punteado que dice «logo pendiente», y el informe lo anota como incidencia. Es a propósito:
+un hueco vacío se olvida, un recuadro que dice lo que falta se corrige.
+
+El segundo selector, *Fondo de Santa Marta*, es **opcional**. Sin él se dibuja una
+ilustración generada —la Sierra Nevada sobre el Caribe— al 8 % de opacidad. Con una
+fotografía cargada se usa esa, al 6 %. La ilustración no exige resolver la licencia de
+ninguna imagen, que es la razón de que sea la opción por defecto.
+
+Máximo 900 KB por imagen: por encima de eso el almacenamiento local de Figma la rechaza.
+
+---
+
 ## Cómo ejecutarlo
 
 1. Abre **Figma escritorio** (no el navegador: la versión web no permite importar un
@@ -37,6 +60,8 @@ Lo que hayas añadido a mano se conserva, porque solo borra lo que lleva su marc
 | Pantallas | 27 | 9 vistas × 360, 768 y 1366 px |
 | Capa de menú | 1 | `Menú de navegación · 360`, que abre el botón compacto del encabezado |
 | Enlaces de prototipo | 151 | Navegación completa entre pantallas del mismo ancho |
+| Logotipo institucional | 28 | Cabecera de las 27 pantallas y del menú desplegable, sobre placa blanca |
+| Fondo de la ciudad | 27 | Sierra Nevada sobre el Caribe, al 8 %, por debajo de todo el contenido |
 
 Se descartan además 11 enlaces que apuntarían a su propia pantalla —la opción activa del
 menú y el «volver al inicio» del pie dentro de Inicio—, que Figma rechaza porque el destino
@@ -79,6 +104,11 @@ Al terminar, el plugin audita lo que acaba de construir:
   primera ejecución real.
 - **Enlaces de prototipo**: cuántos se conectaron, y para los que fallen, en qué pantalla
   está el origen, qué nodo es y cuál fue el error exacto.
+- **Separación entre filas**: todo contenedor con ajuste de línea tiene que separar sus
+  filas, no solo sus columnas. Sin ello las tarjetas se tocan, y a 360 px —una tarjeta por
+  fila— la lista entera queda sin aire.
+- **Fondo y logotipo**: que las 27 pantallas lleven fondo y que el logotipo institucional
+  sea la imagen real y no el marcador.
 - **Pantallas sin camino desde Inicio**: recorre el grafo de enlaces desde V-1 y avisa
   de toda vista a la que no se pueda llegar navegando (HU-09). Una vista puede estar
   impecablemente construida y no tener un solo enlace de entrada: ninguna de las
@@ -99,6 +129,8 @@ asesor en la Sprint Review sigue siendo el cuarto criterio de aceptación de HU-
 | El informe avisa de fuentes sustituidas por Inter | Archivo, Source Sans 3 o IBM Plex Mono no están disponibles en tu cuenta. Búscalas en el selector de fuentes de Figma para que se descarguen y vuelve a ejecutar. |
 | «Cannot write to node» o similar | El archivo está abierto en modo solo lectura, o es un archivo de un equipo donde no tienes permiso de edición. |
 | Los plugins de desarrollo están deshabilitados | Algunas organizaciones restringen los plugins a una lista aprobada. Prueba en un archivo de tu espacio personal (*Drafts*). |
+| El informe dice «logo institucional : NO cargado» | No has usado el selector *Elegir…*, o la imagen no es PNG ni JPG. `createImage` de Figma solo admite mapas de bits: un SVG no sirve. |
+| «La imagen pesa N KB» al elegir el archivo | Supera los 900 KB que admite el almacenamiento local. Expórtala más pequeña: para el logotipo bastan unos 600 px de ancho. |
 
 ---
 
