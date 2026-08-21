@@ -28,10 +28,46 @@
     max-height: 300px; overflow: auto; margin: 0;
   }
   .oculto { display: none; }
+  fieldset {
+    border: 1px solid #E0E0E0; border-radius: 6px;
+    padding: 10px 12px 12px; margin: 0 0 12px;
+  }
+  @media (prefers-color-scheme: dark) { fieldset { border-color: #3A3A3A; } }
+  legend { font-size: 11px; font-weight: 600; padding: 0 4px; }
+  .rec { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .rec label { flex: 1 1 auto; font-size: 11px; }
+  .rec .est { opacity: .65; font-size: 10.5px; display: block; }
+  .rec input[type=file] { display: none; }
+  .rec .elegir, .rec .quitar {
+    font-size: 10.5px; padding: 5px 9px; border-radius: 5px; font-weight: 600;
+    background: #F0F0F0; color: #1B2126; border: 1px solid #E0E0E0; cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) {
+    .rec .elegir, .rec .quitar { background: #3A3A3A; color: #E6EAED; border-color: #4A4A4A; }
+  }
+  .rec .quitar[hidden] { display: none; }
 </style>
 
 <h1>Generador de prototipo</h1>
-<p class="sub">Construye estilos, componentes, las 21 pantallas y los enlaces de navegación.</p>
+<p class="sub">Construye estilos, componentes, las 27 pantallas y los enlaces de navegación.</p>
+
+<fieldset>
+  <legend>Imágenes</legend>
+  <div class="rec">
+    <label>Logo institucional
+      <span class="est" id="est-logo">sin cargar — se dibujará un marcador</span></label>
+    <button class="elegir" data-clave="logo">Elegir…</button>
+    <button class="quitar" data-clave="logo" hidden>Quitar</button>
+    <input type="file" id="f-logo" accept="image/png,image/jpeg">
+  </div>
+  <div class="rec">
+    <label>Fondo de Santa Marta <em>(opcional)</em>
+      <span class="est" id="est-fondo">sin cargar — se usa la ilustración generada</span></label>
+    <button class="elegir" data-clave="fondo">Elegir…</button>
+    <button class="quitar" data-clave="fondo" hidden>Quitar</button>
+    <input type="file" id="f-fondo" accept="image/png,image/jpeg">
+  </div>
+</fieldset>
 
 <div class="fila">
   <button id="construir">Construir</button>
@@ -47,6 +83,60 @@
   var btnCopiar = document.getElementById('copiar');
   var estado = document.getElementById('estado');
   var informe = document.getElementById('informe');
+
+  var LIMITE = 900 * 1024;   // clientStorage no admite valores mucho mayores
+
+  var TEXTO_VACIO = {
+    logo: 'sin cargar — se dibujará un marcador',
+    fondo: 'sin cargar — se usa la ilustración generada'
+  };
+
+  function pintarRecurso(clave, datos) {
+    var est = document.getElementById('est-' + clave);
+    var quitar = document.querySelector('.quitar[data-clave="' + clave + '"]');
+    if (datos) {
+      est.textContent = datos.nombre + ' · ' + datos.kb + ' KB';
+      quitar.hidden = false;
+    } else {
+      est.textContent = TEXTO_VACIO[clave];
+      quitar.hidden = true;
+    }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.elegir'), function (b) {
+    b.onclick = function () { document.getElementById('f-' + b.dataset.clave).click(); };
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.quitar'), function (b) {
+    b.onclick = function () {
+      parent.postMessage({ pluginMessage: { tipo: 'borrarRecurso', clave: b.dataset.clave } }, '*');
+    };
+  });
+
+  ['logo', 'fondo'].forEach(function (clave) {
+    document.getElementById('f-' + clave).onchange = function (ev) {
+      var archivo = ev.target.files && ev.target.files[0];
+      ev.target.value = '';
+      if (!archivo) return;
+      if (archivo.size > LIMITE) {
+        estado.textContent = 'La imagen pesa ' + Math.round(archivo.size / 1024) +
+          ' KB. El máximo son ' + Math.round(LIMITE / 1024) + ' KB: expórtala más pequeña.';
+        return;
+      }
+      var lector = new FileReader();
+      lector.onload = function () {
+        // readAsDataURL devuelve «data:image/png;base64,AAAA…»; solo interesa la cola
+        var b64 = String(lector.result).split(',')[1] || '';
+        parent.postMessage({ pluginMessage: {
+          tipo: 'guardarRecurso', clave: clave, nombre: archivo.name, base64: b64
+        } }, '*');
+      };
+      lector.onerror = function () { estado.textContent = 'No se pudo leer el archivo.'; };
+      lector.readAsDataURL(archivo);
+    };
+  });
+
+  parent.postMessage({ pluginMessage: { tipo: 'estadoRecursos' } }, '*');
 
   btn.onclick = function () {
     btn.disabled = true;
@@ -75,7 +165,10 @@
   onmessage = function (e) {
     var m = e.data.pluginMessage;
     if (!m) return;
-    if (m.tipo === 'progreso') {
+    if (m.tipo === 'recursos') {
+      pintarRecurso('logo', m.logo);
+      pintarRecurso('fondo', m.fondo);
+    } else if (m.tipo === 'progreso') {
       estado.textContent = m.texto;
     } else if (m.tipo === 'informe') {
       estado.textContent = m.ok ? 'Listo.' : 'Terminado con incidencias.';
