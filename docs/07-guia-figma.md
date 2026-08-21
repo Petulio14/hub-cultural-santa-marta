@@ -187,6 +187,12 @@ Dos vistas de soporte, opcionales para cerrar HU-06 pero necesarias antes del Sp
 | Retrato del perfil | ancho completo | 168 px fijos | 168 px fijos |
 | Mapa | alto 340 | 440 | 440 |
 
+**Las tarjetas de una fila se igualan en alto.** Selecciona cada tarjeta de la rejilla y
+en el panel derecho pon su alto en **Fill container** (en la API, `layoutAlign: STRETCH`).
+En un contenedor horizontal el eje transversal es el alto, así que «rellenar» significa
+tomar el alto de la fila. Sin eso cada tarjeta abraza su propio texto y basta con un
+título de dos líneas para desnivelar la fila.
+
 **La separación va en los dos ejes.** En un contenedor con ajuste de línea, Figma
 distingue el hueco *dentro* de la fila (`itemSpacing`, el campo **Gap** del panel) del
 hueco *entre* filas (`counterAxisSpacing`, que aparece como un segundo campo en cuanto
@@ -292,6 +298,7 @@ contra el banco de pruebas y **esperan la ejecución en Figma**.
 | 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
 | 9 | A toda vista se puede llegar navegando desde Inicio | ✅ ninguna fuera del recorrido |
 | 9b | Las filas de tarjetas están separadas, no solo las columnas | 🟡 build 8, pendiente de ejecutar |
+| 9d | En una rejilla, las tarjetas de una fila miden lo mismo de alto | 🟡 build 8, pendiente de ejecutar |
 | 9c | Logotipo institucional y fondo de la ciudad en las 27 pantallas | 🟡 build 8, pendiente de ejecutar |
 | 10 | Revisión visual: jerarquía, alineación, legibilidad | ✅ con el asesor, 21/08/2026 — **no la puede hacer el plugin** |
 | 11 | Enlace anotado en el issue y en el documento 05 | ✅ |

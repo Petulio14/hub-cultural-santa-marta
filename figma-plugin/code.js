@@ -245,6 +245,18 @@ function estirar(nodo) {
   return nodo;
 }
 
+// En un contenedor HORIZONTAL, «rellenar el contenedor» es rellenar el ALTO: el alto
+// es el eje transversal. Es lo que iguala la altura de las tarjetas de una misma fila.
+// Sin esto cada tarjeta abraza su propio texto, y basta con que un título ocupe dos
+// líneas para que su tarjeta sea más alta que la de al lado.
+function igualarAlto(nodo) {
+  nodo.layoutAlign = 'STRETCH';
+  // clave propia y no 'dimensionado': así se combina con crecer(), que fija el
+  // reparto del ancho, sin que una borre a la otra
+  if (nodo.setPluginData) nodo.setPluginData('altoIgual', 'si');
+  return nodo;
+}
+
 function crecer(nodo) {
   nodo.layoutGrow = 1;
   if (nodo.setPluginData) nodo.setPluginData('dimensionado', 'crecer');
@@ -263,6 +275,9 @@ function reaplicarDimensionado(nodo) {
           if (h.layoutMode === 'HORIZONTAL') h.primaryAxisSizingMode = 'FIXED';
         } else if (quiere === 'crecer') {
           h.layoutGrow = 1;
+        }
+        if (nodo.layoutMode === 'HORIZONTAL' && h.getPluginData('altoIgual') === 'si') {
+          h.layoutAlign = 'STRETCH';
         }
       } catch (e) { /* algunos nodos no admiten estas propiedades */ }
     }
@@ -897,7 +912,7 @@ function rejillaEventos(ancho, lista, conDescripcion) {
   var col = anchoColumna(ancho, n, espacio);
   var r = pila('rejilla', 'h', { espacio: espacio, envolver: true, ancho: anchoUtil(ancho) });
   estirar(r);
-  lista.forEach(function (ev) { r.appendChild(tarjetaEvento(ev, col, conDescripcion)); });
+  lista.forEach(function (ev) { r.appendChild(igualarAlto(tarjetaEvento(ev, col, conDescripcion))); });
   return r;
 }
 
@@ -991,7 +1006,7 @@ function V1(ancho) {
     });
     caja.appendChild(estirar(T('titulo/h3', a[0], 'texto/negro')));
     caja.appendChild(estirar(T('cuerpo/pequeno', a[1], 'texto/apagado')));
-    accesos.appendChild(caja);
+    accesos.appendChild(igualarAlto(caja));
     enlaces.push({ desde: caja, hacia: a[2], ancho: ancho });
   });
   sAccesos.appendChild(accesos);
@@ -1345,7 +1360,7 @@ function V7(ancho) {
     });
     caja.appendChild(T('titulo/h1-escritorio', d[0], 'marca/azul-profundo'));
     caja.appendChild(T('cuerpo/pista', d[1], 'texto/apagado'));
-    cifras.appendChild(caja);
+    cifras.appendChild(igualarAlto(caja));
   });
   c.appendChild(cifras);
 
@@ -1641,7 +1656,13 @@ function V9(ancho) {
   var cIni = campo('Inicio', '06/09/2026', null, esMovil(ancho) ? interno : Math.floor((interno - 12) / 2));
   var cFin = campo('Fin', '05/09/2026', 'La fecha de fin no puede ser anterior a la de inicio.',
     esMovil(ancho) ? interno : Math.floor((interno - 12) / 2));
-  if (esMovil(ancho)) { estirar(cIni); estirar(cFin); } else { crecer(cIni); crecer(cFin); }
+  if (esMovil(ancho)) {
+    estirar(cIni); estirar(cFin);
+  } else {
+    // el campo con mensaje de error es más alto; igualarlos alinea los dos bordes
+    // inferiores y deja el hueco reservado bajo el que no tiene error
+    crecer(igualarAlto(cIni)); crecer(igualarAlto(cFin));
+  }
   par.appendChild(cIni);
   par.appendChild(cFin);
   form.appendChild(par);
@@ -2074,6 +2095,57 @@ function auditar() {
   if (sinAire.length) {
     problemas.push(sinAire.length + ' contenedores dejan las filas pegadas entre sí');
     sinAire.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
+  }
+
+  // Tarjetas de la misma fila con alturas distintas. En una rejilla de columnas
+  // iguales, que una tarjeta sea más alta que su vecina solo porque su título ocupa
+  // dos líneas se lee como un descuido. Solo se miran las rejillas de verdad —todas
+  // las columnas del mismo ancho—: una fila de botones o de etiquetas tiene anchos
+  // distintos a propósito y ahí la altura desigual no significa nada.
+  var desparejas = [];
+  Object.keys(todos).forEach(function (k) {
+    function recorrer(nodo) {
+      if (!nodo.children) return;
+      if (nodo.layoutMode === 'HORIZONTAL') {
+        var hijos = [];
+        nodo.children.forEach(function (c) {
+          if (c.layoutPositioning !== 'ABSOLUTE') hijos.push(c);
+        });
+        var uniforme = hijos.length > 1;
+        for (var i = 1; i < hijos.length && uniforme; i++) {
+          if (Math.abs(hijos[i].width - hijos[0].width) > 1) uniforme = false;
+        }
+        if (uniforme) {
+          var filas = {};
+          hijos.forEach(function (c) {
+            var y = String(Math.round(c.y));
+            if (!filas[y]) filas[y] = [];
+            filas[y].push(c);
+          });
+          Object.keys(filas).forEach(function (y) {
+            var fila = filas[y];
+            if (fila.length < 2) return;
+            var min = fila[0].height, max = fila[0].height;
+            fila.forEach(function (c) {
+              if (c.height < min) min = c.height;
+              if (c.height > max) max = c.height;
+            });
+            if (max - min > 1) {
+              desparejas.push(k + ' · ' + nodo.name + ': ' + Math.round(min) +
+                ' y ' + Math.round(max) + ' px en la misma fila');
+            }
+          });
+        }
+      }
+      nodo.children.forEach(recorrer);
+    }
+    recorrer(todos[k]);
+  });
+  lineas.push('tarjetas desparejas en una misma fila : ' +
+    (desparejas.length === 0 ? 'ninguna' : desparejas.length));
+  if (desparejas.length) {
+    problemas.push(desparejas.length + ' filas de una rejilla mezclan alturas distintas');
+    desparejas.slice(0, 6).forEach(function (s) { lineas.push('    · ' + s); });
   }
 
   // La auditoría solo miraba desbordamiento, y un contenedor demasiado ESTRECHO no
