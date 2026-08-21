@@ -67,20 +67,24 @@ function disponer(n) {
 
   n.children.forEach(disponer);
 
+  // Un hijo en posicion absoluta no participa del flujo: ni ocupa sitio ni
+  // desplaza a los demas. Es asi como se cuelga el fondo detras del contenido.
+  const flujo = n.children.filter((c) => c.layoutPositioning !== 'ABSOLUTE');
+
   // Figma colapsa a 1 px a los hijos que rellenan cuando el contenedor horizontal
   // abraza su contenido. Reproducirlo delata los titulos y campos aplastados.
   if (h && n.primaryAxisSizingMode !== 'FIXED') {
-    n.children.forEach((c) => {
+    flujo.forEach((c) => {
       if (c.layoutGrow > 0) { c.width = 1; c._anchoImpuesto = true; }
     });
   }
 
   // Crecimiento en el eje principal (layoutGrow) en contenedores horizontales fijos.
   if (h && n.primaryAxisSizingMode === 'FIXED') {
-    const crecen = n.children.filter((c) => c.layoutGrow > 0);
+    const crecen = flujo.filter((c) => c.layoutGrow > 0);
     if (crecen.length) {
-      const fijos = n.children.filter((c) => !c.layoutGrow).reduce((s, c) => s + c.width, 0);
-      const huecos = n.itemSpacing * Math.max(0, n.children.length - 1);
+      const fijos = flujo.filter((c) => !c.layoutGrow).reduce((s, c) => s + c.width, 0);
+      const huecos = n.itemSpacing * Math.max(0, flujo.length - 1);
       const sobra = anchoInterno - fijos - huecos;
       if (sobra > 0) {
         crecen.forEach((c) => { c.width = Math.max(0.01, sobra / crecen.length); disponer(c); });
@@ -95,21 +99,70 @@ function disponer(n) {
   let altoFila = 0, primeroEnFila = true;
   let maxDerecha = n.paddingLeft, maxAbajo = n.paddingTop;
 
-  n.children.forEach((c) => {
+  const entreFilas = n.counterAxisSpacing === null || n.counterAxisSpacing === undefined
+    ? 0 : n.counterAxisSpacing;
+
+  // Un texto mas estrecho que su contenido salta de linea y crece a lo alto. Sin
+  // modelarlo, todas las tarjetas de una rejilla salen igual de altas en el
+  // simulador y el defecto que se ve en pantalla -un titulo de dos lineas que
+  // estira su tarjeta- no llega a producirse aqui.
+  flujo.forEach((c) => {
+    if (c.type === 'TEXT' && c._anchoNatural > 0 && c.width > 0) {
+      const lineas = Math.max(1, Math.ceil(c._anchoNatural / c.width - 0.001));
+      c.height = lineas * 20;
+    }
+  });
+
+  const filas = [];
+  let filaActual = null;
+
+  flujo.forEach((c) => {
     if (h) {
       if (envuelve && !primeroEnFila && x + c.width > limite) {
         x = n.paddingLeft;
-        y += altoFila + n.itemSpacing;
+        // la separacion entre filas de un contenedor con ajuste es
+        // counterAxisSpacing, no itemSpacing: son dos huecos distintos
+        y += altoFila + entreFilas;
         altoFila = 0;
+        filaActual = null;
       }
       c.x = x; c.y = y;
       x += c.width + n.itemSpacing;
       altoFila = Math.max(altoFila, c.height);
+      if (!filaActual) { filaActual = []; filas.push(filaActual); }
+      filaActual.push(c);
       primeroEnFila = false;
     } else {
       c.x = n.paddingLeft; c.y = y;
       y += c.height + n.itemSpacing;
     }
+  });
+
+  // En un contenedor horizontal el eje transversal es el alto, asi que un hijo
+  // marcado para rellenar toma el alto de su fila. Es lo que iguala las tarjetas.
+  if (h) {
+    filas.forEach((fila) => {
+      const altoDeFila = fila.reduce((m, c) => Math.max(m, c.height), 0);
+      fila.forEach((c) => {
+        if (c.layoutAlign !== 'STRETCH') return;
+        // Lo que enseño el build 8: la marca de estirar no gana al abrazo. Si el
+        // marco sigue abrazando su contenido en el eje del alto, Figma mantiene el
+        // abrazo y la fila queda despareja. El simulador era mas permisivo que
+        // Figma y por eso daba por buena una correccion que alli no hacia nada.
+        const abraza =
+          (c.layoutMode === 'VERTICAL' && c.primaryAxisSizingMode !== 'FIXED') ||
+          (c.layoutMode === 'HORIZONTAL' && c.counterAxisSizingMode !== 'FIXED');
+        if (abraza) {
+          avisos.push('estirado ignorado: "' + (c.name || c.type) +
+            '" sigue abrazando su contenido a lo alto');
+          return;
+        }
+        c.height = altoDeFila;
+      });
+    });
+  }
+
+  flujo.forEach((c) => {
     maxDerecha = Math.max(maxDerecha, c.x + c.width);
     maxAbajo = Math.max(maxAbajo, c.y + c.height);
   });
@@ -152,7 +205,9 @@ function crearNodo(tipo, extra) {
     _layoutAlign: 'INHERIT', _layoutGrow: 0,
     primaryAxisSizingMode: 'AUTO', counterAxisSizingMode: 'AUTO',
     primaryAxisAlignItems: 'MIN', counterAxisAlignItems: 'MIN',
-    itemSpacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0,
+    itemSpacing: 0, counterAxisSpacing: 0, layoutPositioning: 'AUTO',
+    opacity: 1, pointCount: 5, vectorPaths: [],
+    paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0,
     clipsContent: false, layoutGrids: [], gridStyleId: '',
     fillStyleId: '', textStyleId: '',
     reactions: [],
@@ -175,6 +230,20 @@ function crearNodo(tipo, extra) {
       }
       hijo.parent = this;
       this.children.push(hijo);
+      sucio = true;
+    },
+    insertChild(indice, hijo) {
+      if (!hijo) throw new Error('insertChild(undefined) en ' + this.name);
+      if (hijo.removed) throw new Error('insertChild de un nodo ya borrado: ' + hijo.name);
+      if (indice < 0 || indice > this.children.length) {
+        throw new Error('insertChild fuera de rango: ' + indice);
+      }
+      if (hijo.parent) {
+        const i = hijo.parent.children.indexOf(hijo);
+        if (i >= 0) hijo.parent.children.splice(i, 1);
+      }
+      hijo.parent = this;
+      this.children.splice(indice, 0, hijo);
       sucio = true;
     },
     remove() {
@@ -287,6 +356,23 @@ const figma = {
   createFrame: () => nuevo('FRAME'),
   createRectangle: () => nuevo('RECTANGLE'),
   createEllipse: () => nuevo('ELLIPSE'),
+  createPolygon: () => nuevo('POLYGON'),
+
+  createImage(bytes) {
+    if (!bytes || typeof bytes.length !== 'number' || bytes.length === 0) {
+      throw new Error('createImage sin bytes');
+    }
+    return { hash: 'img:' + (++contadorId) + ':' + bytes.length };
+  },
+  base64Decode(txt) {
+    return Uint8Array.from(Buffer.from(String(txt), 'base64'));
+  },
+  clientStorage: {
+    _d: {},
+    async getAsync(k) { return this._d[k] === undefined ? undefined : this._d[k]; },
+    async setAsync(k, v) { this._d[k] = v; },
+    async deleteAsync(k) { delete this._d[k]; }
+  },
   createComponent: () => nuevo('COMPONENT'),
   createText: () => {
     const t = nuevo('TEXT', { textAutoResize: 'NONE', fontName: { family: 'Inter', style: 'Regular' } });
@@ -327,7 +413,8 @@ const contexto = vm.createContext({
   __html__: '<html></html>',
   console,
   setTimeout, clearTimeout,
-  Promise, Date, Math, JSON, Object, Array, String, Number, Boolean, Error
+  Promise, Date, Math, JSON, Object, Array, String, Number, Boolean, Error,
+  Uint8Array
 });
 
 try {

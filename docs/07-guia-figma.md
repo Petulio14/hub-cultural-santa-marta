@@ -177,6 +177,8 @@ Dos vistas de soporte, opcionales para cerrar HU-06 pero necesarias antes del Sp
 | | 360 | 768 | 1366 |
 | --- | --- | --- | --- |
 | Menú | hamburguesa | horizontal | horizontal |
+| Logotipo del TdeA | alto 20 px | 26 px | 30 px |
+| Separación entre tarjetas | 16 px | 18 px | 20 px |
 | Accesos del inicio | 2 columnas | 4 | 4 |
 | Tarjetas por fila | 1 | 2 | 3 |
 | Filtros del catálogo | apilados | 4 columnas | 4 columnas |
@@ -185,9 +187,44 @@ Dos vistas de soporte, opcionales para cerrar HU-06 pero necesarias antes del Sp
 | Retrato del perfil | ancho completo | 168 px fijos | 168 px fijos |
 | Mapa | alto 340 | 440 | 440 |
 
+**Las tarjetas de una fila se igualan en alto.** Selecciona cada tarjeta de la rejilla y
+en el panel derecho pon su alto en **Fill container**. En un contenedor horizontal el eje
+transversal es el alto, así que «rellenar» significa tomar el alto de la fila. Sin eso
+cada tarjeta abraza su propio texto y basta con un título de dos líneas para desnivelar
+la fila.
+
+> Por la API no basta con `layoutAlign = 'STRETCH'`. Si el marco sigue abrazando su
+> contenido en el eje del alto —`primaryAxisSizingMode` en `AUTO` si es vertical—, el
+> abrazo gana y la marca no hace nada. Hay que fijar el eje **y** aplicar la medida.
+> El plugin lo hace en una pasada final, cuando ya conoce el alto de cada fila.
+
+**La separación va en los dos ejes.** En un contenedor con ajuste de línea, Figma
+distingue el hueco *dentro* de la fila (`itemSpacing`, el campo **Gap** del panel) del
+hueco *entre* filas (`counterAxisSpacing`, que aparece como un segundo campo en cuanto
+activas *Wrap*). Poner solo el primero deja las tarjetas tocándose por arriba y por
+abajo, y a 360 px, con una tarjeta por fila, es lo único que se ve. Es exactamente lo que
+señaló el asesor el 21/08/2026.
+
 La tabla del panel es el caso que más se olvida: en móvil **no** es una tabla con desbordamiento
 lateral, sino una tarjeta por fila con cada dato etiquetado. Míralo en la maqueta poniendo
 V-7 a 360.
+
+### Marca institucional y fondo
+
+**Logotipo del Tecnológico de Antioquia** arriba a la izquierda de cada cabecera, sobre
+una **placa blanca** de 5 px de radio con 8 px de holgura lateral. La placa no es
+decorativa: la marca es verde oscuro sobre una cabecera `azul-profundo`, y sin ella el
+contraste se queda muy lejos del 4,5 : 1 de la sección 3 del documento 05.
+
+**Fondo de la ciudad** al **8 %** de opacidad, por debajo de todo el contenido y por
+debajo de la cabecera. Si lo construyes a mano en Figma: dibuja la silueta —Sierra Nevada
+sobre el Caribe—, agrúpala en un marco del ancho de la pantalla, y en el panel derecho
+marca el marco como **Absolute position** para que no participe del auto layout. Colócalo
+como **primer hijo** del marco de la pantalla: en Figma el primer hijo es el que queda al
+fondo.
+
+El plugin hace las dos cosas solo; el logotipo se lo das desde su propio selector, una
+vez ([`../figma-plugin/README.md`](../figma-plugin/README.md)).
 
 ### Textos
 
@@ -248,8 +285,11 @@ Comprueba después dos cosas, no una:
 
 ## Verificación antes de dar HU-06 por terminada
 
-Las nueve primeras las comprueba el propio plugin y quedaron verificadas en la ejecución
-del *build 7* del 21/08/2026, cuyo informe está en el issue [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6).
+Las once primeras las comprueba el propio plugin. Las marcadas como *build 7* están
+verificadas contra el archivo real de Figma, con el informe en el issue
+[HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6). Las del
+*build 8* —las tres correcciones de la segunda ronda del asesor— están verificadas
+contra el banco de pruebas y **esperan la ejecución en Figma**.
 
 | # | Comprobación | Estado |
 | --- | --- | --- |
@@ -262,6 +302,9 @@ del *build 7* del 21/08/2026, cuyo informe está en el issue [HU-06](https://git
 | 7 | Ninguna vista de 360 desborda en horizontal | ✅ ningún desbordamiento |
 | 8 | Toda imagen tiene previsto su texto alternativo | ✅ va en el nombre de cada nodo de imagen |
 | 9 | A toda vista se puede llegar navegando desde Inicio | ✅ ninguna fuera del recorrido |
+| 9b | Las filas de tarjetas están separadas, no solo las columnas | 🟡 build 8, pendiente de ejecutar |
+| 9d | En una rejilla, las tarjetas de una fila miden lo mismo de alto | 🟡 build 8, pendiente de ejecutar |
+| 9c | Logotipo institucional y fondo de la ciudad en las 27 pantallas | 🟡 build 8, pendiente de ejecutar |
 | 10 | Revisión visual: jerarquía, alineación, legibilidad | ✅ con el asesor, 21/08/2026 — **no la puede hacer el plugin** |
 | 11 | Enlace anotado en el issue y en el documento 05 | ✅ |
 | 12 | Retroalimentación del asesor registrada en el issue | 🟡 registrada la del 21/08; falta la de la Sprint Review |
