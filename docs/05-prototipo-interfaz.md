@@ -186,7 +186,10 @@ alcanzaban los 44 px de alto en móvil, y el punto de corte de 768 px no dispara
 a causa del borde del contenedor. Son exactamente los hallazgos que HU-06 debe anticipar
 antes de que lleguen al código.
 
-## 7. Qué falta para cerrar HU-06
+## 7. Cierre de HU-06
+
+**Historia cerrada el 21/08/2026**, con el prototipo aprobado por el asesor tras dos
+rondas de revisión.
 
 | # | Tarea | Estado |
 | --- | --- | --- |
@@ -194,9 +197,19 @@ antes de que lleguen al código.
 | 2 | Construir las 9 vistas navegables en los 3 anchos. | ✅ `prototipo/index.html` |
 | 3 | Crear el archivo de Figma y trasladar las vistas. | ✅ generado con [`../figma-plugin/`](../figma-plugin/) — 27 pantallas |
 | 4 | Aplicar la paleta de la sección 3 como estilos de color de Figma. | ✅ 17 estilos de color y 12 de texto |
-| 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ✅ revisado con el asesor el 21/08/2026 — ver más abajo |
-| 6 | Presentar el prototipo en la Sprint Review y registrar la retroalimentación del asesor. | ⬜ |
+| 5 | Revisar a ojo lo generado: jerarquía tipográfica, alineación, legibilidad del panel en móvil. | ✅ dos rondas con el asesor, 21/08/2026 |
+| 6 | Presentar el prototipo y registrar la retroalimentación del asesor. | ✅ registrada abajo y en el issue |
 | 7 | Añadir el enlace del archivo de Figma en este documento y en el issue HU-06. | ✅ |
+
+Los cuatro criterios de aceptación quedan cubiertos: las siete vistas obligatorias
+existen en los tres anchos, el prototipo navega con 151 enlaces y sin ninguna pantalla
+fuera del recorrido, todos los pares de color de la sección 3 superan el 4,5 : 1, y la
+retroalimentación del asesor está registrada con sus dos rondas y su aprobación.
+
+A partir de aquí el prototipo aprobado es **condición de la Definición de Listo** para
+toda historia con componente visual, es decir, para los sprints 3 a 7: ningún cambio de
+interfaz se escribe en código antes de reflejarse en este documento y en el archivo de
+Figma.
 
 **Prototipo navegable en Figma:** https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1
 
