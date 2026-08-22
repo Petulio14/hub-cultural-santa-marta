@@ -22,6 +22,9 @@ storage-debug.log
 # vercel
 .vercel/
 
+# configuracion local de las herramientas de trabajo
+.claude/
+
 # editores y sistema
 .DS_Store
 Thumbs.db

@@ -1,0 +1,46 @@
+/*
+ * Paleta y medidas del prototipo. Los nombres son los mismos que en
+ * docs/05-prototipo-interfaz.md §3 y §4: si un color cambia allí, cambia aquí,
+ * y en ningún otro sitio del proyecto se escribe un valor hexadecimal.
+ */
+
+:root {
+  /* Color — todos los pares de uso previsto superan 4,5 : 1 (WCAG 2.1, RNF-04) */
+  --azul-profundo: #0b3c5d;
+  --turquesa-oscuro: #0a5f5e;
+  --turquesa: #0e7c7b;
+  --terracota: #b04a2f;
+  --ocre: #8a5a17;
+  --gris-texto: #3a3f45;
+  --negro-texto: #14181c;
+  --arena: #f7f3ec;
+  --blanco: #ffffff;
+  --gris-borde: #d5cfc4;
+
+  /* Margen de la rejilla: 16 px a 360, 24 a 768, 32 a 1366 */
+  --margen: 16px;
+  /* Separación entre tarjetas, la misma entre filas que entre columnas */
+  --espacio-tarjetas: 16px;
+  /* Ancho útil máximo del contenido */
+  --ancho-maximo: 1200px;
+  /* Área mínima de toque en móvil (HU-10) */
+  --toque-minimo: 44px;
+
+  --radio: 10px;
+  --sombra-tarjeta: 0 1px 3px rgba(20, 24, 28, 0.12);
+  --fuente: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --margen: 24px;
+    --espacio-tarjetas: 18px;
+  }
+}
+
+@media (min-width: 1366px) {
+  :root {
+    --margen: 32px;
+    --espacio-tarjetas: 20px;
+  }
+}
