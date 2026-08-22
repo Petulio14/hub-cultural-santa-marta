@@ -133,7 +133,18 @@ Los índices tardan unos minutos en construirse; el estado se ve en *Firestore �
 ### 1.6 Comprobar que las reglas hacen lo que deben
 
 Este es el criterio de aceptación de HU-11, y conviene verificarlo antes de escribir código
-que dependa de ello. En *Firestore → Reglas → Área de pruebas de Reglas*:
+que dependa de ello.
+
+> **Ya no hace falta hacerlo a mano.** Estas seis simulaciones —y quince más— están escritas
+> como pruebas automáticas que corren contra el emulador:
+>
+> ```bash
+> npm run probar:reglas
+> ```
+>
+> Véase [11-reglas-de-seguridad.md](11-reglas-de-seguridad.md). La tabla se conserva porque
+> sigue siendo la forma de comprobar una regla suelta sin escribir código, en
+> *Firestore → Reglas → Área de pruebas de Reglas*:
 
 | Simulación | Ubicación | Autenticado | Resultado esperado |
 | --- | --- | --- | --- |
@@ -267,10 +278,10 @@ Marca aquí conforme avances; sirve de evidencia en la Sprint Review.
 | # | Paso | Estado |
 | --- | --- | --- |
 | 1 | Proyecto de Firebase creado | ✅ 22/08/2026 |
-| 2 | Authentication, Firestore y Storage habilitados | ⬜ |
+| 2 | Authentication, Firestore y Storage habilitados | ◨ Firestore sí; **Storage sin configurar** |
 | 3 | Aplicación web registrada y `.env.local` relleno | ✅ 22/08/2026 |
-| 4 | Reglas e índices publicados | ⬜ |
-| 5 | Las seis simulaciones de §1.6 dan el resultado esperado | ⬜ |
+| 4 | Reglas e índices publicados | ✅ 22/08/2026 · Firestore: reglas compiladas y 6 índices |
+| 5 | Las seis simulaciones de §1.6 dan el resultado esperado | ✅ 22/08/2026 · automatizadas: 21 casos en verde ([11](11-reglas-de-seguridad.md)) |
 | 6 | Cuenta de administrador creada | ⬜ |
 | 7 | Proyecto de Vercel conectado con sus variables | ⬜ |
 | 8 | Dirección pública anotada en HU-08 y en el README | ⬜ |

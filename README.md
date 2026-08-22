@@ -37,6 +37,12 @@ Comprueba que ninguna vista accede a Firebase por su cuenta, que toda vista est�
 que los colores viven solo en la paleta. El detalle está en
 [`docs/08-estructura-del-proyecto.md`](docs/08-estructura-del-proyecto.md).
 
+Y si tocas las reglas de seguridad, las 21 pruebas contra el emulador (requiere Java):
+
+```bash
+npm run probar:reglas
+```
+
 ## Stack
 
 React · Firebase (Authentication, Cloud Firestore, Storage) · Leaflet sobre OpenStreetMap · Vercel
