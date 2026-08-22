@@ -17,6 +17,11 @@
   --blanco: #ffffff;
   --gris-borde: #d5cfc4;
 
+  /* Realces sobre la barra azul: no son colores nuevos, son el blanco atenuado */
+  --realce-suave: rgba(255, 255, 255, 0.12);
+  --realce-fuerte: rgba(255, 255, 255, 0.16);
+  --borde-claro: rgba(255, 255, 255, 0.55);
+
   /* Margen de la rejilla: 16 px a 360, 24 a 768, 32 a 1366 */
   --margen: 16px;
   /* Separación entre tarjetas, la misma entre filas que entre columnas */
