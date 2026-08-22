@@ -67,6 +67,35 @@ cp .env.example .env.local
 Rellena `.env.local` con los seis valores del paso anterior. `.gitignore` ya lo excluye, así
 que no se sube al repositorio.
 
+Este paso **no se hace en la consola de Firebase ni en ninguna página web**: es un archivo
+de texto en la carpeta del proyecto, en el computador. Del objeto `firebaseConfig` que
+muestra Firebase se copia solo el valor de cada línea, sin las comillas ni la coma:
+
+| Del objeto `firebaseConfig` | A `.env.local` |
+| --- | --- |
+| `apiKey` | `VITE_FIREBASE_API_KEY` |
+| `authDomain` | `VITE_FIREBASE_AUTH_DOMAIN` |
+| `projectId` | `VITE_FIREBASE_PROJECT_ID` |
+| `storageBucket` | `VITE_FIREBASE_STORAGE_BUCKET` |
+| `messagingSenderId` | `VITE_FIREBASE_MESSAGING_SENDER_ID` |
+| `appId` | `VITE_FIREBASE_APP_ID` |
+
+El resto del fragmento que muestra Firebase —el `import`, el `initializeApp`— no se copia:
+eso ya está escrito en `src/services/firebase.js`, que lee estas seis variables.
+
+**Vite lee `.env.local` una sola vez, al arrancar.** Si el servidor de desarrollo estaba en
+marcha, hay que pararlo y volver a lanzar `npm run dev`; si no, seguirá creyendo que no hay
+configuración.
+
+Para comprobar que quedó bien, con `npm run dev` en marcha, en la consola del navegador:
+
+```js
+const f = await import('/src/services/firebase.js');
+console.log(f.configuracionCompleta, f.db.app.options.projectId);
+```
+
+Debe imprimir `true` y el identificador del proyecto.
+
 ### 1.5 Publicar las reglas y los índices
 
 Instala la CLI de Firebase y vincula el proyecto:
@@ -84,7 +113,8 @@ firebase use --add
 ```
 
 Elige el proyecto de la lista y ponle el alias `default`. Eso genera `.firebaserc`
-(excluido del repositorio). Después:
+(excluido del repositorio); si el archivo ya existe con el identificador correcto, este
+paso se puede saltar. Después:
 
 ```bash
 firebase deploy --only firestore:rules,firestore:indexes,storage
@@ -236,9 +266,9 @@ Marca aquí conforme avances; sirve de evidencia en la Sprint Review.
 
 | # | Paso | Estado |
 | --- | --- | --- |
-| 1 | Proyecto de Firebase creado | ⬜ |
+| 1 | Proyecto de Firebase creado | ✅ 22/08/2026 |
 | 2 | Authentication, Firestore y Storage habilitados | ⬜ |
-| 3 | Aplicación web registrada y `.env.local` relleno | ⬜ |
+| 3 | Aplicación web registrada y `.env.local` relleno | ✅ 22/08/2026 |
 | 4 | Reglas e índices publicados | ⬜ |
 | 5 | Las seis simulaciones de §1.6 dan el resultado esperado | ⬜ |
 | 6 | Cuenta de administrador creada | ⬜ |
@@ -247,7 +277,7 @@ Marca aquí conforme avances; sirve de evidencia en la Sprint Review.
 | 9 | Dominio de Vercel autorizado en Firebase | ⬜ |
 | 10 | Despliegue automático verificado con un cambio en `master` | ⬜ |
 
-**ID del proyecto de Firebase:** *(pendiente)*
+**ID del proyecto de Firebase:** `hub-cultural-santa-marta`
 **Dirección pública en Vercel:** *(pendiente)*
 
 ---
