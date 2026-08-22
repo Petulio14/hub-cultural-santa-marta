@@ -283,13 +283,13 @@ Marca aquí conforme avances; sirve de evidencia en la Sprint Review.
 | 4 | Reglas e índices publicados | ✅ 22/08/2026 · Firestore: reglas compiladas y 6 índices |
 | 5 | Las seis simulaciones de §1.6 dan el resultado esperado | ✅ 22/08/2026 · automatizadas: 21 casos en verde ([11](11-reglas-de-seguridad.md)) |
 | 6 | Cuenta de administrador creada | ⬜ |
-| 7 | Proyecto de Vercel conectado con sus variables | ⬜ |
-| 8 | Dirección pública anotada en HU-08 y en el README | ⬜ |
-| 9 | Dominio de Vercel autorizado en Firebase | ⬜ |
-| 10 | Despliegue automático verificado con un cambio en `master` | ⬜ |
+| 7 | Proyecto de Vercel conectado con sus variables | ✅ 22/08/2026 |
+| 8 | Dirección pública anotada en HU-08 y en el README | ✅ 22/08/2026 |
+| 9 | Dominio de Vercel autorizado en Firebase | ✅ 22/08/2026 |
+| 10 | Despliegue automático verificado con un cambio en `master` | ✅ 22/08/2026 · despliegue de `10acd0f` ([12](12-despliegue-continuo.md)) |
 
 **ID del proyecto de Firebase:** `hub-cultural-santa-marta`
-**Dirección pública en Vercel:** *(pendiente)*
+**Dirección pública en Vercel:** https://hub-cultural-santa-marta.vercel.app
 
 ---
 
