@@ -5,15 +5,40 @@
 }
 
 .pie__interior {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
   padding-block: 20px;
   font-size: 0.9rem;
 }
 
 .pie p {
-  margin: 0 0 4px;
+  margin: 0;
+}
+
+.pie__creditos {
+  flex: 1 1 260px;
+}
+
+.pie__inicio {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-minimo);
+  padding: 8px 16px;
+  border: 1px solid var(--borde-claro);
+  border-radius: var(--radio);
+  color: var(--blanco);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pie__inicio:hover {
+  background: var(--realce-suave);
 }
 
 .pie__nota {
+  flex: 1 1 100%;
   opacity: 0.85;
   font-size: 0.85rem;
 }

@@ -6,9 +6,11 @@
 .cabecera__interior {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px 16px;
   min-height: 64px;
   padding-block: 10px;
+  /* El panel compacto se despliega debajo, no al lado */
+  flex-wrap: wrap;
 }
 
 .cabecera__marca {
@@ -16,6 +18,7 @@
   align-items: center;
   gap: 12px;
   min-height: var(--toque-minimo);
+  margin-right: auto;
   color: inherit;
   text-decoration: none;
 }
@@ -35,12 +38,144 @@
 }
 
 .cabecera__nombre {
+  display: flex;
+  flex-direction: column;
   font-weight: 700;
   font-size: 1rem;
+  line-height: 1.15;
   letter-spacing: 0.01em;
 }
 
+.cabecera__nombre small {
+  font-weight: 500;
+  font-size: 0.72rem;
+  opacity: 0.85;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
+ * ── Menú compacto: por debajo de 768 px ──────────────────────────────────
+ * El botón existe solo aquí; el panel se oculta hasta que se abre y entonces
+ * ocupa el ancho completo por debajo de la marca.
+ */
+.cabecera__hamburguesa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--toque-minimo);
+  min-width: var(--toque-minimo);
+  padding: 8px 14px;
+  border: 1px solid var(--borde-claro);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--blanco);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cabecera__barras {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  box-shadow:
+    0 -6px 0 currentColor,
+    0 6px 0 currentColor;
+}
+
+.cabecera__panel {
+  display: none;
+  flex-basis: 100%;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 6px;
+}
+
+.cabecera__panel--abierto {
+  display: flex;
+}
+
+.cabecera__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cabecera__enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-minimo);
+  padding: 8px 12px;
+  border-radius: var(--radio);
+  color: var(--blanco);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cabecera__enlace:hover {
+  background: var(--realce-suave);
+}
+
+/* La vista actual no se señala solo con color: lleva subrayado, que es
+   perceptible sin distinguir tonos (WCAG 2.1, criterio 1.4.1). */
+.cabecera__enlace--activo {
+  background: var(--realce-fuerte);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+}
+
+.cabecera__ingresar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--toque-minimo);
+  padding: 8px 16px;
+  border: 1px solid var(--borde-claro);
+  border-radius: var(--radio);
+  color: var(--blanco);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cabecera__ingresar:hover {
+  background: var(--realce-suave);
+}
+
+/*
+ * ── Menú completo: desde 768 px ──────────────────────────────────────────
+ * Desaparece el botón y el panel deja de depender del estado: se muestra
+ * siempre, en horizontal. Así, si alguien reduce la ventana con el panel
+ * abierto y vuelve a ampliarla, no queda un menú a medias.
+ */
 @media (min-width: 768px) {
+  .cabecera__interior {
+    flex-wrap: nowrap;
+  }
+
+  .cabecera__hamburguesa {
+    display: none;
+  }
+
+  .cabecera__panel {
+    display: flex;
+    flex-basis: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 0;
+  }
+
+  .cabecera__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   .cabecera__placa img {
     height: 26px;
   }

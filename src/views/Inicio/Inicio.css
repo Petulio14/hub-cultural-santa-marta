@@ -1,0 +1,93 @@
+.heroe {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 24px 20px;
+  margin-bottom: 32px;
+}
+
+.heroe__antetitulo {
+  color: var(--turquesa-oscuro);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.heroe__texto {
+  max-width: 62ch;
+  font-size: 1.05rem;
+}
+
+.heroe__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/*
+ * Rejilla de los cuatro accesos: 1 columna a 360, 2 a 768 y 4 a 1366
+ * (docs/05-prototipo-interfaz.md §4). La separación entre filas es la misma que
+ * entre columnas, y todas las tarjetas de una fila miden lo mismo de alto porque
+ * el elemento de rejilla se estira a la altura de su fila. Las dos cosas fueron
+ * defectos reales del prototipo en HU-06.
+ */
+.accesos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-tarjetas);
+}
+
+.accesos > li {
+  display: flex;
+}
+
+.acceso {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  min-height: var(--toque-minimo);
+  padding: 18px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-left: 4px solid var(--turquesa-oscuro);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+  text-decoration: none;
+  color: var(--gris-texto);
+}
+
+.acceso:hover {
+  border-left-color: var(--azul-profundo);
+}
+
+.acceso__nombre {
+  color: var(--azul-profundo);
+  font-size: 1.05rem;
+}
+
+.acceso__descripcion {
+  font-size: 0.95rem;
+}
+
+@media (min-width: 768px) {
+  .heroe {
+    padding: 40px 32px;
+  }
+
+  .accesos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .accesos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
