@@ -4,6 +4,7 @@ import ErrorDeRuta from '../components/ErrorDeRuta.jsx';
 import RutaPrivada from './RutaPrivada.jsx';
 import Inicio from '../views/Inicio/Inicio.jsx';
 import Catalogo from '../views/Catalogo/Catalogo.jsx';
+import DirectorioActores from '../views/DirectorioActores/DirectorioActores.jsx';
 import DetalleEvento from '../views/DetalleEvento/DetalleEvento.jsx';
 import PerfilActor from '../views/PerfilActor/PerfilActor.jsx';
 import DirectorioHubs from '../views/DirectorioHubs/DirectorioHubs.jsx';
@@ -20,6 +21,7 @@ import NoEncontrada from '../views/NoEncontrada/NoEncontrada.jsx';
  *   /                  V-1  Inicio                    pública
  *   /eventos           V-2  Catálogo                  pública
  *   /eventos/:id       V-3  Detalle de evento         pública
+ *   /actores           V-4  Actores culturales        pública
  *   /actores/:id       V-4  Perfil de actor cultural  pública
  *   /hubs              V-5  Directorio de hubs        pública
  *   /mapa              V-6  Mapa interactivo          pública
@@ -42,6 +44,11 @@ export const enrutador = createBrowserRouter([
         path: 'eventos/:id',
         element: <DetalleEvento />,
         handle: { titulo: 'Detalle del evento' },
+      },
+      {
+        path: 'actores',
+        element: <DirectorioActores />,
+        handle: { titulo: 'Actores culturales' },
       },
       {
         path: 'actores/:id',

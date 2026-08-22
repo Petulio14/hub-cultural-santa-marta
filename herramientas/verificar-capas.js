@@ -55,10 +55,10 @@ for (const vista of vistas) {
 }
 
 // 3 · Paleta única
-const HEXADECIMAL = /#[0-9a-fA-F]{3,8}\b/g;
+const COLOR_ESCRITO = /#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/g;
 for (const archivo of archivos.filter((a) => a.endsWith('.css'))) {
   if (archivo === ARCHIVO_PALETA) continue;
-  const encontrados = readFileSync(archivo, 'utf8').match(HEXADECIMAL);
+  const encontrados = readFileSync(archivo, 'utf8').match(COLOR_ESCRITO);
   if (encontrados) {
     fallos.push(
       `${nombre(archivo)} escribe el color ${encontrados[0]}; usa una variable de src/styles/variables.css`
