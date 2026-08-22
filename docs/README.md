@@ -15,8 +15,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [07-guia-figma.md](07-guia-figma.md) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Traducción de la especificación a Figma: estilos, componentes, orden de construcción y enlaces de navegación. |
 | [../figma-plugin/](../figma-plugin/) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Plugin que construye el prototipo dentro de Figma: estilos, componentes, 27 pantallas y 151 enlaces, de una sola pasada. Incluye el banco de pruebas que reprodujo cada defecto corregido. |
 | [08-estructura-del-proyecto.md](08-estructura-del-proyecto.md) | [HU-07](https://github.com/Petulio14/hub-cultural-santa-marta/issues/7) | 3 | Estructura de carpetas del proyecto de React, tabla de rutas, página de error controlada y verificación automática de la regla de acceso a datos. |
-| [09-navegacion-e-inicio.md](09-navegacion-e-inicio.md) | [HU-09](https://github.com/Petulio14/hub-cultural-santa-marta/issues/9) | 3 | Los cuatro accesos principales, la página de inicio en React, el regreso al inicio desde cualquier vista y el tiempo de cambio de vista medido. |
-| [10-responsive.md](10-responsive.md) | [HU-10](https://github.com/Petulio14/hub-cultural-santa-marta/issues/10) | 3 | Adaptación a 360, 768 y 1366 px: menú compacto, áreas de toque y verificación del desbordamiento en las nueve rutas públicas. |
+| [11-reglas-de-seguridad.md](11-reglas-de-seguridad.md) | [HU-11](https://github.com/Petulio14/hub-cultural-santa-marta/issues/11) | 3 | Qué protege cada colección, publicación de reglas e índices, y las 21 pruebas automáticas que las demuestran contra el emulador. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -31,7 +30,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | --- | --- | --- | --- |
 | Sprint 1 | 17/08/2026 | HU-01, HU-02, HU-03 | Documentación completa. Pendiente registrar la aprobación del asesor. |
 | Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | **Cerrado el 21/08/2026, once días antes del vencimiento.** Las tres historias completas, con el [prototipo publicado en Figma](https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1) aprobado por el asesor. |
-| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **En curso.** HU-07, HU-09 y HU-10 completas: proyecto de React con su estructura, enrutador y página de error ([08](08-estructura-del-proyecto.md)); navegación y página de inicio ([09](09-navegacion-e-inicio.md)); adaptación a los tres anchos ([10](10-responsive.md)). Reglas de seguridad, índices y archivos de despliegue ya estaban en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)). |
+| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **En curso.** HU-07 completa: proyecto de React con su estructura, enrutador y página de error ([08](08-estructura-del-proyecto.md)). HU-11 completa: proyecto de Firebase creado, reglas e índices publicados y 21 pruebas automáticas que los demuestran ([11](11-reglas-de-seguridad.md)). Falta conectar Vercel ([guía](06-puesta-en-marcha.md)). |
 
 ## Configuración en la raíz del repositorio
 

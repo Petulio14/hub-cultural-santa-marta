@@ -39,6 +39,18 @@ Comprueba que ninguna vista importa el SDK de Firebase por su cuenta (la regla d
 colores solo se escriben en `src/styles/variables.css`. Si una regla nueva hace falta, se
 añade ahí y se comprueba que falla antes de darla por buena.
 
+## Las reglas de seguridad
+
+`firestore.rules` y `storage.rules` están en la raíz. Cualquier cambio se comprueba con:
+
+```bash
+npm run probar:reglas
+```
+
+Levanta el emulador de Firestore y ejecuta `pruebas/reglas-firestore.test.js`. Cada
+prohibición nueva se acompaña del permiso que sí debe concederse: una regla que lo deniegue
+todo también pasa las pruebas de denegación.
+
 ## El plugin de Figma
 
 `figma-plugin/code.js` no tiene dependencias ni paso de compilación. Antes de dar por
