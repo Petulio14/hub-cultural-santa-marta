@@ -2,6 +2,8 @@
 
 Plataforma web que conecta actores culturales, hubs de innovación y visitantes para visibilizar y geolocalizar la oferta cultural de Santa Marta. Trabajo de grado — Ingeniería en Software, Tecnológico de Antioquia.
 
+**Prototipo publicado:** https://hub-cultural-santa-marta.vercel.app
+
 ## Contenido del repositorio
 
 | Carpeta | Contenido |
@@ -52,8 +54,8 @@ La arquitectura de cuatro capas y la justificación de cada decisión técnica e
 
 ## Estado
 
-Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. Sprints 1 y 2
-cerrados; Sprint 3 en curso. El avance se sigue
+Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. Sprints 1, 2 y 3
+cerrados. El avance se sigue
 en los [issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues) y en el
 tablero del proyecto.
 
