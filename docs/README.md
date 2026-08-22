@@ -1,6 +1,6 @@
 # Documentación del proyecto
 
-Evidencia verificable de las historias de usuario de los sprints 1 y 2. Cada documento
+Evidencia verificable de las historias de usuario de los sprints 1 a 3. Cada documento
 corresponde a una historia del backlog y es la prueba que respalda su cierre en el tablero.
 
 | Documento | Historia | Sprint | Contenido |
@@ -14,6 +14,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [06-puesta-en-marcha.md](06-puesta-en-marcha.md) | [HU-08](https://github.com/Petulio14/hub-cultural-santa-marta/issues/8), [HU-11](https://github.com/Petulio14/hub-cultural-santa-marta/issues/11) | 3 | Creación de los proyectos de Firebase y Vercel paso a paso, con la verificación de las reglas de seguridad. |
 | [07-guia-figma.md](07-guia-figma.md) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Traducción de la especificación a Figma: estilos, componentes, orden de construcción y enlaces de navegación. |
 | [../figma-plugin/](../figma-plugin/) | [HU-06](https://github.com/Petulio14/hub-cultural-santa-marta/issues/6) | 2 | Plugin que construye el prototipo dentro de Figma: estilos, componentes, 27 pantallas y 151 enlaces, de una sola pasada. Incluye el banco de pruebas que reprodujo cada defecto corregido. |
+| [08-estructura-del-proyecto.md](08-estructura-del-proyecto.md) | [HU-07](https://github.com/Petulio14/hub-cultural-santa-marta/issues/7) | 3 | Estructura de carpetas del proyecto de React, tabla de rutas, página de error controlada y verificación automática de la regla de acceso a datos. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -28,7 +29,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | --- | --- | --- | --- |
 | Sprint 1 | 17/08/2026 | HU-01, HU-02, HU-03 | Documentación completa. Pendiente registrar la aprobación del asesor. |
 | Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | **Cerrado el 21/08/2026, once días antes del vencimiento.** Las tres historias completas, con el [prototipo publicado en Figma](https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1) aprobado por el asesor. |
-| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | Configuración adelantada: reglas de seguridad, índices y archivos de despliegue ya en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)) y el proyecto de React. |
+| Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **En curso.** HU-07 completa: proyecto de React con su estructura, enrutador y página de error ([08](08-estructura-del-proyecto.md)). Reglas de seguridad, índices y archivos de despliegue ya estaban en el repositorio. Falta crear los proyectos de Firebase y Vercel ([guía](06-puesta-en-marcha.md)). |
 
 ## Configuración en la raíz del repositorio
 

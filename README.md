@@ -6,8 +6,36 @@ Plataforma web que conecta actores culturales, hubs de innovación y visitantes 
 
 | Carpeta | Contenido |
 | --- | --- |
-| [`docs/`](docs/) | Requisitos, alcance del MVP, arquitectura, modelo de datos y especificación de la interfaz. Evidencia de los sprints 1 y 2. |
+| [`src/`](src/) | La aplicación de React: vistas, componentes, servicios, hooks, utilidades, rutas y estilos. |
+| [`docs/`](docs/) | Requisitos, alcance del MVP, arquitectura, modelo de datos y especificación de la interfaz. Evidencia de cada sprint. |
 | [`backlog/`](backlog/) | Las 40 historias de usuario y los scripts que las cargaron como issues y tablero de GitHub Projects. |
+| [`figma-plugin/`](figma-plugin/) | Plugin que construye el prototipo dentro de Figma, con su banco de pruebas. |
+| [`herramientas/`](herramientas/) | Verificaciones del repositorio, sin dependencias. |
+
+## Cómo se ejecuta
+
+Requiere Node.js 20 o superior.
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+Queda en `http://localhost:5173`. Arranca sin Firebase; para conectarlo, copia
+`.env.example` como `.env.local` y sigue [`docs/06-puesta-en-marcha.md`](docs/06-puesta-en-marcha.md).
+
+Antes de abrir un pull request:
+
+```bash
+npm run verificar
+```
+
+Comprueba que ninguna vista accede a Firebase por su cuenta, que toda vista está enrutada y
+que los colores viven solo en la paleta. El detalle está en
+[`docs/08-estructura-del-proyecto.md`](docs/08-estructura-del-proyecto.md).
 
 ## Stack
 
@@ -18,7 +46,8 @@ La arquitectura de cuatro capas y la justificación de cada decisión técnica e
 
 ## Estado
 
-Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. El avance se sigue
+Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. Sprints 1 y 2
+cerrados; Sprint 3 en curso. El avance se sigue
 en los [issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues) y en el
 tablero del proyecto.
 

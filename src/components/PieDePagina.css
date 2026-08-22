@@ -1,0 +1,19 @@
+.pie {
+  background: var(--azul-profundo);
+  color: var(--blanco);
+  margin-top: auto;
+}
+
+.pie__interior {
+  padding-block: 20px;
+  font-size: 0.9rem;
+}
+
+.pie p {
+  margin: 0 0 4px;
+}
+
+.pie__nota {
+  opacity: 0.85;
+  font-size: 0.85rem;
+}

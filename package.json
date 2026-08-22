@@ -1,0 +1,23 @@
+{
+  "name": "hub-cultural-santa-marta",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Plataforma cultural de Santa Marta — trabajo de grado, Tecnologico de Antioquia.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "verificar": "node herramientas/verificar-capas.js"
+  },
+  "dependencies": {
+    "firebase": "^12.18.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.0",
+    "vite": "^8.2.2"
+  }
+}

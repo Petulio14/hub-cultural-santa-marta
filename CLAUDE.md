@@ -25,6 +25,20 @@ los issues del repositorio y en el trabajo escrito. Esa correspondencia es la ba
 matriz que exige HU-40, así que un cambio que introduzca un requisito nuevo tiene que
 reflejarse en los tres sitios.
 
+## La aplicación de React
+
+Vive en la raíz: `src/`, `index.html`, `vite.config.js`. Antes de dar por buena una
+modificación:
+
+```bash
+npm run verificar
+```
+
+Comprueba que ninguna vista importa el SDK de Firebase por su cuenta (la regla de
+`docs/03-arquitectura.md` §3), que toda vista de `src/views/` está enrutada y que los
+colores solo se escriben en `src/styles/variables.css`. Si una regla nueva hace falta, se
+añade ahí y se comprueba que falla antes de darla por buena.
+
 ## El plugin de Figma
 
 `figma-plugin/code.js` no tiene dependencias ni paso de compilación. Antes de dar por
