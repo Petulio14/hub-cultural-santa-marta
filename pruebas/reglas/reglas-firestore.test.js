@@ -1,5 +1,5 @@
 /**
- * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11.
+ * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -165,6 +165,112 @@ describe('escritura sin sesión', () => {
   it('un visitante sin sesión NO escribe en una colección no declarada', async () => {
     await assertFails(
       setDoc(doc(visitante(), 'coleccionInventada', 'x'), { cualquiera: true })
+    );
+  });
+});
+
+describe('usuarios · alta de la cuenta (HU-12, HU-16)', () => {
+  /** Documento de «usuarios» tal y como lo escribe authService al registrarse. */
+  const alta = (uid, cambios = {}) => ({
+    uid,
+    nombre: 'Casa de la cultura',
+    correo: `${uid}@ejemplo.co`,
+    rol: 'actor',
+    estado: 'activo',
+    fechaRegistro: serverTimestamp(),
+    consentimientoDatos: { aceptado: true, fecha: serverTimestamp(), version: '1.0' },
+    ...cambios,
+  });
+
+  it('quien se registra crea su propio documento', async () => {
+    const uid = 'uid-recien-llegado';
+    await assertSucceeds(setDoc(doc(comoUsuario(uid), 'usuarios', uid), alta(uid)));
+  });
+
+  it('registrarse como hub también se permite', async () => {
+    const uid = 'uid-hub-nuevo';
+    await assertSucceeds(
+      setDoc(doc(comoUsuario(uid), 'usuarios', uid), alta(uid, { rol: 'hub' }))
+    );
+  });
+
+  it('NO se crea la cuenta sin aceptar el tratamiento de datos', async () => {
+    const uid = 'uid-sin-consentimiento';
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(uid), 'usuarios', uid),
+        alta(uid, {
+          consentimientoDatos: { aceptado: false, fecha: serverTimestamp(), version: '1.0' },
+        })
+      )
+    );
+  });
+
+  it('NO se crea la cuenta sin el campo de consentimiento', async () => {
+    const uid = 'uid-consentimiento-ausente';
+    const sinConsentimiento = alta(uid);
+    delete sinConsentimiento.consentimientoDatos;
+    await assertFails(setDoc(doc(comoUsuario(uid), 'usuarios', uid), sinConsentimiento));
+  });
+
+  it('NO se crea la cuenta sin la versión de la política aceptada', async () => {
+    const uid = 'uid-sin-version';
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(uid), 'usuarios', uid),
+        alta(uid, { consentimientoDatos: { aceptado: true, fecha: serverTimestamp() } })
+      )
+    );
+  });
+
+  it('NO se crea el documento de otra persona', async () => {
+    await assertFails(
+      setDoc(doc(comoUsuario('uid-intruso'), 'usuarios', 'uid-ajeno'), alta('uid-ajeno'))
+    );
+  });
+
+  it('NO se concede a sí mismo el rol de administrador al registrarse', async () => {
+    const uid = 'uid-aspirante-a-admin';
+    await assertFails(
+      setDoc(doc(comoUsuario(uid), 'usuarios', uid), alta(uid, { rol: 'administrador' }))
+    );
+  });
+
+  it('NO se crea la cuenta con la fecha de registro puesta por el cliente', async () => {
+    const uid = 'uid-fecha-inventada';
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(uid), 'usuarios', uid),
+        alta(uid, { fechaRegistro: new Date('2020-01-01') })
+      )
+    );
+  });
+
+  it('el dueño lee su propio documento', async () => {
+    await assertSucceeds(getDoc(doc(comoUsuario(UID_ACTOR), 'usuarios', UID_ACTOR)));
+  });
+
+  it('NO se lee el documento de otra persona', async () => {
+    await assertFails(getDoc(doc(comoUsuario(UID_OTRO), 'usuarios', UID_ACTOR)));
+  });
+
+  it('el administrador sí lo lee', async () => {
+    await assertSucceeds(getDoc(doc(comoUsuario(UID_ADMIN), 'usuarios', UID_ACTOR)));
+  });
+
+  it('NO se retira el consentimiento editando el propio documento', async () => {
+    await assertFails(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'usuarios', UID_ACTOR), {
+        consentimientoDatos: { aceptado: false, fecha: serverTimestamp(), version: '1.0' },
+      })
+    );
+  });
+
+  it('el dueño sí corrige su nombre', async () => {
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'usuarios', UID_ACTOR), {
+        nombre: 'Colectivo de tambora del Magdalena',
+      })
     );
   });
 });

@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "verificar": "node herramientas/verificar-capas.js",
-    "probar:reglas": "firebase emulators:exec --only firestore \"node --test pruebas/**/*.test.js\""
+    "probar": "node --test \"pruebas/unidad/**/*.test.js\"",
+    "probar:reglas": "firebase emulators:exec --only firestore \"node --test pruebas/reglas/**/*.test.js\""
   },
   "dependencies": {
     "firebase": "^12.18.0",

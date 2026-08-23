@@ -145,3 +145,77 @@ img {
   border-radius: 999px;
   margin-bottom: 12px;
 }
+
+/* Campos de formulario. Los usan todas las vistas con formulario, empezando por
+   V-8 (HU-12). El componente que los pinta es src/components/Campo.jsx. */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 14px;
+}
+
+.campo__etiqueta {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.campo__ayuda {
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+.campo__control {
+  min-height: var(--toque-minimo);
+  padding: 10px 12px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--negro-texto);
+  font: inherit;
+}
+
+/* El campo con error se marca con borde y con el mensaje escrito debajo, nunca
+   solo con color (WCAG 2.1, criterio 1.4.1). */
+.campo__control--error {
+  border-color: var(--terracota);
+  border-width: 2px;
+}
+
+.campo__error {
+  color: var(--terracota);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Casilla de verificación. La etiqueta entera es zona de activación, y la
+   casilla cumple por sí sola el área mínima de toque de HU-10. */
+.casilla {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.casilla input[type='checkbox'] {
+  flex: 0 0 auto;
+  width: var(--toque-minimo);
+  height: var(--toque-minimo);
+  margin: 0;
+  accent-color: var(--turquesa-oscuro);
+  cursor: pointer;
+}
+
+/* Botón que se comporta como enlace: cambia de panel sin cambiar de dirección.
+   Es un «button» y no un «a» porque no lleva a ninguna parte. */
+.enlace-texto {
+  min-height: var(--toque-minimo);
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--turquesa-oscuro);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
