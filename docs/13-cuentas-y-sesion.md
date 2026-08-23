@@ -148,7 +148,7 @@ distingue una frase de una etiqueta.
 ### Las reglas · `npm run probar:reglas`
 
 La suite de HU-11 pasa de 21 a **34 casos** con el alta de cuentas — 34 en verde el
-23/08/2026. Los nuevos:
+22/08/2026. Los nuevos:
 
 ```
 ▶ usuarios · alta de la cuenta (HU-12, HU-16)
@@ -207,19 +207,36 @@ credencial. No es un error de la aplicación: es la respuesta correcta a una con
 incorrecta, y el navegador registra toda respuesta que no sea 2xx. La aplicación no emite
 ningún error propio.
 
-### Pendiente de comprobación en vivo
+### Comprobación en vivo
 
-Tres criterios necesitan una cuenta de verdad y los ejecuta el equipo sobre el sitio
-publicado. Se anotan aquí al cerrarse:
+Los criterios que necesitan una cuenta de verdad, ejecutados sobre el sitio publicado el
+**22/08/2026** con una cuenta de actor cultural creada desde el propio formulario:
 
-| Criterio | Historia | Estado |
+| Criterio | Historia | Resultado |
 | --- | --- | --- |
-| Registro exitoso: sesión iniciada y redirección | HU-12 | ⬜ |
-| Correo ya registrado: mensaje claro, sin cuenta duplicada | HU-12 | ⬜ |
+| El registro crea la cuenta con rol de actor cultural | HU-12 | ✅ Documento de `usuarios` con `rol: "actor"`, `estado: "activo"` y el uid como identificador. |
+| El registro inicia la sesión | HU-12 | ✅ La cabecera pasa a mostrar «prueba · ACTOR CULTURAL». |
+| Un correo ya registrado da un mensaje claro y no duplica la cuenta | HU-12 | ✅ «Ese correo ya tiene una cuenta en la plataforma. Inicia sesión o recupera tu contraseña», junto al campo del correo y con el borde marcado. |
+| Cerrar sesión pierde el acceso a las vistas privadas | HU-13 | ✅ Comprobado al cambiar de la cuenta de administrador a la de actor. |
+| La respuesta de recuperación no revela si la cuenta existe | HU-14 | ✅ Con una dirección registrada y con una que no lo está, el mismo texto. |
 | Recargar la página mantiene la sesión | HU-13 | ⬜ |
-| Cerrar sesión pierde el acceso a las vistas privadas | HU-13 | ⬜ |
-| Llega el correo de restablecimiento a una cuenta real | HU-14 | ⬜ |
-| Con el enlace se define una contraseña nueva y se entra con ella | HU-14 | ⬜ |
+| Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ⬜ |
+
+El documento de `usuarios` leído desde la consola de Firebase, que es la prueba del alta:
+
+```
+uid                  "DFB9zBZUTWMAA1BCgtK6M79JAM92"
+nombre               "prueba"
+correo               "actor@correo.com"
+rol                  "actor"
+estado               "activo"
+fechaRegistro        22 de agosto de 2026, 8:56:38 p.m. UTC-5
+consentimientoDatos  { aceptado: true, fecha: 22 de agosto de 2026, 8:56:38 p.m. UTC-5, version: "1.0" }
+```
+
+Las dos fechas coinciden al segundo porque **las dos las puso el servidor** en la misma
+escritura. Ninguna viene del navegador, que es lo que las hace servir de prueba
+([14 §3](14-tratamiento-de-datos.md)).
 
 ## 5 bis. Recuperar la contraseña (HU-14)
 
