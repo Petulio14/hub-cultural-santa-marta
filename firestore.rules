@@ -157,7 +157,33 @@ service cloud.firestore {
 
     match /categorias/{idCategoria} {
       allow read: if true;                 // los filtros públicos las necesitan
-      allow write: if soyAdmin();          // RF-14
+
+      allow create: if soyAdmin()          // RF-14
+        && request.resource.data.keys().hasOnly(
+             ['idCategoria', 'nombre', 'descripcion', 'activa'])
+        && request.resource.data.idCategoria == idCategoria
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0
+        && request.resource.data.nombre.size() <= 60
+        && request.resource.data.activa is bool;
+
+      // El identificador no cambia al renombrar: es lo que llevan escrito dentro
+      // las publicaciones ya clasificadas (eventos.categoria).
+      allow update: if soyAdmin()
+        && !toca(['idCategoria'])
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0
+        && request.resource.data.nombre.size() <= 60;
+
+      // Una categoría NO se elimina, se desactiva con «activa: false» (HU-17).
+      //
+      // Las reglas no pueden contar los eventos que la usan —no existe consulta
+      // a otra colección desde aquí—, así que una regla que permitiera borrar
+      // «solo si no está en uso» sería una promesa que el servidor no puede
+      // cumplir: el recuento lo aportaría el cliente, y el cliente puede mentir.
+      // Negarlo siempre es la única garantía real de que ninguna publicación se
+      // quede sin clasificación (docs/16-categorias.md §3).
+      allow delete: if false;
     }
 
     // ---------------------------------------------------------------- moderaciones

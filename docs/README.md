@@ -20,6 +20,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [13-cuentas-y-sesion.md](13-cuentas-y-sesion.md) | [HU-12](https://github.com/Petulio14/hub-cultural-santa-marta/issues/12), [HU-13](https://github.com/Petulio14/hub-cultural-santa-marta/issues/13), [HU-14](https://github.com/Petulio14/hub-cultural-santa-marta/issues/14) | 4 | Registro de actor cultural, inicio y cierre de sesión, recuperación de contraseña, mensajes que no revelan quién tiene cuenta, y el agujero de escalada de rol que encontró la suite de reglas. |
 | [14-tratamiento-de-datos.md](14-tratamiento-de-datos.md) | [HU-16](https://github.com/Petulio14/hub-cultural-santa-marta/issues/16) | 4 | Política publicada, consentimiento expreso guardado con fecha y versión, minimización de datos y canal de supresión. |
 | [15-roles-y-permisos.md](15-roles-y-permisos.md) | [HU-15](https://github.com/Petulio14/hub-cultural-santa-marta/issues/15) | 4 | Qué puede hacer cada rol, las cuatro maneras de no pasar, el estado de la cuenta como condición del permiso, y los doce casos que lo fijan contra el emulador. |
+| [16-categorias.md](16-categorias.md) | [HU-17](https://github.com/Petulio14/hub-cultural-santa-marta/issues/17) | 4 | El catálogo de categorías, por qué una categoría se desactiva en lugar de borrarse, y el recuento de publicaciones contado en el servidor. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)

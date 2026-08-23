@@ -1,0 +1,157 @@
+/* V-7 · Panel de administración — HU-17.
+   Los colores son variables de src/styles/variables.css. */
+
+.panel__intro {
+  max-width: 70ch;
+}
+
+.panel__aviso {
+  padding: 12px 14px;
+  border: 1px solid var(--turquesa-oscuro);
+  border-left-width: 4px;
+  border-radius: var(--radio);
+  background: var(--blanco);
+  font-weight: 600;
+}
+
+.panel__aviso--error {
+  border-color: var(--terracota);
+  color: var(--terracota);
+}
+
+.panel__vacio {
+  max-width: 60ch;
+  padding: 18px;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+}
+
+.panel__alta {
+  max-width: 520px;
+  margin-bottom: 32px;
+  padding: 18px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.panel__alta h3 {
+  margin-top: 0;
+}
+
+/*
+ * ── Listado de categorías ────────────────────────────────────────────────
+ * En móvil la tabla no se encoge: se desplaza dentro de su propio contenedor.
+ * Reducir las columnas hasta que quepan deja los números ilegibles, y partir la
+ * tabla en tarjetas duplicaría el marcado. Desplazar conserva la relación entre
+ * la fila y su encabezado, que es lo que anuncia un lector de pantalla.
+ */
+.categorias {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+}
+
+.categorias caption {
+  padding: 12px 14px;
+  text-align: left;
+  color: var(--gris-texto);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.categorias th,
+.categorias td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.categorias thead th {
+  background: var(--arena);
+  color: var(--negro-texto);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.categorias tbody tr:last-child th,
+.categorias tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.categorias__fila--inactiva {
+  background: var(--arena);
+}
+
+.categorias__nombre {
+  display: block;
+  font-weight: 700;
+  color: var(--negro-texto);
+}
+
+.categorias__id {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gris-texto);
+}
+
+.categorias__descripcion {
+  display: block;
+  max-width: 40ch;
+  font-weight: 400;
+  color: var(--gris-texto);
+}
+
+.categorias__numero {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--negro-texto);
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  background: var(--arena);
+  color: var(--gris-texto);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.etiqueta--activa {
+  border-color: var(--turquesa-oscuro);
+  color: var(--turquesa-oscuro);
+  background: var(--blanco);
+}
+
+.categorias__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categorias__advertencia {
+  max-width: 46ch;
+}
+
+.categorias__advertencia p {
+  margin-bottom: 12px;
+}
+
+.categorias__edicion {
+  max-width: 520px;
+}
+
+.categorias__nota {
+  font-size: 0.9rem;
+  color: var(--gris-texto);
+}
