@@ -47,9 +47,18 @@ añade ahí y se comprueba que falla antes de darla por buena.
 npm run probar:reglas
 ```
 
-Levanta el emulador de Firestore y ejecuta `pruebas/reglas-firestore.test.js`. Cada
-prohibición nueva se acompaña del permiso que sí debe concederse: una regla que lo deniegue
-todo también pasa las pruebas de denegación.
+Levanta el emulador de Firestore y ejecuta `pruebas/reglas/`. Cada prohibición nueva se
+acompaña del permiso que sí debe concederse: una regla que lo deniegue todo también pasa las
+pruebas de denegación.
+
+Lo que no necesita emulador —validaciones y utilidades puras— vive en `pruebas/unidad/`:
+
+```bash
+npm run probar
+```
+
+Una función que decide si un dato es aceptable se escribe en `src/utils/` y se prueba ahí,
+no dentro del componente que la usa.
 
 ## El plugin de Figma
 

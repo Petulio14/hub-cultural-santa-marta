@@ -1,0 +1,107 @@
+/* V-8 · Ingreso y registro — HU-12, HU-13, HU-16.
+   Los colores son variables de src/styles/variables.css; aquí no se escribe
+   ningún valor hexadecimal (regla 3 de «npm run verificar»). */
+
+.acceso {
+  padding-block: 8px 24px;
+}
+
+.acceso__caja {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+  overflow: hidden;
+}
+
+/* Las dos pestañas ocupan la mitad cada una: en móvil son dos objetivos de toque
+   grandes y no dos enlaces pequeños uno al lado del otro. */
+.acceso__pestanas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.acceso__pestana {
+  min-height: var(--toque-minimo);
+  padding: 12px 8px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: var(--arena);
+  color: var(--gris-texto);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* La pestaña activa no se distingue solo por el color: cambia el fondo y lleva
+   una barra inferior (WCAG 2.1, criterio 1.4.1). */
+.acceso__pestana--activa {
+  background: var(--blanco);
+  color: var(--azul-profundo);
+  border-bottom-color: var(--turquesa-oscuro);
+}
+
+.acceso__panel {
+  padding: 24px var(--margen) 28px;
+}
+
+.acceso__intro {
+  color: var(--gris-texto);
+}
+
+.acceso__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+/* Error que no pertenece a un campo concreto —credenciales incorrectas, red
+   caída—. Lleva «role=alert» en el JSX para que se anuncie al aparecer. */
+.acceso__aviso {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--terracota);
+  border-left-width: 4px;
+  border-radius: var(--radio);
+  background: var(--arena);
+  color: var(--terracota);
+  font-weight: 600;
+}
+
+.acceso__consentimiento {
+  margin: 4px 0 16px;
+}
+
+/* El enlace a la política ocupa su propia línea y cumple el área mínima de
+   toque: como enlace en medio de la frase mediría 20 px de alto (HU-10). */
+.acceso__politica {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-minimo);
+  margin-left: calc(var(--toque-minimo) + 8px);
+  font-weight: 600;
+}
+
+.acceso__enviar {
+  width: 100%;
+}
+
+.acceso__alternativa {
+  margin: 16px 0 0;
+  text-align: center;
+  color: var(--gris-texto);
+}
+
+@media (min-width: 768px) {
+  .acceso {
+    padding-block: 24px 40px;
+  }
+
+  .acceso__panel {
+    padding: 28px 32px 32px;
+  }
+}

@@ -13,6 +13,7 @@ Plataforma web que conecta actores culturales, hubs de innovación y visitantes 
 | [`backlog/`](backlog/) | Las 40 historias de usuario y los scripts que las cargaron como issues y tablero de GitHub Projects. |
 | [`figma-plugin/`](figma-plugin/) | Plugin que construye el prototipo dentro de Figma, con su banco de pruebas. |
 | [`herramientas/`](herramientas/) | Verificaciones del repositorio, sin dependencias. |
+| [`pruebas/`](pruebas/) | Pruebas automáticas: `unidad/` sin dependencias, `reglas/` contra el emulador de Firestore. |
 
 ## Cómo se ejecuta
 
@@ -39,7 +40,13 @@ Comprueba que ninguna vista accede a Firebase por su cuenta, que toda vista est�
 que los colores viven solo en la paleta. El detalle está en
 [`docs/08-estructura-del-proyecto.md`](docs/08-estructura-del-proyecto.md).
 
-Y si tocas las reglas de seguridad, las 21 pruebas contra el emulador (requiere Java):
+Las pruebas de las validaciones y las utilidades, que no necesitan nada más:
+
+```bash
+npm run probar
+```
+
+Y si tocas las reglas de seguridad, las 34 pruebas contra el emulador (requiere Java):
 
 ```bash
 npm run probar:reglas
