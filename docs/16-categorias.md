@@ -176,7 +176,31 @@ publicado el **22/08/2026** con la cuenta del paso [06 §1.7](06-puesta-en-march
 | El listado muestra el recuento de cada categoría | ✅ Columna «Publicaciones»: 0, que es lo que corresponde con el catálogo de eventos vacío. |
 | «Eliminar» advierte y ofrece desactivar en su lugar | ✅ Texto completo en la captura: «Ninguna publicación la usa ahora mismo, pero el catálogo **no elimina categorías**…», con los botones Desactivar y Cancelar. |
 | Desactivar y reactivar | ✅ La etiqueta pasa de «Se ofrece» a «No se ofrece» y las acciones, de «Eliminar» a «Reactivar». |
-| Medición a 360, 768 y 1366 px sobre el panel | ⬜ |
+| Medición a 360, 768 y 1366 px sobre el panel | ✅ Cinco anchos, todos con 0 px de desborde y 0 elementos por debajo de 44 × 44. |
+
+Medido sobre el panel ya cargado, con la sesión de administrador abierta y una categoría
+dentro:
+
+```
+ 360 px · desborde 0 px · bajo 44x44: 0
+ 768 px · desborde 0 px · bajo 44x44: 0
+ 948 px · desborde 0 px · bajo 44x44: 0
+1138 px · desborde 0 px · bajo 44x44: 0
+1366 px · desborde 0 px · bajo 44x44: 0
+```
+
+**1366 no es uno más de la lista.** Es el punto donde dispara la consulta de medios de
+[`variables.css`](../src/styles/variables.css), que sube `--margen` de 24 a 32 px y
+`--espacio-tarjetas` de 18 a 20. Los otros cuatro anchos caen todos del mismo lado de ese
+corte, así que sin el quinto el panel habría quedado comprobado con unos márgenes y
+publicado con otros. En el prototipo de HU-06 un punto de corte falló por 2 px
+([10 §2](10-responsive.md)); desde entonces el número exacto se mide, no se supone.
+
+La tabla de categorías es el primer elemento del proyecto que no cabe en 360 px por su
+propia naturaleza. No se encoge: se desplaza dentro de su contenedor. Reducir las columnas
+hasta que quepan deja los números ilegibles, y partirla en tarjetas duplicaría el marcado;
+desplazarla conserva la relación entre cada fila y su encabezado, que es lo que anuncia un
+lector de pantalla.
 
 ### Un defecto que apareció en esa comprobación
 
