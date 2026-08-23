@@ -1,6 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useSesion } from '../hooks/useSesion.jsx';
 import { ACCESOS_PRINCIPALES } from '../routes/accesos.js';
+import { enlacesDeRol, etiquetaDeRol } from '../routes/roles.js';
+import { cerrarSesion } from '../services/authService.js';
 import './Cabecera.css';
 
 /**
@@ -21,6 +24,8 @@ import './Cabecera.css';
 export default function Cabecera() {
   const [abierto, setAbierto] = useState(false);
   const { pathname } = useLocation();
+  const navegar = useNavigate();
+  const { cargando, usuario, rol } = useSesion();
   const idPanel = useId();
   const botonRef = useRef(null);
 
@@ -43,6 +48,13 @@ export default function Cabecera() {
     document.addEventListener('keydown', alPulsar);
     return () => document.removeEventListener('keydown', alPulsar);
   }, [abierto]);
+
+  // Al cerrar sesión se vuelve al inicio público. Quedarse en la vista privada
+  // acabaría en la pantalla de ingreso, que parece un fallo y no una salida.
+  async function salir() {
+    await cerrarSesion();
+    navegar('/', { replace: true });
+  }
 
   return (
     <header className="cabecera">
@@ -73,7 +85,7 @@ export default function Cabecera() {
           id={idPanel}
         >
           <nav className="cabecera__nav" aria-label="Navegación principal">
-            {ACCESOS_PRINCIPALES.map((acceso) => (
+            {[...ACCESOS_PRINCIPALES, ...enlacesDeRol(rol)].map((acceso) => (
               <NavLink
                 key={acceso.a}
                 to={acceso.a}
@@ -86,9 +98,24 @@ export default function Cabecera() {
             ))}
           </nav>
 
-          <Link className="cabecera__ingresar" to="/ingreso">
-            Ingresar
-          </Link>
+          {/* Mientras Authentication responde no se muestra ni «Ingresar» ni el
+              nombre: pintar «Ingresar» y sustituirlo medio segundo después haría
+              parpadear la cabecera en cada recarga. */}
+          {cargando ? null : usuario ? (
+            <div className="cabecera__sesion">
+              <span className="cabecera__quien">
+                {usuario.nombre}
+                <small>{etiquetaDeRol(rol)}</small>
+              </span>
+              <button type="button" className="cabecera__salir" onClick={salir}>
+                Cerrar sesión
+              </button>
+            </div>
+          ) : (
+            <Link className="cabecera__ingresar" to="/ingreso">
+              Ingresar
+            </Link>
+          )}
         </div>
       </div>
     </header>

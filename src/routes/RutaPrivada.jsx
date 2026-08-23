@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useSesion } from '../hooks/useSesion.js';
+import { useSesion } from '../hooks/useSesion.jsx';
 
 /**
  * Envoltura de las rutas que exigen sesión, y opcionalmente un rol concreto.

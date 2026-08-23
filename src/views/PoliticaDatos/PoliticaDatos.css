@@ -1,0 +1,58 @@
+/* Política de tratamiento de datos — HU-16.
+   Ancho de lectura corto a propósito: un texto legal a 1200 px de ancho no se
+   lee. Entre 60 y 75 caracteres por línea es lo cómodo. */
+
+.politica {
+  max-width: 760px;
+}
+
+.politica__version {
+  display: inline-block;
+  background: var(--arena);
+  border: 1px solid var(--gris-borde);
+  color: var(--gris-texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.politica h2 {
+  margin-top: 1.6em;
+  font-size: 1.15rem;
+}
+
+.politica ul {
+  margin: 0 0 1em;
+  padding-left: 1.2em;
+}
+
+.politica li {
+  margin-bottom: 0.5em;
+}
+
+.politica__volver {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+/* Canal de atención de los derechos del titular. En bloque y con área mínima de
+   toque: es la acción de esta página, no una mención de paso. */
+.politica__canal {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-minimo);
+  padding: 8px 16px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.politica__canal:hover {
+  border-color: var(--turquesa-oscuro);
+}

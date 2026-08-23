@@ -57,12 +57,20 @@ service cloud.firestore {
       allow list: if soyAdmin();
 
       // Solo puedes crear tu propio documento, y el consentimiento es obligatorio (HU-16).
+      //
+      // El rol NO incluye 'administrador': quien se registra elige entre actor y
+      // hub, y nada más. Admitirlo aquí dejaba que cualquiera creara su propio
+      // documento con rol de administrador y obtuviera el panel de moderación,
+      // porque soyAdmin() lee justamente este documento (HU-15, docs/15 §5). La
+      // cuenta de administrador se crea desde la consola de Firebase, que no pasa
+      // por estas reglas (docs/06 §1.7).
       allow create: if autenticado()
         && miUid() == uid
         && request.resource.data.uid == uid
-        && request.resource.data.rol in ['actor', 'hub', 'administrador']
+        && request.resource.data.rol in ['actor', 'hub']
         && request.resource.data.estado == 'activo'
         && request.resource.data.consentimientoDatos.aceptado == true
+        && request.resource.data.consentimientoDatos.version is string
         && request.resource.data.fechaRegistro == request.time
         && request.resource.data.consentimientoDatos.fecha == request.time;
 
