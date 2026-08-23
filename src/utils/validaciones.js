@@ -1,5 +1,5 @@
 /**
- * Validación de los formularios de cuenta — HU-12, HU-13, HU-16.
+ * Validación de los formularios — HU-12, HU-13, HU-16, HU-17.
  *
  * Funciones puras: sin React, sin Firebase y sin navegador. Esa es la razón de
  * que vivan en «utils» y no dentro de la vista — se comprueban con «npm run
@@ -9,6 +9,8 @@
  * debe leer la persona cuando no lo es. El mensaje dice qué falta y cómo
  * corregirlo, nunca «campo inválido».
  */
+
+import { aIdentificador } from './texto.js';
 
 /** Mínimo exigido por el primer criterio de aceptación de HU-12. */
 export const LONGITUD_MINIMA_CONTRASENA = 8;
@@ -87,6 +89,40 @@ export function validarIngreso({ correo, contrasena }) {
 /** Valida la solicitud de restablecimiento de contraseña (HU-14). */
 export function validarRecuperacion({ correo }) {
   return sinNulos({ correo: validarCorreo(correo) });
+}
+
+/** Longitud máxima del nombre de una categoría: tiene que caber en un filtro. */
+export const LONGITUD_MAXIMA_CATEGORIA = 60;
+
+/**
+ * Valida el nombre de una categoría cultural (HU-17).
+ *
+ * «identificadoresExistentes» son los de las categorías ya creadas. La
+ * comparación se hace sobre el identificador y no sobre el nombre escrito, de
+ * modo que «Música y danza» y «musica y danza» se reconozcan como la misma: el
+ * identificador es lo que queda guardado dentro de cada evento, y dos categorías
+ * que produjeran el mismo se pisarían la una a la otra.
+ */
+export function validarCategoria({ nombre }, identificadoresExistentes = []) {
+  const limpio = (nombre ?? '').trim();
+
+  if (limpio === '') return { nombre: 'Escribe el nombre de la categoría.' };
+  if (limpio.length < 3) return { nombre: 'El nombre debe tener al menos tres caracteres.' };
+  if (limpio.length > LONGITUD_MAXIMA_CATEGORIA) {
+    return {
+      nombre: `El nombre no puede pasar de ${LONGITUD_MAXIMA_CATEGORIA} caracteres: tiene que caber en un filtro.`,
+    };
+  }
+
+  const identificador = aIdentificador(limpio);
+  if (identificador === '') {
+    return { nombre: 'El nombre debe contener al menos una letra o un número.' };
+  }
+  if (identificadoresExistentes.includes(identificador)) {
+    return { nombre: 'Ya existe una categoría con ese nombre.' };
+  }
+
+  return {};
 }
 
 export function hayErrores(errores) {

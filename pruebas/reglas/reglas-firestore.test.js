@@ -1,5 +1,5 @@
 /**
- * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16.
+ * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16, HU-17.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -19,6 +19,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -341,7 +342,9 @@ describe('categorías · potestad del administrador', () => {
   it('el administrador sí escribe en categorías', async () => {
     await assertSucceeds(
       setDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'patrimonio'), {
+        idCategoria: 'patrimonio',
         nombre: 'Patrimonio',
+        descripcion: '',
         activa: true,
       })
     );
@@ -491,5 +494,85 @@ describe('roles y permisos (HU-15)', () => {
     await assertSucceeds(
       updateDoc(doc(comoUsuario(UID_ADMIN), 'usuarios', UID_OTRO), { estado: 'inactivo' })
     );
+  });
+});
+
+describe('categorías · el catálogo no se borra (HU-17)', () => {
+  const categoria = (id, cambios = {}) => ({
+    idCategoria: id,
+    nombre: 'Artesanía y oficios',
+    descripcion: 'Telar, cestería y talla.',
+    activa: true,
+    ...cambios,
+  });
+
+  it('el administrador crea una categoría', async () => {
+    await assertSucceeds(
+      setDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'artesania'), categoria('artesania'))
+    );
+  });
+
+  it('NO se crea con un identificador distinto del documento', async () => {
+    // Dejaría un documento cuyo campo apunta a otra categoría, y las
+    // publicaciones que lo guardaran quedarían clasificadas en la que no es.
+    await assertFails(
+      setDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'danza'), categoria('musica'))
+    );
+  });
+
+  it('NO se crea con un campo que no está en el modelo', async () => {
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(UID_ADMIN), 'categorias', 'colada'),
+        categoria('colada', { contadorInventado: 7 })
+      )
+    );
+  });
+
+  it('NO se crea sin nombre', async () => {
+    await assertFails(
+      setDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'sin-nombre'), categoria('sin-nombre', { nombre: '' }))
+    );
+  });
+
+  it('el administrador la renombra', async () => {
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'artesania'), {
+        nombre: 'Artesanía, oficios y saberes',
+      })
+    );
+  });
+
+  it('NO se cambia el identificador al renombrar', async () => {
+    // «eventos.categoria» guarda ese identificador: cambiarlo dejaría huérfanas
+    // las publicaciones ya clasificadas.
+    await assertFails(
+      updateDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'artesania'), {
+        idCategoria: 'otro-identificador',
+      })
+    );
+  });
+
+  it('el administrador la desactiva', async () => {
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'artesania'), { activa: false })
+    );
+  });
+
+  it('un actor NO la desactiva', async () => {
+    await assertFails(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'categorias', 'artesania'), { activa: false })
+    );
+  });
+
+  it('NADIE la elimina, tampoco el administrador', async () => {
+    // No es un permiso que falte: es la garantía de que ninguna publicación se
+    // quede sin clasificación. Las reglas no pueden contar los eventos que la
+    // usan, así que la única promesa que el servidor puede cumplir es esta.
+    await assertFails(deleteDoc(doc(comoUsuario(UID_ADMIN), 'categorias', 'artesania')));
+  });
+
+  it('una categoría desactivada se sigue leyendo: los eventos antiguos la nombran', async () => {
+    await assertSucceeds(getDoc(doc(visitante(), 'categorias', 'artesania')));
   });
 });
