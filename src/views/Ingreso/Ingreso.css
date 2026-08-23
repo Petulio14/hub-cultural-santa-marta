@@ -86,6 +86,28 @@
   font-weight: 600;
 }
 
+/* «¿Olvidaste tu contraseña?» va debajo del campo de contraseña, alineado a la
+   derecha: es donde se busca, y no compite con el botón de entrar. */
+.acceso__olvido {
+  margin: -6px 0 10px;
+  text-align: right;
+}
+
+/* Confirmación del correo de recuperación (HU-14). Lleva «role=status» en el JSX
+   para que se anuncie sin interrumpir, que es lo que corresponde a un aviso que
+   no es un error. */
+.acceso__confirmacion {
+  padding: 16px;
+  border: 1px solid var(--turquesa-oscuro);
+  border-left-width: 4px;
+  border-radius: var(--radio);
+  background: var(--arena);
+}
+
+.acceso__confirmacion p:last-of-type {
+  margin-bottom: 16px;
+}
+
 .acceso__enviar {
   width: 100%;
 }

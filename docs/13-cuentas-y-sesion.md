@@ -1,14 +1,16 @@
 # Cuentas y sesión
 
-> **Historias de usuario:** HU-12 y HU-13 · Sprint 4
+> **Historias de usuario:** HU-12, HU-13 y HU-14 · Sprint 4
 > **Objetivo específico:** 2 — Desarrollar los módulos del prototipo funcional.
 > **Requisitos asociados:** RF-01 (registro con rol), RF-02 (inicio y cierre de sesión),
 > RNF-05 (credenciales seguras).
 > **Depende de:** [HU-11 · reglas de seguridad](11-reglas-de-seguridad.md).
 
 Con este incremento la plataforma deja de ser solo lectura: una persona puede crear su
-cuenta de actor cultural, entrar, y salir. El consentimiento que exige la ley se documenta
-aparte, en [14 · tratamiento de datos](14-tratamiento-de-datos.md).
+cuenta de actor cultural, entrar, salir y recuperar la contraseña si la olvida. El
+consentimiento que exige la ley se documenta aparte, en
+[14 · tratamiento de datos](14-tratamiento-de-datos.md), y el control por rol en
+[15 · roles y permisos](15-roles-y-permisos.md).
 
 ---
 
@@ -145,7 +147,8 @@ distingue una frase de una etiqueta.
 
 ### Las reglas · `npm run probar:reglas`
 
-La suite de HU-11 pasa de 21 a **34 casos** con el alta de cuentas. Los nuevos:
+La suite de HU-11 pasa de 21 a **34 casos** con el alta de cuentas — 34 en verde el
+23/08/2026. Los nuevos:
 
 ```
 ▶ usuarios · alta de la cuenta (HU-12, HU-16)
@@ -215,6 +218,39 @@ publicado. Se anotan aquí al cerrarse:
 | Correo ya registrado: mensaje claro, sin cuenta duplicada | HU-12 | ⬜ |
 | Recargar la página mantiene la sesión | HU-13 | ⬜ |
 | Cerrar sesión pierde el acceso a las vistas privadas | HU-13 | ⬜ |
+| Llega el correo de restablecimiento a una cuenta real | HU-14 | ⬜ |
+| Con el enlace se define una contraseña nueva y se entra con ella | HU-14 | ⬜ |
+
+## 5 bis. Recuperar la contraseña (HU-14)
+
+El tercer panel de la misma vista. Se llega desde «¿Olvidaste tu contraseña?», debajo del
+campo de contraseña, que es donde se busca.
+
+**La respuesta es la misma exista o no la cuenta.** El mensaje no dice «te hemos enviado un
+correo» sino «si existe una cuenta asociada a esa dirección, acabamos de enviar allí un
+enlace». La diferencia no es de estilo: un formulario que responde distinto según el correo
+esté registrado o no es un detector de quién tiene cuenta en la plataforma, y basta con
+probar direcciones para vaciarlo.
+
+La defensa está en dos sitios, y conviene que estén los dos:
+
+1. **En el proyecto de Firebase.** Con la protección contra enumeración activada, el propio
+   servicio responde correctamente para una dirección desconocida y no devuelve
+   `auth/user-not-found`. Es lo que se observó al probarlo: la petición no produjo error.
+2. **En `authService`.** El código silencia igualmente `auth/user-not-found` e
+   `auth/invalid-email`. Si algún día esa opción del proyecto se desactiva, o si el
+   prototipo se despliega sobre otro proyecto donde no lo esté, el comportamiento no cambia.
+
+Comprobado sobre el proyecto real con una dirección que no está registrada:
+
+```
+Revisa tu correo. Si existe una cuenta asociada a nadie.registrado@ejemplo.co,
+acabamos de enviar allí un enlace para definir una contraseña nueva.
+```
+
+Sin ningún error en la consola. El tercer criterio —definir una contraseña nueva desde el
+enlace y entrar con ella— lo resuelve la pantalla que aloja el propio Firebase, y se
+comprueba en vivo con una cuenta real.
 
 ## 6. Lo que este incremento todavía no hace
 
@@ -226,7 +262,7 @@ publicado. Se anotan aquí al cerrarse:
 - **No hay verificación del correo.** Firebase la ofrece y no está en ningún criterio de
   aceptación del backlog; si se decide exigirla, es una historia nueva.
 
-## 7. Cierre de HU-12 y HU-13
+## 7. Cierre de HU-12, HU-13 y HU-14
 
 | Historia | Criterio de aceptación | Evidencia |
 | --- | --- | --- |
@@ -238,6 +274,9 @@ publicado. Se anotan aquí al cerrarse:
 | HU-13 | Credenciales incorrectas: mensaje que no revela si el correo existe. | §3 y §5, comprobado contra el proyecto real. |
 | HU-13 | Cerrar sesión pierde el acceso a las vistas privadas. | `RutaPrivada` más las reglas; comprobación en vivo. |
 | HU-13 | Recargar mantiene la sesión. | Persistencia local declarada en `authService`; comprobación en vivo. |
+| HU-14 | Un correo registrado recibe el enlace de restablecimiento. | §5 bis; comprobación en vivo. |
+| HU-14 | Un correo no registrado recibe la misma respuesta visible. | §5 bis, comprobado contra el proyecto real. |
+| HU-14 | Con el enlace se define una contraseña nueva y se puede entrar. | Pantalla de Firebase; comprobación en vivo. |
 
 ---
 
