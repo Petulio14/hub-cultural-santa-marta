@@ -69,7 +69,7 @@ moderaciones  idEvento, fecha ↓
 
 El criterio de aceptación se comprobaba a mano en el simulador de la consola de Firebase:
 seis clics que nadie vuelve a repetir cuando las reglas cambian. Está escrito como
-**pruebas automáticas** en [`../pruebas/reglas-firestore.test.js`](../pruebas/reglas-firestore.test.js),
+**pruebas automáticas** en [`../pruebas/reglas/reglas-firestore.test.js`](../pruebas/reglas/reglas-firestore.test.js),
 que corren contra el emulador y no tocan los datos reales:
 
 ```bash
@@ -155,7 +155,10 @@ niega— y el administrador la ejecuta —y se le permite—.
   está escrito y esperando.
 - **Las reglas se amplían en cada sprint** conforme entren colecciones y casos: HU-15
   (roles y permisos), HU-17 (categorías), HU-24 (moderación). Cada ampliación añade sus
-  casos a la misma suite, y el valor de tenerla es justamente ese.
+  casos a la misma suite, y el valor de tenerla es justamente ese. En el Sprint 4 la suite
+  pasó de 21 a 34 casos con el alta de cuentas, y encontró un agujero en la regla de
+  creación de `usuarios` que este documento no había visto
+  ([13 §4.1](13-cuentas-y-sesion.md)).
 - La suite comprueba **las reglas**, no la interfaz. Que un botón no aparezca es HU-15.
 
 ## 7. Cierre de HU-11
