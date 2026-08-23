@@ -215,12 +215,12 @@ Los criterios que necesitan una cuenta de verdad, ejecutados sobre el sitio publ
 | Criterio | Historia | Resultado |
 | --- | --- | --- |
 | El registro crea la cuenta con rol de actor cultural | HU-12 | ✅ Documento de `usuarios` con `rol: "actor"`, `estado: "activo"` y el uid como identificador. |
-| El registro inicia la sesión | HU-12 | ✅ La cabecera pasa a mostrar «prueba · ACTOR CULTURAL». |
+| El registro inicia la sesión y redirige | HU-12 | ✅ Termina en `/mis-publicaciones` con la cabecera mostrando «prueba · ACTOR CULTURAL». |
 | Un correo ya registrado da un mensaje claro y no duplica la cuenta | HU-12 | ✅ «Ese correo ya tiene una cuenta en la plataforma. Inicia sesión o recupera tu contraseña», junto al campo del correo y con el borde marcado. |
 | Cerrar sesión pierde el acceso a las vistas privadas | HU-13 | ✅ Comprobado al cambiar de la cuenta de administrador a la de actor. |
 | La respuesta de recuperación no revela si la cuenta existe | HU-14 | ✅ Con una dirección registrada y con una que no lo está, el mismo texto. |
-| Recargar la página mantiene la sesión | HU-13 | ⬜ |
-| Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ⬜ |
+| Recargar la página mantiene la sesión | HU-13 | ✅ Con F5 la sesión sigue abierta. |
+| Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ✅ Con una cuenta de Gmail. Con la institucional, no: §5 ter. |
 
 El documento de `usuarios` leído desde la consola de Firebase, que es la prueba del alta:
 
@@ -268,6 +268,52 @@ acabamos de enviar allí un enlace para definir una contraseña nueva.
 Sin ningún error en la consola. El tercer criterio —definir una contraseña nueva desde el
 enlace y entrar con ella— lo resuelve la pantalla que aloja el propio Firebase, y se
 comprueba en vivo con una cuenta real.
+
+## 5 ter. El correo de restablecimiento: dos hallazgos de la prueba en vivo
+
+El primer intento se hizo con una dirección `@correo.tdea.edu.co`, y **el correo no llegó**.
+La cuenta existía —comprobado en la lista de usuarios de Authentication—, así que no era el
+caso de §5 bis.
+
+### El buzón institucional lo retiene antes de que se vea
+
+Los registros MX del dominio dicen quién filtra:
+
+```
+correo.tdea.edu.co  →  correo-tdea-edu-co.mail.protection.outlook.com
+```
+
+Es Microsoft 365 con Exchange Online Protection delante. Cuando ese filtro pone un mensaje
+en cuarentena **no lo deja en la carpeta de no deseado**: lo retiene en el servidor, donde
+el destinatario no lo ve salvo que el administrador del dominio le habilite el portal de
+cuarentena. Firebase envía desde `noreply@hub-cultural-santa-marta.firebaseapp.com`, un
+remitente que ese filtro no conoce y cuyo dominio no tiene registros de autenticación de
+correo alineados con la institución: es el perfil que EOP retiene sin avisar.
+
+Repetida la prueba con una cuenta de Gmail, **el correo llegó** —a la carpeta de no
+deseado— y el enlace permitió definir una contraseña nueva y entrar con ella. El envío
+funciona; lo que falla es la entrega en un destinatario concreto.
+
+Queda como **limitación conocida y no como defecto**: una plataforma que no controla un
+dominio propio de correo no puede garantizar la entrega en buzones corporativos. Resolverlo
+de verdad exige un remitente propio con SPF y DKIM —un servidor SMTP configurado en
+*Authentication → Templates*—, que está fuera del alcance del prototipo y de su presupuesto
+de cero pesos (RNF-10). Si la plataforma llegara a operar, es lo primero que habría que
+montar.
+
+### El correo llegaba en inglés
+
+El mensaje decía «Reset your password for hub-cultural-santa-marta», y el enlace terminaba
+en `&lang=en`. La plantilla predeterminada de Firebase está en inglés y se envía en el
+idioma que declare el cliente, que no declaraba ninguno.
+
+Es un defecto pequeño y de los que se cuelan: toda la interfaz está en español, nadie
+revisa un correo que envía un tercero, y solo aparece cuando alguien recibe uno de verdad.
+Se corrige en una línea, en `services/firebase.js`:
+
+```js
+if (auth) auth.languageCode = 'es';
+```
 
 ## 6. Lo que este incremento todavía no hace
 

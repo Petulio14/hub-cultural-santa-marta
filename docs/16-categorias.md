@@ -165,18 +165,29 @@ De 46 a **56 casos**:
 El último cierra el círculo: si al desactivar se ocultara también la lectura, un evento
 antiguo mostraría el identificador crudo en lugar del nombre de su categoría.
 
-### Pendiente de comprobación en vivo
+### Comprobación en vivo
 
-El panel es la primera vista que exige sesión de administrador, así que su comprobación
-necesita la cuenta del paso [06 §1.7](06-puesta-en-marcha.md):
+El panel es la primera vista que exige sesión de administrador. Ejecutado sobre el sitio
+publicado el **22/08/2026** con la cuenta del paso [06 §1.7](06-puesta-en-marcha.md):
 
-| Criterio | Estado |
+| Criterio | Resultado |
 | --- | --- |
-| Crear una categoría y verla aparecer en el listado | ⬜ |
-| El listado muestra el recuento de publicaciones de cada una | ⬜ |
-| «Eliminar» advierte y ofrece desactivar en su lugar | ⬜ |
-| Renombrar conserva el identificador | ⬜ |
+| Crear una categoría y verla en el listado | ✅ «Danza» aparece con su identificador `danza`, y el aviso confirma que ya está disponible en los formularios de publicación. |
+| El listado muestra el recuento de cada categoría | ✅ Columna «Publicaciones»: 0, que es lo que corresponde con el catálogo de eventos vacío. |
+| «Eliminar» advierte y ofrece desactivar en su lugar | ✅ Texto completo en la captura: «Ninguna publicación la usa ahora mismo, pero el catálogo **no elimina categorías**…», con los botones Desactivar y Cancelar. |
+| Desactivar y reactivar | ✅ La etiqueta pasa de «Se ofrece» a «No se ofrece» y las acciones, de «Eliminar» a «Reactivar». |
 | Medición a 360, 768 y 1366 px sobre el panel | ⬜ |
+
+### Un defecto que apareció en esa comprobación
+
+El resumen del listado decía **«1 categoría, 1 en uso»** al lado de una columna
+«Publicaciones» que marcaba **0**. Las dos cifras eran correctas y se contradecían: «en uso»
+se refería a las categorías que se ofrecen, y la columna, a las publicaciones que las usan.
+
+No es un fallo de comportamiento, y por eso importa anotarlo: nadie lo habría encontrado
+leyendo el código, porque cada frase por separado dice la verdad. Solo se ve con la pantalla
+delante y un dato real dentro. El resumen dice ahora «1 categoría, 1 se ofrece en los
+formularios y en los filtros», que es el mismo vocabulario de la etiqueta de cada fila.
 
 ## 6. Lo que queda fuera
 

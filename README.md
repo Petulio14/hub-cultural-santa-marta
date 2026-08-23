@@ -61,8 +61,9 @@ La arquitectura de cuatro capas y la justificación de cada decisión técnica e
 
 ## Estado
 
-Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. Sprints 1, 2 y 3
-cerrados. El avance se sigue
+Prototipo en construcción, 8 sprints entre agosto y noviembre de 2026. Sprints 1, 2, 3 y 4
+cerrados: la plataforma se puede recorrer sin cuenta, y quien la tiene puede registrarse,
+entrar, recuperar su contraseña y —si es administrador— gestionar el catálogo de categorías. El avance se sigue
 en los [issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues) y en el
 tablero del proyecto.
 
