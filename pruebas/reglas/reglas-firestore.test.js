@@ -18,8 +18,10 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   setLogLevel,
   updateDoc,
@@ -33,6 +35,7 @@ setLogLevel('silent');
 const UID_ACTOR = 'uid-actor';
 const UID_OTRO = 'uid-otro-actor';
 const UID_ADMIN = 'uid-admin';
+const UID_DESACTIVADO = 'uid-desactivado';
 const ID_ACTOR = 'actor-1';
 const ID_ACTOR_PENDIENTE = 'actor-2';
 
@@ -68,6 +71,14 @@ before(async () => {
       rol: 'actor',
       estado: 'activo',
       correo: 'otro@ejemplo.co',
+    });
+    // Misma cuenta de actor, pero desactivada: sirve para comprobar que el rol
+    // por sí solo no concede permisos (HU-15).
+    await setDoc(doc(bd, 'usuarios', UID_DESACTIVADO), {
+      uid: UID_DESACTIVADO,
+      rol: 'actor',
+      estado: 'inactivo',
+      correo: 'desactivado@ejemplo.co',
     });
     await setDoc(doc(bd, 'usuarios', UID_ADMIN), {
       uid: UID_ADMIN,
@@ -403,5 +414,82 @@ describe('interacciones · registro anonimizado', () => {
 
   it('un visitante NO las lee: son solo para el panel de indicadores', async () => {
     await assertFails(getDoc(doc(visitante(), 'interacciones', 'interaccion-1')));
+  });
+});
+
+describe('roles y permisos (HU-15)', () => {
+  /** Perfil de actor cultural mínimo que las reglas aceptan. */
+  const perfilDeActor = (uid) => ({
+    uid,
+    nombre: 'Escuela de gaitas',
+    manifestacion: 'Música tradicional',
+    descripcion: 'Enseñanza de gaita y tambor.',
+    categoria: 'musica',
+    contacto: { telefono: null, correo: null, whatsapp: null },
+    estado: 'pendiente',
+  });
+
+  it('una cuenta activa con rol de actor crea su perfil', async () => {
+    await assertSucceeds(
+      setDoc(doc(comoUsuario(UID_OTRO), 'actoresCulturales', 'actor-3'), perfilDeActor(UID_OTRO))
+    );
+  });
+
+  it('una cuenta desactivada NO crea perfil, aunque su rol sea el correcto', async () => {
+    // El rol por sí solo no basta: tengoRol() exige además estado 'activo'. Es lo
+    // que hace que desactivar una cuenta surta efecto sin borrar la credencial.
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(UID_DESACTIVADO), 'actoresCulturales', 'actor-4'),
+        perfilDeActor(UID_DESACTIVADO)
+      )
+    );
+  });
+
+  it('un visitante sin sesión lee el catálogo aprobado sin registrarse', async () => {
+    // Tercer criterio de HU-15: la parte pública no exige cuenta.
+    await assertSucceeds(getDoc(doc(visitante(), 'eventos', 'evento-aprobado')));
+    await assertSucceeds(getDoc(doc(visitante(), 'actoresCulturales', ID_ACTOR)));
+    await assertSucceeds(getDoc(doc(visitante(), 'categorias', 'musica')));
+  });
+
+  it('un actor NO lista la colección de usuarios', async () => {
+    await assertFails(getDocs(collection(comoUsuario(UID_ACTOR), 'usuarios')));
+  });
+
+  it('el administrador sí la lista', async () => {
+    await assertSucceeds(getDocs(collection(comoUsuario(UID_ADMIN), 'usuarios')));
+  });
+
+  it('el actor dueño lee la moderación de su propio evento', async () => {
+    await assertSucceeds(getDoc(doc(comoUsuario(UID_ACTOR), 'moderaciones', 'moderacion-2')));
+  });
+
+  it('otro actor NO lee esa moderación', async () => {
+    await assertFails(getDoc(doc(comoUsuario(UID_OTRO), 'moderaciones', 'moderacion-2')));
+  });
+
+  it('un visitante sin sesión NO lee moderaciones', async () => {
+    await assertFails(getDoc(doc(visitante(), 'moderaciones', 'moderacion-2')));
+  });
+
+  it('un actor NO lee las interacciones: alimentan el panel de indicadores', async () => {
+    await assertFails(getDoc(doc(comoUsuario(UID_ACTOR), 'interacciones', 'interaccion-1')));
+  });
+
+  it('el administrador sí las lee', async () => {
+    await assertSucceeds(getDoc(doc(comoUsuario(UID_ADMIN), 'interacciones', 'interaccion-1')));
+  });
+
+  it('un actor NO desactiva la cuenta de otra persona', async () => {
+    await assertFails(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'usuarios', UID_OTRO), { estado: 'inactivo' })
+    );
+  });
+
+  it('el administrador sí desactiva una cuenta', async () => {
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ADMIN), 'usuarios', UID_OTRO), { estado: 'inactivo' })
+    );
   });
 });
