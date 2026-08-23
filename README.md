@@ -46,7 +46,7 @@ Las pruebas de las validaciones y las utilidades, que no necesitan nada más:
 npm run probar
 ```
 
-Y si tocas las reglas de seguridad, las 34 pruebas contra el emulador (requiere Java):
+Y si tocas las reglas de seguridad, las 46 pruebas contra el emulador (requiere Java):
 
 ```bash
 npm run probar:reglas
