@@ -6,23 +6,51 @@ import { destinoTrasIngresar } from '../../routes/roles.js';
 import {
   ErrorDeCuenta,
   VERSION_POLITICA_DATOS,
+  enviarCorreoDeRestablecimiento,
   iniciarSesion,
   registrarActorCultural,
 } from '../../services/authService.js';
-import { hayErrores, validarIngreso, validarRegistro } from '../../utils/validaciones.js';
+import {
+  hayErrores,
+  validarIngreso,
+  validarRecuperacion,
+  validarRegistro,
+} from '../../utils/validaciones.js';
 import './Ingreso.css';
 
 /**
- * V-8 · Ingreso y registro — HU-12, HU-13, HU-16.
+ * V-8 · Ingreso y registro — HU-12, HU-13, HU-14, HU-16.
  *
- * Las dos operaciones comparten vista porque comparten la duda de quien llega:
- * «¿ya tengo cuenta?». Separarlas en dos direcciones obliga a volver atrás al
- * equivocarse; aquí se cambia de panel sin perder el sitio.
+ * Las tres operaciones comparten vista porque comparten la duda de quien llega:
+ * «¿ya tengo cuenta?, ¿me acuerdo de la contraseña?». Separarlas en tres
+ * direcciones obliga a volver atrás al equivocarse; aquí se cambia de panel sin
+ * perder el sitio, y el correo ya escrito se conserva al cambiar.
  *
  * La validación se hace en «utils/validaciones.js», que no sabe nada de React, y
  * el acceso a Firebase en «services/authService.js», que no sabe nada de esta
  * vista. Aquí solo queda el estado del formulario y qué se muestra.
  */
+/** Los textos de cada modo, juntos: así se leen de una vez y no repartidos por el JSX. */
+const TITULO = {
+  ingreso: 'Inicia sesión',
+  registro: 'Crea tu cuenta de actor cultural',
+  recuperar: 'Recupera tu contraseña',
+};
+
+const INTRO = {
+  ingreso: 'Entra con el correo y la contraseña con los que creaste tu cuenta.',
+  registro:
+    'Con una cuenta puedes publicar tus experiencias culturales y aparecer en el directorio de Santa Marta.',
+  recuperar:
+    'Escribe tu correo y te enviamos un enlace para definir una contraseña nueva. No necesitas recordar la anterior.',
+};
+
+const ENVIAR = {
+  ingreso: 'Entrar',
+  registro: 'Crear cuenta',
+  recuperar: 'Enviar el enlace',
+};
+
 const FORMULARIO_VACIO = {
   nombre: '',
   correo: '',
@@ -41,6 +69,7 @@ export default function Ingreso() {
   const [errores, setErrores] = useState({});
   const [errorGeneral, setErrorGeneral] = useState(null);
   const [enviando, setEnviando] = useState(false);
+  const [correoEnviado, setCorreoEnviado] = useState(false);
   const formularioRef = useRef(null);
 
   // Tras un envío rechazado el foco va al primer campo con error. Sin esto, quien
@@ -57,6 +86,7 @@ export default function Ingreso() {
 
   function cambiarModo(nuevo) {
     setModo(nuevo);
+    setCorreoEnviado(false);
     setErrores({});
     setErrorGeneral(null);
     setFormulario((anterior) => ({ ...FORMULARIO_VACIO, correo: anterior.correo }));
@@ -66,12 +96,20 @@ export default function Ingreso() {
     evento.preventDefault();
     setErrorGeneral(null);
 
-    const encontrados = modo === 'registro' ? validarRegistro(formulario) : validarIngreso(formulario);
+    const validar = { registro: validarRegistro, ingreso: validarIngreso, recuperar: validarRecuperacion };
+    const encontrados = validar[modo](formulario);
     setErrores(encontrados);
     if (hayErrores(encontrados)) return;
 
     setEnviando(true);
     try {
+      if (modo === 'recuperar') {
+        await enviarCorreoDeRestablecimiento(formulario.correo);
+        setCorreoEnviado(true);
+        setEnviando(false);
+        return;
+      }
+
       const sesion =
         modo === 'registro'
           ? await registrarActorCultural(formulario)
@@ -105,6 +143,7 @@ export default function Ingreso() {
   }
 
   const esRegistro = modo === 'registro';
+  const esRecuperar = modo === 'recuperar';
 
   return (
     <section className="contenedor acceso">
@@ -140,13 +179,30 @@ export default function Ingreso() {
           role="tabpanel"
           aria-labelledby={esRegistro ? 'pestana-registro' : 'pestana-ingreso'}
         >
-          <h1>{esRegistro ? 'Crea tu cuenta de actor cultural' : 'Inicia sesión'}</h1>
-          <p className="acceso__intro">
-            {esRegistro
-              ? 'Con una cuenta puedes publicar tus experiencias culturales y aparecer en el directorio de Santa Marta.'
-              : 'Entra con el correo y la contraseña con los que creaste tu cuenta.'}
-          </p>
+          <h1>{TITULO[modo]}</h1>
+          <p className="acceso__intro">{INTRO[modo]}</p>
 
+          {esRecuperar && correoEnviado ? (
+            /* El mensaje es el mismo exista o no la cuenta: decir «ese correo no
+               está registrado» convertiría este formulario en un detector de
+               quién tiene cuenta (segundo criterio de HU-14). Por eso habla de
+               «si existe una cuenta» y no de lo que se ha hecho. */
+            <div className="acceso__confirmacion" role="status">
+              <p>
+                <strong>Revisa tu correo.</strong> Si existe una cuenta asociada a{' '}
+                {formulario.correo}, acabamos de enviar allí un enlace para definir una
+                contraseña nueva.
+              </p>
+              <p>
+                El enlace caduca al cabo de un rato. Si no lo encuentras, mira en la carpeta
+                de correo no deseado.
+              </p>
+              <button type="button" className="boton" onClick={() => cambiarModo('ingreso')}>
+                Volver a iniciar sesión
+              </button>
+            </div>
+          ) : (
+          <>
           {/* «noValidate» desactiva los avisos del navegador para que se vean los
               mensajes de «validaciones.js», que son los que están comprobados.
               El atributo «required» se conserva en cada campo: es lo que anuncia
@@ -177,15 +233,29 @@ export default function Ingreso() {
               autoComplete="email"
             />
 
-            <Campo
-              etiqueta="Contraseña"
-              tipo="password"
-              valor={formulario.contrasena}
-              alCambiar={escribir('contrasena')}
-              error={errores.contrasena}
-              ayuda={esRegistro ? 'Mínimo ocho caracteres.' : null}
-              autoComplete={esRegistro ? 'new-password' : 'current-password'}
-            />
+            {!esRecuperar && (
+              <Campo
+                etiqueta="Contraseña"
+                tipo="password"
+                valor={formulario.contrasena}
+                alCambiar={escribir('contrasena')}
+                error={errores.contrasena}
+                ayuda={esRegistro ? 'Mínimo ocho caracteres.' : null}
+                autoComplete={esRegistro ? 'new-password' : 'current-password'}
+              />
+            )}
+
+            {modo === 'ingreso' && (
+              <p className="acceso__olvido">
+                <button
+                  type="button"
+                  className="enlace-texto"
+                  onClick={() => cambiarModo('recuperar')}
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </p>
+            )}
 
             {esRegistro && (
               <>
@@ -236,16 +306,19 @@ export default function Ingreso() {
             )}
 
             <button className="boton acceso__enviar" type="submit" disabled={enviando}>
-              {enviando
-                ? 'Un momento…'
-                : esRegistro
-                  ? 'Crear cuenta'
-                  : 'Entrar'}
+              {enviando ? 'Un momento…' : ENVIAR[modo]}
             </button>
           </form>
 
           <p className="acceso__alternativa">
-            {esRegistro ? (
+            {esRecuperar ? (
+              <>
+                ¿Te acordaste?{' '}
+                <button type="button" className="enlace-texto" onClick={() => cambiarModo('ingreso')}>
+                  Vuelve a iniciar sesión
+                </button>
+              </>
+            ) : esRegistro ? (
               <>
                 ¿Ya tienes cuenta?{' '}
                 <button type="button" className="enlace-texto" onClick={() => cambiarModo('ingreso')}>
@@ -265,6 +338,8 @@ export default function Ingreso() {
               </>
             )}
           </p>
+          </>
+          )}
         </div>
       </div>
     </section>
