@@ -25,9 +25,13 @@ export default function Cabecera() {
   const [abierto, setAbierto] = useState(false);
   const { pathname } = useLocation();
   const navegar = useNavigate();
-  const { cargando, usuario, rol } = useSesion();
+  const { cargando, usuario, rol, perfil } = useSesion();
   const idPanel = useId();
   const botonRef = useRef(null);
+
+  // Una cuenta desactivada conserva la sesión y pierde los permisos, así que
+  // tampoco ve los enlaces que llevan a lo que ya no puede hacer (HU-15).
+  const activa = perfil?.estado === 'activo';
 
   // Al cambiar de vista el panel se cierra: dejarlo abierto taparía la vista
   // recién abierta.
@@ -85,7 +89,7 @@ export default function Cabecera() {
           id={idPanel}
         >
           <nav className="cabecera__nav" aria-label="Navegación principal">
-            {[...ACCESOS_PRINCIPALES, ...enlacesDeRol(rol)].map((acceso) => (
+            {[...ACCESOS_PRINCIPALES, ...(activa ? enlacesDeRol(rol) : [])].map((acceso) => (
               <NavLink
                 key={acceso.a}
                 to={acceso.a}
@@ -105,7 +109,7 @@ export default function Cabecera() {
             <div className="cabecera__sesion">
               <span className="cabecera__quien">
                 {usuario.nombre}
-                <small>{etiquetaDeRol(rol)}</small>
+                <small>{activa ? etiquetaDeRol(rol) : 'Cuenta desactivada'}</small>
               </span>
               <button type="button" className="cabecera__salir" onClick={salir}>
                 Cerrar sesión
