@@ -111,6 +111,24 @@ El último es menos evidente que los otros tres: `consentimientoDatos` está en 
 campos que el propio usuario no puede tocar al editarse. Si pudiera, la prueba de la
 autorización sería un dato que el interesado modifica a voluntad, y dejaría de ser prueba.
 
+### La prueba de la autorización, leída en la base de datos
+
+Sobre una cuenta creada desde el formulario publicado, el 22/08/2026:
+
+```
+consentimientoDatos
+  aceptado  true
+  fecha     22 de agosto de 2026, 8:56:38 p.m. UTC-5
+  version   "1.0"
+fechaRegistro
+            22 de agosto de 2026, 8:56:38 p.m. UTC-5
+```
+
+Es el tercer criterio de aceptación, y es también lo que el artículo 12 llama prueba de la
+autorización: consta **qué** se aceptó (la versión), **cuándo**, y que fue un sí expreso. La
+fecha coincide al segundo con la del registro porque las dos las escribió el servidor en la
+misma operación.
+
 ### La política es alcanzable
 
 ```
