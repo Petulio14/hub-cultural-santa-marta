@@ -146,6 +146,50 @@
   background: var(--realce-suave);
 }
 
+/* Quién está dentro y cómo salir (HU-13). En compacto va en dos líneas debajo
+   del menú; desde 768 px, al final de la barra. */
+.cabecera__sesion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+  border-top: 1px solid var(--realce-suave);
+}
+
+.cabecera__quien {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-right: auto;
+}
+
+.cabecera__quien small {
+  font-weight: 500;
+  font-size: 0.72rem;
+  opacity: 0.85;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cabecera__salir {
+  min-height: var(--toque-minimo);
+  padding: 8px 16px;
+  border: 1px solid var(--borde-claro);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--blanco);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cabecera__salir:hover {
+  background: var(--realce-suave);
+}
+
 /*
  * ── Menú completo: desde 768 px ──────────────────────────────────────────
  * Desaparece el botón y el panel deja de depender del estado: se muestra
@@ -174,6 +218,18 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+  }
+
+  .cabecera__sesion {
+    padding-top: 0;
+    border-top: 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--realce-suave);
+  }
+
+  .cabecera__quien {
+    margin-right: 0;
+    text-align: right;
   }
 
   .cabecera__placa img {
