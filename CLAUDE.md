@@ -18,6 +18,23 @@ Es un requisito del asesor: la autoría del trabajo académico es del estudiante
 - Nunca directo sobre `master`: la rama está protegida y exige pull request con una
   aprobación.
 
+## Pull request
+
+El cuerpo lleva **`Closes #n`** por cada issue que la rama cierra, en inglés y **desde que
+el pull request se abre**. Es lo que alimenta el campo «Linked pull requests» del tablero y
+la sección *Development* del issue, que es por donde se llega al código desde la historia.
+
+Dos límites comprobados y que no tienen vuelta atrás:
+
+- «Cierra #n» en español no enlaza ni cierra nada.
+- Editar el cuerpo **después de fusionar** tampoco crea el enlace: GitHub solo interpreta
+  esas palabras mientras el pull request está abierto. Lo que se olvidó hay que enlazarlo a
+  mano en el panel *Development* del issue.
+
+Si la historia no debe cerrarse al fusionar porque falta comprobarla sobre el sitio
+publicado, se pone `Closes #n` igualmente y se reabre el issue hasta terminar la
+comprobación. Dejarlo para después cuesta el enlace.
+
 ## Trazabilidad
 
 Los códigos `RF-nn`, `RNF-nn` y `HU-nn` son los mismos en los documentos de `docs/`, en
