@@ -132,14 +132,21 @@ Sobre el servidor de desarrollo, sin sesión:
 
 Ese segundo bloque es el tercer criterio: **seis rutas públicas que no piden nada**.
 
-### Pendiente de comprobación en vivo
+### Comprobación en vivo
 
-Con la cuenta de administrador creada según [06 §1.7](06-puesta-en-marcha.md):
+Sobre el sitio publicado, el **22/08/2026**, con la cuenta de administrador del paso
+[06 §1.7](06-puesta-en-marcha.md) y una cuenta de actor cultural creada desde el formulario:
 
-| Criterio | Estado |
+| Criterio | Resultado |
 | --- | --- |
-| El administrador inicia sesión y aterriza en `/admin` | ⬜ |
-| Una cuenta de actor que abre `/admin` recibe el acceso denegado | ⬜ |
+| El administrador entra y llega al panel | ✅ `/admin` abre el panel, y la cabecera muestra «Admin · ADMINISTRADOR». |
+| El menú ofrece los enlaces del rol, y solo los suyos | ✅ Al administrador le aparece «Panel de administración»; al actor cultural, «Mis publicaciones». Ninguno ve el del otro. |
+| Una cuenta de actor que abre `/admin` recibe el acceso denegado | ✅ «Esta sección no está disponible para tu cuenta. La vista solicitada es para Administrador, y tu cuenta figura como actor cultural.» |
+
+La tercera es la que más dice de las dos capas: la cuenta de actor **llegó a escribir la
+dirección** `/admin` en la barra del navegador, sin pasar por ningún enlace. La interfaz la
+detuvo con una explicación, y aunque no lo hubiera hecho, las reglas habrían rechazado
+cualquier lectura o escritura que la vista intentara.
 
 ## 7. Lo que queda fuera
 
