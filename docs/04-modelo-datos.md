@@ -126,9 +126,13 @@ Colección central del sistema.
 | `idCategoria` | `string` | Sí | Identificador del documento. |
 | `nombre` | `string` | Sí | Nombre visible en los filtros. |
 | `descripcion` | `string` | No | Texto orientador. |
+| `activa` | `boolean` | Sí | Si se ofrece en los formularios y en los filtros. Añadido en HU-17. |
 
-> Una categoría con publicaciones asociadas **no puede eliminarse**; la interfaz lo advierte
-> y las reglas lo impiden (HU-17).
+> Una categoría **no se elimina nunca**: se desactiva con `activa: false`. Las reglas no
+> pueden contar los eventos que la usan —no hay consulta a otra colección desde una regla—,
+> así que negar el borrado siempre es la única garantía real de que ninguna publicación se
+> quede sin clasificación. El razonamiento completo está en
+> [16 · categorías](16-categorias.md) §2.
 
 ## 8. `moderaciones`
 
