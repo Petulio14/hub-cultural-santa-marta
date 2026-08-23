@@ -215,12 +215,12 @@ Los criterios que necesitan una cuenta de verdad, ejecutados sobre el sitio publ
 | Criterio | Historia | Resultado |
 | --- | --- | --- |
 | El registro crea la cuenta con rol de actor cultural | HU-12 | ✅ Documento de `usuarios` con `rol: "actor"`, `estado: "activo"` y el uid como identificador. |
-| El registro inicia la sesión | HU-12 | ✅ La cabecera pasa a mostrar «prueba · ACTOR CULTURAL». |
+| El registro inicia la sesión y redirige | HU-12 | ✅ Termina en `/mis-publicaciones` con la cabecera mostrando «prueba · ACTOR CULTURAL». |
 | Un correo ya registrado da un mensaje claro y no duplica la cuenta | HU-12 | ✅ «Ese correo ya tiene una cuenta en la plataforma. Inicia sesión o recupera tu contraseña», junto al campo del correo y con el borde marcado. |
 | Cerrar sesión pierde el acceso a las vistas privadas | HU-13 | ✅ Comprobado al cambiar de la cuenta de administrador a la de actor. |
 | La respuesta de recuperación no revela si la cuenta existe | HU-14 | ✅ Con una dirección registrada y con una que no lo está, el mismo texto. |
-| Recargar la página mantiene la sesión | HU-13 | ⬜ |
-| Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ⬜ |
+| Recargar la página mantiene la sesión | HU-13 | ✅ Con F5 la sesión sigue abierta. |
+| Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ⬜ En curso: ver §5 ter. |
 
 El documento de `usuarios` leído desde la consola de Firebase, que es la prueba del alta:
 
