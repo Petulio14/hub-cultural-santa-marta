@@ -12,6 +12,7 @@ import MapaInteractivo from '../views/MapaInteractivo/MapaInteractivo.jsx';
 import PanelAdministracion from '../views/PanelAdministracion/PanelAdministracion.jsx';
 import Ingreso from '../views/Ingreso/Ingreso.jsx';
 import MisPublicaciones from '../views/MisPublicaciones/MisPublicaciones.jsx';
+import PoliticaDatos from '../views/PoliticaDatos/PoliticaDatos.jsx';
 import NoEncontrada from '../views/NoEncontrada/NoEncontrada.jsx';
 
 /**
@@ -27,6 +28,7 @@ import NoEncontrada from '../views/NoEncontrada/NoEncontrada.jsx';
  *   /mapa              V-6  Mapa interactivo          pública
  *   /admin             V-7  Panel de administración   privada · administrador
  *   /ingreso           V-8  Ingreso y registro        pública
+ *   /politica-de-datos      Tratamiento de datos      pública (HU-16)
  *   /mis-publicaciones V-9  Mis publicaciones         privada · actor cultural
  *   cualquier otra          Página no encontrada      pública
  *
@@ -67,6 +69,13 @@ export const enrutador = createBrowserRouter([
         handle: { titulo: 'Panel de administración' },
       },
       { path: 'ingreso', element: <Ingreso />, handle: { titulo: 'Ingreso y registro' } },
+      {
+        // No estaba en el prototipo de HU-06: la exige el primer criterio de
+        // HU-16, que pide un enlace visible a la política desde el registro.
+        path: 'politica-de-datos',
+        element: <PoliticaDatos />,
+        handle: { titulo: 'Política de tratamiento de datos' },
+      },
       {
         path: 'mis-publicaciones',
         element: (

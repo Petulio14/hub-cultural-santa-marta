@@ -18,6 +18,11 @@ export default function PieDePagina() {
         <Link className="pie__inicio" to="/">
           Volver al inicio
         </Link>
+        {/* La política tiene que ser alcanzable desde cualquier vista, y no solo
+            desde el registro: es donde se ejercen los derechos del titular. */}
+        <Link className="pie__inicio" to="/politica-de-datos">
+          Tratamiento de datos
+        </Link>
         <p className="pie__nota">
           Prototipo académico en construcción. Los datos publicados se tratan conforme a la
           Ley 1581 de 2012.
