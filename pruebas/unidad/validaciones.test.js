@@ -1,5 +1,5 @@
 /**
- * Validación de los formularios de cuenta — HU-12, HU-13, HU-16.
+ * Validación de los formularios — HU-12, HU-13, HU-16, HU-17.
  *
  * No necesitan emulador ni navegador porque lo que comprueban son funciones
  * puras. Es la razón de que la validación viva en «src/utils» y no dentro de la
@@ -11,8 +11,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  LONGITUD_MAXIMA_CATEGORIA,
   LONGITUD_MINIMA_CONTRASENA,
   hayErrores,
+  validarCategoria,
   validarConsentimiento,
   validarIngreso,
   validarRecuperacion,
@@ -154,5 +156,46 @@ describe('recuperación de contraseña (HU-14)', () => {
 
   it('el correo vacío se bloquea', () => {
     assert.ok(validarRecuperacion({ correo: '' }).correo);
+  });
+});
+
+describe('categorías culturales (HU-17)', () => {
+  const existentes = ['musica-y-danza', 'gastronomia'];
+
+  it('un nombre nuevo se acepta', () => {
+    assert.equal(hayErrores(validarCategoria({ nombre: 'Artesanía y oficios' }, existentes)), false);
+  });
+
+  it('el nombre vacío se bloquea', () => {
+    assert.ok(validarCategoria({ nombre: '   ' }, existentes).nombre);
+  });
+
+  it('un nombre demasiado corto se bloquea', () => {
+    assert.ok(validarCategoria({ nombre: 'Ok' }, existentes).nombre);
+  });
+
+  it('un nombre que no cabe en un filtro se bloquea', () => {
+    const largo = 'a'.repeat(LONGITUD_MAXIMA_CATEGORIA + 1);
+    assert.ok(validarCategoria({ nombre: largo }, existentes).nombre);
+  });
+
+  it('acepta exactamente la longitud máxima', () => {
+    const justo = 'a'.repeat(LONGITUD_MAXIMA_CATEGORIA);
+    assert.equal(validarCategoria({ nombre: justo }, existentes).nombre, undefined);
+  });
+
+  it('detecta el duplicado aunque cambien las tildes y las mayúsculas', () => {
+    // «MUSICA Y DANZA» produce el mismo identificador que la existente, y crear
+    // la categoría sobrescribiría la que ya clasifica publicaciones.
+    assert.ok(validarCategoria({ nombre: 'MUSICA Y DANZA' }, existentes).nombre);
+    assert.ok(validarCategoria({ nombre: 'Gastronomía' }, existentes).nombre);
+  });
+
+  it('un nombre sin letras ni números se bloquea antes de llegar al servidor', () => {
+    assert.ok(validarCategoria({ nombre: '///' }, existentes).nombre);
+  });
+
+  it('sin categorías previas, cualquier nombre válido pasa', () => {
+    assert.equal(hayErrores(validarCategoria({ nombre: 'Patrimonio' })), false);
   });
 });
