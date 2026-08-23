@@ -131,10 +131,13 @@ export default function PanelAdministracion() {
 
       {!cargando && categorias.length > 0 && (
         <table className="categorias">
+          {/* «en uso» decía aquí lo que la columna «Publicaciones» desmiente: una
+              categoría puede ofrecerse y no clasificar todavía nada. El resumen
+              habla ahora de lo mismo que la etiqueta de cada fila. */}
           <caption>
             {categorias.length} {categorias.length === 1 ? 'categoría' : 'categorías'}, {activas}{' '}
-            en uso. El número de publicaciones se cuenta en el servidor cada vez que se abre
-            esta página.
+            {activas === 1 ? 'se ofrece' : 'se ofrecen'} en los formularios y en los filtros. El
+            número de publicaciones se cuenta en el servidor cada vez que se abre esta página.
           </caption>
           <thead>
             <tr>
