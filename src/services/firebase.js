@@ -42,5 +42,11 @@ if (configuracionCompleta) {
 }
 
 export const auth = app ? getAuth(app) : null;
+
+// Los correos que envía Authentication —restablecer la contraseña, verificar la
+// dirección— salen en el idioma que se declare aquí. Sin esta línea llegan en
+// inglés, con la plantilla predeterminada de Firebase, a personas que están
+// usando una plataforma escrita entera en español (HU-14, docs/13 §5 ter).
+if (auth) auth.languageCode = 'es';
 export const db = app ? getFirestore(app) : null;
 export const almacenamiento = app ? getStorage(app) : null;
