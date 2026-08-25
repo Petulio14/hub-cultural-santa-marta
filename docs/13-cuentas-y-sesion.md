@@ -221,6 +221,7 @@ Los criterios que necesitan una cuenta de verdad, ejecutados sobre el sitio publ
 | La respuesta de recuperación no revela si la cuenta existe | HU-14 | ✅ Con una dirección registrada y con una que no lo está, el mismo texto. |
 | Recargar la página mantiene la sesión | HU-13 | ✅ Con F5 la sesión sigue abierta. |
 | Llega el correo de restablecimiento y la contraseña nueva funciona | HU-14 | ✅ Con una cuenta de Gmail. Con la institucional, no: §5 ter. |
+| El correo de restablecimiento llega en español | HU-14 | ✅ Comprobado el 25/08/2026, tras la corrección de §5 ter: asunto «Cambia la contraseña de hub-cultural-santa-marta» y enlace con `&lang=es`. |
 
 El documento de `usuarios` leído desde la consola de Firebase, que es la prueba del alta:
 
@@ -314,6 +315,10 @@ Se corrige en una línea, en `services/firebase.js`:
 ```js
 if (auth) auth.languageCode = 'es';
 ```
+
+Comprobado el 25/08/2026 sobre el proyecto desplegado: el correo llega con el asunto
+«Cambia la contraseña de hub-cultural-santa-marta», el cuerpo entero en español y el
+enlace terminado en `&lang=es`. La corrección queda verificada, no solo desplegada.
 
 ## 6. Lo que este incremento todavía no hace
 
