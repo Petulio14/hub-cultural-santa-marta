@@ -83,7 +83,7 @@ no dentro del componente que la usa.
 buena una modificación:
 
 ```bash
-node figma-plugin/simular.js
+node figma-plugin/simular.cjs
 ```
 
 Ejecuta el plugin completo contra una API de Figma simulada e imprime el mismo informe
