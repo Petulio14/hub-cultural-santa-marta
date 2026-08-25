@@ -66,6 +66,16 @@ página de inicio publicada era la de HU-07 —un título y un botón—; despu�
 intervención manual, mostraba el contenido de HU-09: los cuatro accesos y el menú. Esa
 diferencia visible es la prueba de que la publicación siguió al código.
 
+> **Ese identificador ya no existe en el repositorio.** El 25/08/2026 se reescribió el
+> historial para retirar de dieciocho commits un pie `Co-Authored-By` de una herramienta de
+> asistencia, a petición del asesor. La reescritura no cambió ni un byte del contenido —el
+> árbol de `master` sigue siendo `2e917bb`—, pero sí todos los identificadores: aquel
+> commit de fusión es hoy **`a2f65ae`**.
+>
+> El bloque de arriba se deja **tal como lo emitió Vercel**. Sustituir ahí el hash por el
+> nuevo sería escribir algo que Vercel nunca dijo: lo que desplegó aquel 22 de agosto fue
+> `10acd0f`. Una evidencia se anota, no se corrige.
+
 ### La dirección pública responde
 
 ```
@@ -122,7 +132,7 @@ verificador más honesto de que algo se integró de verdad.
 
 | Criterio de aceptación | Evidencia |
 | --- | --- |
-| Integrar en la rama principal genera un despliegue **sin intervención manual**. | Sección 4: despliegue de `10acd0f` con estado `success`, y cambio visible en la portada publicada. |
+| Integrar en la rama principal genera un despliegue **sin intervención manual**. | Sección 4: despliegue de `10acd0f` —hoy `a2f65ae`— con estado `success`, y cambio visible en la portada publicada. |
 | Existe una **dirección pública** accesible desde cualquier navegador. | https://hub-cultural-santa-marta.vercel.app, con sus cabeceras de seguridad. |
 | Integrar sin revisión del otro integrante queda **bloqueado**. | Sección 4: protección de `master` con una aprobación obligatoria. |
 
