@@ -28,6 +28,13 @@ ninguna imagen, que es la razón de que sea la opción por defecto.
 
 Máximo 900 KB por imagen: por encima de eso el almacenamiento local de Figma la rechaza.
 
+Las imágenes que elijas **no se versionan**. El plugin las guarda en el almacenamiento
+local de Figma y jamás lee el repositorio, así que ponerlas aquí no sirve para ejecutarlo
+y sí obliga a responder por su licencia y por el derecho de imagen de quien aparezca en
+ellas. Por eso `figma-plugin/*.jpg` está en `.gitignore`
+([`../docs/05-prototipo-interfaz.md`](../docs/05-prototipo-interfaz.md) §4 bis).
+Guárdalas donde quieras de tu disco y eligélas desde el selector.
+
 ---
 
 ## Cómo ejecutarlo
