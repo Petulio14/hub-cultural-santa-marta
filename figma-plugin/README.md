@@ -149,13 +149,18 @@ node --check figma-plugin/code.js
 Banco de pruebas: ejecuta el plugin completo contra una API de Figma simulada.
 
 ```bash
-node figma-plugin/simular.js
+node figma-plugin/simular.cjs
 ```
 
 Atrapa métodos inexistentes, propiedades asignadas en el orden equivocado, nodos usados
 después de borrarlos y excepciones sin capturar, que es lo que de verdad rompe un plugin.
 Imprime el mismo informe que verías en Figma, así que sirve para comprobar un cambio sin
 abrir la aplicación. Sale con código distinto de cero si la construcción falla.
+
+La extensión es `.cjs` a propósito: `package.json` declara `"type": "module"` por la
+aplicación de React, y el banco de pruebas está escrito en CommonJS porque necesita `vm`
+para ejecutar `code.js` tal cual, sin compilarlo. Con `.js` Node lo leería como módulo ES
+y fallaría en el primer `require`.
 
 Su motor de disposición no es Figma, pero ya modela lo suficiente para reproducir los
 defectos que han ido apareciendo: qué eje es el principal en cada dirección, el relleno y
