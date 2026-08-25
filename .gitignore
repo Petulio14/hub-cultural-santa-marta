@@ -44,3 +44,10 @@ yarn-error.log*
 figma-plugin/*.jpg
 figma-plugin/*.jpeg
 figma-plugin/*.jfif
+figma-plugin/*.png
+figma-plugin/*.webp
+
+# El logotipo institucional si se versiona: es la marca del Tecnologico de
+# Antioquia en el trabajo de grado de uno de sus estudiantes, no una imagen de
+# terceros cuya licencia haya que resolver.
+!figma-plugin/logo.png
