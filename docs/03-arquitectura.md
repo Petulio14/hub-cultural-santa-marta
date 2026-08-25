@@ -144,6 +144,37 @@ src/
 | Base de datos documental (Firestore) | Base de datos relacional | La información cultural es heterogénea y no se ajusta cómodamente a un esquema relacional rígido. |
 | Leaflet + OpenStreetMap | Google Maps u otro servicio comercial | Evita el costo asociado a los servicios cartográficos comerciales y se ajusta a la restricción de recursos gratuitos (R-02, RNF-10). |
 | SPA en React | Renderizado en servidor | Se despliega como sitio estático en el nivel gratuito de Vercel y no requiere servidor en ejecución. |
+| Imágenes reducidas dentro del documento de Firestore | Firebase Storage | Storage exige plan de facturación con medio de pago, y el proyecto no dispone de él (R-02, RNF-10). Detalle abajo. |
+
+### 6.1 Por qué las imágenes no van en Firebase Storage
+
+`storage.rules` está escrito y probado desde HU-08, pero **nunca se ha publicado**: al
+activar Storage la consola exige pasar el proyecto a plan Blaze, que requiere registrar un
+medio de pago aunque el consumo previsto quede dentro de la franja gratuita. El proyecto no
+tiene presupuesto (RNF-10), así que HU-19 y HU-21 —las dos historias que guardan
+imágenes— no pueden apoyarse en él.
+
+En su lugar, la imagen se **reduce en el navegador antes de guardarse** y viaja como texto
+en el propio documento de Firestore. Un JPEG de 480 px al 70 % ronda los 40 KB, unos 55 KB
+ya codificado, muy por debajo del límite de 1 MB por documento.
+
+Lo que hace aceptable el cambio es que **la restricción sigue siendo del servidor**. Las
+reglas comprueban las dos cosas que exige el criterio de HU-19, y las comprueban sobre lo
+que de verdad se escribe, no sobre lo que el navegador diga haber hecho:
+
+```
+request.resource.data.imagen.size() < 120000
+&& request.resource.data.imagen.matches('^data:image/(jpeg|png);base64,.*')
+```
+
+El rechazo por formato o por tamaño con mensaje explicativo ocurre antes, en el
+formulario, sobre el archivo original de hasta 2 MB que elige la persona.
+
+Lo que se pierde, dicho sin adornos: resolución frente al original, y más datos
+transferidos en cada carga del catálogo, porque la imagen viaja con el documento en lugar
+de pedirse aparte y quedar en la caché del navegador. `storage.rules` se conserva en el
+repositorio como el diseño ya listo para el día que exista presupuesto: migrar significa
+publicar esas reglas y sustituir el texto por la URL, no rehacer el modelo.
 
 ---
 
