@@ -133,8 +133,27 @@ Se genera, no se descarga: una fotografía exigiría resolver su licencia antes 
 prototipo pueda publicarse, y el trabajo de grado es un documento público.
 
 Si se prefiere una fotografía, el plugin acepta una desde su selector y la usa en lugar
-de la ilustración, al 6 %. En ese caso hay que dejar constancia de la autoría y la
-licencia de la imagen en este documento.
+de la ilustración, al 6 %. Esa imagen es una **entrada local de quien ejecuta el plugin y
+no se versiona**: `figma-plugin/*.jpg` está en `.gitignore`, y el plugin nunca lee el
+repositorio, solo su propio selector.
+
+La razón no es de tamaño. Una fotografía dentro del repositorio hay que poder responder
+por ella dos veces:
+
+- **Por sus derechos de autor.** Que una imagen esté publicada en un sitio web, incluso en
+  el de una entidad pública, no la hace reutilizable. El artículo 41 de la Ley 23 de 1982
+  exime los textos oficiales de naturaleza legislativa, administrativa o judicial; una
+  fotografía de divulgación no entra ahí. Sus metadatos suelen llevar escrito el nombre
+  del fotógrafo, que es justamente la prueba de que hay un titular.
+- **Por las personas que aparecen.** Un rostro identificable es un dato personal, y su
+  publicación exige autorización previa (Ley 1581 de 2012, art. 9). Si es de un menor,
+  la autorización es de quien ejerce la patria potestad (art. 7). Si la escena pertenece a
+  una comunidad étnica, el consentimiento además es colectivo. Este trabajo dedica una
+  historia entera —HU-16— al tratamiento de datos personales: no puede incumplirlo en su
+  propio material gráfico.
+
+Si en algún momento se decide versionar una fotografía, aquí van **autoría, fecha,
+licencia y autorización de las personas retratadas**, o no entra.
 
 En ambos casos el fondo es **decorativo**: no porta información, y por eso no necesita
 texto alternativo (WCAG 2.1, criterio 1.1.1).

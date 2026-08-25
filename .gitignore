@@ -36,3 +36,11 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# imagenes del plugin de Figma
+# El plugin las toma de su propio selector, nunca del repositorio: son entradas
+# locales de quien lo ejecuta. Versionarlas obliga a resolver la licencia y el
+# derecho de imagen de cada fotografia (docs/05-prototipo-interfaz.md §4 bis).
+figma-plugin/*.jpg
+figma-plugin/*.jpeg
+figma-plugin/*.jfif
