@@ -297,7 +297,15 @@ indicativo duplicado de §8.
 
 ### Las reglas · `npm run probar:reglas`
 
-**15 casos nuevos** contra el emulador, uno por cada decisión de §2, §5, §6 y §7:
+**15 casos nuevos** contra el emulador, uno por cada decisión de §2, §5, §6 y §7. No se
+ejecutan en la máquina de desarrollo: el emulador de Firestore muere allí al abrir el pipe
+de bucle local que necesita el selector de netty, con o sin aislamiento de red. Una prueba
+escrita y nunca ejecutada no es evidencia de nada, así que esta historia trae también el
+flujo de integración continua que las corre en cada pull request,
+[`.github/workflows/pruebas.yml`](../.github/workflows/pruebas.yml). Con él, la casilla «la
+funcionalidad supera la totalidad de sus casos de prueba» deja de depender de qué portátil
+tenía a mano quien cerró la historia, y pasa a estar registrada en el repositorio — para
+esta historia y para las seis que quedan del sprint.
 
 ```
 ▶ perfil de actor cultural (HU-18)
@@ -335,6 +343,29 @@ estado de la cuenta, que es lo que ahí se mide.
 Las tres reglas siguen pasando con 53 archivos y 13 vistas: ninguna vista importa el SDK de
 Firebase por su cuenta, `MiPerfil` está enrutada, y los colores nuevos de las hojas de
 estilo salen todos de `variables.css`.
+
+### Las reglas publicadas · `firebase deploy --only firestore:rules`
+
+El emulador no arranca en la máquina de desarrollo, así que la **única compilación real** de
+`firestore.rules` es la que hace el despliegue. Salida del 26/08/2026:
+
+```
+=== Deploying to 'hub-cultural-santa-marta'...
+
+i  deploying firestore
+i  firestore: reading indexes from firestore.indexes.json...
+i  cloud.firestore: checking firestore.rules for compilation errors...
++  cloud.firestore: rules file firestore.rules compiled successfully
+i  firestore: uploading rules firestore.rules...
++  firestore: released rules firestore.rules to cloud.firestore
+
++  Deploy complete!
+```
+
+Que compilen no es que sean correctas —eso lo dicen los 15 casos del emulador—, pero sí
+descarta lo que un error de sintaxis dejaría pasar: hasta este despliegue, el proyecto en
+producción seguía ejecutando las reglas anteriores, sin `hasOnly` y sin la garantía de «un
+actor, un perfil».
 
 ### Comprobación en vivo
 
