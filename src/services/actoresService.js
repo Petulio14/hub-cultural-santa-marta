@@ -31,6 +31,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { ErrorDeDatos, intentar, traducir } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'actoresCulturales';
@@ -38,12 +39,15 @@ const COLECCION = 'actoresCulturales';
 /** Los tres estados del modelo (docs/04 §4). */
 export const ESTADOS_DE_ACTOR = ['pendiente', 'aprobado', 'inactivo'];
 
-export class ErrorDeActor extends Error {
-  constructor(mensaje, { campo = null, codigo = null } = {}) {
-    super(mensaje);
+/**
+ * Error de dominio de esta colección. Hereda de «ErrorDeDatos» para que la
+ * traducción de los códigos de Firestore se escriba una sola vez (errores.js) y
+ * para que la vista pueda seguir distinguiendo de dónde viene el fallo.
+ */
+export class ErrorDeActor extends ErrorDeDatos {
+  constructor(mensaje, opciones) {
+    super(mensaje, opciones);
     this.name = 'ErrorDeActor';
-    this.campo = campo;
-    this.codigo = codigo;
   }
 }
 
@@ -52,47 +56,6 @@ function exigirConfiguracion() {
     throw new ErrorDeActor(
       'La aplicación no está conectada a Firebase. Falta «.env.local» (docs/06-puesta-en-marcha.md §1.4).'
     );
-  }
-}
-
-/**
- * Traduce los códigos de Firestore a mensajes en español.
- *
- * Sin esto, un fallo del servidor llega a la pantalla como lo escribió el kit:
- * «Missing or insufficient permissions.» Es exactamente lo que leyó quien probó
- * la aplicación el 26/08/2026, y no dice a quién le falta permiso, ni para qué,
- * ni qué hacer a continuación. La misma decisión que ya tomó «authService.js»
- * para Authentication.
- */
-function traducir(fallo) {
-  if (fallo instanceof ErrorDeActor) return fallo;
-
-  const codigo = fallo?.code ?? '';
-
-  if (codigo === 'permission-denied') {
-    return new ErrorDeActor(
-      'Tu cuenta no tiene permiso para esta operación. Si acabas de registrarte, cierra sesión y vuelve a entrar.',
-      { codigo }
-    );
-  }
-  if (codigo === 'unavailable' || codigo === 'deadline-exceeded') {
-    return new ErrorDeActor('No hay conexión con el servidor. Revisa tu red e inténtalo de nuevo.', {
-      codigo,
-    });
-  }
-  if (codigo === 'not-found') {
-    return new ErrorDeActor('Ese perfil ya no existe.', { codigo });
-  }
-
-  return new ErrorDeActor('No se pudo completar la operación. Inténtalo de nuevo.', { codigo });
-}
-
-/** Ejecuta la operación y convierte cualquier fallo en un mensaje legible. */
-async function intentar(operacion) {
-  try {
-    return await operacion();
-  } catch (fallo) {
-    throw traducir(fallo);
   }
 }
 

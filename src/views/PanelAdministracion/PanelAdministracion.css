@@ -195,3 +195,10 @@
   gap: 8px;
   margin: 0;
 }
+
+/* La dirección del hub en la tarjeta de la cola de aprobación — HU-20 */
+.perfil-pendiente__direccion {
+  margin: 0;
+  font-weight: 600;
+  color: var(--negro-texto);
+}

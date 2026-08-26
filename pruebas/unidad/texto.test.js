@@ -5,7 +5,7 @@
  */
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { aIdentificador, normalizarTexto } from '../../src/utils/texto.js';
+import { aIdentificador, aLineasDeTrabajo, normalizarTexto } from '../../src/utils/texto.js';
 
 describe('normalizarTexto', () => {
   it('pasa a minúsculas y quita las tildes', () => {
@@ -61,5 +61,48 @@ describe('aIdentificador', () => {
     // vacío, que Firestore rechaza con un error incomprensible para quien lo ve.
     assert.equal(aIdentificador('///'), '');
     assert.equal(aIdentificador('   '), '');
+  });
+});
+
+describe('líneas de trabajo de un hub (HU-20)', () => {
+  it('separa por comas', () => {
+    assert.deepEqual(aLineasDeTrabajo('emprendimiento, formación, TIC'), [
+      'emprendimiento',
+      'formación',
+      'TIC',
+    ]);
+  });
+
+  it('separa también por saltos de línea, porque las dos cosas se hacen sin pensar', () => {
+    assert.deepEqual(aLineasDeTrabajo('emprendimiento\nformación'), [
+      'emprendimiento',
+      'formación',
+    ]);
+  });
+
+  it('descarta las vacías: «a,,b» y «a, b» son la misma lista', () => {
+    assert.deepEqual(aLineasDeTrabajo('a,,b'), ['a', 'b']);
+    assert.deepEqual(aLineasDeTrabajo('  ,  '), []);
+  });
+
+  it('quita las repetidas sin distinguir mayúsculas ni tildes', () => {
+    // «Formación» y «formacion» saldrían dos veces en el directorio, una al lado
+    // de la otra, y parecería un fallo de quien las escribió.
+    assert.deepEqual(aLineasDeTrabajo('Formación, formacion, FORMACIÓN'), ['Formación']);
+  });
+
+  it('de las repetidas conserva la primera TAL COMO se escribió', () => {
+    // Normalizar para comparar es correcto; normalizar para mostrar convertiría
+    // «TIC» en «tic».
+    assert.deepEqual(aLineasDeTrabajo('TIC, tic'), ['TIC']);
+  });
+
+  it('colapsa los espacios de sobra dentro de una línea', () => {
+    assert.deepEqual(aLineasDeTrabajo('economía   naranja'), ['economía naranja']);
+  });
+
+  it('sin texto no hay líneas', () => {
+    assert.deepEqual(aLineasDeTrabajo(''), []);
+    assert.deepEqual(aLineasDeTrabajo(null), []);
   });
 });

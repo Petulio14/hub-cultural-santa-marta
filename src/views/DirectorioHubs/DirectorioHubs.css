@@ -1,0 +1,106 @@
+/* V-5 · directorio público de hubs de innovación — HU-20 */
+
+.hubs__intro {
+  max-width: 65ch;
+  color: var(--gris-texto);
+}
+
+.hubs__recuento {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.hubs__aviso {
+  border: 1px solid var(--terracota);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--terracota);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.hubs__vacio {
+  max-width: 60ch;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 18px;
+}
+
+/* Tarjetas más anchas que las de actores: llevan dentro toda la información del
+   hub, porque no hay página propia a la que enviar a nadie. */
+.hubs__rejilla {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+}
+
+.tarjeta-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tarjeta-hub__nombre {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+/* Las líneas de trabajo son etiquetas, no una lista con viñetas: se leen de un
+   vistazo y es así como se usan al buscar con quién articularse. */
+.tarjeta-hub__lineas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tarjeta-hub__lineas li {
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.tarjeta-hub__descripcion {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tarjeta-hub__direccion {
+  margin: 0;
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.tarjeta-hub__punto {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+.tarjeta-hub__contacto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.tarjeta-hub__contacto a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-minimo);
+  font-weight: 600;
+}

@@ -10,6 +10,7 @@
  * corregirlo, nunca «campo inválido».
  */
 
+import { estaEnSantaMarta } from './coordenadas.js';
 import { aIdentificador } from './texto.js';
 
 /** Mínimo exigido por el primer criterio de aceptación de HU-12. */
@@ -266,6 +267,93 @@ export function validarPerfilDeActor(
     manifestacion: validarManifestacion(manifestacion),
     descripcion: validarDescripcionDeActor(descripcion),
     categoria: validarCategoriaDeActor(categoria, identificadoresOfrecidos),
+  });
+
+  for (const [campo, mensaje] of Object.entries(validarContacto(contacto))) {
+    errores[campo === 'contacto' ? 'contacto' : `contacto.${campo}`] = mensaje;
+  }
+
+  return errores;
+}
+
+/* ------------------------------------------------------------------ HU-20 --
+ * Perfil de un hub de innovación.
+ *
+ * Comparte con el perfil de actor (HU-18) el nombre, la descripción y los
+ * canales de contacto, y reutiliza sus validadores. Lo propio del hub son tres
+ * cosas que un actor cultural no tiene: las líneas de trabajo, la dirección
+ * física y el punto en el mapa.
+ */
+
+/** Al menos una línea, y no más de las que caben en una tarjeta del directorio. */
+export const MAXIMO_LINEAS_DE_TRABAJO = 8;
+
+/** Una línea de trabajo es una etiqueta, no una frase. */
+export const LONGITUD_MAXIMA_LINEA = 60;
+
+/** Lo bastante para «Calle 22 # 1-40, El Rodadero» y no para un párrafo. */
+export const LONGITUD_MAXIMA_DIRECCION = 200;
+
+export function validarLineasDeTrabajo(lineas) {
+  const lista = Array.isArray(lineas) ? lineas : [];
+
+  if (lista.length === 0) {
+    return 'Escribe al menos una línea de trabajo, separadas por comas. Por ejemplo: emprendimiento, economía naranja, formación.';
+  }
+  if (lista.length > MAXIMO_LINEAS_DE_TRABAJO) {
+    return `Son ${lista.length} líneas y el máximo son ${MAXIMO_LINEAS_DE_TRABAJO}. Deja las que mejor te describan.`;
+  }
+  if (lista.some((linea) => linea.length > LONGITUD_MAXIMA_LINEA)) {
+    return `Cada línea de trabajo es una etiqueta corta, de ${LONGITUD_MAXIMA_LINEA} caracteres como mucho. Lo que no quepa va en la descripción.`;
+  }
+  return null;
+}
+
+export function validarDireccion(valor) {
+  const limpio = (valor ?? '').trim();
+  if (limpio === '') return 'Escribe la dirección del espacio.';
+  if (limpio.length < 5) return 'Esa dirección es demasiado corta para encontrar el sitio.';
+  if (limpio.length > LONGITUD_MAXIMA_DIRECCION) {
+    return `La dirección no puede pasar de ${LONGITUD_MAXIMA_DIRECCION} caracteres.`;
+  }
+  return null;
+}
+
+/**
+ * El punto en el mapa (tercer criterio de HU-20).
+ *
+ * Se exige **confirmado**, no deducido. El buscador de direcciones acierta con
+ * los sitios con nombre y falla con la nomenclatura de «carrera con calle»
+ * (véase la cabecera de geocodificacionService.js), así que geocodificar en
+ * silencio al guardar pondría en el mapa puntos que nadie ha visto. Quien
+ * registra el hub busca, mira lo que se encontró y confirma que es el suyo.
+ */
+export function validarPunto(punto) {
+  if (!punto) {
+    return 'Busca la dirección y confirma el punto: sin él, el hub no puede aparecer en el mapa.';
+  }
+  if (!estaEnSantaMarta(punto)) {
+    return 'Ese punto queda fuera de Santa Marta y su área. Busca de nuevo con un lugar de referencia cercano.';
+  }
+  return null;
+}
+
+/** Valida el formulario completo del hub (HU-20). */
+export function validarPerfilDeHub(
+  { nombre, descripcion, lineasDeTrabajo, direccion, punto, contacto } = {}
+) {
+  const nombreLimpio = (nombre ?? '').trim();
+  const excedeNombre =
+    nombreLimpio.length > LONGITUD_MAXIMA_NOMBRE_ACTOR
+      ? `El nombre no puede pasar de ${LONGITUD_MAXIMA_NOMBRE_ACTOR} caracteres.`
+      : null;
+
+  const errores = sinNulos({
+    nombre: validarNombre(nombre) ?? excedeNombre,
+    descripcion: validarDescripcionDeActor(descripcion),
+    lineasDeTrabajo: validarLineasDeTrabajo(lineasDeTrabajo),
+    direccion: validarDireccion(direccion),
+    punto: validarPunto(punto),
   });
 
   for (const [campo, mensaje] of Object.entries(validarContacto(contacto))) {

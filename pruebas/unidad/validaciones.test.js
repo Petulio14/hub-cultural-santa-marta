@@ -1,5 +1,5 @@
 /**
- * Validación de los formularios — HU-12, HU-13, HU-16, HU-17, HU-18.
+ * Validación de los formularios — HU-12, HU-13, HU-16, HU-17, HU-18, HU-20.
  *
  * No necesitan emulador ni navegador porque lo que comprueban son funciones
  * puras. Es la razón de que la validación viva en «src/utils» y no dentro de la
@@ -14,10 +14,13 @@ import { describe, it } from 'node:test';
 import {
   LONGITUD_MAXIMA_CATEGORIA,
   LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
+  LONGITUD_MAXIMA_DIRECCION,
+  LONGITUD_MAXIMA_LINEA,
   LONGITUD_MAXIMA_MANIFESTACION,
   LONGITUD_MAXIMA_NOMBRE_ACTOR,
   LONGITUD_MINIMA_CONTRASENA,
   LONGITUD_MINIMA_DESCRIPCION_ACTOR,
+  MAXIMO_LINEAS_DE_TRABAJO,
   hayErrores,
   validarCategoria,
   validarConsentimiento,
@@ -25,6 +28,7 @@ import {
   validarDescripcionDeActor,
   validarIngreso,
   validarPerfilDeActor,
+  validarPerfilDeHub,
   validarRecuperacion,
   validarRegistro,
   validarTelefono,
@@ -350,5 +354,101 @@ describe('perfil de actor · teléfono (HU-18)', () => {
   it('vacío es válido mientras no sea obligatorio: hay otros dos canales', () => {
     assert.equal(validarTelefono(''), null);
     assert.ok(validarTelefono('', { obligatorio: true }));
+  });
+});
+
+/* ---------------------------------------------------------------- HU-20 --- */
+
+const HUB_VALIDO = {
+  nombre: 'Hub Caribe de Innovación',
+  descripcion:
+    'Un espacio abierto en el centro histórico donde se forman y se encuentran quienes trabajan en cultura, tecnología y economía creativa en Santa Marta.',
+  lineasDeTrabajo: ['emprendimiento', 'economía naranja', 'formación'],
+  direccion: 'Calle 22 # 1-40, Santa Marta',
+  punto: { lat: 11.24222, lon: -74.21331 },
+  contacto: { telefono: '', whatsapp: '', correo: 'hub@ejemplo.co' },
+};
+
+const hub = (cambios) => validarPerfilDeHub({ ...HUB_VALIDO, ...cambios });
+
+describe('hub de innovación · formulario completo (HU-20, primer criterio)', () => {
+  it('un hub con todo lo que pide el criterio se acepta', () => {
+    assert.equal(hayErrores(hub({})), false);
+  });
+
+  it('sin nombre, sin descripción o sin dirección no se guarda', () => {
+    assert.ok(hub({ nombre: '' }).nombre);
+    assert.ok(hub({ descripcion: '' }).descripcion);
+    assert.ok(hub({ direccion: '' }).direccion);
+  });
+
+  it('una dirección demasiado corta para encontrar el sitio se bloquea', () => {
+    assert.ok(hub({ direccion: 'Cra' }).direccion);
+  });
+
+  it('la dirección no puede pasar de su tope', () => {
+    assert.ok(hub({ direccion: 'a'.repeat(LONGITUD_MAXIMA_DIRECCION + 1) }).direccion);
+    assert.equal(hub({ direccion: 'a'.repeat(LONGITUD_MAXIMA_DIRECCION) }).direccion, undefined);
+  });
+});
+
+describe('hub · líneas de trabajo', () => {
+  it('al menos una', () => {
+    assert.ok(hub({ lineasDeTrabajo: [] }).lineasDeTrabajo);
+    assert.equal(hub({ lineasDeTrabajo: ['TIC'] }).lineasDeTrabajo, undefined);
+  });
+
+  it('no más de las que caben en una tarjeta, y el aviso dice cuántas hay', () => {
+    const demasiadas = Array.from({ length: MAXIMO_LINEAS_DE_TRABAJO + 1 }, (_, i) => `l${i}`);
+    const mensaje = hub({ lineasDeTrabajo: demasiadas }).lineasDeTrabajo;
+    assert.match(mensaje, new RegExp(`${demasiadas.length}`));
+  });
+
+  it('acepta exactamente el máximo', () => {
+    const justas = Array.from({ length: MAXIMO_LINEAS_DE_TRABAJO }, (_, i) => `l${i}`);
+    assert.equal(hub({ lineasDeTrabajo: justas }).lineasDeTrabajo, undefined);
+  });
+
+  it('cada línea es una etiqueta, no una frase', () => {
+    assert.ok(hub({ lineasDeTrabajo: ['a'.repeat(LONGITUD_MAXIMA_LINEA + 1)] }).lineasDeTrabajo);
+  });
+
+  it('lo que no sea un arreglo se trata como lista vacía', () => {
+    assert.ok(hub({ lineasDeTrabajo: 'emprendimiento' }).lineasDeTrabajo);
+    assert.ok(hub({ lineasDeTrabajo: undefined }).lineasDeTrabajo);
+  });
+});
+
+describe('hub · el punto en el mapa (HU-20, tercer criterio)', () => {
+  it('sin punto confirmado no se guarda', () => {
+    // El criterio pide que un hub guardado tenga coordenadas. Como el buscador
+    // de direcciones falla con la nomenclatura colombiana, la única forma de
+    // cumplirlo sin inventar puntos es exigir que alguien confirme uno.
+    assert.match(hub({ punto: null }).punto, /no puede aparecer en el mapa/);
+  });
+
+  it('un punto fuera de Santa Marta se rechaza y dice qué hacer', () => {
+    // Bogotá: es lo que devuelve una búsqueda de «Calle 22» mal acotada.
+    const mensaje = hub({ punto: { lat: 4.711, lon: -74.0721 } }).punto;
+    assert.match(mensaje, /fuera de Santa Marta/);
+    assert.match(mensaje, /referencia cercano/);
+  });
+
+  it('un punto con coordenadas imposibles se rechaza', () => {
+    assert.ok(hub({ punto: { lat: 999, lon: -74.2 } }).punto);
+  });
+
+  it('el punto del Parque de los Novios se acepta', () => {
+    assert.equal(hub({ punto: { lat: 11.24222, lon: -74.21331 } }).punto, undefined);
+  });
+});
+
+describe('hub · contacto (RF-12)', () => {
+  it('reutiliza la regla del perfil de actor: basta con uno de los tres', () => {
+    assert.equal(hayErrores(hub({ contacto: { telefono: '3001234567' } })), false);
+  });
+
+  it('sin ninguno se bloquea', () => {
+    assert.ok(hub({ contacto: {} }).contacto);
   });
 });

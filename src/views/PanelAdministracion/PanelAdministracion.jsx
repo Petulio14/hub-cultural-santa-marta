@@ -8,14 +8,15 @@ import {
 } from '../../services/categoriasService.js';
 import { hayErrores, validarCategoria } from '../../utils/validaciones.js';
 import FilaDeCategoria from './FilaDeCategoria.jsx';
+import HubsPendientes from './HubsPendientes.jsx';
 import PerfilesDeActores from './PerfilesDeActores.jsx';
 import './PanelAdministracion.css';
 
 /**
- * V-7 · Panel de administración — HU-17, HU-18.
+ * V-7 · Panel de administración — HU-17, HU-18, HU-20.
  *
  * Gestiona el catálogo de categorías y la aprobación de los perfiles de actores
- * culturales. La cola de moderación de publicaciones llega con HU-24 y los
+ * culturales y de los hubs de innovación. La cola de moderación de publicaciones llega con HU-24 y los
  * indicadores de uso con HU-34; cada uno añadirá su sección a esta misma vista.
  *
  * Quién puede abrirla lo decide «RutaPrivada» con el rol de administrador
@@ -172,6 +173,7 @@ export default function PanelAdministracion() {
       )}
 
       <PerfilesDeActores />
+      <HubsPendientes />
     </section>
   );
 }
