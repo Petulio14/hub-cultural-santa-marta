@@ -26,6 +26,10 @@ on:
     branches: [master]
   push:
     branches: [master]
+  # A mano, desde la pestaña «Actions». Hace falta más de lo que parece: alguna
+  # vez GitHub no encola la ejecución de un empujón, y sin esta entrada la única
+  # forma de conseguir una es inventarse un commit.
+  workflow_dispatch:
 
 # Un empujón nuevo sobre la misma rama cancela la ejecución anterior: lo que
 # importa es el resultado del último commit, no el de todos los intermedios.
