@@ -381,6 +381,57 @@ actor, un perfil».
 | | Los enlaces de teléfono, WhatsApp y correo abren lo que dicen | |
 | | A 360, 768 y 1366 px | |
 
+### Un defecto que apareció en esa comprobación
+
+El primer actor que abrió `/mi-perfil` sobre el sitio publicado no vio el formulario vacío:
+vio **«Missing or insufficient permissions.»** Su cuenta era correcta, su rol era correcto y
+las reglas recién publicadas eran las que se querían publicar.
+
+La causa es una particularidad de Firestore que ninguno de los quince casos tocaba. Sobre un
+documento **que no existe**, `resource` llega **nulo**. La regla de lectura empezaba así:
+
+```javascript
+allow read: if resource.data.estado == 'aprobado'
+            || (autenticado() && resource.data.uid == miUid())
+            || soyAdmin();
+```
+
+`resource.data.estado` sobre un `resource` nulo no devuelve falso: **falla**, y con él falla
+la expresión entera. El resultado es que quien acababa de registrarse —es decir, todo actor
+la primera vez— no podía ni preguntar si tenía perfil.
+
+La corrección es una condición delante, y solo para la propia ruta:
+
+```javascript
+allow read: if (resource == null && autenticado() && idActor == miUid())
+            || resource.data.estado == 'aprobado'
+            || ...
+```
+
+No abre nada. Solo se puede preguntar por la ruta propia, porque el identificador **es** el
+uid (§2), y la única respuesta posible —«no tienes perfil»— ya la conoce quien pregunta.
+Preguntar por la ruta de otro sigue denegado, y eso importa: si no lo estuviera, la
+dirección respondería distinto para un uid sin perfil que para uno con perfil sin aprobar, y
+volvería a ser el detector que §7 se propone evitar.
+
+Tres casos nuevos lo fijan, y son los que faltaban:
+
+```
+▶ el perfil que todavía no existe
+  ✔ el actor lee su propia ruta vacía antes de crear nada
+  ✔ pero NO lee la ruta vacía de otra persona
+  ✔ un visitante sin sesión tampoco
+```
+
+**Lo que enseña este defecto** es dónde estaba el punto ciego de la suite: los quince casos
+comprobaban qué se puede hacer con perfiles **que existen**. El estado inicial de toda cuenta
+—no tener nada— no se estaba probando, y es por el que pasa el cien por cien de los actores.
+
+De paso quedó a la vista un segundo problema, menor pero del mismo origen: el mensaje que se
+leyó en pantalla estaba **en inglés y lo había escrito el kit de Firebase**. No dice a quién
+le falta permiso, ni para qué, ni qué hacer. `actoresService.js` traduce ahora los códigos de
+Firestore a mensajes en español, como ya hacía `authService.js` con los de Authentication.
+
 ---
 
 ## 11. Lo que queda fuera

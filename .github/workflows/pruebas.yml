@@ -48,11 +48,13 @@ jobs:
 
       # El emulador de Firestore es una aplicación de Java. Se declara la
       # versión en lugar de confiar en la que traiga la imagen del runner, que
-      # puede cambiar sin aviso.
-      - uses: actions/setup-java@v4
+      # puede cambiar sin aviso. Tiene que ser 21 o superior: firebase-tools
+      # rechaza cualquier JDK anterior con «no longer supports Java version
+      # before 21» y se apaga antes de levantar nada.
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Instalar dependencias
         run: npm ci

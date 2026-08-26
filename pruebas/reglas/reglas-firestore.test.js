@@ -54,7 +54,7 @@ const ID_ACTOR_PENDIENTE = UID_OTRO;         // perfil aún sin aprobar
  * reutilizar una cuenta convertiría la segunda escritura en una actualización, y
  * la prueba mediría entonces una regla distinta de la que dice medir.
  */
-const UIDS_SIN_PERFIL = Array.from({ length: 8 }, (_, i) => `uid-sin-perfil-${i + 1}`);
+const UIDS_SIN_PERFIL = Array.from({ length: 10 }, (_, i) => `uid-sin-perfil-${i + 1}`);
 
 /** Perfil de actor cultural mínimo que las reglas aceptan (HU-18). */
 const perfilDeActor = (uid, cambios = {}) => ({
@@ -729,6 +729,30 @@ describe('perfil de actor cultural (HU-18)', () => {
           uid: UID_OTRO,
         })
       );
+    });
+  });
+
+  describe('el perfil que todavía no existe', () => {
+    it('el actor lee su propia ruta vacía antes de crear nada', async () => {
+      // El defecto que encontró la comprobación en vivo del 26/08/2026. Sobre un
+      // documento inexistente «resource» llega nulo, y sin la primera condición
+      // de la regla la expresión entera falla: quien acababa de registrarse
+      // abría /mi-perfil y leía «Missing or insufficient permissions» en lugar
+      // del formulario vacío.
+      const uid = UIDS_SIN_PERFIL[8];
+      await assertSucceeds(getDoc(doc(comoUsuario(uid), 'actoresCulturales', uid)));
+    });
+
+    it('pero NO lee la ruta vacía de otra persona', async () => {
+      // Si esto pasara, la dirección sería un detector: respondería distinto
+      // para un uid sin perfil que para uno con perfil sin aprobar.
+      await assertFails(
+        getDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', UIDS_SIN_PERFIL[9]))
+      );
+    });
+
+    it('un visitante sin sesión tampoco', async () => {
+      await assertFails(getDoc(doc(visitante(), 'actoresCulturales', UIDS_SIN_PERFIL[9])));
     });
   });
 
