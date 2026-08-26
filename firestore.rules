@@ -116,7 +116,16 @@ service cloud.firestore {
 
     match /actoresCulturales/{idActor} {
       // Público solo lo aprobado; el dueño y el administrador ven también lo pendiente.
-      allow read: if resource.data.estado == 'aprobado'
+      //
+      // La primera condición es la que permite leer un documento que NO EXISTE.
+      // Sin ella, quien todavía no ha creado su perfil recibe un
+      // «Missing or insufficient permissions» al abrir /mi-perfil: sobre un
+      // documento inexistente `resource` llega nulo, `resource.data.estado`
+      // falla, y con ella falla la expresión entera. No abre nada: solo se puede
+      // preguntar por la propia ruta, porque el identificador ES el uid, y la
+      // respuesta —«no tienes perfil»— ya la conoce quien pregunta.
+      allow read: if (resource == null && autenticado() && idActor == miUid())
+                  || resource.data.estado == 'aprobado'
                   || (autenticado() && resource.data.uid == miUid())
                   || soyAdmin();
 

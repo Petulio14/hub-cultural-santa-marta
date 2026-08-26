@@ -1,0 +1,89 @@
+# Comprobaciones automáticas del proyecto — HU-18
+#
+# Existe por un motivo concreto: el emulador de Firestore NO arranca en la
+# máquina de desarrollo. Muere al abrir el pipe de bucle local que necesita el
+# selector de netty, con o sin aislamiento de red:
+#
+#   java.io.IOException: Unable to establish loopback connection
+#   Caused by: java.net.SocketException: Invalid argument: connect
+#
+# Mientras eso siga así, las pruebas de «pruebas/reglas/» solo se ejecutan aquí.
+# Una prueba escrita y nunca ejecutada no es evidencia de nada, y la Definición
+# de Terminado de cada historia exige que la funcionalidad «supere la totalidad
+# de sus casos de prueba». Este flujo es lo que convierte esa casilla en algo
+# comprobable, y deja la ejecución registrada en el repositorio en lugar de en
+# el portátil de quien la corrió.
+#
+# No toca datos reales: el emulador levanta una base vacía y se apaga al acabar.
+# Tampoco necesita credenciales de Firebase, y por eso no hay ningún secreto
+# declarado: «emulators:exec» funciona con un identificador de proyecto
+# inventado (docs/11-reglas-de-seguridad.md §4).
+
+name: Pruebas
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  # A mano, desde la pestaña «Actions». Hace falta más de lo que parece: alguna
+  # vez GitHub no encola la ejecución de un empujón, y sin esta entrada la única
+  # forma de conseguir una es inventarse un commit.
+  workflow_dispatch:
+
+# Un empujón nuevo sobre la misma rama cancela la ejecución anterior: lo que
+# importa es el resultado del último commit, no el de todos los intermedios.
+concurrency:
+  group: pruebas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  comprobar:
+    name: Estructura, funciones puras, reglas y compilación
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # El emulador de Firestore es una aplicación de Java. Se declara la
+      # versión en lugar de confiar en la que traiga la imagen del runner, que
+      # puede cambiar sin aviso. Tiene que ser 21 o superior: firebase-tools
+      # rechaza cualquier JDK anterior con «no longer supports Java version
+      # before 21» y se apaga antes de levantar nada.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Se fija la versión: una herramienta que se actualiza sola convierte un
+      # fallo del proyecto y un cambio de la herramienta en el mismo síntoma.
+      - name: Instalar firebase-tools
+        run: npm install --global firebase-tools@15.28.1
+
+      # El emulador se descarga la primera vez y pesa. Guardarlo en caché
+      # ahorra ese minuto en cada ejecución.
+      - name: Recuperar el emulador de la caché
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: emuladores-firestore-${{ runner.os }}
+
+      - name: Reglas estructurales
+        run: npm run verificar
+
+      - name: Funciones puras
+        run: npm run probar
+
+      - name: Reglas de seguridad contra el emulador
+        run: npm run probar:reglas
+
+      - name: Compilación de producción
+        run: npm run build

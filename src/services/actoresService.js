@@ -38,10 +38,11 @@ const COLECCION = 'actoresCulturales';
 export const ESTADOS_DE_ACTOR = ['pendiente', 'aprobado', 'inactivo'];
 
 export class ErrorDeActor extends Error {
-  constructor(mensaje, { campo = null } = {}) {
+  constructor(mensaje, { campo = null, codigo = null } = {}) {
     super(mensaje);
     this.name = 'ErrorDeActor';
     this.campo = campo;
+    this.codigo = codigo;
   }
 }
 
@@ -50,6 +51,47 @@ function exigirConfiguracion() {
     throw new ErrorDeActor(
       'La aplicación no está conectada a Firebase. Falta «.env.local» (docs/06-puesta-en-marcha.md §1.4).'
     );
+  }
+}
+
+/**
+ * Traduce los códigos de Firestore a mensajes en español.
+ *
+ * Sin esto, un fallo del servidor llega a la pantalla como lo escribió el kit:
+ * «Missing or insufficient permissions.» Es exactamente lo que leyó quien probó
+ * la aplicación el 26/08/2026, y no dice a quién le falta permiso, ni para qué,
+ * ni qué hacer a continuación. La misma decisión que ya tomó «authService.js»
+ * para Authentication.
+ */
+function traducir(fallo) {
+  if (fallo instanceof ErrorDeActor) return fallo;
+
+  const codigo = fallo?.code ?? '';
+
+  if (codigo === 'permission-denied') {
+    return new ErrorDeActor(
+      'Tu cuenta no tiene permiso para esta operación. Si acabas de registrarte, cierra sesión y vuelve a entrar.',
+      { codigo }
+    );
+  }
+  if (codigo === 'unavailable' || codigo === 'deadline-exceeded') {
+    return new ErrorDeActor('No hay conexión con el servidor. Revisa tu red e inténtalo de nuevo.', {
+      codigo,
+    });
+  }
+  if (codigo === 'not-found') {
+    return new ErrorDeActor('Ese perfil ya no existe.', { codigo });
+  }
+
+  return new ErrorDeActor('No se pudo completar la operación. Inténtalo de nuevo.', { codigo });
+}
+
+/** Ejecuta la operación y convierte cualquier fallo en un mensaje legible. */
+async function intentar(operacion) {
+  try {
+    return await operacion();
+  } catch (fallo) {
+    throw traducir(fallo);
   }
 }
 
@@ -111,8 +153,10 @@ function camposEditables({ nombre, manifestacion, descripcion, categoria, contac
  */
 export async function leerMiPerfil(uid) {
   exigirConfiguracion();
-  const instantanea = await getDoc(doc(db, COLECCION, uid));
-  return instantanea.exists() ? aActor(instantanea) : null;
+  return intentar(async () => {
+    const instantanea = await getDoc(doc(db, COLECCION, uid));
+    return instantanea.exists() ? aActor(instantanea) : null;
+  });
 }
 
 /**
@@ -130,18 +174,20 @@ export async function guardarMiPerfil(uid, datos) {
   exigirConfiguracion();
 
   const referencia = doc(db, COLECCION, uid);
-  const existente = await getDoc(referencia);
-
   const editables = camposEditables(datos);
 
-  if (existente.exists()) {
-    await updateDoc(referencia, editables);
-    return { ...aActor(existente), ...editables };
-  }
+  return intentar(async () => {
+    const existente = await getDoc(referencia);
 
-  const perfil = { idActor: uid, uid, ...editables, imagenUrl: null, estado: 'pendiente' };
-  await setDoc(referencia, perfil);
-  return { id: uid, ...perfil };
+    if (existente.exists()) {
+      await updateDoc(referencia, editables);
+      return { ...aActor(existente), ...editables };
+    }
+
+    const perfil = { idActor: uid, uid, ...editables, imagenUrl: null, estado: 'pendiente' };
+    await setDoc(referencia, perfil);
+    return { id: uid, ...perfil };
+  });
 }
 
 /**
@@ -151,7 +197,7 @@ export async function guardarMiPerfil(uid, datos) {
 export async function listarActoresAprobados() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'aprobado'));
-  return (await getDocs(consulta)).docs.map(aActor).sort(porNombre);
+  return intentar(async () => (await getDocs(consulta)).docs.map(aActor).sort(porNombre));
 }
 
 /**
@@ -169,7 +215,7 @@ export async function leerActor(idActor) {
     return instantanea.exists() ? aActor(instantanea) : null;
   } catch (fallo) {
     if (fallo?.code === 'permission-denied') return null;
-    throw fallo;
+    throw traducir(fallo);
   }
 }
 
@@ -177,7 +223,7 @@ export async function leerActor(idActor) {
 export async function listarActoresPendientes() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'pendiente'));
-  return (await getDocs(consulta)).docs.map(aActor).sort(porNombre);
+  return intentar(async () => (await getDocs(consulta)).docs.map(aActor).sort(porNombre));
 }
 
 /**
@@ -189,5 +235,5 @@ export async function cambiarEstadoDeActor(idActor, estado) {
   if (!ESTADOS_DE_ACTOR.includes(estado)) {
     throw new ErrorDeActor(`«${estado}» no es un estado de perfil válido.`);
   }
-  await updateDoc(doc(db, COLECCION, idActor), { estado });
+  await intentar(() => updateDoc(doc(db, COLECCION, idActor), { estado }));
 }

@@ -297,7 +297,16 @@ indicativo duplicado de §8.
 
 ### Las reglas · `npm run probar:reglas`
 
-**15 casos nuevos** contra el emulador, uno por cada decisión de §2, §5, §6 y §7:
+**18 casos nuevos** contra el emulador: quince por cada decisión de §2, §5, §6 y §7, y
+tres más que añadió el defecto que encontró la comprobación en vivo. No se
+ejecutan en la máquina de desarrollo: el emulador de Firestore muere allí al abrir el pipe
+de bucle local que necesita el selector de netty, con o sin aislamiento de red. Una prueba
+escrita y nunca ejecutada no es evidencia de nada, así que esta historia trae también el
+flujo de integración continua que las corre en cada pull request,
+[`.github/workflows/pruebas.yml`](../.github/workflows/pruebas.yml). Con él, la casilla «la
+funcionalidad supera la totalidad de sus casos de prueba» deja de depender de qué portátil
+tenía a mano quien cerró la historia, y pasa a estar registrada en el repositorio — para
+esta historia y para las seis que quedan del sprint.
 
 ```
 ▶ perfil de actor cultural (HU-18)
@@ -319,7 +328,17 @@ indicativo duplicado de §8.
     ✔ y abre uno de ellos en su propia dirección
     ✔ pero NO lista la colección entera: hay perfiles sin aprobar dentro
     ✔ un perfil pendiente NO es legible por un visitante
+  ▶ el perfil que todavía no existe
+    ✔ el actor lee su propia ruta vacía antes de crear nada
+    ✔ pero NO lee la ruta vacía de otra persona
+    ✔ un visitante sin sesión tampoco
 ```
+
+**Ejecutados por primera vez el 26/08/2026**, en la
+[ejecución 32982319819](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/32982319819)
+del flujo de integración continua. La suite entera pasa: **74 casos de reglas y 74 de
+funciones puras, cero fallos**. Hasta ese momento los de esta historia —y los cincuenta y
+seis heredados de HU-11, HU-15 y HU-17— estaban escritos y no se habían ejecutado nunca.
 
 Las fixtures de la suite tuvieron que cambiar con el modelo, y el cambio dejó ver algo. Los
 perfiles sembrados tenían tres campos sueltos; desde esta historia la regla de actualización
@@ -336,19 +355,108 @@ Las tres reglas siguen pasando con 53 archivos y 13 vistas: ninguna vista import
 Firebase por su cuenta, `MiPerfil` está enrutada, y los colores nuevos de las hojas de
 estilo salen todos de `variables.css`.
 
+### Las reglas publicadas · `firebase deploy --only firestore:rules`
+
+El emulador no arranca en la máquina de desarrollo, así que la **única compilación real** de
+`firestore.rules` es la que hace el despliegue. Salida del 26/08/2026:
+
+```
+=== Deploying to 'hub-cultural-santa-marta'...
+
+i  deploying firestore
+i  firestore: reading indexes from firestore.indexes.json...
+i  cloud.firestore: checking firestore.rules for compilation errors...
++  cloud.firestore: rules file firestore.rules compiled successfully
+i  firestore: uploading rules firestore.rules...
++  firestore: released rules firestore.rules to cloud.firestore
+
++  Deploy complete!
+```
+
+Que compilen no es que sean correctas —eso lo dicen los 15 casos del emulador—, pero sí
+descarta lo que un error de sintaxis dejaría pasar: hasta este despliegue, el proyecto en
+producción seguía ejecutando las reglas anteriores, sin `hasOnly` y sin la garantía de «un
+actor, un perfil».
+
 ### Comprobación en vivo
+
+Sobre <https://hub-cultural-santa-marta.vercel.app>, con una cuenta de actor cultural y otra
+de administrador. El perfil de la comprobación es
+[`/actores/DFB9zBZUTWMAA1BCgtK6M79JAM92`](https://hub-cultural-santa-marta.vercel.app/actores/DFB9zBZUTWMAA1BCgtK6M79JAM92).
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | Un visitante sin sesión abre `/actores` | |
-| | Un visitante abre `/actores/:id` de un perfil aprobado | |
-| | Un visitante que abre `/mi-perfil` acaba en `/ingreso` | |
-| | Un actor crea su perfil y queda `pendiente` | |
-| | El administrador lo publica desde el panel | |
-| | El actor lo edita y el cambio se ve sin volver a aprobación | |
-| | La descripción avisa al pasar de 1.000 caracteres | |
-| | Los enlaces de teléfono, WhatsApp y correo abren lo que dicen | |
-| | A 360, 768 y 1366 px | |
+| 26/08/2026 | Un visitante sin sesión abre `/actores` | ✅ Carga sin pedir cuenta. Con cero perfiles aprobados muestra el estado vacío que orienta a registrarse. |
+| 26/08/2026 | Un actor aterriza en `/mi-perfil` al iniciar sesión | ✅ No en `/mis-publicaciones`: sin perfil no podría publicar nada. |
+| 26/08/2026 | Un visitante que abre `/mi-perfil` acaba en `/ingreso` | ✅ La ruta privada redirige. |
+| 26/08/2026 | La descripción avisa al pasar de 1.000 caracteres | ✅ «1016 de 1000 caracteres · te sobran 16», mientras se escribe. **El texto no se recorta**: los 1.016 siguen ahí. |
+| 26/08/2026 | Un actor crea su perfil y queda `pendiente` | ✅ Y **no figura en `/actores`** abierto sin sesión, comprobado desde fuera. |
+| 26/08/2026 | El administrador lo publica desde el panel | ✅ Aparece en el directorio: «1 perfil publicado». |
+| 26/08/2026 | El actor lo edita y el cambio se ve sin volver a aprobación | ✅ **No reaparece** entre los pendientes, y su página pública sigue sin la franja de «sin aprobar». Segundo criterio. |
+| 26/08/2026 | Un visitante abre `/actores/:id` de un perfil aprobado | ✅ Se ve entero sin cuenta. Una dirección inventada responde «Ese perfil no está disponible», y una ruta que no existe cae en la página de error de HU-07. |
+| 26/08/2026 | Los enlaces de contacto apuntan a donde dicen | ✅ `tel:+573206342740`, `https://wa.me/573206342740` y `mailto:actor@correo.com`. |
+| 26/08/2026 | Los tres enlaces **pulsados en un teléfono real** | ✅ El marcador abre con el número completo y WhatsApp abre la conversación, **también con el número escrito como `+57…`**. Es el caso del indicativo duplicado de §8, comprobado ahora en los tres sitios: la prueba unitaria, el `href` del HTML y el aparato. |
+| 26/08/2026 | A 360, 768 y 1366 px | ✅ Sin desbordamiento horizontal —`scrollWidth` 375 sobre `clientWidth` 375 a la anchura menor— y los botones del panel se pulsan con el dedo en los tres anchos (RNF-03, HU-10). |
+| 26/08/2026 | Consola del navegador | ✅ Limpia en el directorio, en el perfil público y en la página de perfil inexistente. En el panel de administración aparecieron seis errores, todos del navegador —extensiones de Brave— y ninguno del proyecto. |
+
+**El identificador del documento es el uid**, y se comprueba a simple vista en la dirección
+pública del perfil: es la decisión de §2 funcionando.
+
+Conviene decir cómo se comprobó lo de la consola, porque es la clase de casilla que se marca
+sin mirar: los seis errores aparecieron en `/admin` y se revisaron uno a uno antes de
+descartarlos. Que la consola tenga errores no significa que sean tuyos, y que no los tenga
+tampoco significa que no los haya —solo que no los hubo mientras alguien miraba.
+
+### Un defecto que apareció en esa comprobación
+
+El primer actor que abrió `/mi-perfil` sobre el sitio publicado no vio el formulario vacío:
+vio **«Missing or insufficient permissions.»** Su cuenta era correcta, su rol era correcto y
+las reglas recién publicadas eran las que se querían publicar.
+
+La causa es una particularidad de Firestore que ninguno de los quince casos tocaba. Sobre un
+documento **que no existe**, `resource` llega **nulo**. La regla de lectura empezaba así:
+
+```javascript
+allow read: if resource.data.estado == 'aprobado'
+            || (autenticado() && resource.data.uid == miUid())
+            || soyAdmin();
+```
+
+`resource.data.estado` sobre un `resource` nulo no devuelve falso: **falla**, y con él falla
+la expresión entera. El resultado es que quien acababa de registrarse —es decir, todo actor
+la primera vez— no podía ni preguntar si tenía perfil.
+
+La corrección es una condición delante, y solo para la propia ruta:
+
+```javascript
+allow read: if (resource == null && autenticado() && idActor == miUid())
+            || resource.data.estado == 'aprobado'
+            || ...
+```
+
+No abre nada. Solo se puede preguntar por la ruta propia, porque el identificador **es** el
+uid (§2), y la única respuesta posible —«no tienes perfil»— ya la conoce quien pregunta.
+Preguntar por la ruta de otro sigue denegado, y eso importa: si no lo estuviera, la
+dirección respondería distinto para un uid sin perfil que para uno con perfil sin aprobar, y
+volvería a ser el detector que §7 se propone evitar.
+
+Tres casos nuevos lo fijan, y son los que faltaban:
+
+```
+▶ el perfil que todavía no existe
+  ✔ el actor lee su propia ruta vacía antes de crear nada
+  ✔ pero NO lee la ruta vacía de otra persona
+  ✔ un visitante sin sesión tampoco
+```
+
+**Lo que enseña este defecto** es dónde estaba el punto ciego de la suite: los quince casos
+comprobaban qué se puede hacer con perfiles **que existen**. El estado inicial de toda cuenta
+—no tener nada— no se estaba probando, y es por el que pasa el cien por cien de los actores.
+
+De paso quedó a la vista un segundo problema, menor pero del mismo origen: el mensaje que se
+leyó en pantalla estaba **en inglés y lo había escrito el kit de Firebase**. No dice a quién
+le falta permiso, ni para qué, ni qué hacer. `actoresService.js` traduce ahora los códigos de
+Firestore a mensajes en español, como ya hacía `authService.js` con los de Authentication.
 
 ---
 
