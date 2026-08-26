@@ -30,7 +30,7 @@ datos es esto y no ellas.
 | Colección | Lectura | Escritura |
 | --- | --- | --- |
 | `usuarios` | La propia, o el administrador. | Cada quien crea la suya, con consentimiento obligatorio (HU-16). Nadie se cambia el rol ni el estado a sí mismo. |
-| `actoresCulturales` | Pública si está aprobada; el dueño y el administrador ven también la pendiente. | El dueño edita su perfil, pero **no lo aprueba**: `estado` solo lo mueve el administrador. |
+| `actoresCulturales` | Pública si está aprobada; el dueño y el administrador ven también la pendiente. | El identificador del documento **es el `uid`** de su dueño, que es lo que garantiza «un actor, un perfil». El dueño edita su perfil, pero **no lo aprueba**: `estado` solo lo mueve el administrador. Solo se admiten los diez campos del modelo ([17 §2 y §6](17-perfil-de-actor.md)). |
 | `hubs` | Igual que actores. | Igual que actores. |
 | `eventos` | **Pública solo si está aprobada.** El dueño y el administrador ven las pendientes. | Nace pendiente, con fecha del servidor; al editarla vuelve a pendiente (HU-23). |
 | `categorias` | Pública: los filtros la necesitan sin sesión. | Solo el administrador (RF-14). |

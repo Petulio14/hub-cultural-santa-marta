@@ -188,6 +188,27 @@ img {
   font-weight: 600;
 }
 
+/* Contador de caracteres de «AreaDeTexto». Cuando se pasa del límite no cambia
+   solo de color: el propio texto dice cuántos caracteres sobran (HU-18). */
+.campo__contador {
+  align-self: flex-end;
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+.campo__contador--excedido {
+  color: var(--terracota);
+  font-weight: 600;
+}
+
+/* El «select» y el «textarea» comparten el aspecto del campo de una línea, pero
+   no su altura fija: uno crece con las filas y el otro se ajusta a su contenido. */
+textarea.campo__control {
+  min-height: calc(var(--toque-minimo) * 3);
+  resize: vertical;
+  line-height: 1.5;
+}
+
 /* Casilla de verificación. La etiqueta entera es zona de activación, y la
    casilla cumple por sí sola el área mínima de toque de HU-10. */
 .casilla {

@@ -1,0 +1,79 @@
+/* V-4 · directorio público de actores culturales — HU-18 */
+
+.directorio__intro {
+  max-width: 65ch;
+  color: var(--gris-texto);
+}
+
+.directorio__recuento {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.directorio__aviso {
+  border: 1px solid var(--terracota);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--terracota);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.directorio__vacio {
+  max-width: 60ch;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 18px;
+}
+
+/* La misma rejilla del catálogo: una columna a 360 px, dos a 768 y tres a 1366
+   (docs/10-responsive.md §2). «auto-fill» con un mínimo lo resuelve sin escribir
+   los tres puntos de corte a mano. */
+.directorio__rejilla {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+.tarjeta-actor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tarjeta-actor__nombre {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.tarjeta-actor__manifestacion {
+  margin: 0;
+  color: var(--negro-texto);
+}
+
+.tarjeta-actor__categoria {
+  align-self: flex-start;
+  margin: 4px 0;
+  padding: 2px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+/* La descripción puede llegar a mil caracteres y la tarjeta no es el sitio para
+   leerlos: se recortan a cuatro líneas y el perfil completo está a un clic. El
+   texto no se elimina del documento, solo se recorta visualmente, así que un
+   lector de pantalla lo sigue leyendo entero. */
+.tarjeta-actor__descripcion {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

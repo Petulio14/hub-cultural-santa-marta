@@ -71,13 +71,21 @@ Identificador del documento: **`uid` de Firebase Authentication**.
 
 ## 4. `actoresCulturales`
 
+Identificador del documento: **`uid` de Firebase Authentication**, igual que en `usuarios`.
+
+Un actor tiene un perfil y solo uno, y esta es la única forma de que las reglas de seguridad
+puedan garantizarlo: desde una regla no se puede consultar «¿existe ya otro documento con
+este `uid`?», solo comprobar la existencia de una ruta concreta. El razonamiento completo,
+incluida la comprobación de qué abre publicar un `uid` (nada), está en
+[17-perfil-de-actor.md §2](17-perfil-de-actor.md).
+
 | Campo | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| `idActor` | `string` | Sí | Identificador del documento. |
+| `idActor` | `string` | Sí | Identificador del documento. Coincide con `uid`. |
 | `uid` | `string` | Sí | **Referencia** a `usuarios`. Determina quién puede editar el perfil. |
-| `nombre` | `string` | Sí | Nombre del actor o colectivo. |
-| `manifestacion` | `string` | Sí | Manifestación o práctica cultural que representa. |
-| `descripcion` | `string` | Sí | Máximo 1.000 caracteres (validado en HU-18). |
+| `nombre` | `string` | Sí | Nombre del actor o colectivo. Máximo 80 caracteres. |
+| `manifestacion` | `string` | Sí | Manifestación o práctica cultural que representa. Máximo 120 caracteres. |
+| `descripcion` | `string` | Sí | Máximo 1.000 caracteres, comprobado en el formulario y en las reglas (HU-18). |
 | `categoria` | `string` | Sí | **Referencia** a `categorias.idCategoria`. |
 | `contacto` | `map` | Sí | `{ telefono: string\|null, correo: string\|null, whatsapp: string\|null }` — canales autorizados por el actor (RF-12). |
 | `redes` | `map` | No | Enlaces a redes sociales. Admite valor nulo. |

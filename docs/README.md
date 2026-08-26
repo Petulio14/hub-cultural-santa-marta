@@ -1,6 +1,6 @@
 # Documentación del proyecto
 
-Evidencia verificable de las historias de usuario de los sprints 1 a 4. Cada documento
+Evidencia verificable de las historias de usuario de los sprints 1 a 5. Cada documento
 corresponde a una historia del backlog y es la prueba que respalda su cierre en el tablero.
 
 | Documento | Historia | Sprint | Contenido |
@@ -21,6 +21,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [14-tratamiento-de-datos.md](14-tratamiento-de-datos.md) | [HU-16](https://github.com/Petulio14/hub-cultural-santa-marta/issues/16) | 4 | Política publicada, consentimiento expreso guardado con fecha y versión, minimización de datos y canal de supresión. |
 | [15-roles-y-permisos.md](15-roles-y-permisos.md) | [HU-15](https://github.com/Petulio14/hub-cultural-santa-marta/issues/15) | 4 | Qué puede hacer cada rol, las cuatro maneras de no pasar, el estado de la cuenta como condición del permiso, y los doce casos que lo fijan contra el emulador. |
 | [16-categorias.md](16-categorias.md) | [HU-17](https://github.com/Petulio14/hub-cultural-santa-marta/issues/17) | 4 | El catálogo de categorías, por qué una categoría se desactiva en lugar de borrarse, y el recuento de publicaciones contado en el servidor. |
+| [17-perfil-de-actor.md](17-perfil-de-actor.md) | [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18) | 5 | El perfil del actor cultural: por qué su identificador es el `uid`, el límite de la descripción escrito en las dos capas, la edición que no vuelve a la cola y el directorio público. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -37,6 +38,11 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | **Cerrado el 21/08/2026, once días antes del vencimiento.** Las tres historias completas, con el [prototipo publicado en Figma](https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1) aprobado por el asesor. |
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **Cerrado el 22/08/2026, veinticuatro días antes del vencimiento.** Las cinco historias completas: proyecto de React con su estructura y enrutador ([08](08-estructura-del-proyecto.md)), navegación y página de inicio ([09](09-navegacion-e-inicio.md)), adaptación a los tres anchos ([10](10-responsive.md)), reglas de seguridad publicadas y probadas ([11](11-reglas-de-seguridad.md)) y despliegue continuo en [hub-cultural-santa-marta.vercel.app](https://hub-cultural-santa-marta.vercel.app) ([12](12-despliegue-continuo.md)). |
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
+
+> **Sprint 5** (vence el 13/10/2026) está en curso: HU-18 a HU-24, la épica E2 y el
+> comienzo de la E3. La primera historia cerrada es
+> [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18), documentada en
+> [17-perfil-de-actor.md](17-perfil-de-actor.md).
 
 ## Configuración en la raíz del repositorio
 
