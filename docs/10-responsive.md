@@ -54,6 +54,83 @@ de abrir.
 en una columna; a 768 px el menú es completo. En el prototipo de HU-06 este mismo punto
 falló por 2 px a causa del borde del contenedor, así que se comprobó el píxel exacto.
 
+## 2 bis. El menú que no cabía (corregido el 26/08/2026)
+
+La comprobación de la sección 2 se hizo **sin sesión iniciada**: el panel que se midió lleva
+cinco elementos —Eventos, Actores culturales, Hubs, Mapa, Ingresar—. El menú de un actor
+cultural lleva ocho: los cuatro accesos públicos, «Mi perfil», «Mis publicaciones», su nombre
+y «Cerrar sesión». Ese nunca se midió, y es el que se rompió.
+
+Es el mismo punto ciego que HU-18 encontró en sus reglas: allí todas las pruebas cubrían
+perfiles **que existen** y ninguna la cuenta recién creada; aquí todas las medidas cubrían
+la cabecera **de un visitante** y ninguna la de quien ha entrado. Lo que no se mide es
+siempre el caso que no se pensó.
+
+### Lo que fallaba
+
+`.cabecera__interior` heredaba de `.contenedor` un ancho máximo de **1200 px**, que descontado
+el margen deja 1.152 px útiles. El menú completo de un actor mide:
+
+| Pieza | Ancho |
+| --- | --- |
+| Marca (placa, logotipo y nombre) | 254 px |
+| Seis enlaces con sus separaciones | 650 px |
+| Nombre, rol y «Cerrar sesión» | 269 px |
+| Separaciones y filo del bloque de sesión | 36 px |
+| **Total** | **1.210 px** |
+
+Faltaban 58 px, y **ninguna pantalla los aportaba**: por encima de 1200 px el tope congela la
+barra, así que ampliar la ventana no daba ni un píxel más de sitio. El menú se partía en dos
+filas y la marca, comprimida, escribía «Hub Cultural» en dos líneas.
+
+Encima había una regla que subía el logotipo de 26 a 30 px de alto a partir de **1366 px**.
+Como es una imagen apaisada, eso son **18 px más de ancho**, cobrados justo en la resolución
+de portátil más común. Por eso el defecto se veía aparecer exactamente entre 1365 y 1366 px,
+y por eso parecía un problema de ese ancho cuando en realidad venía de mucho antes.
+
+### La corrección
+
+Tres cambios, ninguno en el componente de React:
+
+| Cambio | Por qué |
+| --- | --- |
+| La cabecera usa `--ancho-cabecera` (1600 px) en lugar del tope del contenido | Una barra de navegación no es un párrafo: el tope de 1200 px existe para que una línea de texto no se vuelva ilegible, y a un menú le hace falta lo contrario |
+| `flex-shrink: 0` en la marca, desde 768 px | Es el camino de vuelta al inicio desde cualquier vista (HU-09) y no debe partirse; quien cede es el menú, que sabe repartirse en filas |
+| Fuera el `@media (min-width: 1366px)` del logotipo | Un adorno de 4 px de alto no vale una fila de menú |
+
+El selector es `.cabecera .cabecera__interior` y lleva el padre por delante a propósito:
+`.contenedor` y `.cabecera__interior` son las dos una sola clase, empatan en especificidad y
+decidiría el orden en que Vite junta las hojas. Es la misma trampa que costó una corrección
+en la tarjeta del directorio de actores.
+
+### Medido después
+
+Con el menú de un actor cultural, contando filas de enlaces y altura de la cabecera:
+
+| Ancho de ventana | Antes | Después |
+| --- | --- | --- |
+| 1024 px | 2 filas · 112 px · marca partida | 2 filas · 112 px · marca entera |
+| 1200 px | 2 filas · 112 px · marca partida | 2 filas · 112 px · marca entera |
+| 1280 px | 2 filas · 112 px | **1 fila · 64 px** |
+| 1365 px | 2 filas · 112 px | **1 fila · 64 px** |
+| 1366 px | 2 filas · 112 px | **1 fila · 64 px** |
+| 1920 px | 2 filas · 112 px | **1 fila · 64 px** |
+| 2560 px | 2 filas · 112 px | **1 fila · 64 px** |
+
+Sin desbordamiento horizontal en ninguno.
+
+**Entre 768 y 1257 px el menú sigue ocupando dos filas**, y se deja así a conciencia: es el
+reparto que `flex-wrap` hace a propósito, todos los enlaces quedan visibles y la marca ya no
+se parte. Esconder el menú tras el botón hasta 1258 px sería mover el punto de corte que
+HU-10 fijó en 768 px, y eso es una decisión de diseño, no la corrección de un defecto.
+
+### Lo que se lleva a HU-33
+
+La medición de la sección 4 recorre las rutas **públicas** con la ventana redimensionada.
+Cuando se repita en HU-33 tiene que recorrerlas **con sesión iniciada en cada uno de los tres
+roles**, porque el menú —que es lo que más ancho pide de toda la estructura— depende del rol
+y no de la ruta.
+
 ## 3. Verificación en los tres anchos
 
 Recorriendo las nueve direcciones públicas del enrutador en cada ancho:
@@ -128,7 +205,7 @@ cierra la comprobación sobre el conjunto.
 | Criterio de aceptación | Evidencia |
 | --- | --- |
 | A 360, 768 y 1366 px el contenido permanece legible y **sin desbordamiento horizontal**. | Sección 3: 0 px en los tres anchos, sobre las nueve rutas públicas. |
-| Por debajo de **768 px** el menú se presenta en su versión compacta. | Sección 2, comprobado además en el píxel exacto del punto de corte. |
+| Por debajo de **768 px** el menú se presenta en su versión compacta. | Sección 2, comprobado además en el píxel exacto del punto de corte. Corregido en la sección 2 bis para el menú de un actor, que no se había medido. |
 | En móvil, el área de toque no baja de **44 × 44 px**. | Sección 3: ningún elemento interactivo visible por debajo del umbral. |
 
 ---

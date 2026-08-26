@@ -28,6 +28,8 @@
   --espacio-tarjetas: 16px;
   /* Ancho útil máximo del contenido */
   --ancho-maximo: 1200px;
+  /* Ancho útil máximo de la barra de navegación: un menú no es un párrafo */
+  --ancho-cabecera: 1600px;
   /* Área mínima de toque en móvil (HU-10) */
   --toque-minimo: 44px;
 
