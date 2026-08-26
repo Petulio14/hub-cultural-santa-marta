@@ -397,10 +397,15 @@ de administrador. El perfil de la comprobación es
 | 26/08/2026 | Los enlaces de contacto apuntan a donde dicen | ✅ `tel:+573206342740`, `https://wa.me/573206342740` y `mailto:actor@correo.com`. |
 | 26/08/2026 | Los tres enlaces **pulsados en un teléfono real** | ✅ El marcador abre con el número completo y WhatsApp abre la conversación. Es lo único de esta tabla que un navegador de escritorio no puede comprobar. |
 | 26/08/2026 | A 375 px | ✅ `scrollWidth` 375 sobre `clientWidth` 375: sin desbordamiento horizontal (RNF-03). |
-| 26/08/2026 | Consola del navegador | ✅ Limpia en el directorio, en el perfil público y en la página de perfil inexistente. |
+| 26/08/2026 | Consola del navegador | ✅ Limpia en el directorio, en el perfil público y en la página de perfil inexistente. En el panel de administración aparecieron seis errores, todos del navegador —extensiones de Brave— y ninguno del proyecto. |
 
 **El identificador del documento es el uid**, y se comprueba a simple vista en la dirección
 pública del perfil: es la decisión de §2 funcionando.
+
+Conviene decir cómo se comprobó lo de la consola, porque es la clase de casilla que se marca
+sin mirar: los seis errores aparecieron en `/admin` y se revisaron uno a uno antes de
+descartarlos. Que la consola tenga errores no significa que sean tuyos, y que no los tenga
+tampoco significa que no los haya —solo que no los hubo mientras alguien miraba.
 
 ### Un defecto que apareció en esa comprobación
 
