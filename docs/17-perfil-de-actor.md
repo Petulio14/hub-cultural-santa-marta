@@ -380,17 +380,26 @@ actor, un perfil».
 
 ### Comprobación en vivo
 
+Sobre <https://hub-cultural-santa-marta.vercel.app>, con una cuenta de actor cultural y otra
+de administrador. El perfil de la comprobación es
+[`/actores/DFB9zBZUTWMAA1BCgtK6M79JAM92`](https://hub-cultural-santa-marta.vercel.app/actores/DFB9zBZUTWMAA1BCgtK6M79JAM92).
+
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | Un visitante sin sesión abre `/actores` | |
-| | Un visitante abre `/actores/:id` de un perfil aprobado | |
-| | Un visitante que abre `/mi-perfil` acaba en `/ingreso` | |
-| | Un actor crea su perfil y queda `pendiente` | |
-| | El administrador lo publica desde el panel | |
-| | El actor lo edita y el cambio se ve sin volver a aprobación | |
-| | La descripción avisa al pasar de 1.000 caracteres | |
-| | Los enlaces de teléfono, WhatsApp y correo abren lo que dicen | |
-| | A 360, 768 y 1366 px | |
+| 26/08/2026 | Un visitante sin sesión abre `/actores` | ✅ Carga sin pedir cuenta. Con cero perfiles aprobados muestra el estado vacío que orienta a registrarse. |
+| 26/08/2026 | Un actor aterriza en `/mi-perfil` al iniciar sesión | ✅ No en `/mis-publicaciones`: sin perfil no podría publicar nada. |
+| 26/08/2026 | Un visitante que abre `/mi-perfil` acaba en `/ingreso` | ✅ La ruta privada redirige. |
+| 26/08/2026 | La descripción avisa al pasar de 1.000 caracteres | ✅ «1016 de 1000 caracteres · te sobran 16», mientras se escribe. **El texto no se recorta**: los 1.016 siguen ahí. |
+| 26/08/2026 | Un actor crea su perfil y queda `pendiente` | ✅ Y **no figura en `/actores`** abierto sin sesión, comprobado desde fuera. |
+| 26/08/2026 | El administrador lo publica desde el panel | ✅ Aparece en el directorio: «1 perfil publicado». |
+| 26/08/2026 | El actor lo edita y el cambio se ve sin volver a aprobación | ✅ **No reaparece** entre los pendientes, y su página pública sigue sin la franja de «sin aprobar». Segundo criterio. |
+| 26/08/2026 | Un visitante abre `/actores/:id` de un perfil aprobado | ✅ Se ve entero sin cuenta. Una dirección inventada responde «Ese perfil no está disponible», y una ruta que no existe cae en la página de error de HU-07. |
+| 26/08/2026 | Los enlaces de contacto apuntan a donde dicen | ✅ `tel:+573206342740`, `https://wa.me/573206342740` y `mailto:actor@correo.com`. |
+| 26/08/2026 | A 375 px | ✅ `scrollWidth` 375 sobre `clientWidth` 375: sin desbordamiento horizontal (RNF-03). |
+| 26/08/2026 | Consola del navegador | ✅ Limpia en el directorio, en el perfil público y en la página de perfil inexistente. |
+
+**El identificador del documento es el uid**, y se comprueba a simple vista en la dirección
+pública del perfil: es la decisión de §2 funcionando.
 
 ### Un defecto que apareció en esa comprobación
 
