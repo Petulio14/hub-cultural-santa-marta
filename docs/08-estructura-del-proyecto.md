@@ -80,11 +80,13 @@ de [`05-prototipo-interfaz.md` §2](05-prototipo-interfaz.md):
 | `/` | V-1 · Inicio | Pública | HU-09, HU-10 |
 | `/eventos` | V-2 · Catálogo | Pública | HU-25, HU-26, HU-27 |
 | `/eventos/:id` | V-3 · Detalle de evento | Pública | HU-28, HU-29 |
+| `/actores` | V-4 · Directorio de actores culturales | Pública | HU-18 |
 | `/actores/:id` | V-4 · Perfil de actor cultural | Pública | HU-18, HU-19 |
 | `/hubs` | V-5 · Directorio de hubs | Pública | HU-20 |
 | `/mapa` | V-6 · Mapa interactivo | Pública | HU-30, HU-33 |
 | `/admin` | V-7 · Panel de administración | Privada · rol administrador | HU-17, HU-24, HU-34 |
 | `/ingreso` | V-8 · Ingreso y registro | Pública | HU-12, HU-13, HU-14, HU-16 |
+| `/mi-perfil` | V-4 · Mi perfil de actor cultural | Privada · rol actor cultural | HU-18, HU-19 |
 | `/mis-publicaciones` | V-9 · Mis publicaciones | Privada · rol actor cultural | HU-21, HU-22, HU-23 |
 | cualquier otra | Página no encontrada | Pública | HU-07 |
 

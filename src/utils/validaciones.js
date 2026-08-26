@@ -133,3 +133,144 @@ export function hayErrores(errores) {
 function sinNulos(candidatos) {
   return Object.fromEntries(Object.entries(candidatos).filter(([, mensaje]) => mensaje !== null));
 }
+
+/* ------------------------------------------------------------------ HU-18 --
+ * Perfil de actor cultural.
+ *
+ * Los topes coinciden con los que imponen las reglas de seguridad
+ * (firestore.rules, colección «actoresCulturales»). Están escritos dos veces a
+ * propósito y por motivos distintos: aquí para poder avisar **antes** del envío,
+ * que es el tercer criterio de aceptación, y allí para que el aviso no dependa
+ * de que quien escribe use esta interfaz. Si uno cambia, el otro también.
+ */
+
+/** El tope del modelo de datos (docs/04 §4) y de las reglas. */
+export const LONGITUD_MAXIMA_DESCRIPCION_ACTOR = 1000;
+
+/** Por debajo de esto la descripción no orienta a nadie sobre la propuesta. */
+export const LONGITUD_MINIMA_DESCRIPCION_ACTOR = 30;
+
+/** Tiene que caber en la tarjeta del directorio sin partirse en tres líneas. */
+export const LONGITUD_MAXIMA_NOMBRE_ACTOR = 80;
+
+/** «Danza de la tambora del Magdalena Grande» cabe; un párrafo no debe caber. */
+export const LONGITUD_MAXIMA_MANIFESTACION = 120;
+
+/**
+ * Forma de un teléfono colombiano, deliberadamente laxa: se aceptan espacios,
+ * guiones, paréntesis y prefijo internacional, y se cuenta solo lo que queda.
+ * Un móvil tiene 10 dígitos y un fijo 7 más el indicativo; con prefijo +57 se
+ * llega a 12. Rechazar por formato un número que sí existe es peor que aceptar
+ * uno mal escrito: el teléfono lo verifica quien llama, no el formulario.
+ */
+const SOLO_DIGITOS = /\D+/g;
+
+export function validarTelefono(valor, { obligatorio = false } = {}) {
+  const limpio = (valor ?? '').trim();
+  if (limpio === '') return obligatorio ? 'Escribe un número de teléfono.' : null;
+
+  const digitos = limpio.replace(SOLO_DIGITOS, '');
+  if (digitos.length < 7 || digitos.length > 13) {
+    return 'Ese teléfono no parece completo. Un móvil tiene 10 dígitos y un fijo 7 más el indicativo.';
+  }
+  return null;
+}
+
+export function validarManifestacion(valor) {
+  const limpio = (valor ?? '').trim();
+  if (limpio === '') {
+    return 'Escribe qué manifestación o práctica cultural representas. Por ejemplo: tambora, cocina tradicional, tejido en fique.';
+  }
+  if (limpio.length < 3) return 'La manifestación debe tener al menos tres caracteres.';
+  if (limpio.length > LONGITUD_MAXIMA_MANIFESTACION) {
+    return `La manifestación no puede pasar de ${LONGITUD_MAXIMA_MANIFESTACION} caracteres. Lo que no quepa aquí va en la descripción.`;
+  }
+  return null;
+}
+
+/**
+ * Tercer criterio de aceptación de HU-18: el aviso llega **antes** del envío.
+ * Por eso el contador de caracteres de la vista llama a esta misma función en
+ * cada pulsación, y no solo al pulsar «Guardar».
+ */
+export function validarDescripcionDeActor(valor) {
+  const limpio = (valor ?? '').trim();
+  if (limpio === '') return 'Describe tu propuesta: es lo que va a leer quien te encuentre.';
+  if (limpio.length < LONGITUD_MINIMA_DESCRIPCION_ACTOR) {
+    return `La descripción debe tener al menos ${LONGITUD_MINIMA_DESCRIPCION_ACTOR} caracteres para decir algo de tu propuesta.`;
+  }
+  if (limpio.length > LONGITUD_MAXIMA_DESCRIPCION_ACTOR) {
+    const sobran = limpio.length - LONGITUD_MAXIMA_DESCRIPCION_ACTOR;
+    const cuenta = sobran === 1 ? 'sobra 1 carácter' : `sobran ${sobran} caracteres`;
+    return `Te ${cuenta}: el máximo es ${LONGITUD_MAXIMA_DESCRIPCION_ACTOR}.`;
+  }
+  return null;
+}
+
+/**
+ * La categoría se comprueba contra las que el administrador ofrece hoy, no
+ * contra una lista escrita aquí: el catálogo es un dato de la base (HU-17), y
+ * copiarlo al código lo dejaría desfasado en cuanto se cree una categoría nueva.
+ */
+export function validarCategoriaDeActor(valor, identificadoresOfrecidos = []) {
+  const limpio = (valor ?? '').trim();
+  if (limpio === '') return 'Elige la categoría que mejor clasifica tu manifestación.';
+  if (identificadoresOfrecidos.length > 0 && !identificadoresOfrecidos.includes(limpio)) {
+    return 'Esa categoría ya no está disponible. Elige otra de la lista.';
+  }
+  return null;
+}
+
+/**
+ * Canales de contacto (RF-12).
+ *
+ * Se exige **al menos uno**, y no los tres. Un perfil sin ninguna forma de
+ * contacto incumple el propósito de la historia —«antes de contactarme»—, pero
+ * obligar a los tres forzaría a publicar un número personal a quien solo quiere
+ * dar un correo. Publicar un dato de contacto es una decisión del actor, y la
+ * política de tratamiento de datos la respalda como tal (docs/14 §3).
+ */
+export function validarContacto({ telefono, correo, whatsapp } = {}) {
+  const errores = sinNulos({
+    telefono: validarTelefono(telefono),
+    whatsapp: validarTelefono(whatsapp),
+    correo: (correo ?? '').trim() === '' ? null : validarCorreo(correo),
+  });
+
+  const hayAlguno = [telefono, correo, whatsapp].some((canal) => (canal ?? '').trim() !== '');
+  if (!hayAlguno) {
+    errores.contacto =
+      'Deja al menos un canal de contacto: teléfono, WhatsApp o correo. Sin ninguno, quien te encuentre no puede escribirte.';
+  }
+
+  return errores;
+}
+
+/**
+ * Valida el formulario completo del perfil (HU-18). Los errores del mapa de
+ * contacto se aplanan con el prefijo «contacto.» para que la vista pueda
+ * localizarlos junto a su campo sin recorrer un objeto anidado.
+ */
+export function validarPerfilDeActor(
+  { nombre, manifestacion, descripcion, categoria, contacto } = {},
+  identificadoresOfrecidos = []
+) {
+  const nombreLimpio = (nombre ?? '').trim();
+  const excedeNombre =
+    nombreLimpio.length > LONGITUD_MAXIMA_NOMBRE_ACTOR
+      ? `El nombre no puede pasar de ${LONGITUD_MAXIMA_NOMBRE_ACTOR} caracteres.`
+      : null;
+
+  const errores = sinNulos({
+    nombre: validarNombre(nombre) ?? excedeNombre,
+    manifestacion: validarManifestacion(manifestacion),
+    descripcion: validarDescripcionDeActor(descripcion),
+    categoria: validarCategoriaDeActor(categoria, identificadoresOfrecidos),
+  });
+
+  for (const [campo, mensaje] of Object.entries(validarContacto(contacto))) {
+    errores[campo === 'contacto' ? 'contacto' : `contacto.${campo}`] = mensaje;
+  }
+
+  return errores;
+}

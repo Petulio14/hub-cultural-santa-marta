@@ -1,5 +1,5 @@
 /**
- * Validación de los formularios — HU-12, HU-13, HU-16, HU-17.
+ * Validación de los formularios — HU-12, HU-13, HU-16, HU-17, HU-18.
  *
  * No necesitan emulador ni navegador porque lo que comprueban son funciones
  * puras. Es la razón de que la validación viva en «src/utils» y no dentro de la
@@ -9,16 +9,25 @@
  *   npm run probar
  */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import {
   LONGITUD_MAXIMA_CATEGORIA,
+  LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
+  LONGITUD_MAXIMA_MANIFESTACION,
+  LONGITUD_MAXIMA_NOMBRE_ACTOR,
   LONGITUD_MINIMA_CONTRASENA,
+  LONGITUD_MINIMA_DESCRIPCION_ACTOR,
   hayErrores,
   validarCategoria,
   validarConsentimiento,
+  validarContacto,
+  validarDescripcionDeActor,
   validarIngreso,
+  validarPerfilDeActor,
   validarRecuperacion,
   validarRegistro,
+  validarTelefono,
 } from '../../src/utils/validaciones.js';
 
 /** Registro correcto del que parten las variantes: se cambia solo lo que se prueba. */
@@ -197,5 +206,149 @@ describe('categorías culturales (HU-17)', () => {
 
   it('sin categorías previas, cualquier nombre válido pasa', () => {
     assert.equal(hayErrores(validarCategoria({ nombre: 'Patrimonio' })), false);
+  });
+});
+
+/* ---------------------------------------------------------------- HU-18 --- */
+
+/** Perfil correcto del que parten las variantes: se cambia solo lo que se prueba. */
+const PERFIL_VALIDO = {
+  nombre: 'Colectivo Tambora del Magdalena',
+  manifestacion: 'Tambora y cantos de vaquería',
+  descripcion:
+    'Somos ocho músicos de Santa Marta que sostienen la tambora tradicional del Magdalena Grande. Tocamos en fiestas patronales y damos talleres a niñas y niños del barrio.',
+  categoria: 'musica-y-danza',
+  contacto: { telefono: '3001234567', correo: '', whatsapp: '' },
+};
+
+const OFRECIDAS = ['musica-y-danza', 'gastronomia', 'artesania'];
+
+const perfil = (cambios) => validarPerfilDeActor({ ...PERFIL_VALIDO, ...cambios }, OFRECIDAS);
+
+describe('perfil de actor · formulario completo (HU-18, primer criterio)', () => {
+  it('un perfil con nombre, manifestación, descripción, categoría y contacto se acepta', () => {
+    assert.equal(hayErrores(perfil({})), false);
+  });
+
+  it('sin nombre no se guarda', () => {
+    assert.ok(perfil({ nombre: '   ' }).nombre);
+  });
+
+  it('sin manifestación no se guarda: es lo que distingue a un actor de otro', () => {
+    assert.ok(perfil({ manifestacion: '' }).manifestacion);
+  });
+
+  it('sin categoría no se guarda: sin ella el perfil no entra en ningún filtro', () => {
+    assert.ok(perfil({ categoria: '' }).categoria);
+  });
+
+  it('devuelve todos los campos que fallan de una vez, no solo el primero', () => {
+    const errores = perfil({ nombre: '', manifestacion: '', categoria: '' });
+    assert.deepEqual(Object.keys(errores).sort(), ['categoria', 'manifestacion', 'nombre']);
+  });
+
+  it('una categoría que el administrador ya no ofrece se rechaza', () => {
+    // Se desactivó entre que se cargó el formulario y se pulsó «Guardar»: el
+    // identificador sigue siendo válido, pero ya no está en la lista (HU-17).
+    assert.ok(perfil({ categoria: 'teatro-callejero' }).categoria);
+  });
+
+  it('sin lista de categorías ofrecidas no se inventa un rechazo', () => {
+    // El formulario puede validarse antes de que llegue el catálogo. Si aquí se
+    // rechazara, el primer envío fallaría siempre por una lista vacía.
+    assert.equal(validarPerfilDeActor(PERFIL_VALIDO, []).categoria, undefined);
+  });
+
+  it('el nombre no puede pasar del tope de la tarjeta del directorio', () => {
+    assert.ok(perfil({ nombre: 'a'.repeat(LONGITUD_MAXIMA_NOMBRE_ACTOR + 1) }).nombre);
+    assert.equal(perfil({ nombre: 'a'.repeat(LONGITUD_MAXIMA_NOMBRE_ACTOR) }).nombre, undefined);
+  });
+
+  it('la manifestación no puede pasar de su tope', () => {
+    assert.ok(
+      perfil({ manifestacion: 'a'.repeat(LONGITUD_MAXIMA_MANIFESTACION + 1) }).manifestacion
+    );
+  });
+});
+
+describe('perfil de actor · límite de la descripción (HU-18, tercer criterio)', () => {
+  it('acepta exactamente el máximo, que es el borde del criterio', () => {
+    const justo = 'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_ACTOR);
+    assert.equal(validarDescripcionDeActor(justo), null);
+  });
+
+  it('un carácter de más se advierte, y el aviso dice cuántos sobran', () => {
+    const excedido = 'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_ACTOR + 1);
+    assert.match(validarDescripcionDeActor(excedido), /sobra 1 carácter/);
+  });
+
+  it('el aviso concuerda en plural cuando sobra más de uno', () => {
+    const excedido = 'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_ACTOR + 7);
+    assert.match(validarDescripcionDeActor(excedido), /sobran 7 caracteres/);
+  });
+
+  it('el tope es el mismo que imponen las reglas de seguridad', () => {
+    // firestore.rules exige «descripcion.size() <= 1000» en actoresCulturales.
+    // Si este número deja de coincidir, el formulario aceptaría un texto que el
+    // servidor rechaza, y el error llegaría sin campo al que señalar.
+    const reglas = readFileSync(new URL('../../firestore.rules', import.meta.url), 'utf8');
+    const tope = `descripcion.size() <= ${LONGITUD_MAXIMA_DESCRIPCION_ACTOR}`;
+    assert.ok(reglas.includes(tope), `firestore.rules ya no exige «${tope}»`);
+  });
+
+  it('una descripción demasiado corta no dice nada de la propuesta', () => {
+    assert.ok(validarDescripcionDeActor('a'.repeat(LONGITUD_MINIMA_DESCRIPCION_ACTOR - 1)));
+  });
+
+  it('los espacios de los extremos no cuentan para el límite', () => {
+    const justo = `   ${'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_ACTOR)}   `;
+    assert.equal(validarDescripcionDeActor(justo), null);
+  });
+});
+
+describe('perfil de actor · canales de contacto (RF-12)', () => {
+  it('basta con uno de los tres', () => {
+    assert.equal(hayErrores(validarContacto({ correo: 'tambora@ejemplo.co' })), false);
+    assert.equal(hayErrores(validarContacto({ whatsapp: '3001234567' })), false);
+  });
+
+  it('ninguno de los tres se bloquea: el perfil quedaría incontactable', () => {
+    assert.ok(validarContacto({ telefono: '', correo: '', whatsapp: '' }).contacto);
+    assert.ok(validarContacto({}).contacto);
+  });
+
+  it('un correo mal escrito se señala aunque haya otro canal correcto', () => {
+    const errores = validarContacto({ telefono: '3001234567', correo: 'esto-no-es-un-correo' });
+    assert.ok(errores.correo);
+    assert.equal(errores.contacto, undefined);
+  });
+
+  it('los errores del contacto llegan al formulario con su prefijo', () => {
+    const errores = perfil({ contacto: { telefono: '12', correo: '', whatsapp: '' } });
+    assert.ok(errores['contacto.telefono']);
+  });
+});
+
+describe('perfil de actor · teléfono (HU-18)', () => {
+  it('acepta un móvil colombiano', () => {
+    assert.equal(validarTelefono('3001234567'), null);
+  });
+
+  it('acepta el mismo número escrito como lo escribe la gente', () => {
+    assert.equal(validarTelefono('+57 300 123 4567'), null);
+    assert.equal(validarTelefono('(605) 421-0000'), null);
+  });
+
+  it('acepta un fijo de Santa Marta con su indicativo', () => {
+    assert.equal(validarTelefono('6054210000'), null);
+  });
+
+  it('rechaza lo que no llega a siete dígitos', () => {
+    assert.ok(validarTelefono('12345'));
+  });
+
+  it('vacío es válido mientras no sea obligatorio: hay otros dos canales', () => {
+    assert.equal(validarTelefono(''), null);
+    assert.ok(validarTelefono('', { obligatorio: true }));
   });
 });

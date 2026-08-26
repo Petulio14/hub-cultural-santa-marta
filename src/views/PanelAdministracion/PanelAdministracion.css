@@ -155,3 +155,43 @@
   font-size: 0.9rem;
   color: var(--gris-texto);
 }
+
+/* Perfiles de actores culturales a la espera de publicación — HU-18 */
+
+.perfiles-pendientes {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+}
+
+.perfil-pendiente__nombre {
+  margin: 0 0 2px;
+  font-size: 1.1rem;
+}
+
+.perfil-pendiente__manifestacion {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+/* La descripción puede llegar a mil caracteres; en la tarjeta se recorta a seis
+   líneas. El texto sigue completo en el documento para quien lo escuche. */
+.perfil-pendiente__descripcion {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Los dos botones se apilan en móvil y se ponen en fila en cuanto hay sitio: a
+   360 px, uno junto a otro no cumpliría el área mínima de toque de HU-10. */
+.perfil-pendiente__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}

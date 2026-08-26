@@ -11,6 +11,7 @@ import DirectorioHubs from '../views/DirectorioHubs/DirectorioHubs.jsx';
 import MapaInteractivo from '../views/MapaInteractivo/MapaInteractivo.jsx';
 import PanelAdministracion from '../views/PanelAdministracion/PanelAdministracion.jsx';
 import Ingreso from '../views/Ingreso/Ingreso.jsx';
+import MiPerfil from '../views/MiPerfil/MiPerfil.jsx';
 import MisPublicaciones from '../views/MisPublicaciones/MisPublicaciones.jsx';
 import PoliticaDatos from '../views/PoliticaDatos/PoliticaDatos.jsx';
 import NoEncontrada from '../views/NoEncontrada/NoEncontrada.jsx';
@@ -29,6 +30,7 @@ import NoEncontrada from '../views/NoEncontrada/NoEncontrada.jsx';
  *   /admin             V-7  Panel de administración   privada · administrador
  *   /ingreso           V-8  Ingreso y registro        pública
  *   /politica-de-datos      Tratamiento de datos      pública (HU-16)
+ *   /mi-perfil         V-4  Mi perfil de actor        privada · actor cultural
  *   /mis-publicaciones V-9  Mis publicaciones         privada · actor cultural
  *   cualquier otra          Página no encontrada      pública
  *
@@ -75,6 +77,19 @@ export const enrutador = createBrowserRouter([
         path: 'politica-de-datos',
         element: <PoliticaDatos />,
         handle: { titulo: 'Política de tratamiento de datos' },
+      },
+      {
+        // V-4 en su cara privada. El prototipo la describe como «público
+        // (lectura) / privado (edición)» sin darle dirección propia, pero quien
+        // aún no tiene perfil no tiene tampoco un «/actores/:id» al que ir. Es
+        // el mismo caso que «/politica-de-datos» (HU-18, docs/17 §3).
+        path: 'mi-perfil',
+        element: (
+          <RutaPrivada rol="actor">
+            <MiPerfil />
+          </RutaPrivada>
+        ),
+        handle: { titulo: 'Mi perfil de actor cultural' },
       },
       {
         path: 'mis-publicaciones',

@@ -15,8 +15,14 @@
 export const ROLES = {
   actor: {
     etiqueta: 'Actor cultural',
-    inicio: '/mis-publicaciones',
-    enlaces: [{ a: '/mis-publicaciones', nombre: 'Mis publicaciones' }],
+    // Aterriza en su perfil y no en sus publicaciones: sin perfil no puede
+    // publicar nada —«eventos» exige un idActor que sea suyo—, así que llevarle
+    // primero al catálogo vacío sería enseñarle una puerta cerrada (HU-18).
+    inicio: '/mi-perfil',
+    enlaces: [
+      { a: '/mi-perfil', nombre: 'Mi perfil' },
+      { a: '/mis-publicaciones', nombre: 'Mis publicaciones' },
+    ],
   },
   hub: {
     etiqueta: 'Hub de innovación',
