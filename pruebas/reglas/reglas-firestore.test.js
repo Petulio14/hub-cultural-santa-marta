@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19.
+ * HU-17, HU-18, HU-19, HU-20.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -20,6 +20,7 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  GeoPoint,
   collection,
   deleteDoc,
   doc,
@@ -55,6 +56,13 @@ const ID_ACTOR_PENDIENTE = UID_OTRO;         // perfil aún sin aprobar
  * la prueba mediría entonces una regla distinta de la que dice medir.
  */
 const UIDS_SIN_PERFIL = Array.from({ length: 16 }, (_, i) => `uid-sin-perfil-${i + 1}`);
+
+/** Cuentas con rol de hub, y por la misma razón: una por prueba de creación. */
+const UIDS_HUB = Array.from({ length: 10 }, (_, i) => `uid-hub-${i + 1}`);
+
+/** El hub que ya existe. Su identificador es el uid de su dueño, como el actor. */
+const UID_HUB_DUENO = 'uid-hub-dueno';
+const ID_HUB = UID_HUB_DUENO;
 
 /** Perfil de actor cultural mínimo que las reglas aceptan (HU-18). */
 const perfilDeActor = (uid, cambios = {}) => ({
@@ -115,6 +123,27 @@ before(async () => {
       rol: 'administrador',
       estado: 'activo',
       correo: 'admin@ejemplo.co',
+    });
+
+    for (const uid of [...UIDS_HUB, UID_HUB_DUENO]) {
+      await setDoc(doc(bd, 'usuarios', uid), {
+        uid,
+        rol: 'hub',
+        estado: 'activo',
+        correo: `${uid}@ejemplo.co`,
+      });
+    }
+
+    await setDoc(doc(bd, 'hubs', ID_HUB), {
+      idHub: ID_HUB,
+      uid: UID_HUB_DUENO,
+      nombre: 'Hub Caribe de Innovación',
+      descripcion: 'Espacio de formación y encuentro en el centro histórico.',
+      lineasDeTrabajo: ['emprendimiento', 'economía naranja'],
+      direccion: 'Calle 22 # 1-40, Santa Marta',
+      coordenadas: new GeoPoint(11.24222, -74.21331),
+      contacto: { telefono: null, correo: 'hub@ejemplo.co', whatsapp: null },
+      estado: 'aprobado',
     });
 
     for (const uid of UIDS_SIN_PERFIL) {
@@ -913,5 +942,167 @@ describe('imagen del perfil (HU-19)', () => {
         imagen: imagenDe(40000),
       })
     );
+  });
+});
+
+describe('hub de innovación (HU-20)', () => {
+  /** Hub mínimo que las reglas aceptan. */
+  const hubDe = (uid, cambios = {}) => ({
+    idHub: uid,
+    uid,
+    nombre: 'Hub del Rodadero',
+    descripcion: 'Espacio de formación para emprendimientos culturales.',
+    lineasDeTrabajo: ['formación'],
+    direccion: 'Carrera 3 # 10-20, El Rodadero',
+    coordenadas: new GeoPoint(11.2, -74.22),
+    contacto: { telefono: '3001234567', correo: null, whatsapp: null },
+    estado: 'pendiente',
+    ...cambios,
+  });
+
+  it('una cuenta con rol de hub registra el suyo', async () => {
+    const uid = UIDS_HUB[0];
+    await assertSucceeds(setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid)));
+  });
+
+  it('el identificador tiene que ser el uid de su responsable', async () => {
+    const uid = UIDS_HUB[1];
+    await assertFails(setDoc(doc(comoUsuario(uid), 'hubs', 'hub-caribe'), hubDe(uid)));
+  });
+
+  it('un actor cultural NO registra un hub', async () => {
+    // El rol decide qué colección puedes estrenar, y no solo qué ves.
+    await assertFails(setDoc(doc(comoUsuario(UID_ACTOR), 'hubs', UID_ACTOR), hubDe(UID_ACTOR)));
+  });
+
+  it('el hub nace pendiente: nadie se publica solo', async () => {
+    const uid = UIDS_HUB[2];
+    await assertFails(
+      setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid, { estado: 'aprobado' }))
+    );
+  });
+
+  describe('las líneas de trabajo', () => {
+    it('sin ninguna no hay hub', async () => {
+      const uid = UIDS_HUB[3];
+      await assertFails(
+        setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid, { lineasDeTrabajo: [] }))
+      );
+    });
+
+    it('más de ocho tampoco', async () => {
+      const uid = UIDS_HUB[4];
+      const nueve = Array.from({ length: 9 }, (_, i) => `linea-${i}`);
+      await assertFails(
+        setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid, { lineasDeTrabajo: nueve }))
+      );
+    });
+
+    it('una cadena en lugar de una lista se rechaza', async () => {
+      const uid = UIDS_HUB[5];
+      await assertFails(
+        setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid, { lineasDeTrabajo: 'formación' }))
+      );
+    });
+  });
+
+  describe('el punto en el mapa (tercer criterio)', () => {
+    it('sin coordenadas no se guarda', async () => {
+      const uid = UIDS_HUB[6];
+      const sinPunto = hubDe(uid);
+      delete sinPunto.coordenadas;
+      await assertFails(setDoc(doc(comoUsuario(uid), 'hubs', uid), sinPunto));
+    });
+
+    it('dos números sueltos no son un punto', async () => {
+      // Sin «is latlng», el mapa de HU-30 recibiría esto donde espera un
+      // GeoPoint y la consulta entera se caería.
+      const uid = UIDS_HUB[7];
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(uid), 'hubs', uid),
+          hubDe(uid, { coordenadas: { lat: 11.2, lon: -74.2 } })
+        )
+      );
+    });
+
+    it('tampoco una cadena con el punto escrito', async () => {
+      const uid = UIDS_HUB[8];
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(uid), 'hubs', uid),
+          hubDe(uid, { coordenadas: '11.24222, -74.21331' })
+        )
+      );
+    });
+  });
+
+  it('un campo que la interfaz nunca pinta no entra en el hub', async () => {
+    const uid = UIDS_HUB[9];
+    await assertFails(
+      setDoc(doc(comoUsuario(uid), 'hubs', uid), hubDe(uid, { notasInternas: 'lo que sea' }))
+    );
+  });
+
+  describe('propiedad y aprobación', () => {
+    it('el dueño edita su hub y sigue aprobado', async () => {
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_HUB_DUENO), 'hubs', ID_HUB), {
+          descripcion: 'Espacio de formación, coworking y encuentro.',
+        })
+      );
+      const despues = await getDoc(doc(visitante(), 'hubs', ID_HUB));
+      assert.equal(despues.data().estado, 'aprobado');
+    });
+
+    it('otra persona NO edita mi hub', async () => {
+      await assertFails(
+        updateDoc(doc(comoUsuario(UIDS_HUB[0]), 'hubs', ID_HUB), { nombre: 'Suplantado' })
+      );
+    });
+
+    it('el dueño NO se aprueba ni se retira a sí mismo', async () => {
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_HUB_DUENO), 'hubs', ID_HUB), { estado: 'inactivo' })
+      );
+    });
+
+    it('el administrador sí mueve el estado', async () => {
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_ADMIN), 'hubs', ID_HUB), { estado: 'aprobado' })
+      );
+    });
+  });
+
+  describe('directorio público (segundo criterio)', () => {
+    it('un visitante sin cuenta lista los hubs aprobados', async () => {
+      await assertSucceeds(
+        getDocs(query(collection(visitante(), 'hubs'), where('estado', '==', 'aprobado')))
+      );
+    });
+
+    it('pero NO la colección entera: hay hubs sin aprobar dentro', async () => {
+      await assertFails(getDocs(collection(visitante(), 'hubs')));
+    });
+
+    it('el responsable lee su propia ruta vacía antes de registrar nada', async () => {
+      // La misma lección de HU-18: sobre un documento inexistente «resource»
+      // llega nulo, y sin la primera condición de la regla quien abre /mi-hub
+      // por primera vez leería un error de permisos.
+      const uid = 'uid-hub-sin-registrar';
+      await entorno.withSecurityRulesDisabled(async (contexto) => {
+        await setDoc(doc(contexto.firestore(), 'usuarios', uid), {
+          uid,
+          rol: 'hub',
+          estado: 'activo',
+          correo: 'sin-registrar@ejemplo.co',
+        });
+      });
+      await assertSucceeds(getDoc(doc(comoUsuario(uid), 'hubs', uid)));
+    });
+
+    it('pero NO la ruta vacía de otra persona', async () => {
+      await assertFails(getDoc(doc(comoUsuario(UID_HUB_DUENO), 'hubs', 'uid-que-no-existe')));
+    });
   });
 });

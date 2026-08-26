@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18, HU-19 · RNF-05, RNF-08
+// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18, HU-19, HU-20 · RNF-05, RNF-08
 //
 // El control de acceso vive en dos capas simultáneas: la interfaz oculta lo que el rol no
 // puede usar, y estas reglas rechazan la operación aunque se intente desde fuera de la
@@ -170,20 +170,53 @@ service cloud.firestore {
     }
 
     // ---------------------------------------------------------------- hubs
+    // Gemelo de actoresCulturales, y por las mismas razones: el id ES el uid, de
+    // modo que «un responsable, un hub» sea algo que las reglas puedan
+    // garantizar y no solo algo que el modelo declare (docs/19 §2).
+
+    // Forma mínima de un hub de innovación (HU-20 · docs/04 §5).
+    function hubBienFormado() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['idHub', 'uid', 'nombre', 'descripcion',
+                               'lineasDeTrabajo', 'direccion', 'coordenadas',
+                               'contacto', 'estado'])
+        && d.nombre is string && d.nombre.size() > 0 && d.nombre.size() <= 80
+        && d.descripcion is string
+        && d.descripcion.size() > 0 && d.descripcion.size() <= 1000
+        && d.lineasDeTrabajo is list
+        && d.lineasDeTrabajo.size() > 0 && d.lineasDeTrabajo.size() <= 8
+        && d.direccion is string
+        && d.direccion.size() > 0 && d.direccion.size() <= 200
+        // 'latlng' es el tipo de un GeoPoint. Exigirlo aquí es lo que impide que
+        // el mapa reciba un hub con dos cadenas de texto donde espera un punto,
+        // y con él la consulta entera de HU-30.
+        && d.coordenadas is latlng
+        && d.contacto is map;
+    }
 
     match /hubs/{idHub} {
-      allow read: if resource.data.estado == 'aprobado'
+      // La primera condición permite leer un documento que NO EXISTE, que es lo
+      // que hace quien abre /mi-hub antes de crear el suyo. Sin ella, «resource»
+      // llega nulo y la expresión entera falla — el defecto que HU-18 encontró
+      // en producción (docs/17 §10).
+      allow read: if (resource == null && autenticado() && idHub == miUid())
+                  || resource.data.estado == 'aprobado'
                   || (autenticado() && resource.data.uid == miUid())
                   || soyAdmin();
 
       allow create: if tengoRol('hub')
+        && idHub == miUid()
         && request.resource.data.uid == miUid()
+        && request.resource.data.idHub == idHub
         && request.resource.data.estado == 'pendiente'
-        && request.resource.data.lineasDeTrabajo.size() > 0;
+        && hubBienFormado();
 
+      // Se edita sin volver a aprobación, igual que el perfil del actor; el
+      // dueño no se autoaprueba.
       allow update: if (autenticado()
                         && resource.data.uid == miUid()
-                        && !toca(['uid', 'estado']))
+                        && !toca(['uid', 'idHub', 'estado'])
+                        && hubBienFormado())
                     || soyAdmin();
 
       allow delete: if (autenticado() && resource.data.uid == miUid()) || soyAdmin();

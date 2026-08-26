@@ -26,9 +26,11 @@ export const ROLES = {
   },
   hub: {
     etiqueta: 'Hub de innovación',
-    // El perfil del hub llega en HU-20; hasta entonces su inicio es el directorio.
-    inicio: '/hubs',
-    enlaces: [],
+    // Aterriza en su propio registro y no en el directorio, por lo mismo que el
+    // actor cultural: hasta que el hub no exista, el directorio público no tiene
+    // nada suyo que enseñarle (HU-20).
+    inicio: '/mi-hub',
+    enlaces: [{ a: '/mi-hub', nombre: 'Mi hub' }],
   },
   administrador: {
     etiqueta: 'Administrador',

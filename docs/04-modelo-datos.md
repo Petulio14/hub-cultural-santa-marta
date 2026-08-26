@@ -94,15 +94,19 @@ incluida la comprobación de qué abre publicar un `uid` (nada), está en
 
 ## 5. `hubs`
 
+Identificador del documento: **`uid` de Firebase Authentication**, igual que en `usuarios` y
+en `actoresCulturales`, y por la misma razón: es lo único que permite a las reglas garantizar
+«un responsable, un hub» ([17 §2](17-perfil-de-actor.md)).
+
 | Campo | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| `idHub` | `string` | Sí | Identificador del documento. |
+| `idHub` | `string` | Sí | Identificador del documento. Coincide con `uid`. |
 | `uid` | `string` | Sí | **Referencia** a `usuarios`. |
 | `nombre` | `string` | Sí | Nombre del hub. |
 | `descripcion` | `string` | Sí | Descripción del espacio. |
-| `lineasDeTrabajo` | `array<string>` | Sí | Al menos un elemento. |
+| `lineasDeTrabajo` | `array<string>` | Sí | Entre 1 y 8 elementos, de 60 caracteres como mucho cada uno (HU-20). |
 | `direccion` | `string` | Sí | Dirección física. |
-| `coordenadas` | `geopoint` | Sí | Latitud y longitud, necesarias para el mapa (HU-20). |
+| `coordenadas` | `geopoint` | Sí | Latitud y longitud, necesarias para el mapa (HU-20). Se obtienen buscando la dirección y **confirmando** el resultado, nunca en silencio ([19 §3](19-hubs-de-innovacion.md)). |
 | `contacto` | `map` | Sí | Canales de contacto del hub. |
 | `estado` | `string` | Sí | `pendiente`, `aprobado` o `inactivo`. |
 

@@ -83,6 +83,7 @@ de [`05-prototipo-interfaz.md` §2](05-prototipo-interfaz.md):
 | `/actores` | V-4 · Directorio de actores culturales | Pública | HU-18 |
 | `/actores/:id` | V-4 · Perfil de actor cultural | Pública | HU-18, HU-19 |
 | `/hubs` | V-5 · Directorio de hubs | Pública | HU-20 |
+| `/mi-hub` | V-5 · Mi hub de innovación | Privada · rol hub | HU-20 |
 | `/mapa` | V-6 · Mapa interactivo | Pública | HU-30, HU-33 |
 | `/admin` | V-7 · Panel de administración | Privada · rol administrador | HU-17, HU-24, HU-34 |
 | `/ingreso` | V-8 · Ingreso y registro | Pública | HU-12, HU-13, HU-14, HU-16 |

@@ -44,3 +44,35 @@ export function aIdentificador(nombre) {
     .replace(/[^a-z0-9ñ]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * Las líneas de trabajo de un hub, a partir de lo que se escribe en una sola
+ * caja — HU-20.
+ *
+ * Se admite separar por comas o por saltos de línea, porque las dos cosas se
+ * hacen sin pensar y ninguna es más correcta que la otra. Se quitan los
+ * espacios sobrantes, se descartan las vacías —«a,,b» y «a, b» son la misma
+ * lista— y se eliminan las repetidas sin distinguir mayúsculas ni tildes, para
+ * que «Emprendimiento» y «emprendimiento» no salgan dos veces en el directorio.
+ *
+ * De las repetidas se conserva **la primera tal como se escribió**: es la que
+ * quien la escribió eligió, y normalizarla para mostrarla convertiría «TIC» en
+ * «tic».
+ */
+export function aLineasDeTrabajo(texto) {
+  const vistas = new Set();
+  const lineas = [];
+
+  for (const trozo of (texto ?? '').split(/[,\n]/)) {
+    const limpio = trozo.trim().replace(/\s+/g, ' ');
+    if (limpio === '') continue;
+
+    const clave = normalizarTexto(limpio);
+    if (vistas.has(clave)) continue;
+
+    vistas.add(clave);
+    lineas.push(limpio);
+  }
+
+  return lineas;
+}

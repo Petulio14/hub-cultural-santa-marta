@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useColaDeAprobacion } from '../../hooks/useColaDeAprobacion.js';
 import {
   cambiarEstadoDeActor,
   listarActoresPendientes,
@@ -10,62 +10,28 @@ import {
  *
  * Un perfil nace `pendiente` y no aparece en el directorio público hasta que
  * alguien lo aprueba (docs/04 §4). Sin esta sección, el quinto criterio de
- * aceptación de HU-18 —«el perfil debe figurar en el directorio público»— solo
- * podría cumplirse editando el documento desde la consola de Firebase, es decir,
- * fuera de la plataforma y sin dejar rastro dentro de ella.
+ * aceptación de HU-18 solo podría cumplirse editando el documento desde la
+ * consola de Firebase, es decir, fuera de la plataforma.
  *
  * No es la cola de moderación de HU-24: aquélla modera **publicaciones**, se
  * ordena por antigüedad y deja constancia de cada decisión en la colección
- * `moderaciones`. Aquí se decide únicamente si un perfil se publica, que es una
- * puerta de entrada y no un acto de moderación editorial.
+ * `moderaciones`. Aquí se decide únicamente si un perfil se publica.
+ *
+ * La mecánica —leer, decidir, recargar, avisar— la comparte con la cola de hubs
+ * y vive en «useColaDeAprobacion».
  */
+const MENSAJES = {
+  alPublicar: (actor) => `«${actor.nombre}» ya figura en el directorio público.`,
+  alRetirar: (actor) => `«${actor.nombre}» queda retirado. Su dueño puede seguir editándolo.`,
+  alFallarLectura: 'No se pudieron leer los perfiles pendientes. Revisa la conexión.',
+};
+
 export default function PerfilesDeActores() {
-  const [pendientes, setPendientes] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
-  const [aviso, setAviso] = useState(null);
-  const [ocupada, setOcupada] = useState(false);
-
-  const recargar = useCallback(async () => {
-    setCargando(true);
-    try {
-      setPendientes(await listarActoresPendientes());
-      setError(null);
-    } catch (fallo) {
-      setError(
-        fallo?.message ?? 'No se pudieron leer los perfiles pendientes. Revisa la conexión.'
-      );
-    } finally {
-      setCargando(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    recargar();
-  }, [recargar]);
-
-  async function decidir(actor, estado) {
-    setOcupada(true);
-    setAviso(null);
-    try {
-      await cambiarEstadoDeActor(actor.id, estado);
-      await recargar();
-      setAviso({
-        tipo: 'exito',
-        texto:
-          estado === 'aprobado'
-            ? `«${actor.nombre}» ya figura en el directorio público.`
-            : `«${actor.nombre}» queda retirado. Su dueño puede seguir editándolo.`,
-      });
-    } catch (fallo) {
-      setAviso({
-        tipo: 'error',
-        texto: fallo?.message ?? 'No se pudo cambiar el estado del perfil. Inténtalo de nuevo.',
-      });
-    } finally {
-      setOcupada(false);
-    }
-  }
+  const { pendientes, cargando, error, aviso, ocupada, decidir } = useColaDeAprobacion({
+    listar: listarActoresPendientes,
+    cambiarEstado: cambiarEstadoDeActor,
+    mensajes: MENSAJES,
+  });
 
   return (
     <>
