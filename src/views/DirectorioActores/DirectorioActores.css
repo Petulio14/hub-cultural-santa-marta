@@ -77,3 +77,21 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* La imagen encabeza la tarjeta junto al nombre — HU-19.
+   Un cuadrado pequeño y no una franja a todo lo ancho: a 96 px identifica sin
+   apropiarse de la tarjeta, y al ser cuadrado no recorta la cabeza de nadie,
+   que es lo que haría un recorte apaisado sobre un retrato. */
+.tarjeta-actor__encabezado {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* El selector lleva el padre para ganarle a «.imagen-actor { width: 100% }» de
+   global.css. Con una sola clase empatarían en especificidad y decidiría el
+   orden en que Vite junta las hojas, que no es asunto de esta vista. */
+.tarjeta-actor__encabezado .tarjeta-actor__imagen {
+  flex: 0 0 auto;
+  width: 96px;
+}

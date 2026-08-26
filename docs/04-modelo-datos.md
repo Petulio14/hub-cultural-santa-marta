@@ -89,7 +89,7 @@ incluida la comprobación de qué abre publicar un `uid` (nada), está en
 | `categoria` | `string` | Sí | **Referencia** a `categorias.idCategoria`. |
 | `contacto` | `map` | Sí | `{ telefono: string\|null, correo: string\|null, whatsapp: string\|null }` — canales autorizados por el actor (RF-12). |
 | `redes` | `map` | No | Enlaces a redes sociales. Admite valor nulo. |
-| `imagenUrl` | `string` | No | URL en Firebase Storage. Nulo cuando no hay imagen: se muestra una predeterminada (HU-19). |
+| `imagen` | `string` | No | Imagen reducida como **URI de datos** (`data:image/jpeg;base64,…`), máximo 120.000 caracteres. Nulo cuando no hay: se muestra una predeterminada (HU-19). No es una URL de Firebase Storage; el porqué está en [03 §6.1](03-arquitectura.md). |
 | `estado` | `string` | Sí | `pendiente`, `aprobado` o `inactivo`. |
 
 ## 5. `hubs`
@@ -122,7 +122,7 @@ Colección central del sistema.
 | `fechaFin` | `timestamp` | Sí | — |
 | `lugar` | `string` | Sí | Nombre del lugar en texto. |
 | `coordenadas` | `geopoint` | No | Nulo si el actor no seleccionó punto; en ese caso el evento **no aparece en el mapa** y se advierte al guardar (HU-22). |
-| `imagenUrl` | `string` | No | URL en Firebase Storage. |
+| `imagen` | `string` | No | Imagen reducida como **URI de datos**, igual que en `actoresCulturales` y por el mismo motivo ([03 §6.1](03-arquitectura.md)). La rellena HU-21. |
 | `estadoPublicacion` | `string` | Sí | `pendiente`, `aprobado` o `devuelto`. Nace siempre en `pendiente` (HU-21). |
 | `fechaCreacion` | `timestamp` | Sí | Asignada por el servidor, no por el cliente. |
 | `contadorConsultas` | `number` | Sí | Inicia en `0`. Alimenta los indicadores de RF-15. |

@@ -1,5 +1,5 @@
 /**
- * Perfiles de actores culturales — HU-18 · RF-03, RF-06, RF-12.
+ * Perfiles de actores culturales — HU-18, HU-19 · RF-03, RF-06, RF-12.
  *
  * Único punto del proyecto que lee y escribe la colección «actoresCulturales»
  * (docs/03-arquitectura.md §3). Lo consumen el formulario del propio actor, el
@@ -22,6 +22,7 @@
  */
 import {
   collection,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -122,7 +123,11 @@ function aActor(documento) {
       correo: datos.contacto?.correo ?? null,
       whatsapp: datos.contacto?.whatsapp ?? null,
     },
-    imagenUrl: datos.imagenUrl ?? null,
+    // La imagen viaja dentro del documento, como URI de datos, y no en Firebase
+    // Storage (docs/03 §6.1). «imagenUrl» es el nombre que tuvo el campo
+    // mientras se dio por hecho que habría Storage: se sigue leyendo para que
+    // los perfiles creados antes de HU-19 no pierdan nada, y se deja de escribir.
+    imagen: datos.imagen ?? datos.imagenUrl ?? null,
     estado: datos.estado ?? 'pendiente',
   };
 }
@@ -130,7 +135,7 @@ function aActor(documento) {
 const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, 'es');
 
 /** Los campos que el actor controla. «uid», «idActor» y «estado» no están aquí. */
-function camposEditables({ nombre, manifestacion, descripcion, categoria, contacto }) {
+function camposEditables({ nombre, manifestacion, descripcion, categoria, contacto, imagen }) {
   return {
     nombre: nombre.trim(),
     manifestacion: manifestacion.trim(),
@@ -141,6 +146,7 @@ function camposEditables({ nombre, manifestacion, descripcion, categoria, contac
       correo: oNulo(contacto?.correo)?.toLowerCase() ?? null,
       whatsapp: oNulo(contacto?.whatsapp),
     },
+    imagen: imagen ?? null,
   };
 }
 
@@ -180,11 +186,16 @@ export async function guardarMiPerfil(uid, datos) {
     const existente = await getDoc(referencia);
 
     if (existente.exists()) {
-      await updateDoc(referencia, editables);
+      // «deleteField» borra el campo viejo si el perfil se creó antes de HU-19.
+      // Hay que borrarlo y no dejarlo estar: las reglas admiten exactamente diez
+      // claves, y «imagenUrl» ya no es una de ellas, así que un documento que la
+      // conserve no pasaría la comprobación de forma. Sobre un perfil que no la
+      // tiene, esto no hace nada.
+      await updateDoc(referencia, { ...editables, imagenUrl: deleteField() });
       return { ...aActor(existente), ...editables };
     }
 
-    const perfil = { idActor: uid, uid, ...editables, imagenUrl: null, estado: 'pendiente' };
+    const perfil = { idActor: uid, uid, ...editables, estado: 'pendiente' };
     await setDoc(referencia, perfil);
     return { id: uid, ...perfil };
   });

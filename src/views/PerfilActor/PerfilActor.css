@@ -64,3 +64,26 @@
   min-height: var(--toque-minimo);
   font-weight: 600;
 }
+
+/* La imagen junto al nombre — HU-19.
+   Se apilan a 360 px y se ponen en fila en cuanto hay sitio: a la anchura menor
+   una imagen de 160 px al lado del nombre dejaría el nombre en columna de tres
+   palabras. */
+.perfil__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+/* Con el padre delante, por lo mismo que en el directorio: si no, decide el
+   orden de las hojas. */
+.perfil__encabezado .perfil__imagen {
+  flex: 0 0 auto;
+  width: 160px;
+}
+
+.perfil__encabezado h1 {
+  margin-bottom: 4px;
+}

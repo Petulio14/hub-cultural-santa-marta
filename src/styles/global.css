@@ -240,3 +240,77 @@ textarea.campo__control {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Imagen del perfil — HU-19.
+   Cuadrada y recortada al centro: las fotografías llegan en cualquier
+   proporción, y una rejilla en la que cada tarjeta mide distinto no es una
+   rejilla. «object-fit» recorta, no deforma: una cara estirada es peor que una
+   cara con menos fondo alrededor. */
+.imagen-actor {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radio);
+  background: var(--arena);
+}
+
+.imagen-actor--vacia {
+  border: 1px solid var(--gris-borde);
+}
+
+/* Selector de imagen con vista previa */
+.campo-imagen {
+  gap: 8px;
+}
+
+.campo-imagen__cuerpo {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.campo-imagen__cuerpo .campo-imagen__vista {
+  flex: 0 0 auto;
+  width: 120px;
+}
+
+.campo-imagen__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* El «input» de archivo no se puede dimensionar y a 360 px se sale de la
+   columna. Se esconde sin sacarlo del documento —nada de «display: none», que
+   lo quitaría del orden de tabulación— y quien lo activa es su etiqueta, que sí
+   cumple el área mínima de toque de HU-10. */
+.campo-imagen__entrada {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* El foco del «input» oculto tiene que verse en su etiqueta: si no, quien
+   navega con teclado pasa por el control sin ninguna señal. */
+.campo-imagen__entrada:focus-visible + .campo-imagen__boton {
+  outline: 3px solid var(--turquesa-oscuro);
+  outline-offset: 2px;
+}
+
+.campo-imagen__boton {
+  cursor: pointer;
+}
+
+.campo-imagen__estado {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--turquesa-oscuro);
+}

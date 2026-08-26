@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import { listarActoresAprobados } from '../../services/actoresService.js';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import './DirectorioActores.css';
 
 /**
- * V-4 · Directorio de actores culturales — HU-18, quinto criterio.
+ * V-4 · Directorio de actores culturales — HU-18, quinto criterio; HU-19.
  *
  * El prototipo especifica el perfil de un actor, pero los cuatro accesos de la
  * página de inicio exigen además una puerta de entrada a todos ellos (véase la
@@ -80,11 +81,25 @@ export default function DirectorioActores() {
               const categoria = nombreDeCategoria(actor.categoria);
               return (
                 <li className="tarjeta tarjeta-actor" key={actor.id}>
-                  <h2 className="tarjeta-actor__nombre">
-                    <Link to={`/actores/${actor.id}`}>{actor.nombre}</Link>
-                  </h2>
-                  <p className="tarjeta-actor__manifestacion">{actor.manifestacion}</p>
-                  {categoria && <p className="tarjeta-actor__categoria">{categoria}</p>}
+                  {/* La imagen encabeza la tarjeta al lado del nombre, y no
+                      arriba a todo lo ancho: ahí ocuparía más que el texto y la
+                      rejilla se leería como un muro de fotografías. Quien no
+                      subió ninguna ve la predeterminada y no un hueco, que es el
+                      tercer criterio de HU-19. */}
+                  <div className="tarjeta-actor__encabezado">
+                    <ImagenDeActor
+                      imagen={actor.imagen}
+                      nombre={actor.nombre}
+                      className="tarjeta-actor__imagen"
+                    />
+                    <div>
+                      <h2 className="tarjeta-actor__nombre">
+                        <Link to={`/actores/${actor.id}`}>{actor.nombre}</Link>
+                      </h2>
+                      <p className="tarjeta-actor__manifestacion">{actor.manifestacion}</p>
+                      {categoria && <p className="tarjeta-actor__categoria">{categoria}</p>}
+                    </div>
+                  </div>
                   <p className="tarjeta-actor__descripcion">{actor.descripcion}</p>
                 </li>
               );

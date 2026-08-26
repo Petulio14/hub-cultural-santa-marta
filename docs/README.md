@@ -22,6 +22,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [15-roles-y-permisos.md](15-roles-y-permisos.md) | [HU-15](https://github.com/Petulio14/hub-cultural-santa-marta/issues/15) | 4 | Qué puede hacer cada rol, las cuatro maneras de no pasar, el estado de la cuenta como condición del permiso, y los doce casos que lo fijan contra el emulador. |
 | [16-categorias.md](16-categorias.md) | [HU-17](https://github.com/Petulio14/hub-cultural-santa-marta/issues/17) | 4 | El catálogo de categorías, por qué una categoría se desactiva en lugar de borrarse, y el recuento de publicaciones contado en el servidor. |
 | [17-perfil-de-actor.md](17-perfil-de-actor.md) | [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18) | 5 | El perfil del actor cultural: por qué su identificador es el `uid`, el límite de la descripción escrito en las dos capas, la edición que no vuelve a la cola y el directorio público. |
+| [18-imagen-del-perfil.md](18-imagen-del-perfil.md) | [HU-19](https://github.com/Petulio14/hub-cultural-santa-marta/issues/19) | 5 | La imagen dentro del documento en lugar de Firebase Storage, los dos límites que no son el mismo, la reducción en el navegador y la imagen predeterminada dibujada en el código. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -40,9 +41,9 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 
 > **Sprint 5** (vence el 13/10/2026) está en curso: HU-18 a HU-24, la épica E2 y el
-> comienzo de la E3. La primera historia cerrada es
-> [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18), documentada en
-> [17-perfil-de-actor.md](17-perfil-de-actor.md).
+> comienzo de la E3. Cerradas [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18)
+> ([17](17-perfil-de-actor.md)) y [HU-19](https://github.com/Petulio14/hub-cultural-santa-marta/issues/19)
+> ([18](18-imagen-del-perfil.md)).
 
 ## Configuración en la raíz del repositorio
 
@@ -50,7 +51,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | --- | --- | --- |
 | `firestore.rules` | Reglas de seguridad de las 7 colecciones. | HU-11 |
 | `firestore.indexes.json` | Los 6 índices compuestos. Generado desde [04 §10](04-modelo-datos.md). | HU-05, HU-26 |
-| `storage.rules` | Lectura pública, escritura del propietario, JPG/PNG ≤ 2 MB. | HU-19 |
+| `storage.rules` | Lectura pública, escritura del propietario, JPG/PNG ≤ 2 MB. **Escrito y sin publicar**: activar Storage exige plan de facturación ([18 §1](18-imagen-del-perfil.md)). | HU-19 |
 | `firebase.json` | Enlaza reglas e índices; configura los emuladores locales. | HU-11 |
 | `vercel.json` | Build de Vite, reescritura de rutas y cabeceras de seguridad. | HU-08 |
 | `.env.example` | Las seis variables del SDK de Firebase. | HU-08 |
