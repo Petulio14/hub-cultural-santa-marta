@@ -297,7 +297,8 @@ indicativo duplicado de §8.
 
 ### Las reglas · `npm run probar:reglas`
 
-**15 casos nuevos** contra el emulador, uno por cada decisión de §2, §5, §6 y §7. No se
+**18 casos nuevos** contra el emulador: quince por cada decisión de §2, §5, §6 y §7, y
+tres más que añadió el defecto que encontró la comprobación en vivo. No se
 ejecutan en la máquina de desarrollo: el emulador de Firestore muere allí al abrir el pipe
 de bucle local que necesita el selector de netty, con o sin aislamiento de red. Una prueba
 escrita y nunca ejecutada no es evidencia de nada, así que esta historia trae también el
@@ -327,7 +328,17 @@ esta historia y para las seis que quedan del sprint.
     ✔ y abre uno de ellos en su propia dirección
     ✔ pero NO lista la colección entera: hay perfiles sin aprobar dentro
     ✔ un perfil pendiente NO es legible por un visitante
+  ▶ el perfil que todavía no existe
+    ✔ el actor lee su propia ruta vacía antes de crear nada
+    ✔ pero NO lee la ruta vacía de otra persona
+    ✔ un visitante sin sesión tampoco
 ```
+
+**Ejecutados por primera vez el 26/08/2026**, en la
+[ejecución 32982319819](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/32982319819)
+del flujo de integración continua. La suite entera pasa: **74 casos de reglas y 74 de
+funciones puras, cero fallos**. Hasta ese momento los de esta historia —y los cincuenta y
+seis heredados de HU-11, HU-15 y HU-17— estaban escritos y no se habían ejecutado nunca.
 
 Las fixtures de la suite tuvieron que cambiar con el modelo, y el cambio dejó ver algo. Los
 perfiles sembrados tenían tres campos sueltos; desde esta historia la regla de actualización
