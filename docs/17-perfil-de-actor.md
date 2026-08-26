@@ -395,6 +395,7 @@ de administrador. El perfil de la comprobación es
 | 26/08/2026 | El actor lo edita y el cambio se ve sin volver a aprobación | ✅ **No reaparece** entre los pendientes, y su página pública sigue sin la franja de «sin aprobar». Segundo criterio. |
 | 26/08/2026 | Un visitante abre `/actores/:id` de un perfil aprobado | ✅ Se ve entero sin cuenta. Una dirección inventada responde «Ese perfil no está disponible», y una ruta que no existe cae en la página de error de HU-07. |
 | 26/08/2026 | Los enlaces de contacto apuntan a donde dicen | ✅ `tel:+573206342740`, `https://wa.me/573206342740` y `mailto:actor@correo.com`. |
+| 26/08/2026 | Los tres enlaces **pulsados en un teléfono real** | ✅ El marcador abre con el número completo y WhatsApp abre la conversación. Es lo único de esta tabla que un navegador de escritorio no puede comprobar. |
 | 26/08/2026 | A 375 px | ✅ `scrollWidth` 375 sobre `clientWidth` 375: sin desbordamiento horizontal (RNF-03). |
 | 26/08/2026 | Consola del navegador | ✅ Limpia en el directorio, en el perfil público y en la página de perfil inexistente. |
 
