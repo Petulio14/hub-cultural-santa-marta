@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
 import { leerActor } from '../../services/actoresService.js';
@@ -11,7 +12,7 @@ import {
 import './PerfilActor.css';
 
 /**
- * V-4 · Perfil público de un actor cultural — HU-18, quinto criterio.
+ * V-4 · Perfil público de un actor cultural — HU-18, quinto criterio; HU-19.
  *
  * Cada perfil aprobado tiene su propia dirección, «/actores/:id», que se puede
  * copiar y compartir. Eso es lo que convierte el perfil en algo que el actor
@@ -21,7 +22,7 @@ import './PerfilActor.css';
  * respuesta, por lo explicado en «leerActor»: distinguirlos convertiría esta
  * dirección en un detector de perfiles pendientes.
  *
- * La imagen y el listado de publicaciones del actor llegan en HU-19 y HU-25.
+ * El listado de publicaciones del actor llega en HU-25.
  */
 export default function PerfilActor() {
   const { id } = useParams();
@@ -103,9 +104,18 @@ export default function PerfilActor() {
         <Link to="/actores">Actores culturales</Link>
       </p>
 
-      <h1>{actor.nombre}</h1>
-      <p className="perfil__manifestacion">{actor.manifestacion}</p>
-      {categoria && <p className="perfil__categoria">{categoria}</p>}
+      <div className="perfil__encabezado">
+        <ImagenDeActor
+          imagen={actor.imagen}
+          nombre={actor.nombre}
+          className="perfil__imagen"
+        />
+        <div>
+          <h1>{actor.nombre}</h1>
+          <p className="perfil__manifestacion">{actor.manifestacion}</p>
+          {categoria && <p className="perfil__categoria">{categoria}</p>}
+        </div>
+      </div>
 
       <h2>Sobre la propuesta</h2>
       {/* «pre-wrap» en la hoja de estilos: respeta los saltos de línea que

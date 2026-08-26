@@ -183,7 +183,7 @@ function perfilDeActorBienFormado() {
   let d = request.resource.data;
   return d.keys().hasOnly(['idActor', 'uid', 'nombre', 'manifestacion',
                            'descripcion', 'categoria', 'contacto', 'redes',
-                           'imagenUrl', 'estado'])
+                           'imagenUrl', 'estado'])   // 'imagen' desde HU-19
     && ...
 }
 ```
@@ -282,6 +282,10 @@ de área, porque eso sería inventar a quién llama.
 
 `redes` e `imagenUrl` se admiten en las reglas pero el formulario todavía no los pide:
 la imagen llega en **HU-19**.
+
+> **Actualizado en HU-19.** El campo pasó a llamarse `imagen` y guarda la imagen reducida
+> como URI de datos, no una dirección de Firebase Storage. La lista de claves admitidas
+> cambió en consecuencia. Véase [18-imagen-del-perfil.md](18-imagen-del-perfil.md).
 
 ---
 

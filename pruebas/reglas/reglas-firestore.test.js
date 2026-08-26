@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18.
+ * HU-17, HU-18, HU-19.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -54,7 +54,7 @@ const ID_ACTOR_PENDIENTE = UID_OTRO;         // perfil aún sin aprobar
  * reutilizar una cuenta convertiría la segunda escritura en una actualización, y
  * la prueba mediría entonces una regla distinta de la que dice medir.
  */
-const UIDS_SIN_PERFIL = Array.from({ length: 10 }, (_, i) => `uid-sin-perfil-${i + 1}`);
+const UIDS_SIN_PERFIL = Array.from({ length: 16 }, (_, i) => `uid-sin-perfil-${i + 1}`);
 
 /** Perfil de actor cultural mínimo que las reglas aceptan (HU-18). */
 const perfilDeActor = (uid, cambios = {}) => ({
@@ -789,5 +789,129 @@ describe('perfil de actor cultural (HU-18)', () => {
       });
       await assertFails(getDoc(doc(visitante(), 'actoresCulturales', uid)));
     });
+  });
+});
+
+describe('imagen del perfil (HU-19)', () => {
+  /** Una URI de datos del tamaño que se pida, con la forma que exige la regla. */
+  const imagenDe = (caracteres, tipo = 'jpeg') => {
+    const prefijo = `data:image/${tipo};base64,`;
+    return prefijo + 'A'.repeat(Math.max(0, caracteres - prefijo.length));
+  };
+
+  it('un perfil con su imagen reducida se guarda', async () => {
+    const uid = UIDS_SIN_PERFIL[10];
+    await assertSucceeds(
+      setDoc(
+        doc(comoUsuario(uid), 'actoresCulturales', uid),
+        perfilDeActor(uid, { imagen: imagenDe(60000) })
+      )
+    );
+  });
+
+  it('un perfil sin imagen también: la clave puede no estar', async () => {
+    // La regla lee la imagen con «get» y valor por omisión. Si la leyera
+    // directamente, un perfil sin ella fallaría entero, que es el defecto que
+    // encontró HU-18 con «resource» nulo.
+    const uid = UIDS_SIN_PERFIL[11];
+    await assertSucceeds(
+      setDoc(doc(comoUsuario(uid), 'actoresCulturales', uid), perfilDeActor(uid))
+    );
+  });
+
+  it('y con la imagen puesta a nulo, que es como nace un perfil', async () => {
+    const uid = UIDS_SIN_PERFIL[12];
+    await assertSucceeds(
+      setDoc(
+        doc(comoUsuario(uid), 'actoresCulturales', uid),
+        perfilDeActor(uid, { imagen: null })
+      )
+    );
+  });
+
+  describe('el tamaño lo impone el servidor', () => {
+    it('acepta un carácter por debajo del límite: es el borde', async () => {
+      const uid = UIDS_SIN_PERFIL[13];
+      await assertSucceeds(
+        setDoc(
+          doc(comoUsuario(uid), 'actoresCulturales', uid),
+          perfilDeActor(uid, { imagen: imagenDe(119999) })
+        )
+      );
+    });
+
+    it('el límite mismo se rechaza: la regla exige «menor que»', async () => {
+      const uid = UIDS_SIN_PERFIL[14];
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(uid), 'actoresCulturales', uid),
+          perfilDeActor(uid, { imagen: imagenDe(120000) })
+        )
+      );
+    });
+
+    it('tampoco se cuela al editar un perfil que ya existe', async () => {
+      // Sin esto, bastaría con crear el perfil sin imagen y añadirla después.
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), {
+          imagen: imagenDe(150000),
+        })
+      );
+    });
+  });
+
+  describe('el formato lo impone el servidor', () => {
+    it('un GIF se rechaza aunque quepa de sobra', async () => {
+      const uid = UIDS_SIN_PERFIL[15];
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(uid), 'actoresCulturales', uid),
+          perfilDeActor(uid, { imagen: imagenDe(5000, 'gif') })
+        )
+      );
+    });
+
+    it('un SVG se rechaza: es código que el navegador ejecuta, no una fotografía', async () => {
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), {
+          imagen: `data:image/svg+xml;base64,${'A'.repeat(200)}`,
+        })
+      );
+    });
+
+    it('una dirección http en lugar de una URI de datos se rechaza', async () => {
+      // Es lo que se guardaría con Firebase Storage. Mientras no haya
+      // presupuesto para activarlo, aquí no entra (docs/03 §6.1).
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), {
+          imagen: 'https://ejemplo.co/foto.jpg',
+        })
+      );
+    });
+
+    it('un número en lugar de una cadena se rechaza', async () => {
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), { imagen: 42 })
+      );
+    });
+  });
+
+  it('el dueño sí pone y quita su propia imagen', async () => {
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), {
+        imagen: imagenDe(40000),
+      })
+    );
+    await assertSucceeds(
+      updateDoc(doc(comoUsuario(UID_ACTOR), 'actoresCulturales', ID_ACTOR), { imagen: null })
+    );
+  });
+
+  it('otro actor NO le pone una imagen a mi perfil', async () => {
+    await assertFails(
+      updateDoc(doc(comoUsuario(UID_OTRO), 'actoresCulturales', ID_ACTOR), {
+        imagen: imagenDe(40000),
+      })
+    );
   });
 });

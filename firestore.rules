@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18 · RNF-05, RNF-08
+// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18, HU-19 · RNF-05, RNF-08
 //
 // El control de acceso vive en dos capas simultáneas: la interfaz oculta lo que el rol no
 // puede usar, y estas reglas rechazan la operación aunque se intente desde fuera de la
@@ -52,14 +52,36 @@ service cloud.firestore {
       let d = request.resource.data;
       return d.keys().hasOnly(['idActor', 'uid', 'nombre', 'manifestacion',
                                'descripcion', 'categoria', 'contacto', 'redes',
-                               'imagenUrl', 'estado'])
+                               'imagen', 'estado'])
         && d.nombre is string && d.nombre.size() > 0 && d.nombre.size() <= 80
         && d.manifestacion is string
         && d.manifestacion.size() > 0 && d.manifestacion.size() <= 120
         && d.descripcion is string
         && d.descripcion.size() > 0 && d.descripcion.size() <= 1000
         && d.categoria is string && d.categoria.size() > 0
-        && d.contacto is map;
+        && d.contacto is map
+        && imagenAceptable();
+    }
+
+    // La imagen del perfil viaja DENTRO del documento, como URI de datos, y no
+    // en Firebase Storage: activarlo exige plan de facturación con medio de pago
+    // y el proyecto no lo tiene (docs/03-arquitectura.md §6.1).
+    //
+    // Eso obliga a poner aquí el límite que en Storage habría puesto
+    // «request.resource.size». Sin él, el documento admitiría hasta el máximo de
+    // Firestore, un megabyte, y cada visitante del directorio se descargaría eso
+    // por cada perfil. Los dos criterios de HU-19 —formato y tamaño— siguen
+    // comprobándose en el servidor, que es lo que exige RNF-08.
+    //
+    // Se usa «get» con valor por omisión porque la imagen es opcional: leer una
+    // clave ausente haría fallar la expresión entera, que es exactamente el
+    // defecto que HU-18 encontró con «resource» nulo (docs/17 §10).
+    function imagenAceptable() {
+      let imagen = request.resource.data.get('imagen', null);
+      return imagen == null
+        || (imagen is string
+            && imagen.size() < 120000
+            && imagen.matches('^data:image/(jpeg|png);base64,.*'));
     }
 
     // El actor cultural identificado por idActor pertenece a quien hace la petición.

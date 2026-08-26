@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AreaDeTexto from '../../components/AreaDeTexto.jsx';
 import Campo from '../../components/Campo.jsx';
+import CampoDeImagen from '../../components/CampoDeImagen.jsx';
 import Seleccion from '../../components/Seleccion.jsx';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { useMiPerfilDeActor } from '../../hooks/useMiPerfilDeActor.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
 import { guardarMiPerfil } from '../../services/actoresService.js';
+import { reducirImagen, validarArchivoDeImagen } from '../../utils/imagen.js';
 import {
   LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
   hayErrores,
@@ -15,7 +17,7 @@ import {
 import './MiPerfil.css';
 
 /**
- * V-4 en su cara privada — HU-18 · RF-03, RF-06, RF-12.
+ * V-4 en su cara privada — HU-18, HU-19 · RF-03, RF-06, RF-12.
  *
  * La misma vista sirve para crear el perfil y para editarlo: son la misma
  * pantalla con el mismo formulario, y separarlas en dos rutas obligaría a
@@ -27,7 +29,6 @@ import './MiPerfil.css';
  * no tiene tampoco un «/actores/:id» al que ir. Es la misma razón por la que
  * HU-16 añadió «/politica-de-datos» (docs/17 §3).
  *
- * La imagen del perfil llega en HU-19; hasta entonces el formulario no la pide.
  */
 const FORMULARIO_VACIO = {
   nombre: '',
@@ -35,6 +36,7 @@ const FORMULARIO_VACIO = {
   descripcion: '',
   categoria: '',
   contacto: { telefono: '', whatsapp: '', correo: '' },
+  imagen: null,
 };
 
 /** Qué significa cada estado para quien es dueño del perfil. */
@@ -58,6 +60,7 @@ export default function MiPerfil() {
   const [errores, setErrores] = useState({});
   const [aviso, setAviso] = useState(null);
   const [guardando, setGuardando] = useState(false);
+  const [reduciendo, setReduciendo] = useState(false);
 
   // El formulario se rellena cuando llega el perfil, no en cada renderizado: a
   // partir de ahí lo que hay escrito en pantalla es de quien está escribiendo.
@@ -73,6 +76,7 @@ export default function MiPerfil() {
         whatsapp: perfil.contacto.whatsapp ?? '',
         correo: perfil.contacto.correo ?? '',
       },
+      imagen: perfil.imagen,
     });
   }, [perfil]);
 
@@ -92,6 +96,30 @@ export default function MiPerfil() {
       [`contacto.${canal}`]: undefined,
     }));
   };
+
+  /**
+   * Elegir imagen (HU-19). El archivo original **no se guarda en ninguna parte**:
+   * se valida, se reduce y lo que queda en el formulario es ya el resultado, que
+   * es también lo que muestra la vista previa.
+   */
+  async function elegirImagen(archivo) {
+    const problema = validarArchivoDeImagen(archivo);
+    setErrores((actuales) => ({ ...actuales, imagen: problema ?? undefined }));
+    if (problema || !archivo) return;
+
+    setReduciendo(true);
+    try {
+      const reducida = await reducirImagen(archivo);
+      setFormulario((actual) => ({ ...actual, imagen: reducida }));
+    } catch (fallo) {
+      setErrores((actuales) => ({
+        ...actuales,
+        imagen: fallo?.message ?? 'No se pudo preparar esa imagen. Prueba con otra.',
+      }));
+    } finally {
+      setReduciendo(false);
+    }
+  }
 
   async function guardar(evento) {
     evento.preventDefault();
@@ -226,6 +254,18 @@ export default function MiPerfil() {
           filas={8}
         />
 
+        <CampoDeImagen
+          imagen={formulario.imagen}
+          nombre={formulario.nombre}
+          alElegir={elegirImagen}
+          alQuitar={() => {
+            setFormulario((actual) => ({ ...actual, imagen: null }));
+            setErrores((actuales) => ({ ...actuales, imagen: undefined }));
+          }}
+          error={errores.imagen}
+          ocupado={reduciendo}
+        />
+
         <fieldset className="mi-perfil__contacto">
           <legend>Cómo te pueden contactar</legend>
           <p className="campo__ayuda">
@@ -269,7 +309,13 @@ export default function MiPerfil() {
           />
         </fieldset>
 
-        <button className="boton" type="submit" disabled={guardando || sinCategorias}>
+        {/* No se guarda mientras la imagen se está reduciendo: el formulario
+            escribiría el valor anterior y el resultado llegaría tarde. */}
+        <button
+          className="boton"
+          type="submit"
+          disabled={guardando || reduciendo || sinCategorias}
+        >
           {guardando ? 'Guardando…' : perfil ? 'Guardar cambios' : 'Crear mi perfil'}
         </button>
       </form>
