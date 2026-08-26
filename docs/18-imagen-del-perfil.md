@@ -240,16 +240,45 @@ pesa bastante menos.
 
 ### Comprobación en vivo
 
+Sobre el despliegue del proyecto, con la cuenta de actor cultural.
+
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | Un perfil sin imagen muestra la predeterminada en `/actores` y en `/actores/:id` | |
-| | Un actor sube un JPG y aparece en su perfil público | |
-| | Un actor sube un PNG | |
-| | Un archivo de más de 2 MB se rechaza con su mensaje | |
-| | Un archivo que no es JPG ni PNG se rechaza con su mensaje | |
-| | Quitar la imagen devuelve la predeterminada | |
-| | Editar otro campo no borra la imagen ya guardada | |
-| | A 360, 768 y 1366 px, y sin errores en consola | |
+| 26/08/2026 | Un perfil sin imagen muestra la predeterminada en `/actores` y en `/actores/:id` | ✅ El dibujo del código, a 96 px en la tarjeta y 160 px en el perfil. |
+| 26/08/2026 | Un actor sube un JPG y aparece en su perfil público | ✅ |
+| 26/08/2026 | Un actor sube un PNG | ✅ Y **la transparencia sale blanca, no negra**: el aplanado de §5 funciona sobre un archivo real y no solo sobre el generado en la prueba. |
+| 26/08/2026 | Un archivo de más de 2 MB se rechaza con su mensaje | ✅ No se sube, y el perfil conserva lo que tuviera. |
+| 26/08/2026 | Un archivo que no es JPG ni PNG se rechaza con su mensaje | ✅ Probado con GIF y con PDF. Se queda la predeterminada. |
+| 26/08/2026 | Quitar la imagen devuelve la predeterminada | ✅ |
+| 26/08/2026 | Editar otro campo no borra la imagen ya guardada | ✅ Varias ediciones seguidas de la descripción, con la imagen intacta. Es la que más se cuela: el formulario podría enviar la imagen vacía sin que nadie la hubiera tocado. |
+| 26/08/2026 | A 360, 768 y 1366 px, y sin errores en consola | ✅ Sin desbordamiento horizontal y sin errores propios. |
+
+La migración de `imagenUrl` a `imagen` (§4) quedó comprobada de paso y sin hacer nada: el
+perfil que existía se editó varias veces y ninguna falló, que es lo que habría ocurrido si el
+campo viejo hubiera seguido dentro del documento.
+
+### Una lección de orden: las reglas se publican **después**
+
+Al preparar esta comprobación se publicaron las reglas **antes** de fusionar el pull request,
+siguiendo la lista que traía escrita. Con eso, durante unos minutos, el proyecto en
+producción quedó así:
+
+| | |
+| --- | --- |
+| Leer el directorio y los perfiles | funcionaba |
+| **Crear un perfil** | denegado |
+| **Editar un perfil** | denegado |
+
+La aplicación desplegada era todavía la de HU-18, que escribe `imagenUrl`; las reglas recién
+publicadas admiten diez claves y esa ya no era una de ellas. Cualquier escritura que dejara
+la clave vieja se rechazaba.
+
+**La regla que sale de aquí:** cuando el código y las reglas cambian a la vez, las reglas van
+**después** de fusionar, no antes. En HU-18 el orden dio igual porque las reglas solo se
+apretaron en cosas que la aplicación anterior ya cumplía. En cuanto cambia el **nombre** de un
+campo, deja de dar igual. Está anotado también en
+[12-despliegue-continuo.md §5.1](12-despliegue-continuo.md), que es donde se busca al
+desplegar.
 
 ---
 

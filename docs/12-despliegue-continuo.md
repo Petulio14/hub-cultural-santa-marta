@@ -128,6 +128,32 @@ historias apiladas: **fusionar de abajo arriba, borrando cada rama**, y confirma
 sitio publicado que el cambio llegó. La dirección pública es, entre otras cosas, el
 verificador más honesto de que algo se integró de verdad.
 
+### 5.1 Las reglas de seguridad se publican **después** de fusionar
+
+Añadido tras HU-19. `firebase deploy --only firestore:rules` no pasa por Vercel ni por
+`master`: publica al instante lo que haya en el archivo local. Eso convierte el orden en algo
+que hay que decidir a propósito.
+
+Mientras las reglas nuevas solo **aprieten** condiciones que la aplicación desplegada ya
+cumple, el orden da igual. Deja de dar igual en cuanto cambia el **nombre de un campo** o
+aparece una comprobación que el código anterior no satisface: durante la ventana entre el
+despliegue de las reglas y el de la aplicación, el sitio publicado escribe algo que el
+servidor ya rechaza.
+
+Ocurrió el 26/08/2026 con el paso de `imagenUrl` a `imagen`
+([18 §9](18-imagen-del-perfil.md)): unos minutos en los que el directorio se leía bien pero
+no se podía crear ni editar ningún perfil.
+
+| Qué cambia | Orden |
+| --- | --- |
+| Solo las reglas | Publicar cuando se quiera |
+| Reglas que aprietan algo que el código ya cumple | Cualquiera de los dos órdenes |
+| **Reglas y código a la vez** | **Fusionar primero, publicar después** |
+
+Para comprobar antes de fusionar sin tocar producción está el **despliegue de vista previa**
+que Vercel crea para cada pull request: corre el código nuevo contra el mismo proyecto de
+Firebase.
+
 ## 6. Cierre de HU-08
 
 | Criterio de aceptación | Evidencia |
