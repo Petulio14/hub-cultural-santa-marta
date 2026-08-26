@@ -3,6 +3,23 @@
   color: var(--blanco);
 }
 
+/*
+ * La barra de navegación no es un párrafo. El tope de 1200 px que «.contenedor»
+ * impone existe para que una línea de texto no se vuelva ilegible de tan larga;
+ * a un menú le hace falta justo lo contrario, que cuanta más ventana haya más
+ * sitio tengan los enlaces. Con el tope heredado, el menú de un actor —los seis
+ * enlaces que quedaron cuando HU-18 añadió «Mi perfil», más el bloque de
+ * sesión— pide 1.210 px y solo disponía de 1.152, así que se partía en dos
+ * filas **y ninguna pantalla, por grande que fuese, añadía un píxel**.
+ *
+ * El selector lleva el padre por delante a propósito: «.contenedor» y
+ * «.cabecera__interior» son las dos una sola clase, empatan en especificidad y
+ * decidiría el orden en que Vite junta las hojas.
+ */
+.cabecera .cabecera__interior {
+  max-width: var(--ancho-cabecera);
+}
+
 .cabecera__interior {
   display: flex;
   align-items: center;
@@ -205,6 +222,13 @@
     display: none;
   }
 
+  /* La marca no cede ancho: comprimida partía «Hub Cultural» en dos líneas, y
+     es el camino de vuelta al inicio desde cualquier vista (HU-09). Quien tiene
+     que ceder es el menú, que para eso sabe repartirse en filas. */
+  .cabecera__marca {
+    flex-shrink: 0;
+  }
+
   .cabecera__panel {
     display: flex;
     flex-basis: auto;
@@ -241,8 +265,9 @@
   }
 }
 
-@media (min-width: 1366px) {
-  .cabecera__placa img {
-    height: 30px;
-  }
-}
+/*
+ * Aquí había un «@media (min-width: 1366px)» que subía el logotipo de 26 a 30 px
+ * de alto. Al ser una imagen apaisada eso son 18 px más de ancho, y se cobraban
+ * exactamente en 1366 px: la resolución de portátil más común, y el punto donde
+ * el menú iba más justo. Un adorno de 4 px no vale una fila de más.
+ */
