@@ -148,7 +148,9 @@ Colección central del sistema.
 
 ## 8. `moderaciones`
 
-Registro inmutable: los documentos se crean, nunca se editan ni se eliminan.
+Registro inmutable: los documentos se crean, nunca se editan ni se eliminan. Desde HU-24 hay dos casos de prueba que lo comprueban, en lugar de confiarlo a esta frase.
+
+Se escribe **en el mismo lote** que el cambio de estado del evento, porque el cuarto criterio de HU-24 exige que de cualquier decisión quede constancia y dos escrituras sueltas dejan un hueco donde la primera ocurre y la segunda no ([23 §2](23-moderacion.md)).
 
 | Campo | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
