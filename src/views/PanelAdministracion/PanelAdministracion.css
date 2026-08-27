@@ -202,3 +202,34 @@
   font-weight: 600;
   color: var(--negro-texto);
 }
+
+
+/* ── Cola de moderación de publicaciones · HU-24 · RF-13 ───────────────────── */
+
+.moderacion__imagen {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: var(--radio);
+  margin-bottom: 10px;
+}
+
+.moderacion__cuando,
+.moderacion__enviada {
+  margin: 0 0 6px;
+  color: var(--gris-texto);
+  font-size: 0.9375rem;
+}
+
+/* Que no esté situada no es un defecto que impida aprobar —el modelo lo admite
+   desde HU-21—, pero el moderador tiene que verlo, porque es lo que decide si la
+   publicación saldrá o no en el mapa. */
+.moderacion__sin-punto {
+  color: var(--ocre);
+}
+
+.moderacion__devolucion {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gris-borde);
+}

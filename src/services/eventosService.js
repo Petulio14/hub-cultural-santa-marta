@@ -1,8 +1,11 @@
 /**
  * Publicaciones culturales — HU-21 · RF-05, RF-07.
  *
- * Único punto del proyecto que lee y escribe la colección «eventos»
- * (docs/03-arquitectura.md §3).
+ * Punto único del proyecto que lee y escribe la colección «eventos», con **una
+ * excepción declarada**: la transición de moderación vive en
+ * «moderacionService.js», porque cambiar el estado y dejar constancia de quién lo
+ * cambió tienen que ocurrir en la misma escritura o en ninguna, y eso obliga a un
+ * lote que toca dos colecciones a la vez (docs/03 §3, docs/23 §2).
  *
  * Se parece a «actoresService» y «hubsService», pero cambia lo esencial: un actor
  * tiene **un** perfil y **muchas** publicaciones. Ahí se acaba el parecido y
@@ -103,13 +106,6 @@ const porCreacionDescendente = (a, b) =>
   (b.fechaCreacion?.getTime() ?? 0) - (a.fechaCreacion?.getTime() ?? 0);
 
 /**
- * Los campos que el actor controla.
- *
- * «idEvento», «idActor», «estadoPublicacion», «fechaCreacion» y
- * «contadorConsultas» no están: los pone el servicio al crear y las reglas los
- * defienden después.
- */
-/**
  * El punto del dominio al tipo de Firestore — HU-22.
  *
  * Nulo entra y nulo sale: una publicación sin punto es válida y no aparece en el
@@ -119,6 +115,13 @@ const porCreacionDescendente = (a, b) =>
  */
 const aGeoPoint = (punto) => (punto ? new GeoPoint(punto.lat, punto.lon) : null);
 
+/**
+ * Los campos que el actor controla.
+ *
+ * «idEvento», «idActor», «estadoPublicacion», «fechaCreacion» y
+ * «contadorConsultas» no están: los pone el servicio al crear y las reglas los
+ * defienden después.
+ */
 function camposEditables({
   titulo,
   descripcion,
@@ -258,6 +261,34 @@ export async function eliminarPublicacion(idEvento) {
     await deleteDoc(doc(db, COLECCION, idEvento));
     return idEvento;
   });
+}
+
+/**
+ * La cola de moderación — **primer criterio de HU-24**.
+ *
+ * Filtra en el servidor y ordena en memoria, igual que la lista propia y por lo
+ * mismo. Lo que cambia es **el sentido del orden**: aquí de la más antigua a la
+ * más reciente, porque una cola se atiende por orden de llegada, y en «Mis
+ * publicaciones» al revés, porque lo último que uno hizo es lo primero que busca.
+ * Los dos órdenes son deliberados y no conviene «unificarlos».
+ *
+ * El índice compuesto que declara docs/04 §10 para esta consulta tampoco hace
+ * falta por ahora, por la misma razón que en HU-23: ordenar en memoria no alcanza
+ * ningún documento de más, ya están todos leídos.
+ */
+export async function listarPublicacionesPendientes() {
+  exigirConfiguracion();
+
+  const consulta = query(
+    collection(db, COLECCION),
+    where('estadoPublicacion', '==', 'pendiente')
+  );
+
+  return intentar(async () =>
+    (await getDocs(consulta))
+      .docs.map(aPublicacion)
+      .sort((a, b) => (a.fechaCreacion?.getTime() ?? 0) - (b.fechaCreacion?.getTime() ?? 0))
+  );
 }
 
 /** Las publicaciones de un actor, las suyas y todas, en cualquier estado. */

@@ -34,6 +34,9 @@ import {
   validarPerfilDeActor,
   validarPerfilDeHub,
   validarPeriodo,
+  LONGITUD_MAXIMA_OBSERVACION,
+  LONGITUD_MINIMA_OBSERVACION,
+  validarObservacion,
   validarPublicacion,
   validarPuntoDePublicacion,
   validarRecuperacion,
@@ -630,5 +633,58 @@ describe('publicación · el punto en el mapa (HU-22)', () => {
     assert.ok(errores.punto);
     assert.equal(errores.titulo, undefined);
     assert.equal(errores.lugar, undefined);
+  });
+});
+
+
+/**
+ * La observación de una devolución — HU-24 · RF-13.
+ *
+ * El tercer criterio pide una observación **escrita**, y la regla del servidor
+ * solo puede comprobar que haya algo. «No» pasa la regla y no le sirve de nada a
+ * quien tiene que corregir su publicación, así que el mínimo vive aquí. Es el
+ * mismo reparto de siempre: el servidor pone el techo del abuso, el formulario
+ * promete que el texto se va a poder leer.
+ */
+describe('moderación · la observación al devolver (HU-24)', () => {
+  it('una observación útil se acepta', () => {
+    assert.equal(
+      validarObservacion('Falta la dirección exacta del lugar y la hora de finalización.'),
+      null
+    );
+  });
+
+  it('en blanco no: es lo único que el autor va a recibir de vuelta', () => {
+    assert.ok(validarObservacion(''));
+    assert.ok(validarObservacion('    '));
+    assert.ok(validarObservacion(null));
+  });
+
+  it('«No sirve» pasa la regla del servidor y no pasa aquí', () => {
+    // La regla solo exige que haya algo escrito. Este caso es la diferencia
+    // entre cumplir la letra del criterio y cumplirlo.
+    assert.ok(validarObservacion('No sirve'));
+  });
+
+  it('el mínimo se cuenta sobre el texto limpio, no sobre los espacios', () => {
+    const justo = 'a'.repeat(LONGITUD_MINIMA_OBSERVACION);
+    assert.equal(validarObservacion(`   ${justo}   `), null);
+    assert.ok(validarObservacion(`   ${'a'.repeat(LONGITUD_MINIMA_OBSERVACION - 1)}   `));
+  });
+
+  it('pasarse del tope dice cuánto sobra', () => {
+    const mensaje = validarObservacion('a'.repeat(LONGITUD_MAXIMA_OBSERVACION + 3));
+    assert.match(mensaje, /sobran 3 caracteres/);
+  });
+
+  it('y con uno solo de más lo dice en singular', () => {
+    const mensaje = validarObservacion('a'.repeat(LONGITUD_MAXIMA_OBSERVACION + 1));
+    assert.match(mensaje, /sobra 1 carácter/);
+  });
+
+  it('el tope del formulario es más bajo que el de la regla, a propósito', () => {
+    // La regla admite 2000. Si alguien iguala los dos números, este caso lo
+    // detiene y el comentario de validaciones.js explica por qué son distintos.
+    assert.equal(LONGITUD_MAXIMA_OBSERVACION < 2000, true);
   });
 });

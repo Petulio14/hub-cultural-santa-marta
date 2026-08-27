@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18 a HU-21 · RNF-05, RNF-08
+// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18 a HU-24 · RNF-05, RNF-08
 //
 // El control de acceso vive en dos capas simultáneas: la interfaz oculta lo que el rol no
 // puede usar, y estas reglas rechazan la operación aunque se intente desde fuera de la
@@ -40,6 +40,34 @@ service cloud.firestore {
     // ¿La actualización toca alguno de estos campos?
     function toca(campos) {
       return request.resource.data.diff(resource.data).affectedKeys().hasAny(campos);
+    }
+
+    // Forma de un registro de moderación (HU-24 · docs/04 §8).
+    //
+    // La regla anterior comprobaba quién escribe, qué decide y que traiga
+    // observación al devolver, pero **no la forma del documento**: dejaba pasar
+    // campos inventados, un registro sin «idEvento» y un «idModeracion» que
+    // dijera llamarse una cosa mientras vivía en otra ruta. El modelo declaraba
+    // esos tres campos obligatorios desde HU-11 y la regla no los pedía.
+    //
+    // Importa más aquí que en otras colecciones porque «moderaciones» es el
+    // registro inmutable: lo que entra mal escrito no se puede corregir después
+    // —«update» y «delete» están cerrados—, y es la prueba de qué se decidió y
+    // quién lo decidió.
+    function moderacionBienFormada(idModeracion) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['idModeracion', 'idEvento', 'idAdministrador',
+                               'decision', 'observaciones', 'fecha'])
+        && d.idModeracion == idModeracion
+        && d.idEvento is string && d.idEvento.size() > 0
+        && d.idAdministrador is string
+        // Presente siempre, con punto o sin él: nula al aprobar y con texto al
+        // devolver. Que la clave exista en los dos casos evita que el documento
+        // cambie de forma según la decisión.
+        && (d.decision == 'aprobado'
+            ? d.observaciones == null
+            : d.observaciones is string && d.observaciones.size() > 0
+              && d.observaciones.size() <= 2000);
     }
 
     // Forma mínima de un perfil de actor cultural (HU-18 · docs/04 §4).
@@ -358,15 +386,19 @@ service cloud.firestore {
                       && soyDuenoDelActor(
                            get(/databases/$(database)/documents/eventos/$(resource.data.idEvento)).data.idActor));
 
+      // El tercer y el cuarto criterio de HU-24, escritos donde no dependen de
+      // que nadie use esta interfaz: quién decidió («idAdministrador == miUid»),
+      // qué decidió, cuándo —la hora del servidor, que un cliente no puede
+      // inventar— y, al devolver, la observación escrita.
       allow create: if soyAdmin()
         && request.resource.data.idAdministrador == miUid()
         && request.resource.data.decision in ['aprobado', 'devuelto']
         && request.resource.data.fecha == request.time
-        // devolver exige observación escrita (HU-24)
-        && (request.resource.data.decision == 'aprobado'
-            || (request.resource.data.observaciones is string
-                && request.resource.data.observaciones.size() > 0));
+        && moderacionBienFormada(idModeracion);
 
+      // Registro inmutable (docs/04 §8). Sin esto, «quedó constancia» sería una
+      // costumbre: un administrador podría reescribir su propia decisión, y el
+      // registro dejaría de servir para lo único que sirve.
       allow update, delete: if false;
     }
 
