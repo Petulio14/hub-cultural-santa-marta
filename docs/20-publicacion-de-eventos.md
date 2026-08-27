@@ -251,18 +251,42 @@ El módulo de fechas, ejecutado sobre `npm run dev`:
 
 ### Comprobación en vivo
 
+Sobre el sitio publicado, con las reglas de esta historia ya desplegadas.
+
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | Un actor **sin perfil** ve el aviso y el enlace, no el formulario | |
-| | Con perfil, el formulario se puede rellenar entero | |
-| | Poner la fecha de fin antes que la de inicio bloquea el envío y explica por qué | |
-| | La publicación se guarda y aparece «En revisión» | |
-| | La fecha de envío que se muestra es la del servidor, no la del equipo | |
-| | Un evento de las 19:00 sigue siendo de las 19:00 al recargar | |
-| | La imagen se reduce igual que en HU-19, y sin imagen sale el dibujo | |
-| | Un visitante sin cuenta no encuentra la publicación pendiente | |
-| | Publicar dos veces deja las dos, la más reciente arriba | |
-| | A 360, 768 y 1366 px, y sin errores en consola | |
+| 26/08/2026 | Un actor **sin perfil** ve el aviso y el enlace, no el formulario | Correcto: la puerta de la sección 1 se explica antes de enviar |
+| 26/08/2026 | Con perfil, el formulario se puede rellenar entero | Correcto |
+| 26/08/2026 | Poner la fecha de fin antes que la de inicio bloquea el envío y explica por qué | Correcto: el mensaje sale junto al campo de finalización y se retira al corregir |
+| 26/08/2026 | La publicación se guarda y aparece «En revisión» | Correcto |
+| 26/08/2026 | La fecha de envío que se muestra es la del servidor, no la del equipo | Correcto en pantalla; el origen del dato lo sostienen las reglas (véase abajo) |
+| 26/08/2026 | Un evento de las 19:00 sigue siendo de las 19:00 al recargar | Correcto: ni cambia de hora ni salta de día |
+| 26/08/2026 | La imagen se reduce igual que en HU-19, y sin imagen sale el dibujo | Correcto |
+| 26/08/2026 | Un visitante sin cuenta no encuentra la publicación pendiente | Comprobado en las reglas (véase abajo) |
+| 26/08/2026 | Publicar dos veces deja las dos, la más reciente arriba | Correcto |
+| 26/08/2026 | A 360, 768 y 1366 px, y sin errores en consola | Correcto |
+
+Las **diez** pasaron. La sexta es la que vale por todo [`utils/fechas.js`](../src/utils/fechas.js):
+las 19:00 son la hora a la que empieza media agenda cultural de la ciudad y la hora a la que el
+día en UTC ya es el siguiente, así que es el caso donde el defecto se habría visto.
+
+### Dos filas que no se pueden mirar en la pantalla
+
+La quinta y la octava se apoyan en los casos de prueba, y conviene decir por qué en lugar de
+apuntar «correcto» y seguir.
+
+**La quinta.** Que la fecha de envío la haya puesto el servidor no se ve mirándola: una fecha
+escrita por el navegador tendría el mismo aspecto y la misma hora. Lo que se comprueba en
+pantalla es que está y que es plausible; lo que demuestra su origen es la regla
+`fechaCreacion == request.time` y el caso que rechaza una fecha inventada por el cliente.
+
+**La octava.** El catálogo público es HU-25 y todavía no existe, así que no hay página donde
+comprobar que la publicación no aparece. Lo comprobable hoy es el documento en la consola de
+Firebase, con su `estadoPublicacion` en `pendiente`; que un visitante no pueda leerlo lo
+demuestran los dos casos que piden la colección entera sin sesión y la ven fallar.
+
+Las dos vuelven a la pantalla en **HU-24** y **HU-25**, cuando exista la cola de moderación y
+el catálogo. Queda anotado para no darlas por cerradas dos veces.
 
 ---
 
