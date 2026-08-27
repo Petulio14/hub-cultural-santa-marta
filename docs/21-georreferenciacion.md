@@ -49,7 +49,7 @@ ratón.
 > **El defecto que StrictMode encuentra y producción no.** En desarrollo, React monta,
 > desmonta y vuelve a montar cada componente. Sin el `instancia.remove()` del retorno del
 > efecto, el segundo montaje encuentra el contenedor ya inicializado y Leaflet aborta con
-> «Map container is already initialized». Se comprobó que **no ocurre** (§5): es el mismo
+> «Map container is already initialized». Se comprobó que **no ocurre** (§8): es el mismo
 > tipo de error que solo aparece al volver a entrar en una vista, y en producción se
 > manifestaría como un mapa que funciona la primera vez y no la segunda.
 
@@ -317,21 +317,33 @@ El mapa se montó aislado, fuera de la ruta privada, para poder medirlo:
 
 ### Comprobación en vivo
 
-Pendiente sobre el sitio publicado, con sesión de actor cultural. La tabla se rellena al
-terminarla, como en HU-19, HU-20 y HU-21.
+Sobre el sitio publicado, con sesión de actor cultural. Sin despliegue de reglas previo:
+esta historia no las toca (§7).
 
-| # | Qué se hace | Qué debe ocurrir | Resultado |
-| --- | --- | --- | --- |
-| 1 | Abrir «Mis publicaciones» con sesión de actor | El formulario muestra el mapa de Santa Marta | |
-| 2 | Escribir un lugar conocido y pulsar «Buscar este lugar en el mapa» | Aparece el punto y el mapa se centra en él | |
-| 3 | Escribir un lugar inventado y buscar | Aviso de que no se encontró, invitando a situarlo a mano | |
-| 4 | Hacer clic sobre el mapa | El marcador se coloca ahí y se leen sus coordenadas | |
-| 5 | Arrastrar el marcador | Las coordenadas cambian al soltarlo | |
-| 6 | Enviar el formulario completo **sin** punto | No se guarda: aparece la advertencia y el botón cambia de texto | |
-| 7 | Volver a pulsar el botón | Ahora sí se guarda, y la tarjeta dice «Sin situar en el mapa» | |
-| 8 | Enviar una publicación **con** punto | Se guarda y la tarjeta muestra sus coordenadas | |
-| 9 | Pulsar «Cambiar el punto», mover el marcador y «Cancelar» | La tarjeta sigue con el punto anterior | |
-| 10 | Repetir y pulsar «Guardar el punto» | La tarjeta muestra las coordenadas nuevas | |
+| Fecha | Qué se comprobó | Resultado |
+| --- | --- | --- |
+| 27/08/2026 | «Mis publicaciones» abre con el mapa de Santa Marta ya dibujado | Correcto: teselas cargadas, centrado en el casco histórico |
+| 27/08/2026 | Buscar un lugar conocido sitúa el punto y centra el mapa en él | Correcto |
+| 27/08/2026 | Buscar un lugar inventado avisa e invita a situarlo a mano | Correcto: el aviso no tiene tono de error, porque no lo es |
+| 27/08/2026 | Un clic sobre el mapa coloca el marcador y muestra sus coordenadas | Correcto |
+| 27/08/2026 | Arrastrar el marcador cambia las coordenadas al soltarlo | Correcto |
+| 27/08/2026 | Enviar el formulario **sin** punto no guarda: advierte y cambia el botón | Correcto: es el segundo criterio, y la primera pulsación no escribe nada |
+| 27/08/2026 | La segunda pulsación sí guarda, y la tarjeta dice «Sin situar en el mapa» | Correcto |
+| 27/08/2026 | Enviar una publicación **con** punto la guarda con sus coordenadas | Correcto: es el primer criterio, de punta a punta |
+| 27/08/2026 | Mover el marcador y pulsar «Cancelar» deja la tarjeta como estaba | Correcto: el editor no comparte el punto con la lista |
+| 27/08/2026 | Repetir y pulsar «Guardar el punto» actualiza las coordenadas | Correcto: es el tercer criterio |
+
+Las **diez** pasaron, y los tres criterios de aceptación quedan comprobados en pantalla. Es
+la primera historia del proyecto en la que ocurre eso: HU-19, HU-20 y HU-21 dejaron alguna
+fila apoyada en los casos de prueba porque miraban algo que todavía no tiene página donde
+verse. Aquí no hay ninguna, y la razón es la misma que explica el reparto de la cabecera de
+este documento: **elegir un punto es un gesto**, y un gesto ocurre entero delante de quien lo
+hace.
+
+Las filas 6 y 7 son un solo envío en dos pulsaciones, y las 9 y 10 la misma acción con final
+distinto. Se enumeran por separado a propósito: lo que hay que ver en la 6 y en la 9 es que
+**no** pasó nada, y una fila que solo dijera «se guarda el punto» no distinguiría un
+«Cancelar» que funciona de uno que no hace nada porque nunca se llegó a cambiar nada.
 
 ---
 
