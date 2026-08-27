@@ -35,6 +35,7 @@ import {
   validarPerfilDeHub,
   validarPeriodo,
   validarPublicacion,
+  validarPuntoDePublicacion,
   validarRecuperacion,
   validarRegistro,
   validarTelefono,
@@ -582,5 +583,52 @@ describe('publicación · las dos fechas (HU-21, segundo criterio)', () => {
     const errores = validarPeriodo(new Date(2026, 8, 1, 18, 0), null);
     assert.equal(errores.fechaInicio, undefined);
     assert.match(errores.fechaFin, /cuándo termina/);
+  });
+});
+
+/**
+ * El punto de una publicación — HU-22 · RF-08.
+ *
+ * Lo que estos casos fijan no es una fórmula, es una diferencia: aquí **faltar no
+ * es un error**, al revés que en el hub. Si alguien uniformara las dos
+ * validaciones «por coherencia», el primer caso lo detiene.
+ */
+describe('publicación · el punto en el mapa (HU-22)', () => {
+  const PLAZA_DE_BOLIVAR = { lat: 11.2452, lon: -74.2145 };
+
+  it('sin punto no hay error: la publicación se guarda igual', () => {
+    assert.equal(validarPuntoDePublicacion(null), null);
+    assert.equal(validarPuntoDePublicacion(undefined), null);
+  });
+
+  it('un punto dentro de Santa Marta se acepta', () => {
+    assert.equal(validarPuntoDePublicacion(PLAZA_DE_BOLIVAR), null);
+  });
+
+  it('un punto de otra ciudad se rechaza aunque sea un punto perfecto', () => {
+    // El centro de Bogotá. Es una coordenada impecable y no es de aquí: es lo
+    // que devuelve el buscador cuando se le pide «Calle 22» sin acotar.
+    assert.ok(validarPuntoDePublicacion({ lat: 4.598, lon: -74.076 }));
+  });
+
+  it('el signo de la longitud importa: el mismo número en positivo no vale', () => {
+    assert.ok(validarPuntoDePublicacion({ lat: 11.2452, lon: 74.2145 }));
+  });
+
+  it('lo que no es un punto tampoco pasa por serlo', () => {
+    assert.ok(validarPuntoDePublicacion({ lat: 'once', lon: -74.2 }));
+    assert.ok(validarPuntoDePublicacion({ lat: Number.NaN, lon: -74.2 }));
+    assert.ok(validarPuntoDePublicacion({ lat: 11.24 }));
+  });
+
+  it('el formulario completo sigue siendo válido sin punto', () => {
+    assert.equal(hayErrores(publicacion({ punto: null })), false);
+  });
+
+  it('y falla con un punto de fuera, sin estropear los demás campos', () => {
+    const errores = publicacion({ punto: { lat: 4.598, lon: -74.076 } });
+    assert.ok(errores.punto);
+    assert.equal(errores.titulo, undefined);
+    assert.equal(errores.lugar, undefined);
   });
 });

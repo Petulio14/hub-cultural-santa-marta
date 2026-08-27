@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -1334,6 +1334,172 @@ describe('publicación de un evento (HU-21)', () => {
       // inexistente «resource» llega nulo, y sin la guarda la expresión entera
       // fallaría en lugar de responder que no.
       await assertFails(getDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'no-existe')));
+    });
+  });
+});
+
+/**
+ * Georreferenciación de la publicación — HU-22 · RF-08.
+ *
+ * Este bloque cubre un hueco que HU-21 dejó abierto: «allow update» sobre
+ * «eventos» estaba escrito y **no tenía un solo caso**. HU-21 probó a fondo el
+ * nacimiento de una publicación y su lectura, y la edición se quedó descrita en
+ * un comentario. El tercer criterio de esta historia —poder cambiar el punto— es
+ * la primera vez que alguien escribe por ahí, así que es aquí donde toca.
+ */
+describe('el punto de una publicación (HU-22)', () => {
+  const PUNTO = new GeoPoint(11.2452, -74.2145);
+
+  /** Siembra una publicación sin pasar por las reglas y devuelve su ruta. */
+  const sembrarPublicacion = async (idEvento, cambios = {}) => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), 'eventos', idEvento), {
+        idEvento,
+        idActor: ID_ACTOR,
+        titulo: 'Taller de tambora',
+        tituloNormalizado: 'taller de tambora',
+        descripcion:
+          'Tres sesiones de introducción al toque de tambora, con instrumentos prestados.',
+        categoria: 'musica',
+        fechaInicio: new Date(2026, 8, 1, 18, 0),
+        fechaFin: new Date(2026, 8, 1, 21, 0),
+        lugar: 'Casa de la Cultura, Santa Marta',
+        coordenadas: null,
+        imagen: null,
+        estadoPublicacion: 'pendiente',
+        fechaCreacion: new Date(2026, 7, 20, 9, 0),
+        contadorConsultas: 0,
+        ...cambios,
+      });
+    });
+    return idEvento;
+  };
+
+  describe('quién puede moverlo (tercer criterio)', () => {
+    it('su autor sitúa el punto de una publicación en revisión', async () => {
+      const id = await sembrarPublicacion('geo-1');
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), { coordenadas: PUNTO })
+      );
+    });
+
+    it('y también puede quitarlo: sin punto es un estado legítimo', async () => {
+      const id = await sembrarPublicacion('geo-2', { coordenadas: PUNTO });
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), { coordenadas: null })
+      );
+    });
+
+    it('otro actor no mueve el punto de una publicación ajena', async () => {
+      const id = await sembrarPublicacion('geo-3');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_OTRO), 'eventos', id), { coordenadas: PUNTO })
+      );
+    });
+
+    it('un visitante tampoco, aunque esté aprobada y él pueda leerla', async () => {
+      // Poder leer y poder escribir no son lo mismo, y es el error que este caso
+      // vigila: la publicación aprobada es pública desde HU-21.
+      const id = await sembrarPublicacion('geo-4', { estadoPublicacion: 'aprobado' });
+      await assertFails(updateDoc(doc(visitante(), 'eventos', id), { coordenadas: PUNTO }));
+    });
+  });
+
+  describe('el límite que hereda de HU-21', () => {
+    it('sobre una publicación YA APROBADA su autor no puede', async () => {
+      // No es una decisión de HU-22 sino la regla de HU-21, que exige que lo
+      // escrito siga siendo 'pendiente'. Se prueba aquí porque es aquí donde por
+      // primera vez alguien intenta escribir, y porque la interfaz esconde el
+      // botón basándose en esto: si la regla cambiara, el caso avisaría.
+      const id = await sembrarPublicacion('geo-5', { estadoPublicacion: 'aprobado' });
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), { coordenadas: PUNTO })
+      );
+    });
+
+    it('ni aprobándose de paso, que sería la forma de saltárselo', async () => {
+      const id = await sembrarPublicacion('geo-6');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: PUNTO,
+          estadoPublicacion: 'aprobado',
+        })
+      );
+    });
+
+    it('un administrador sí puede moverlo aunque esté aprobada', async () => {
+      const id = await sembrarPublicacion('geo-7', { estadoPublicacion: 'aprobado' });
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_ADMIN), 'eventos', id), { coordenadas: PUNTO })
+      );
+    });
+  });
+
+  describe('lo que no se puede colar junto al punto', () => {
+    it('las visitas contadas no se tocan', async () => {
+      const id = await sembrarPublicacion('geo-8');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: PUNTO,
+          contadorConsultas: 9999,
+        })
+      );
+    });
+
+    it('la fecha de creación tampoco: es la que ordena la cola de HU-24', async () => {
+      const id = await sembrarPublicacion('geo-9');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: PUNTO,
+          fechaCreacion: new Date(2020, 0, 1),
+        })
+      );
+    });
+
+    it('ni la publicación cambia de dueño', async () => {
+      const id = await sembrarPublicacion('geo-10');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: PUNTO,
+          idActor: UID_OTRO,
+        })
+      );
+    });
+
+    it('un objeto con lat y lon no es un punto: tiene que ser un GeoPoint', async () => {
+      const id = await sembrarPublicacion('geo-11');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: { lat: 11.2452, lon: -74.2145 },
+        })
+      );
+    });
+  });
+
+  /**
+   * La pregunta que el código no podía responder solo.
+   *
+   * «toca()» pregunta por «diff().affectedKeys()», y de ahí depende una decisión
+   * de «eventosService»: si «affectedKeys» contase las claves *enviadas*,
+   * reescribir el documento entero sería imposible aunque los valores fuesen
+   * idénticos, y actualizar solo una clave sería obligatorio. Si cuenta las
+   * claves cuyo *valor cambió*, reenviar lo mismo pasa, y escribir solo el punto
+   * es una economía y no una obligación.
+   *
+   * Suponerlo sería exactamente el error de HU-21 —una prueba que pasa por el
+   * motivo equivocado—, así que se le pregunta al emulador.
+   */
+  describe('¿reescribir un campo con el mismo valor cuenta como tocarlo?', () => {
+    it('no: «affectedKeys» mira los valores, no las claves enviadas', async () => {
+      const id = await sembrarPublicacion('geo-12');
+      await assertSucceeds(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), {
+          coordenadas: PUNTO,
+          // El mismo dueño que ya tiene. Si esto fallara, la respuesta sería la
+          // contraria y habría que corregir el comentario de eventosService.js.
+          idActor: ID_ACTOR,
+        })
+      );
     });
   });
 });

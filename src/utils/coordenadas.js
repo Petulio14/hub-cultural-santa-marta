@@ -23,6 +23,16 @@ export const LIMITES_SANTA_MARTA = {
   lonMax: -73.7,
 };
 
+/**
+ * Dónde se abre el mapa cuando todavía no hay punto — HU-22.
+ *
+ * Es el centro histórico, no el centro geométrico del rectángulo de arriba: ese
+ * caería en la Sierra, con media pantalla de monte y sin una sola calle
+ * reconocible. Un mapa que abre donde nadie publica obliga a arrastrar antes de
+ * poder hacer nada.
+ */
+export const CENTRO_SANTA_MARTA = { lat: 11.2408, lon: -74.199 };
+
 /** ¿Es un número real y no un NaN disfrazado? */
 const esNumero = (valor) => typeof valor === 'number' && Number.isFinite(valor);
 

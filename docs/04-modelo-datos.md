@@ -125,7 +125,7 @@ Colección central del sistema.
 | `fechaInicio` | `timestamp` | Sí | Debe ser anterior o igual a `fechaFin` (validado en HU-21). |
 | `fechaFin` | `timestamp` | Sí | — |
 | `lugar` | `string` | Sí | Nombre del lugar en texto. |
-| `coordenadas` | `geopoint` | No | Nulo si el actor no seleccionó punto; en ese caso el evento **no aparece en el mapa** y se advierte al guardar (HU-22). |
+| `coordenadas` | `geopoint` | No | Nulo si el actor no seleccionó punto; en ese caso el evento **no aparece en el mapa** y se advierte al guardar, con una segunda confirmación, antes de enviarlo ([21 §4](21-georreferenciacion.md)). El punto se sitúa sobre el mapa o buscando el lugar por su nombre, y puede cambiarse mientras la publicación sigue pendiente. |
 | `imagen` | `string` | No | Imagen reducida como **URI de datos**, igual que en `actoresCulturales` y por el mismo motivo ([03 §6.1](03-arquitectura.md)). La rellena HU-21. |
 | `estadoPublicacion` | `string` | Sí | `pendiente`, `aprobado` o `devuelto`. Nace siempre en `pendiente` (HU-21). |
 | `fechaCreacion` | `timestamp` | Sí | Asignada por el servidor, no por el cliente. |

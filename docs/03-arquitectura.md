@@ -143,6 +143,7 @@ src/
 | Backend como servicio (Firebase) | Backend propio (Node + base de datos gestionada) | Equipo de dos integrantes con 12 horas semanales (R-03); un backend propio consumiría el presupuesto de tiempo de dos sprints completos. |
 | Base de datos documental (Firestore) | Base de datos relacional | La información cultural es heterogénea y no se ajusta cómodamente a un esquema relacional rígido. |
 | Leaflet + OpenStreetMap | Google Maps u otro servicio comercial | Evita el costo asociado a los servicios cartográficos comerciales y se ajusta a la restricción de recursos gratuitos (R-02, RNF-10). |
+| Leaflet a secas, con un envoltorio propio | `react-leaflet` | Una capa entre React y Leaflet que va por detrás de cada versión de React —el proyecto está en React 19—, y lo que aporta cabe en el archivo `MapaDePunto.jsx`, que hay que entender igual para depurarlo (HU-22, [21 §1](21-georreferenciacion.md)). |
 | SPA en React | Renderizado en servidor | Se despliega como sitio estático en el nivel gratuito de Vercel y no requiere servidor en ejecución. |
 | Imágenes reducidas dentro del documento de Firestore | Firebase Storage | Storage exige plan de facturación con medio de pago, y el proyecto no dispone de él (R-02, RNF-10). Detalle abajo. |
 
