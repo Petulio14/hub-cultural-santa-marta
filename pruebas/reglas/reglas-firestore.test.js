@@ -57,6 +57,19 @@ const ID_ACTOR_PENDIENTE = UID_OTRO;         // perfil aún sin aprobar
  */
 const UIDS_SIN_PERFIL = Array.from({ length: 16 }, (_, i) => `uid-sin-perfil-${i + 1}`);
 
+/**
+ * Cuenta de actor activa que **nunca** llega a crear perfil.
+ *
+ * Va aparte de «UIDS_SIN_PERFIL» y no como un índice más porque no es una
+ * cuenta de repuesto: es el sujeto de una prueba concreta —quien intenta
+ * publicar sin perfil (HU-21)— y tiene que seguir sin perfil hasta el final del
+ * archivo. Nació de un fallo: la prueba usaba «UIDS_SIN_PERFIL[10]», que ochenta
+ * lineas antes ya había estrenado el suyo en una prueba de HU-19, así que medía
+ * lo contrario de lo que decía medir. Un nombre no se puede reutilizar por
+ * descuido; un índice sí.
+ */
+const UID_ACTOR_SIN_PERFIL = 'uid-actor-que-nunca-crea-perfil';
+
 /** Cuentas con rol de hub, y por la misma razón: una por prueba de creación. */
 const UIDS_HUB = Array.from({ length: 10 }, (_, i) => `uid-hub-${i + 1}`);
 
@@ -146,7 +159,7 @@ before(async () => {
       estado: 'aprobado',
     });
 
-    for (const uid of UIDS_SIN_PERFIL) {
+    for (const uid of [...UIDS_SIN_PERFIL, UID_ACTOR_SIN_PERFIL]) {
       await setDoc(doc(bd, 'usuarios', uid), {
         uid,
         rol: 'actor',
@@ -1142,11 +1155,22 @@ describe('publicación de un evento (HU-21)', () => {
   });
 
   it('un actor SIN perfil no publica: no hay a quién atribuirlo', async () => {
-    const uid = UIDS_SIN_PERFIL[10];
     await assertFails(
       setDoc(
-        doc(comoUsuario(uid), 'eventos', 'pub-3'),
-        publicacionDe('pub-3', { idActor: uid })
+        doc(comoUsuario(UID_ACTOR_SIN_PERFIL), 'eventos', 'pub-3'),
+        publicacionDe('pub-3', { idActor: UID_ACTOR_SIN_PERFIL })
+      )
+    );
+  });
+
+  it('y sigue sin poder aunque el perfil que invoque exista', async () => {
+    // La comprobación anterior podría pasar por el motivo equivocado —que el
+    // perfil no exista— y no por el que dice. Esta lo separa: el perfil existe,
+    // pero es de otra persona.
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(UID_ACTOR_SIN_PERFIL), 'eventos', 'pub-3-bis'),
+        publicacionDe('pub-3-bis')
       )
     );
   });

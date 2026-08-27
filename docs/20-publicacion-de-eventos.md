@@ -154,12 +154,13 @@ Normalizar no añade ni quita letras —«Café» y «cafe» tienen las mismas c
 mayúsculas. Con las dos condiciones, un título secuestrado tendría que medir exactamente lo
 mismo que el verdadero y no llevar ni una mayúscula, que ya no es un ataque cómodo.
 
-> **Lo que esta historia no puede afirmar todavía.** Que `size()` cuente *caracteres* y no
-> *bytes* es la condición para que la segunda línea funcione: «Cañón» y «canon» tienen cinco
-> letras y distinto número de bytes en UTF-8. Aquí no se puede comprobar —el emulador no
-> arranca en esta máquina—, así que hay un caso de prueba con tildes y eñe cuyo único trabajo
-> es responder a esa pregunta en integración continua. Si sale en rojo, la condición se
-> sustituye por `<=`, que es cierta con las dos semánticas y algo más débil.
+> **`size()` cuenta caracteres, no bytes.** La segunda línea solo funciona si es así: «Cañón»
+> y «canon» tienen las mismas cinco letras y **distinto número de bytes** en UTF-8 —dieciocho
+> contra quince en el título completo de la prueba—. Como el emulador no arranca en esta
+> máquina, la pregunta se dejó abierta y se escribió un caso con tildes y eñe cuyo único
+> trabajo era responderla en integración continua. **Pasó**, así que la condición se queda como
+> está. Si hubiera salido en rojo, la sustituta era `<=`: cierta con las dos semánticas y algo
+> más débil.
 
 ---
 
@@ -213,7 +214,7 @@ precisamente para que eso no ocurra.
 
 ### Las reglas · `npm run probar:reglas`
 
-**26 casos nuevos**, 131 en total, ejecutados en integración continua. Entre ellos:
+**27 casos nuevos**, 132 en total, ejecutados en integración continua. Entre ellos:
 
 | Qué comprueba | Por qué importa |
 | --- | --- |
@@ -221,7 +222,20 @@ precisamente para que eso no ocurra.
 | Un visitante **no** lista la colección entera | Es el tercer criterio: no es que la vista esconda lo pendiente, es que pedirlo falla |
 | Un actor sin perfil no publica | La puerta de la sección 1, comprobada en el servidor |
 | Un administrador tampoco publica en nombre de un actor | Moderar no es escribir por otro |
-| Un título con tildes y eñe se acepta | Responde a la pregunta abierta de la sección 5 |
+| Un título con tildes y eñe se acepta | Respondió la pregunta abierta de la sección 5: `size()` cuenta caracteres |
+| Un actor sin perfil no publica **aunque invoque uno que existe** | Separa «falla porque no hay perfil» de «falla porque no es el mío» |
+
+#### Un caso que medía lo contrario de lo que decía
+
+La primera ejecución dejó en rojo «un actor SIN perfil no publica»: **la escritura se permitió**.
+No era un fallo de la regla. La prueba tomaba una cuenta de repuesto por su índice,
+`UIDS_SIN_PERFIL[10]`, y ochenta líneas antes esa misma cuenta ya había estrenado su perfil en
+una prueba de HU-19. El actor sí tenía perfil, así que publicar era **lo correcto**.
+
+Una prueba que pasa por el motivo equivocado es peor que una que falla, porque no vuelve a
+mirarse. Se corrigió con una cuenta de nombre propio —`UID_ACTOR_SIN_PERFIL`, que no aparece en
+ninguna otra prueba— y se partió en dos casos, para separar «falla porque no hay perfil» de
+«falla porque el perfil no es mío». Un nombre no se reutiliza por descuido; un índice sí.
 
 ### En el navegador
 
