@@ -222,22 +222,33 @@ que haya algo escrito, y el criterio pide una observación que explique.
 
 ### Comprobación en vivo
 
-Pendiente sobre el sitio publicado, **con las reglas ya desplegadas** y con dos sesiones: una
-de administrador y otra de actor cultural.
+Sobre el sitio publicado, con dos sesiones: una de administrador y otra de actor cultural.
+La mitad de lo que hay que ver ocurre en el lado de quien recibe la devolución, y por eso no
+se puede hacer con una sola.
 
-| # | Qué se hace | Qué debe ocurrir | Resultado |
-| --- | --- | --- | --- |
-| 1 | Abrir el panel con sesión de administrador | Aparece «Publicaciones por revisar», al final | |
-| 2 | Mirar el orden de la cola | La más antigua arriba | |
-| 3 | Comprobar lo que enseña cada tarjeta | Imagen, fechas, lugar, punto y descripción completos | |
-| 4 | Aprobar una publicación | Desaparece de la cola y el aviso lo confirma | |
-| 5 | Ver esa publicación con la sesión del actor | Queda «Publicada» | |
-| 6 | Pulsar «Devolver al autor» y guardar sin escribir nada | No se devuelve: pide la observación | |
-| 7 | Escribir «No» y guardar | Tampoco: pide que explique qué corregir | |
-| 8 | Escribir una observación real y devolver | Desaparece de la cola y el aviso lo confirma | |
-| 9 | Ver esa publicación con la sesión del actor | Queda «Devuelta» **y se lee la observación debajo** | |
-| 10 | Editarla y guardar desde la sesión del actor | Vuelve a «En revisión» y reaparece en la cola | |
-| 11 | Comprobar el panel a 360 px | Todo alcanzable, sin desbordamiento horizontal | |
+| Fecha | Qué se comprobó | Resultado |
+| --- | --- | --- |
+| 27/08/2026 | El panel muestra «Publicaciones por revisar», al final de las tres colas | Correcto |
+| 27/08/2026 | La cola va de la más antigua a la más reciente | Correcto: es el primer criterio |
+| 27/08/2026 | Cada tarjeta enseña imagen, fechas, lugar, punto y descripción completos | Correcto: se decide sobre lo que se ve, no sobre un resumen |
+| 27/08/2026 | Aprobar retira la publicación de la cola y lo confirma | Correcto |
+| 27/08/2026 | Esa publicación queda «Publicada» en la sesión del actor | Correcto: es el segundo criterio hasta donde hoy se puede ver (§9) |
+| 27/08/2026 | Devolver sin escribir nada no devuelve: pide la observación | Correcto: es el tercer criterio |
+| 27/08/2026 | Devolver escribiendo «No» tampoco: pide que explique qué corregir | Correcto: la regla del servidor no puede distinguir esto, el formulario sí |
+| 27/08/2026 | Con una observación real, la devolución se guarda y sale de la cola | Correcto |
+| 27/08/2026 | En la sesión del actor queda «Devuelta» **y se lee la observación debajo** | Correcto: es la notificación de §3, y cierra la promesa que la tarjeta llevaba haciendo desde HU-21 |
+| 27/08/2026 | Editarla desde la sesión del actor la devuelve a revisión y reaparece en la cola | Correcto: el ciclo se cierra sobre sí mismo |
+| 27/08/2026 | Todo lo anterior a 360 px, sin desbordamiento horizontal | Correcto |
+
+Las **once** pasaron.
+
+La séptima es la que separa cumplir la letra del criterio de cumplirlo. «No» es una
+observación escrita para la regla del servidor —hay algo, y no son espacios— y no le sirve de
+nada a quien tiene que corregir su publicación. Ese mínimo solo puede vivir en el formulario,
+y por eso está ahí y no en `firestore.rules`.
+
+La décima cierra el ciclo completo del Sprint 5 en una sola comprobación: se publica (HU-21),
+se sitúa (HU-22), se modera (HU-24), se devuelve, se corrige (HU-23) y vuelve a la cola.
 
 ---
 

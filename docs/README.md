@@ -44,21 +44,14 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 2 | 01/09/2026 | HU-04, HU-05, HU-06 | **Cerrado el 21/08/2026, once días antes del vencimiento.** Las tres historias completas, con el [prototipo publicado en Figma](https://www.figma.com/proto/wAfJjgLhVl2owhFtxZ2PjN/Hub-Cultural-Santa-Marta-%E2%80%94-Prototipo?node-id=17-10047&starting-point-node-id=17%3A9189&scaling=min-zoom&content-scaling=fixed&t=pbQnxU0nW6OzSUZt-1) aprobado por el asesor. |
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **Cerrado el 22/08/2026, veinticuatro días antes del vencimiento.** Las cinco historias completas: proyecto de React con su estructura y enrutador ([08](08-estructura-del-proyecto.md)), navegación y página de inicio ([09](09-navegacion-e-inicio.md)), adaptación a los tres anchos ([10](10-responsive.md)), reglas de seguridad publicadas y probadas ([11](11-reglas-de-seguridad.md)) y despliegue continuo en [hub-cultural-santa-marta.vercel.app](https://hub-cultural-santa-marta.vercel.app) ([12](12-despliegue-continuo.md)). |
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
+| Sprint 5 | 13/10/2026 | HU-18 a HU-24 | **Cerrado el 27/08/2026, cuarenta y siete días antes del vencimiento.** Dos épicas completas. La **E2**: perfil del actor cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de innovación ([19](19-hubs-de-innovacion.md)). La **E3**, el ciclo de vida entero de una publicación: crearla ([20](20-publicacion-de-eventos.md)), situarla en el mapa ([21](21-georreferenciacion.md)), corregirla y retirarla ([22](22-edicion-y-eliminacion.md)) y moderarla antes de que se vea ([23](23-moderacion.md)). Las siete comprobadas en el sitio publicado con cuentas reales de administrador y de actor cultural. |
 
-> **Sprint 5** (vence el 13/10/2026) está en curso: HU-18 a HU-24, la épica E2 y el
-> comienzo de la E3. La **épica E2** quedó completa con
-> [HU-20](https://github.com/Petulio14/hub-cultural-santa-marta/issues/20): perfil del actor
-> cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs
-> de innovación ([19](19-hubs-de-innovacion.md)). La **E3** empieza con
-> [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21), que estrena
-> `eventos`, la colección central del modelo ([20](20-publicacion-de-eventos.md)), y sigue con
-> [HU-22](https://github.com/Petulio14/hub-cultural-santa-marta/issues/22), que la sitúa en el
-> mapa ([21](21-georreferenciacion.md)) y con
-> [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23), que cierra el
-> ciclo de vida de una publicación por el lado del autor ([22](22-edicion-y-eliminacion.md)).
-> La cierra [HU-24](https://github.com/Petulio14/hub-cultural-santa-marta/issues/24), la
-> moderación, que es la tercera cola de aprobación y la primera en la que decidir deja
-> constancia ([23](23-moderacion.md)).
+
+> **Lo que queda por delante.** Con la E3 cerrada, lo publicado ya existe, está situado y está
+> moderado — pero **todavía no hay dónde verlo**: el catálogo público es HU-25 y el mapa es
+> HU-30. Es la deuda que el Sprint 5 deja abierta a propósito, y está anotada en
+> [20 §8](20-publicacion-de-eventos.md) y [23 §9](23-moderacion.md) para que las filas de
+> verificación que se apoyan en ella no se den por cerradas dos veces.
 
 ## Configuración en la raíz del repositorio
 
