@@ -77,7 +77,7 @@ registra aquí y **no se incorpora a ningún sprint**.
 
 | # | Funcionalidad propuesta | Fecha de identificación | Origen | Estado |
 | --- | --- | --- | --- | --- |
-| — | *(sin registros a la fecha)* | — | — | — |
+| TF-01 | Deshacer la eliminación de una publicación: papelera o borrado lógico en lugar de definitivo. | 27/08/2026 | HU-23 | Registrada, fuera de sprint |
 
 ## 6. Constancia de aceptación
 

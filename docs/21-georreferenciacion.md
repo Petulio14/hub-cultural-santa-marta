@@ -215,8 +215,10 @@ y llevar a un `permission-denied` que no explica nada. Y hay un caso de prueba s
 regla, para que si algún día cambia, la interfaz se entere por una prueba en rojo y no por
 un usuario.
 
-Quien necesite corregirlo pasará por **HU-23**, que devuelve la publicación a revisión al
-editarla.
+Quien necesite corregirlo pasa por **HU-23**, que devuelve la publicación a revisión al
+editarla. **Ya está hecho**: `actualizarPunto` escribe también el estado, así que mover el
+punto de una aprobada se puede y avisa antes de guardar. El límite era del servicio, no
+del servidor ([22 §6](22-edicion-y-eliminacion.md)).
 
 ### La pregunta que se le hizo al emulador
 

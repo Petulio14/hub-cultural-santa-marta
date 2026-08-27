@@ -16,6 +16,14 @@ import { validarPuntoDePublicacion } from '../../utils/validaciones.js';
  * instancias de Leaflet como tarjetas, cada una pidiendo sus teselas al servidor
  * gratuito de OpenStreetMap nada más entrar en la página, y eso es justo lo que
  * su política de uso pide no hacer.
+ *
+ * **HU-23 levanta el límite que esta pieza documentaba.** Hasta entonces el punto
+ * solo se podía tocar mientras la publicación estaba pendiente: el servicio
+ * escribía únicamente «coordenadas» y la regla exige que lo escrito siga siendo
+ * 'pendiente', así que sobre una aprobada chocaba. Ahora mover el punto es una
+ * edición como cualquier otra y devuelve la publicación a revisión, que es el
+ * primer criterio de HU-23 aplicado al cambio más pequeño que existe. Lo que
+ * queda es decirlo antes, no después.
  */
 export default function EditorDePunto({ publicacion, alGuardar }) {
   const [abierto, setAbierto] = useState(false);
@@ -23,7 +31,7 @@ export default function EditorDePunto({ publicacion, alGuardar }) {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState(null);
 
-  const editable = publicacion.estadoPublicacion === 'pendiente';
+  const enElCatalogo = publicacion.estadoPublicacion === 'aprobado';
 
   function abrir() {
     setPunto(publicacion.punto);
@@ -65,28 +73,29 @@ export default function EditorDePunto({ publicacion, alGuardar }) {
         )}
       </p>
 
-      {/* Ya aprobada no se toca: la regla exige que lo que se escribe siga
-          'pendiente', así que el servidor rechazaría el cambio. Decirlo aquí
-          evita ofrecer un botón que solo lleva a un error. */}
-      {!editable && (
-        <p className="tarjeta-publicacion__punto-bloqueado">
-          El punto solo puede cambiarse mientras la publicación está en revisión.
-        </p>
-      )}
-
-      {editable && !abierto && (
+      {!abierto && (
         <button className="boton boton--secundario" type="button" onClick={abrir}>
           {publicacion.punto ? 'Cambiar el punto' : 'Situar en el mapa'}
         </button>
       )}
 
-      {editable && abierto && (
+      {abierto && (
         <div className="tarjeta-publicacion__editor">
           <MapaDePunto
             punto={punto}
             alElegirPunto={setPunto}
             descripcion={`Sitúa «${publicacion.titulo}» con un clic sobre el mapa, o arrastra el marcador para afinarlo.`}
           />
+
+          {/* Antes de mover nada, no al guardar. Quien está en el catálogo tiene
+              derecho a saber que corregir el punto lo retira de él mientras lo
+              revisan otra vez. */}
+          {enElCatalogo && (
+            <p className="tarjeta-publicacion__aviso-revision" role="status">
+              Esta publicación está en el catálogo. Al guardar el punto volverá a revisión y
+              dejará de verse hasta que la aprueben de nuevo.
+            </p>
+          )}
 
           <p className="tarjeta-publicacion__punto-nuevo" role="status">
             {punto

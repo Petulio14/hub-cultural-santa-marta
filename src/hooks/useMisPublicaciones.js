@@ -65,5 +65,18 @@ export function useMisPublicaciones(idActor) {
     );
   }, []);
 
-  return { publicaciones, cargando, error, recargar, anadir, reemplazar };
+  /**
+   * Retira una publicación de la lista — HU-23, segundo criterio.
+   *
+   * Se llama **después** de que el servidor confirme el borrado, no antes.
+   * Quitarla al pulsar y devolverla si falla se ve más rápido, pero enseña
+   * durante un instante un estado que puede no ser verdad, y en un borrado eso es
+   * peor que esperar: quien ve desaparecer su publicación y luego reaparecer no
+   * sabe si se borró.
+   */
+  const quitar = useCallback((idEvento) => {
+    setPublicaciones((actuales) => actuales.filter((actual) => actual.id !== idEvento));
+  }, []);
+
+  return { publicaciones, cargando, error, recargar, anadir, reemplazar, quitar };
 }

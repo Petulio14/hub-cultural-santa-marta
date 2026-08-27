@@ -4,7 +4,12 @@ import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { useMiPerfilDeActor } from '../../hooks/useMiPerfilDeActor.js';
 import { useMisPublicaciones } from '../../hooks/useMisPublicaciones.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
-import { actualizarPunto, crearPublicacion } from '../../services/eventosService.js';
+import {
+  actualizarPublicacion,
+  actualizarPunto,
+  crearPublicacion,
+  eliminarPublicacion,
+} from '../../services/eventosService.js';
 import FormularioDePublicacion from './FormularioDePublicacion.jsx';
 import TarjetaDePublicacion from './TarjetaDePublicacion.jsx';
 import './MisPublicaciones.css';
@@ -31,7 +36,8 @@ export default function MisPublicaciones() {
   const { perfil, cargando: cargandoPerfil } = useMiPerfilDeActor(uid);
   const idActor = perfil?.id ?? null;
 
-  const { publicaciones, cargando, error, anadir, reemplazar } = useMisPublicaciones(idActor);
+  const { publicaciones, cargando, error, anadir, reemplazar, quitar } =
+    useMisPublicaciones(idActor);
   const { categorias, cargando: cargandoCategorias } = useCategoriasActivas();
 
   const [aviso, setAviso] = useState(null);
@@ -84,6 +90,42 @@ export default function MisPublicaciones() {
       texto: punto
         ? `«${actualizada.titulo}» quedó situada en el mapa.`
         : `«${actualizada.titulo}» ya no tiene punto: dejará de aparecer en el mapa.`,
+    });
+  }
+
+  /**
+   * Guarda los cambios de una publicación — HU-23, primer criterio.
+   *
+   * Deja escapar el error, igual que «guardarPunto» y por lo mismo: el formulario
+   * que lo provocó está dentro de una tarjeta, y el aviso general de arriba puede
+   * quedar a varias pantallas de distancia.
+   */
+  async function guardarCambios(idEvento, datos) {
+    const guardada = await actualizarPublicacion(idEvento, datos);
+    reemplazar(guardada);
+    setAviso({
+      tipo: 'exito',
+      texto: `«${guardada.titulo}» se guardó y volvió a revisión. Aparecerá en el catálogo cuando la aprueben de nuevo.`,
+    });
+    return guardada;
+  }
+
+  /**
+   * Elimina una publicación — HU-23, segundo criterio.
+   *
+   * El título se lee **antes** de borrar. Después ya no está en la lista, y el
+   * aviso tendría que hablar de «la publicación» sin poder decir cuál, que es
+   * justo lo que hay que confirmar cuando se acaba de borrar algo.
+   */
+  async function borrar(idEvento) {
+    const borrada = publicaciones.find((publicacion) => publicacion.id === idEvento);
+    await eliminarPublicacion(idEvento);
+    quitar(idEvento);
+    setAviso({
+      tipo: 'exito',
+      texto: borrada
+        ? `«${borrada.titulo}» se eliminó.`
+        : 'La publicación se eliminó.',
     });
   }
 
@@ -165,7 +207,11 @@ export default function MisPublicaciones() {
             <TarjetaDePublicacion
               key={publicacion.id}
               publicacion={publicacion}
+              categorias={categorias}
+              cargandoCategorias={cargandoCategorias}
               alGuardarPunto={guardarPunto}
+              alGuardarCambios={guardarCambios}
+              alEliminar={borrar}
             />
           ))}
         </ul>

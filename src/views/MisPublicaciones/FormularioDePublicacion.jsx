@@ -5,6 +5,7 @@ import CampoDeImagen from '../../components/CampoDeImagen.jsx';
 import Seleccion from '../../components/Seleccion.jsx';
 import { desdeEntradaDeFecha } from '../../utils/fechas.js';
 import { reducirImagen, validarArchivoDeImagen } from '../../utils/imagen.js';
+import { PUBLICACION_VACIA } from '../../utils/publicaciones.js';
 import {
   LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION,
   hayErrores,
@@ -16,8 +17,12 @@ import UbicacionDeLaPublicacion from './UbicacionDeLaPublicacion.jsx';
  * El formulario de una publicación — HU-21 · RF-05, ampliado en HU-22 · RF-08.
  *
  * Vive aparte de la vista porque la vista hace además otras dos cosas —decidir si
- * se puede publicar y listar lo publicado—, y porque HU-23 va a necesitar este
- * mismo formulario relleno para editar.
+ * se puede publicar y listar lo publicado—, y porque HU-23 necesita este mismo
+ * formulario relleno para editar. Desde HU-23 sirve para las dos cosas: sin
+ * «valoresIniciales» crea, con ellos edita, y lo único que cambia son los textos
+ * de los botones y si se vacía al guardar. Un segundo formulario de edición
+ * habría sido el sitio donde una validación nueva se aplicaría solo a la mitad de
+ * los casos.
  *
  * Las dos fechas se guardan en el estado **como el texto que escribe el control**,
  * no como «Date». Un «datetime-local» es un campo controlado y necesita
@@ -39,24 +44,23 @@ import UbicacionDeLaPublicacion from './UbicacionDeLaPublicacion.jsx';
  * quien de verdad no quiere poner punto, y ese es el precio de que la advertencia
  * exista de verdad y no solo en el código.
  */
-const VACIO = {
-  titulo: '',
-  descripcion: '',
-  categoria: '',
-  fechaInicio: '',
-  fechaFin: '',
-  lugar: '',
-  punto: null,
-  imagen: null,
-};
-
 export default function FormularioDePublicacion({
   categorias,
   cargandoCategorias,
   alEnviar,
   guardando,
+  valoresIniciales = null,
+  textoDeEnvio = 'Enviar a revisión',
+  textoGuardando = 'Publicando…',
+  // El de HU-22, que quedó escrito en docs/21 §4 y comprobado en vivo. Se
+  // parametriza para que al editar diga «guardar» y no «publicar», sin que eso
+  // cambie lo que hace el formulario de creación.
+  textoSinPunto = 'Publicar sin situarla en el mapa',
+  alCancelar = null,
+  limpiarAlGuardar = true,
 }) {
-  const [formulario, setFormulario] = useState(VACIO);
+  const inicio = valoresIniciales ?? PUBLICACION_VACIA;
+  const [formulario, setFormulario] = useState(inicio);
   const [errores, setErrores] = useState({});
   const [reduciendo, setReduciendo] = useState(false);
   const [avisoSinPunto, setAvisoSinPunto] = useState(false);
@@ -129,8 +133,11 @@ export default function FormularioDePublicacion({
     // Solo se vacía si de verdad se guardó. Limpiar el formulario tras un fallo
     // de red haría perder un texto largo por un problema que no es de quien
     // escribe, y volver a escribirlo es exactamente lo que nadie hace.
-    if (creada) {
-      setFormulario(VACIO);
+    // Al editar no se vacía: el formulario se cierra y la tarjeta vuelve a su
+    // sitio con lo guardado. Vaciarlo dejaría medio segundo de campos en blanco
+    // sobre una publicación que sigue existiendo.
+    if (creada && limpiarAlGuardar) {
+      setFormulario(PUBLICACION_VACIA);
       setErrores({});
       setAvisoSinPunto(false);
     }
@@ -222,13 +229,30 @@ export default function FormularioDePublicacion({
         </p>
       )}
 
-      <button className="boton" type="submit" disabled={guardando || reduciendo || sinCategorias}>
-        {guardando
-          ? 'Publicando…'
-          : avisoSinPunto
-            ? 'Publicar sin situarla en el mapa'
-            : 'Enviar a revisión'}
-      </button>
+      <p className="publicacion__acciones">
+        <button
+          className="boton"
+          type="submit"
+          disabled={guardando || reduciendo || sinCategorias}
+        >
+          {guardando
+            ? textoGuardando
+            : avisoSinPunto
+              ? textoSinPunto
+              : textoDeEnvio}
+        </button>
+
+        {alCancelar && (
+          <button
+            className="boton boton--secundario"
+            type="button"
+            onClick={alCancelar}
+            disabled={guardando}
+          >
+            Cancelar
+          </button>
+        )}
+      </p>
     </form>
   );
 }
