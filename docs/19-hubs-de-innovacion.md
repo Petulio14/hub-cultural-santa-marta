@@ -194,18 +194,42 @@ frente a los 350 de una aislada.
 
 ### Comprobación en vivo
 
+Sobre el sitio publicado, con las reglas de esta historia ya desplegadas.
+
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | Un visitante sin sesión abre `/hubs` | |
-| | Un responsable de hub aterriza en `/mi-hub` al iniciar sesión | |
-| | Busca su dirección y elige un candidato | |
-| | Una dirección que el buscador no encuentra explica qué hacer | |
-| | El hub se guarda y queda `pendiente`, sin figurar en el directorio | |
-| | El administrador lo publica desde el panel | |
-| | Aparece en `/hubs` con sus líneas, dirección, punto y contacto | |
-| | Editarlo no lo devuelve a la cola | |
-| | Cambiar la dirección obliga a volver a confirmar el punto | |
-| | A 360, 768 y 1366 px, y sin errores en consola | |
+| 26/08/2026 | Un visitante sin sesión abre `/hubs` | Correcto: el directorio se lee sin cuenta |
+| 26/08/2026 | Un responsable de hub aterriza en `/mi-hub` al iniciar sesión | Correcto, y la ruta vacía se lee sin error de permisos |
+| 26/08/2026 | Busca su dirección y elige un candidato | Correcto: los candidatos se ofrecen con su nombre y sus coordenadas, y hay que elegir |
+| 26/08/2026 | Una dirección que el buscador no encuentra explica qué hacer | Correcto: sin resultados aparece la explicación, no un campo vacío |
+| 26/08/2026 | El hub se guarda y queda `pendiente`, sin figurar en el directorio | Correcto |
+| 26/08/2026 | El administrador lo publica desde el panel | Correcto |
+| 26/08/2026 | Aparece en `/hubs` con sus líneas, dirección, punto y contacto | Correcto: la tarjeta muestra lo que pide el prototipo V-5 |
+| 26/08/2026 | Editarlo no lo devuelve a la cola | Correcto: sigue `aprobado` tras editar |
+| 26/08/2026 | Cambiar la dirección obliga a volver a confirmar el punto | Correcto: el punto anterior se invalida |
+| 26/08/2026 | A 360, 768 y 1366 px, y sin errores en consola | Correcto |
+
+Las **diez** pasaron. Las dos que sostienen el tercer criterio son la cuarta y la novena: sin
+la cuarta, una dirección no encontrada dejaría a alguien mirando un campo vacío sin saber qué
+se espera de él; sin la novena, se guardaría una dirección con las coordenadas de otra y nadie
+lo notaría hasta ver el mapa de HU-30.
+
+### Dos cosas que salieron de comprobar esta historia
+
+**El orden del despliegue aguantó.** Se fusionó primero y se publicaron las reglas después,
+como quedó escrito en [12 §5.1](12-despliegue-continuo.md) tras el tropiezo de HU-19. Esta vez
+no hubo ventana de escrituras denegadas. El despliegue falló al primer intento —`Failed to
+make request to firebaserules.googleapis.com`—, pero en el paso que **comprueba** las reglas y
+antes de publicar nada, así que reintentar bastó y el estado nunca quedó a medias.
+
+**Apareció un defecto que no era de esta historia.** Mientras se navegaba con sesión iniciada,
+el menú de la cabecera se partía en dos filas y la marca escribía «Hub Cultural» en dos
+líneas. No lo causaba HU-20: venía de HU-18, cuando el menú de un actor creció hasta pedir más
+ancho del que la cabecera podía dar. Está corregido y razonado en
+[10-responsive.md §2 bis](10-responsive.md), con la lección que importa: la medición de HU-10
+se hizo **sin sesión**, y el menú que se rompió es el que nunca se midió.
+
+---
 
 ---
 
