@@ -16,7 +16,7 @@
  * Anunciarla obligaría a quien usa un lector de pantalla a escuchar «imagen
  * predeterminada» en cada tarjeta del directorio sin ganar nada a cambio.
  */
-export default function ImagenDeActor({ imagen, nombre, className = '' }) {
+export default function ImagenDeActor({ imagen, nombre, alt, className = '' }) {
   const clases = ['imagen-actor', className].filter(Boolean).join(' ');
 
   if (imagen) {
@@ -27,7 +27,12 @@ export default function ImagenDeActor({ imagen, nombre, className = '' }) {
         // El nombre y no una descripción del contenido: nadie más que quien la
         // subió sabe qué se ve en la fotografía, y describirla a ciegas sería
         // inventar. Decir de quién es el perfil sí es cierto y sí orienta.
-        alt={`Imagen del perfil de ${nombre}`}
+        //
+        // HU-21 reutiliza este componente para la imagen de una publicación, que
+        // no es «el perfil de» nadie, y por eso el texto se puede sustituir. El
+        // dibujo de respaldo y las tres razones de arriba valen igual para las
+        // dos, así que la pieza es la misma.
+        alt={alt ?? `Imagen del perfil de ${nombre}`}
         loading="lazy"
       />
     );

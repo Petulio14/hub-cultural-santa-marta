@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20.
+ * HU-17, HU-18, HU-19, HU-20, HU-21.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -56,6 +56,19 @@ const ID_ACTOR_PENDIENTE = UID_OTRO;         // perfil aún sin aprobar
  * la prueba mediría entonces una regla distinta de la que dice medir.
  */
 const UIDS_SIN_PERFIL = Array.from({ length: 16 }, (_, i) => `uid-sin-perfil-${i + 1}`);
+
+/**
+ * Cuenta de actor activa que **nunca** llega a crear perfil.
+ *
+ * Va aparte de «UIDS_SIN_PERFIL» y no como un índice más porque no es una
+ * cuenta de repuesto: es el sujeto de una prueba concreta —quien intenta
+ * publicar sin perfil (HU-21)— y tiene que seguir sin perfil hasta el final del
+ * archivo. Nació de un fallo: la prueba usaba «UIDS_SIN_PERFIL[10]», que ochenta
+ * lineas antes ya había estrenado el suyo en una prueba de HU-19, así que medía
+ * lo contrario de lo que decía medir. Un nombre no se puede reutilizar por
+ * descuido; un índice sí.
+ */
+const UID_ACTOR_SIN_PERFIL = 'uid-actor-que-nunca-crea-perfil';
 
 /** Cuentas con rol de hub, y por la misma razón: una por prueba de creación. */
 const UIDS_HUB = Array.from({ length: 10 }, (_, i) => `uid-hub-${i + 1}`);
@@ -146,7 +159,7 @@ before(async () => {
       estado: 'aprobado',
     });
 
-    for (const uid of UIDS_SIN_PERFIL) {
+    for (const uid of [...UIDS_SIN_PERFIL, UID_ACTOR_SIN_PERFIL]) {
       await setDoc(doc(bd, 'usuarios', uid), {
         uid,
         rol: 'actor',
@@ -1103,6 +1116,224 @@ describe('hub de innovación (HU-20)', () => {
 
     it('pero NO la ruta vacía de otra persona', async () => {
       await assertFails(getDoc(doc(comoUsuario(UID_HUB_DUENO), 'hubs', 'uid-que-no-existe')));
+    });
+  });
+});
+describe('publicación de un evento (HU-21)', () => {
+  /** Publicación mínima que las reglas aceptan, tal y como la escribe el servicio. */
+  const publicacionDe = (idEvento, cambios = {}) => ({
+    idEvento,
+    idActor: ID_ACTOR,
+    titulo: 'Taller de tambora',
+    tituloNormalizado: 'taller de tambora',
+    descripcion: 'Tres sesiones de introducción al toque de tambora, con instrumentos prestados.',
+    categoria: 'musica',
+    fechaInicio: new Date(2026, 8, 1, 18, 0),
+    fechaFin: new Date(2026, 8, 1, 21, 0),
+    lugar: 'Casa de la Cultura, Santa Marta',
+    coordenadas: null,
+    imagen: null,
+    estadoPublicacion: 'pendiente',
+    fechaCreacion: serverTimestamp(),
+    contadorConsultas: 0,
+    ...cambios,
+  });
+
+  const crear = (uid, idEvento, cambios = {}) =>
+    setDoc(doc(comoUsuario(uid), 'eventos', idEvento), publicacionDe(idEvento, cambios));
+
+  it('un actor con perfil publica (primer criterio)', async () => {
+    await assertSucceeds(crear(UID_ACTOR, 'pub-1'));
+  });
+
+  it('el identificador del documento tiene que coincidir con «idEvento»', async () => {
+    // Si no, un documento diría llamarse una cosa y vivir en otra ruta, y HU-24
+    // registraría la moderación contra un identificador que no existe.
+    await assertFails(
+      setDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'pub-2'), publicacionDe('otro-cualquiera'))
+    );
+  });
+
+  it('un actor SIN perfil no publica: no hay a quién atribuirlo', async () => {
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(UID_ACTOR_SIN_PERFIL), 'eventos', 'pub-3'),
+        publicacionDe('pub-3', { idActor: UID_ACTOR_SIN_PERFIL })
+      )
+    );
+  });
+
+  it('y sigue sin poder aunque el perfil que invoque exista', async () => {
+    // La comprobación anterior podría pasar por el motivo equivocado —que el
+    // perfil no exista— y no por el que dice. Esta lo separa: el perfil existe,
+    // pero es de otra persona.
+    await assertFails(
+      setDoc(
+        doc(comoUsuario(UID_ACTOR_SIN_PERFIL), 'eventos', 'pub-3-bis'),
+        publicacionDe('pub-3-bis')
+      )
+    );
+  });
+
+  it('nadie publica en nombre de otro actor (cuarto criterio)', async () => {
+    // «idActor» es de UID_ACTOR y quien escribe es otra persona.
+    await assertFails(crear(UID_OTRO, 'pub-4'));
+  });
+
+  it('un administrador tampoco publica en nombre de un actor', async () => {
+    // Moderar no es escribir por otro: el administrador mueve estados (HU-24),
+    // no crea contenido con la firma de alguien.
+    await assertFails(crear(UID_ADMIN, 'pub-5'));
+  });
+
+  describe('nace pendiente (primer criterio)', () => {
+    it('no se puede nacer aprobado', async () => {
+      await assertFails(crear(UID_ACTOR, 'pub-6', { estadoPublicacion: 'aprobado' }));
+    });
+
+    it('ni empezar con visitas contadas', async () => {
+      await assertFails(crear(UID_ACTOR, 'pub-7', { contadorConsultas: 42 }));
+    });
+  });
+
+  describe('la fecha de creación la pone el servidor (cuarto criterio)', () => {
+    it('una fecha inventada por el cliente se rechaza', async () => {
+      // Sin esta regla, una publicación podría nacer fechada el año pasado y
+      // colarse al principio de la cola de moderación de HU-24.
+      await assertFails(
+        crear(UID_ACTOR, 'pub-8', { fechaCreacion: new Date(2020, 0, 1) })
+      );
+    });
+
+    it('y sin fecha de creación tampoco', async () => {
+      const sinFecha = publicacionDe('pub-9');
+      delete sinFecha.fechaCreacion;
+      await assertFails(setDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'pub-9'), sinFecha));
+    });
+  });
+
+  describe('el orden de las fechas (segundo criterio)', () => {
+    it('terminar antes de empezar se rechaza también en el servidor', async () => {
+      // El formulario ya lo impide, pero el formulario no es la defensa: quien
+      // escriba por fuera de la interfaz encuentra aquí la misma respuesta.
+      await assertFails(
+        crear(UID_ACTOR, 'pub-10', { fechaFin: new Date(2026, 8, 1, 17, 0) })
+      );
+    });
+
+    it('empezar y terminar a la vez es válido', async () => {
+      const cuando = new Date(2026, 8, 1, 18, 0);
+      await assertSucceeds(
+        crear(UID_ACTOR, 'pub-11', { fechaInicio: cuando, fechaFin: cuando })
+      );
+    });
+
+    it('una fecha que no es fecha se rechaza', async () => {
+      await assertFails(crear(UID_ACTOR, 'pub-12', { fechaInicio: '1 de septiembre' }));
+    });
+  });
+
+  describe('el título normalizado, que nadie mira nunca', () => {
+    it('no puede decir algo distinto del título', async () => {
+      // El moderador de HU-24 aprueba leyendo «titulo». Un «tituloNormalizado»
+      // que dijera otra cosa entraría al catálogo sin que nadie lo notase y
+      // respondería a búsquedas que no le corresponden (HU-27).
+      await assertFails(
+        crear(UID_ACTOR, 'pub-13', { tituloNormalizado: 'festival del mar gratis' })
+      );
+    });
+
+    it('no puede llevar mayúsculas', async () => {
+      await assertFails(crear(UID_ACTOR, 'pub-14', { tituloNormalizado: 'Taller de tambora' }));
+    });
+
+    it('un título con tildes y eñe se normaliza y se acepta', async () => {
+      // Este caso mide algo que las pruebas no podían responder sobre el papel:
+      // si «size()» cuenta caracteres o bytes. «Cañón» y «canon» tienen las
+      // mismas cinco letras y distinto número de bytes en UTF-8.
+      await assertSucceeds(
+        crear(UID_ACTOR, 'pub-15', {
+          titulo: 'Cañón de música',
+          tituloNormalizado: 'canon de musica',
+        })
+      );
+    });
+  });
+
+  describe('la forma del documento', () => {
+    it('un campo que la interfaz nunca pinta no entra', async () => {
+      await assertFails(crear(UID_ACTOR, 'pub-16', { destacado: true }));
+    });
+
+    it('sin lugar no se guarda', async () => {
+      const sinLugar = publicacionDe('pub-17');
+      delete sinLugar.lugar;
+      await assertFails(setDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'pub-17'), sinLugar));
+    });
+
+    it('un punto en el mapa, si lo hay, tiene que ser un punto', async () => {
+      await assertFails(
+        crear(UID_ACTOR, 'pub-18', { coordenadas: { lat: 11.2, lon: -74.2 } })
+      );
+    });
+
+    it('y un GeoPoint de verdad se acepta (lo rellenará HU-22)', async () => {
+      await assertSucceeds(
+        crear(UID_ACTOR, 'pub-19', { coordenadas: new GeoPoint(11.24, -74.21) })
+      );
+    });
+
+    it('un SVG no es una imagen aceptable: es código', async () => {
+      await assertFails(
+        crear(UID_ACTOR, 'pub-20', {
+          imagen: 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=',
+        })
+      );
+    });
+  });
+
+  describe('el catálogo público (tercer criterio)', () => {
+    it('un visitante lista lo aprobado', async () => {
+      await assertSucceeds(
+        getDocs(
+          query(collection(visitante(), 'eventos'), where('estadoPublicacion', '==', 'aprobado'))
+        )
+      );
+    });
+
+    it('pero NO la colección entera: dentro hay publicaciones sin aprobar', async () => {
+      // Esto es lo que sostiene el tercer criterio. No es que la vista esconda
+      // lo pendiente: es que pedirlo falla.
+      await assertFails(getDocs(collection(visitante(), 'eventos')));
+    });
+
+    it('y una publicación recién creada no sale en lo aprobado', async () => {
+      const instantanea = await getDocs(
+        query(collection(visitante(), 'eventos'), where('estadoPublicacion', '==', 'aprobado'))
+      );
+      const identificadores = instantanea.docs.map((documento) => documento.id);
+      assert.equal(identificadores.includes('pub-1'), false);
+    });
+  });
+
+  describe('la lista propia', () => {
+    it('un actor lista sus publicaciones, en cualquier estado', async () => {
+      await assertSucceeds(
+        getDocs(query(collection(comoUsuario(UID_ACTOR), 'eventos'), where('idActor', '==', ID_ACTOR)))
+      );
+    });
+
+    it('pero NO las de otro actor', async () => {
+      await assertFails(
+        getDocs(query(collection(comoUsuario(UID_OTRO), 'eventos'), where('idActor', '==', ID_ACTOR)))
+      );
+    });
+
+    it('leer una publicación que no existe se deniega, no revienta', async () => {
+      // La lección de HU-18 (docs/17 §10) aplicada al revés: sobre un documento
+      // inexistente «resource» llega nulo, y sin la guarda la expresión entera
+      // fallaría en lugar de responder que no.
+      await assertFails(getDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'no-existe')));
     });
   });
 });

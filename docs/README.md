@@ -24,6 +24,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [17-perfil-de-actor.md](17-perfil-de-actor.md) | [HU-18](https://github.com/Petulio14/hub-cultural-santa-marta/issues/18) | 5 | El perfil del actor cultural: por qué su identificador es el `uid`, el límite de la descripción escrito en las dos capas, la edición que no vuelve a la cola y el directorio público. |
 | [18-imagen-del-perfil.md](18-imagen-del-perfil.md) | [HU-19](https://github.com/Petulio14/hub-cultural-santa-marta/issues/19) | 5 | La imagen dentro del documento en lugar de Firebase Storage, los dos límites que no son el mismo, la reducción en el navegador y la imagen predeterminada dibujada en el código. |
 | [19-hubs-de-innovacion.md](19-hubs-de-innovacion.md) | [HU-20](https://github.com/Petulio14/hub-cultural-santa-marta/issues/20) | 5 | Los hubs de innovación, las tres piezas que salieron de duplicar, y por qué las coordenadas no se pueden obtener en silencio. |
+| [20-publicacion-de-eventos.md](20-publicacion-de-eventos.md) | [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21) | 5 | La publicación de un evento: hora local contra UTC, la fecha de creación que solo el servidor puede escribir, y el campo normalizado que ninguna persona mira. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -42,10 +43,12 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 
 > **Sprint 5** (vence el 13/10/2026) está en curso: HU-18 a HU-24, la épica E2 y el
-> comienzo de la E3. Con [HU-20](https://github.com/Petulio14/hub-cultural-santa-marta/issues/20)
-> se cierra la **épica E2** completa: perfil del actor cultural
-> ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de
-> innovación ([19](19-hubs-de-innovacion.md)).
+> comienzo de la E3. La **épica E2** quedó completa con
+> [HU-20](https://github.com/Petulio14/hub-cultural-santa-marta/issues/20): perfil del actor
+> cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs
+> de innovación ([19](19-hubs-de-innovacion.md)). La **E3** empieza con
+> [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21), que estrena
+> `eventos`, la colección central del modelo ([20](20-publicacion-de-eventos.md)).
 
 ## Configuración en la raíz del repositorio
 

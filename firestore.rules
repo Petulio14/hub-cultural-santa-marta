@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18, HU-19, HU-20 · RNF-05, RNF-08
+// Reglas de seguridad de Cloud Firestore — HU-11, HU-15, HU-18 a HU-21 · RNF-05, RNF-08
 //
 // El control de acceso vive en dos capas simultáneas: la interfaz oculta lo que el rol no
 // puede usar, y estas reglas rechazan la operación aunque se intente desde fuera de la
@@ -82,6 +82,56 @@ service cloud.firestore {
         || (imagen is string
             && imagen.size() < 120000
             && imagen.matches('^data:image/(jpeg|png);base64,.*'));
+    }
+
+    // Un punto en el mapa, cuando lo hay (HU-22 lo rellena; HU-21 lo deja nulo).
+    function puntoAceptable() {
+      let punto = request.resource.data.get('coordenadas', null);
+      return punto == null || punto is latlng;
+    }
+
+    // El título normalizado no lo escribe una persona: lo calcula el cliente para
+    // que la búsqueda de HU-27 no distinga mayúsculas ni tildes. Y ahí está el
+    // problema: **nadie lo mira nunca**. El moderador de HU-24 aprueba leyendo
+    // «titulo», así que un «tituloNormalizado» que dijera otra cosa entraría al
+    // catálogo sin que nadie lo notase, y respondería a búsquedas que no le
+    // corresponden.
+    //
+    // Las reglas no saben quitar tildes, así que no pueden recalcularlo. Lo que
+    // sí pueden es exigir lo que la normalización nunca cambia: no añade letras
+    // ni deja mayúsculas.
+    function tituloNormalizadoCoherente() {
+      let d = request.resource.data;
+      return d.tituloNormalizado is string
+        && d.tituloNormalizado == d.tituloNormalizado.lower()
+        && d.tituloNormalizado.size() == d.titulo.size();
+    }
+
+    // Forma de una publicación (HU-21 · docs/04 §6).
+    //
+    // Los topes de longitud son más anchos que los del formulario a propósito, y
+    // por el motivo de docs/18 §2: el del formulario es una promesa de que el
+    // texto se verá bien, y este es el techo del abuso. Si los dos fueran el
+    // mismo número, cualquier desacuerdo entre cómo cuenta caracteres el
+    // navegador y cómo los cuenta una regla se convertiría en un rechazo que
+    // quien escribe no puede entender ni corregir.
+    function publicacionBienFormada() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['idEvento', 'idActor', 'titulo', 'tituloNormalizado',
+                               'descripcion', 'categoria', 'fechaInicio', 'fechaFin',
+                               'lugar', 'coordenadas', 'imagen', 'estadoPublicacion',
+                               'fechaCreacion', 'contadorConsultas'])
+        && d.titulo is string && d.titulo.size() > 0 && d.titulo.size() <= 200
+        && tituloNormalizadoCoherente()
+        && d.descripcion is string
+        && d.descripcion.size() > 0 && d.descripcion.size() <= 4000
+        && d.categoria is string && d.categoria.size() > 0
+        && d.fechaInicio is timestamp
+        && d.fechaFin is timestamp
+        && d.fechaInicio <= d.fechaFin
+        && d.lugar is string && d.lugar.size() > 0 && d.lugar.size() <= 300
+        && puntoAceptable()
+        && imagenAceptable();
     }
 
     // El actor cultural identificado por idActor pertenece a quien hace la petición.
@@ -225,24 +275,42 @@ service cloud.firestore {
     // ---------------------------------------------------------------- eventos
 
     match /eventos/{idEvento} {
-      // Sin autenticación solo son legibles los documentos aprobados (HU-11).
-      allow read: if resource.data.estadoPublicacion == 'aprobado'
-                  || soyDuenoDelActor(resource.data.idActor)
-                  || soyAdmin();
+      // **Tercer criterio de HU-21**: sin aprobar no sale al catálogo. No lo
+      // decide la vista al pintar, lo decide esto: una consulta de visitante que
+      // alcance una publicación pendiente no devuelve menos filas, falla entera.
+      //
+      // «resource != null» va delante por la lección de HU-18 (docs/17 §10):
+      // sobre un documento que no existe «resource» llega nulo y «resource.data»
+      // no devuelve falso, revienta la expresión. Aquí sí se deniega —un
+      // identificador de evento es aleatorio y nadie tiene por qué leer una ruta
+      // vacía—, pero denegar y estallar no son lo mismo.
+      allow read: if resource != null
+                  && (resource.data.estadoPublicacion == 'aprobado'
+                      || soyDuenoDelActor(resource.data.idActor)
+                      || soyAdmin());
 
-      // Nace siempre pendiente y con la fecha del servidor (HU-21).
+      // **Primer y cuarto criterio de HU-21.** Nace pendiente, con la fecha del
+      // servidor y conservando de quién es.
+      //
+      // «fechaCreacion == request.time» es lo que hace verdadero el cuarto
+      // criterio: obliga a que el cliente haya enviado «serverTimestamp()», que
+      // es el único valor de tiempo que no puede inventarse. Sin esta línea, una
+      // publicación podría nacer fechada el año pasado y colarse al principio de
+      // la cola de moderación de HU-24.
       allow create: if tengoRol('actor')
         && soyDuenoDelActor(request.resource.data.idActor)
+        && idEvento == request.resource.data.idEvento
         && request.resource.data.estadoPublicacion == 'pendiente'
         && request.resource.data.contadorConsultas == 0
         && request.resource.data.fechaCreacion == request.time
-        && request.resource.data.fechaInicio <= request.resource.data.fechaFin;
+        && publicacionBienFormada();
 
       // Al editar vuelve a 'pendiente' (HU-23). El autor no se aprueba solo.
       allow update: if (soyDuenoDelActor(resource.data.idActor)
-                        && !toca(['idActor', 'fechaCreacion', 'contadorConsultas'])
+                        && !toca(['idEvento', 'idActor', 'fechaCreacion',
+                                  'contadorConsultas'])
                         && request.resource.data.estadoPublicacion == 'pendiente'
-                        && request.resource.data.fechaInicio <= request.resource.data.fechaFin)
+                        && publicacionBienFormada())
                     || soyAdmin();
 
       allow delete: if soyDuenoDelActor(resource.data.idActor) || soyAdmin();
