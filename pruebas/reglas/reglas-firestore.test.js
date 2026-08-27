@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -1500,6 +1500,164 @@ describe('el punto de una publicación (HU-22)', () => {
           idActor: ID_ACTOR,
         })
       );
+    });
+  });
+});
+
+/**
+ * Editar y eliminar publicaciones propias — HU-23 · RF-06.
+ *
+ * Vuelve a pasar lo de HU-22: la regla ya estaba escrita y sin estrenar. Esta vez
+ * es `allow delete`, que no tenía un solo caso desde HU-21. Van tres historias
+ * seguidas encontrando lo mismo, así que conviene decirlo en voz alta: escribir
+ * la regla y probarla son dos trabajos, y el segundo se aplaza solo.
+ */
+describe('editar y eliminar una publicación (HU-23)', () => {
+  /** Los campos que una edición envía. Todos los que la persona controla. */
+  const edicionDe = (cambios = {}) => ({
+    titulo: 'Taller de tambora, segunda edición',
+    tituloNormalizado: 'taller de tambora, segunda edicion',
+    descripcion: 'Cuatro sesiones esta vez, con los mismos instrumentos prestados.',
+    categoria: 'musica',
+    fechaInicio: new Date(2026, 9, 1, 18, 0),
+    fechaFin: new Date(2026, 9, 1, 21, 0),
+    lugar: 'Parque de los Novios, Santa Marta',
+    coordenadas: null,
+    imagen: null,
+    estadoPublicacion: 'pendiente',
+    ...cambios,
+  });
+
+  const sembrar = async (idEvento, cambios = {}) => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), 'eventos', idEvento), {
+        idEvento,
+        idActor: ID_ACTOR,
+        titulo: 'Taller de tambora',
+        tituloNormalizado: 'taller de tambora',
+        descripcion: 'Tres sesiones de introducción al toque de tambora.',
+        categoria: 'musica',
+        fechaInicio: new Date(2026, 8, 1, 18, 0),
+        fechaFin: new Date(2026, 8, 1, 21, 0),
+        lugar: 'Casa de la Cultura, Santa Marta',
+        coordenadas: null,
+        imagen: null,
+        estadoPublicacion: 'pendiente',
+        fechaCreacion: new Date(2026, 7, 20, 9, 0),
+        contadorConsultas: 0,
+        ...cambios,
+      });
+    });
+    return idEvento;
+  };
+
+  describe('la edición devuelve a revisión (primer criterio)', () => {
+    it('el autor edita la suya mientras está pendiente', async () => {
+      const id = await sembrar('ed-1');
+      await assertSucceeds(updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), edicionDe()));
+    });
+
+    it('y también una YA APROBADA, que vuelve a pendiente', async () => {
+      // Este caso es el criterio entero. Hasta HU-22 no se podía escribir sobre
+      // una publicación aprobada, y quedó anotado como límite; lo que lo levanta
+      // no es un cambio en la regla, es que la edición envía 'pendiente'.
+      const id = await sembrar('ed-2', { estadoPublicacion: 'aprobado' });
+      await assertSucceeds(updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), edicionDe()));
+
+      // Se lee como el dueño, que puede ver las suyas en cualquier estado. Sin
+      // esta lectura el caso solo diria que la escritura paso, no que el estado
+      // quedo donde el criterio exige.
+      const despues = await getDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id));
+      assert.equal(despues.data().estadoPublicacion, 'pendiente');
+    });
+
+    it('una devuelta también vuelve a pendiente al editarla', async () => {
+      const id = await sembrar('ed-3', { estadoPublicacion: 'devuelto' });
+      await assertSucceeds(updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), edicionDe()));
+    });
+
+    it('pero NO se puede editar conservando el visto bueno', async () => {
+      // Es lo que hace que el criterio sea verdad y no una costumbre del
+      // formulario: quien escriba por fuera de la interfaz encuentra lo mismo.
+      const id = await sembrar('ed-4', { estadoPublicacion: 'aprobado' });
+      await assertFails(
+        updateDoc(
+          doc(comoUsuario(UID_ACTOR), 'eventos', id),
+          edicionDe({ estadoPublicacion: 'aprobado' })
+        )
+      );
+    });
+
+    it('ni aprobarse a sí misma de camino', async () => {
+      const id = await sembrar('ed-5');
+      await assertFails(
+        updateDoc(
+          doc(comoUsuario(UID_ACTOR), 'eventos', id),
+          edicionDe({ estadoPublicacion: 'aprobado' })
+        )
+      );
+    });
+
+    it('una edición mal formada se rechaza también en el servidor', async () => {
+      // El formulario ya lo impide. El formulario no es la defensa: es la
+      // comodidad. Los dos topes existen y son distintos (docs/18 §2).
+      const id = await sembrar('ed-6');
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id), edicionDe({ titulo: '' }))
+      );
+    });
+  });
+
+  describe('sobre lo ajeno no se puede (tercer criterio)', () => {
+    it('otro actor no edita una publicación que no es suya', async () => {
+      const id = await sembrar('ed-7');
+      await assertFails(updateDoc(doc(comoUsuario(UID_OTRO), 'eventos', id), edicionDe()));
+    });
+
+    it('otro actor no la elimina', async () => {
+      const id = await sembrar('ed-8');
+      await assertFails(deleteDoc(doc(comoUsuario(UID_OTRO), 'eventos', id)));
+    });
+
+    it('un visitante sin sesión tampoco la elimina', async () => {
+      const id = await sembrar('ed-9', { estadoPublicacion: 'aprobado' });
+      await assertFails(deleteDoc(doc(visitante(), 'eventos', id)));
+    });
+  });
+
+  describe('eliminar la propia (segundo criterio)', () => {
+    it('el autor elimina la suya', async () => {
+      // La confirmación no se prueba aquí y no es un olvido: es de la interfaz.
+      // La regla contesta a «quién», no a «estás seguro».
+      const id = await sembrar('ed-10');
+      await assertSucceeds(deleteDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id)));
+    });
+
+    it('y también una que ya está en el catálogo', async () => {
+      // Deliberadamente distinto de la edición: retirar lo propio del catálogo no
+      // necesita permiso de nadie; cambiar lo que ya se aprobó vuelve a pedirlo.
+      const id = await sembrar('ed-11', { estadoPublicacion: 'aprobado' });
+      await assertSucceeds(deleteDoc(doc(comoUsuario(UID_ACTOR), 'eventos', id)));
+    });
+
+    it('un administrador puede eliminar la de otro: es moderación', async () => {
+      const id = await sembrar('ed-12');
+      await assertSucceeds(deleteDoc(doc(comoUsuario(UID_ADMIN), 'eventos', id)));
+    });
+
+    it('eliminar una que no existe no se permite', async () => {
+      // Sobre un documento inexistente «resource» llega nulo, así que
+      // «resource.data.idActor» no devuelve falso: falla la expresión. El
+      // resultado que ve el cliente es el mismo PERMISSION_DENIED, y este caso
+      // **no puede distinguir** una cosa de la otra —conviene decirlo en vez de
+      // apuntarse un mérito que no es—. Lo que sí demuestra es lo que importa:
+      // que no acaba en un borrado.
+      //
+      // A diferencia de «allow read», aquí no se añade la guarda «resource !=
+      // null». En la lectura hacía falta porque había un caso legítimo que
+      // quedaba mal atendido (docs/17 §10); borrar algo que ya no está solo le
+      // ocurre a quien lo borró en otra pestaña, y la lista ya lo ha quitado.
+      await assertFails(deleteDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'no-existe-ed')));
     });
   });
 });

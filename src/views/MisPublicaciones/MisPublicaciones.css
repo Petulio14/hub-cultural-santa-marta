@@ -282,3 +282,45 @@
   gap: 10px;
   margin: 12px 0 0;
 }
+
+
+/* ── Editar y eliminar · HU-23 · RF-06 ─────────────────────────────────────── */
+
+/*
+ * El aviso de que guardar devuelve la publicación a revisión. No es un error ni
+ * una advertencia de las que detienen: es una consecuencia que conviene saber
+ * antes de escribir, no después de guardar.
+ */
+.tarjeta-publicacion__aviso-revision {
+  border-left: 4px solid var(--ocre);
+  background: var(--arena);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  color: var(--gris-texto);
+  font-size: 0.9375rem;
+}
+
+/*
+ * La pregunta y sus dos botones en la misma fila cuando caben, y apilados cuando
+ * no. Envuelve a 360 px, que es donde «Se va a eliminar «…»» ya ocupa dos líneas
+ * por sí sola.
+ */
+.tarjeta-publicacion__confirmacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.tarjeta-publicacion__pregunta {
+  /* Que la pregunta ocupe su propia línea evita el peor accidente posible aquí:
+     que «Sí, eliminar» quede pegado al borde donde estaba «Eliminar». */
+  flex-basis: 100%;
+  color: var(--gris-texto);
+}
+
+/* El formulario de edición vive dentro de la tarjeta, que ya tiene su relleno. */
+.tarjeta-publicacion__cuerpo .publicacion__formulario {
+  margin-top: 4px;
+}

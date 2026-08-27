@@ -31,6 +31,7 @@
 import {
   GeoPoint,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -180,19 +181,19 @@ export async function crearPublicacion(idActor, datos) {
 /**
  * Cambia el punto de una publicación ya guardada — **tercer criterio de HU-22**.
  *
- * Escribe **una sola clave** y no el documento entero. No es por la regla: «toca»
+ * Escribe **dos claves** y no el documento entero. No es por la regla: «toca»
  * compara con «diff().affectedKeys()», que mira valores y no claves enviadas, así
  * que reenviar el documento igual pasaría —hay un caso en pruebas/reglas que lo
  * comprueba en lugar de suponerlo—. Es por lo que cuesta: el documento lleva
  * dentro la imagen reducida, hasta 120 KB (docs/03 §6.1), y reenviarla en cada
  * ajuste del marcador serían 120 KB de subida para mover un punto tres metros.
  *
- * **Solo mientras está pendiente.** No es una decisión de esta historia: la regla
- * de HU-21 exige «estadoPublicacion == 'pendiente'» en lo que se escribe, así que
- * una publicación ya aprobada no la puede modificar su autor. Mover el punto de
- * algo que un administrador aprobó sería cambiar lo aprobado después del visto
- * bueno. Quien necesite corregirlo tendrá que pasar por HU-23, que devuelve la
- * publicación a revisión al editarla.
+ * La segunda clave llega con HU-23 y **levanta el límite que HU-22 documentó**.
+ * Entonces esta función escribía solo «coordenadas», así que sobre una
+ * publicación aprobada chocaba con la regla —que exige que lo escrito siga
+ * siendo 'pendiente'— y el punto se quedaba sin poder corregir. Mover el punto es
+ * editar, y editar devuelve a revisión: es el primer criterio de HU-23 aplicado
+ * al caso más pequeño que existe.
  */
 export async function actualizarPunto(idEvento, punto) {
   exigirConfiguracion();
@@ -200,8 +201,62 @@ export async function actualizarPunto(idEvento, punto) {
   const referencia = doc(db, COLECCION, idEvento);
 
   return intentar(async () => {
-    await updateDoc(referencia, { coordenadas: aGeoPoint(punto) });
+    await updateDoc(referencia, {
+      coordenadas: aGeoPoint(punto),
+      estadoPublicacion: 'pendiente',
+    });
     return aPublicacion(await getDoc(referencia));
+  });
+}
+
+/**
+ * Guarda los cambios de una publicación — **primer criterio de HU-23**.
+ *
+ * «Vuelve a estado pendiente» no lo decide esta línea, lo decide la regla: exige
+ * que lo escrito lleve «estadoPublicacion == 'pendiente'», así que una edición
+ * que intentara conservar el visto bueno sería rechazada por el servidor. Aquí se
+ * escribe porque es lo único que la regla acepta, no porque el cliente sea quien
+ * lo garantiza. La diferencia importa: el criterio se sostiene aunque alguien
+ * escriba por fuera de esta interfaz.
+ *
+ * Es la decisión contraria a la de los perfiles de actor, que **no** vuelven a
+ * pendiente al editarse (docs/17 §5). Un evento anuncia una fecha y un lugar que
+ * pueden cambiar a algo que no debería publicarse; un perfil describe a quien ya
+ * fue admitido en la plataforma.
+ */
+export async function actualizarPublicacion(idEvento, datos) {
+  exigirConfiguracion();
+
+  const referencia = doc(db, COLECCION, idEvento);
+
+  return intentar(async () => {
+    await updateDoc(referencia, {
+      ...camposEditables(datos),
+      estadoPublicacion: 'pendiente',
+    });
+    return aPublicacion(await getDoc(referencia));
+  });
+}
+
+/**
+ * Elimina una publicación — **segundo criterio de HU-23**.
+ *
+ * La confirmación no está aquí y no es un olvido. Un servicio que preguntara
+ * antes de borrar sería un servicio imposible de llamar desde una prueba, y la
+ * pregunta es asunto de la interfaz: es ella la que sabe **qué** se va a borrar y
+ * puede enseñarlo. Aquí solo se borra.
+ *
+ * La regla no mira el estado: se puede retirar una publicación aprobada. Es
+ * deliberado y es lo contrario que en la edición —donde el visto bueno se pierde
+ * en lugar de conservarse—. Retirar lo propio del catálogo no necesita permiso de
+ * nadie; cambiar lo que ya se aprobó, sí vuelve a pedirlo.
+ */
+export async function eliminarPublicacion(idEvento) {
+  exigirConfiguracion();
+
+  return intentar(async () => {
+    await deleteDoc(doc(db, COLECCION, idEvento));
+    return idEvento;
   });
 }
 

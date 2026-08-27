@@ -120,6 +120,15 @@ img {
   border-color: var(--gris-borde);
 }
 
+/* Lo que no se puede deshacer (HU-23). Terracota es el color de la paleta que
+   más se aparta del turquesa de las acciones normales, y va acompañado siempre
+   de una pregunta escrita: el color por sí solo no distingue nada para quien no
+   lo percibe (WCAG 1.4.1). */
+.boton--peligro {
+  background: var(--terracota);
+  color: var(--blanco);
+}
+
 .tarjeta {
   background: var(--blanco);
   border: 1px solid var(--gris-borde);
