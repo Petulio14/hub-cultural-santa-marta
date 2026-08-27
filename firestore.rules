@@ -64,9 +64,15 @@ service cloud.firestore {
         // Presente siempre, con punto o sin él: nula al aprobar y con texto al
         // devolver. Que la clave exista en los dos casos evita que el documento
         // cambie de forma según la decisión.
+        //
+        // «trim()» y no solo «size() > 0»: tres espacios tienen tamaño tres y no
+        // son una observación escrita. Lo encontró el caso de prueba, no la
+        // lectura de la regla — el servicio ya recortaba antes de escribir, así
+        // que por la interfaz no se notaba nada, y el agujero solo existía para
+        // quien escribiera por fuera, que es justo de quien defiende esto.
         && (d.decision == 'aprobado'
             ? d.observaciones == null
-            : d.observaciones is string && d.observaciones.size() > 0
+            : d.observaciones is string && d.observaciones.trim().size() > 0
               && d.observaciones.size() <= 2000);
     }
 
