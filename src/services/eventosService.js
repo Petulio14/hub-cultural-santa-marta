@@ -29,6 +29,7 @@
  *    (docs/04 §10).
  */
 import {
+  GeoPoint,
   collection,
   doc,
   getDoc,
@@ -36,6 +37,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { normalizarTexto } from '../utils/texto.js';
@@ -106,10 +108,30 @@ const porCreacionDescendente = (a, b) =>
  * «contadorConsultas» no están: los pone el servicio al crear y las reglas los
  * defienden después.
  */
-function camposEditables({ titulo, descripcion, categoria, fechaInicio, fechaFin, lugar, imagen }) {
+/**
+ * El punto del dominio al tipo de Firestore — HU-22.
+ *
+ * Nulo entra y nulo sale: una publicación sin punto es válida y no aparece en el
+ * mapa (docs/04 §6). Es la traducción inversa de la que hace «aPublicacion», y
+ * las dos viven aquí por lo mismo: «latitude» y «longitude» son vocabulario del
+ * SDK, y una vista no habla ese idioma (docs/03 §3).
+ */
+const aGeoPoint = (punto) => (punto ? new GeoPoint(punto.lat, punto.lon) : null);
+
+function camposEditables({
+  titulo,
+  descripcion,
+  categoria,
+  fechaInicio,
+  fechaFin,
+  lugar,
+  punto,
+  imagen,
+}) {
   const tituloLimpio = titulo.trim();
 
   return {
+    coordenadas: aGeoPoint(punto),
     titulo: tituloLimpio,
     // Se guarda calculado y no se calcula al buscar: Firestore no sabe comparar
     // sin distinguir tildes, así que la única forma de que «Cumbia» encuentre
@@ -125,11 +147,13 @@ function camposEditables({ titulo, descripcion, categoria, fechaInicio, fechaFin
 }
 
 /**
- * Crea una publicación — **primer y cuarto criterio de aceptación de HU-21**.
+ * Crea una publicación — **primer y cuarto criterio de aceptación de HU-21**,
+ * y **primer criterio de HU-22** desde que «coordenadas» puede llegar con punto.
  *
- * Nace «pendiente» y con «coordenadas» en nulo: el punto en el mapa lo añade
- * HU-22, y dejar la clave escrita desde el principio evita que el documento
- * cambie de forma a mitad de vida.
+ * Nace «pendiente». «coordenadas» ya no se fija aquí a nulo: la escribe
+ * «camposEditables», que traduce el punto del formulario y deja nulo si no lo
+ * hay. La clave sigue estando siempre presente, con punto o sin él, para que el
+ * documento no cambie de forma a mitad de vida.
  */
 export async function crearPublicacion(idActor, datos) {
   exigirConfiguracion();
@@ -141,7 +165,6 @@ export async function crearPublicacion(idActor, datos) {
       idEvento: referencia.id,
       idActor,
       ...camposEditables(datos),
-      coordenadas: null,
       estadoPublicacion: 'pendiente',
       fechaCreacion: serverTimestamp(),
       contadorConsultas: 0,
@@ -150,6 +173,34 @@ export async function crearPublicacion(idActor, datos) {
     // Se vuelve a leer para devolver la fecha que puso el servidor. Devolver lo
     // que se acaba de escribir daría «fechaCreacion» en nulo, que es justo el
     // dato que el cuarto criterio manda comprobar.
+    return aPublicacion(await getDoc(referencia));
+  });
+}
+
+/**
+ * Cambia el punto de una publicación ya guardada — **tercer criterio de HU-22**.
+ *
+ * Escribe **una sola clave** y no el documento entero. No es por la regla: «toca»
+ * compara con «diff().affectedKeys()», que mira valores y no claves enviadas, así
+ * que reenviar el documento igual pasaría —hay un caso en pruebas/reglas que lo
+ * comprueba en lugar de suponerlo—. Es por lo que cuesta: el documento lleva
+ * dentro la imagen reducida, hasta 120 KB (docs/03 §6.1), y reenviarla en cada
+ * ajuste del marcador serían 120 KB de subida para mover un punto tres metros.
+ *
+ * **Solo mientras está pendiente.** No es una decisión de esta historia: la regla
+ * de HU-21 exige «estadoPublicacion == 'pendiente'» en lo que se escribe, así que
+ * una publicación ya aprobada no la puede modificar su autor. Mover el punto de
+ * algo que un administrador aprobó sería cambiar lo aprobado después del visto
+ * bueno. Quien necesite corregirlo tendrá que pasar por HU-23, que devuelve la
+ * publicación a revisión al editarla.
+ */
+export async function actualizarPunto(idEvento, punto) {
+  exigirConfiguracion();
+
+  const referencia = doc(db, COLECCION, idEvento);
+
+  return intentar(async () => {
+    await updateDoc(referencia, { coordenadas: aGeoPoint(punto) });
     return aPublicacion(await getDoc(referencia));
   });
 }

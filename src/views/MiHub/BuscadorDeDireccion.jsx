@@ -1,9 +1,6 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import Campo from '../../components/Campo.jsx';
-import {
-  ErrorDeGeocodificacion,
-  buscarDireccion,
-} from '../../services/geocodificacionService.js';
+import { useBusquedaDeDireccion } from '../../hooks/useBusquedaDeDireccion.js';
 import { textoDeCoordenadas } from '../../utils/coordenadas.js';
 
 /**
@@ -23,6 +20,12 @@ import { textoDeCoordenadas } from '../../utils/coordenadas.js';
  * uno. Ese es el paso que convierte «lo que encontró el buscador» en «el sitio
  * que dice el responsable del hub», y es la diferencia entre un mapa útil y un
  * mapa con puntos plausibles pero falsos.
+ *
+ * Desde HU-22 el «pedir, esperar y traducir el fallo» vive en
+ * «useBusquedaDeDireccion»: lo hacen dos formularios y hacerlo dos veces se
+ * convertía en dos sitios donde arreglar el mismo mensaje. Lo que no subió al
+ * gancho es este marcado, porque la publicación cultural enseña además un mapa
+ * y elegir un candidato allí mueve la vista del mapa.
  */
 export default function BuscadorDeDireccion({
   direccion,
@@ -33,26 +36,7 @@ export default function BuscadorDeDireccion({
   errorDePunto = null,
 }) {
   const id = useId();
-  const [candidatos, setCandidatos] = useState(null);
-  const [buscando, setBuscando] = useState(false);
-  const [fallo, setFallo] = useState(null);
-
-  async function buscar() {
-    setBuscando(true);
-    setFallo(null);
-    setCandidatos(null);
-    try {
-      setCandidatos(await buscarDireccion(direccion));
-    } catch (error) {
-      setFallo(
-        error instanceof ErrorDeGeocodificacion
-          ? error.message
-          : 'No se pudo buscar la dirección. Inténtalo de nuevo.'
-      );
-    } finally {
-      setBuscando(false);
-    }
-  }
+  const { candidatos, buscando, fallo, buscar, limpiar } = useBusquedaDeDireccion();
 
   return (
     <fieldset className="hub__ubicacion">
@@ -66,7 +50,7 @@ export default function BuscadorDeDireccion({
           // Cambiar la dirección invalida el punto ya elegido: si no, se
           // guardaría una dirección con las coordenadas de otra.
           if (punto) alElegirPunto(null);
-          setCandidatos(null);
+          limpiar();
         }}
         error={errorDeDireccion}
         ayuda="Escríbela como se la darías a alguien que va a llegar."
@@ -76,7 +60,7 @@ export default function BuscadorDeDireccion({
         <button
           className="boton boton--secundario"
           type="button"
-          onClick={buscar}
+          onClick={() => buscar(direccion)}
           disabled={buscando || direccion.trim() === ''}
         >
           {buscando ? 'Buscando…' : 'Buscar en el mapa'}

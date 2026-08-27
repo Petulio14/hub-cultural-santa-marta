@@ -454,7 +454,36 @@ export function validarPeriodo(inicio, fin) {
 }
 
 /**
- * Valida el formulario completo de una publicación (HU-21).
+ * El punto de una publicación — HU-22 · RF-08.
+ *
+ * **Que falte no es un error**, y ahí está toda la diferencia con
+ * «validarPunto», que es la del hub. Un hub sin punto no tiene sentido: es un
+ * espacio físico y su razón de estar en la plataforma es que se pueda llegar.
+ * Una publicación sin punto sí lo tiene —se guarda, se modera y se lee en el
+ * catálogo—, solo que no sale en el mapa. El modelo lo dice desde HU-21:
+ * «coordenadas» nace nula (docs/04 §6).
+ *
+ * Por eso esta función devuelve nulo cuando no hay punto. Lo que sí es un error
+ * es un punto **equivocado**: uno fuera de Santa Marta no es un descuido de quien
+ * publica, es un candidato mal devuelto por el buscador —pedir «Calle 22» sin
+ * acotar encuentra una calle 22 de cualquier ciudad del país—, y guardarlo
+ * pondría un marcador creíble y falso en el mapa de HU-30.
+ *
+ * La advertencia de que sin punto no aparecerá en el mapa —**segundo criterio de
+ * aceptación**— no vive aquí: no es una validación, porque no impide guardar.
+ * Vive en el formulario, que la enseña al intentar enviar y pide una segunda
+ * confirmación.
+ */
+export function validarPuntoDePublicacion(punto) {
+  if (!punto) return null;
+  if (!estaEnSantaMarta(punto)) {
+    return 'Ese punto queda fuera de Santa Marta y su área. Sitúalo de nuevo sobre el mapa.';
+  }
+  return null;
+}
+
+/**
+ * Valida el formulario completo de una publicación (HU-21, ampliada en HU-22).
  *
  * La imagen no entra aquí. Es opcional según el modelo de datos (docs/04 §6) y
  * su validación no es del mismo tipo que las demás: depende del archivo elegido
@@ -462,7 +491,7 @@ export function validarPeriodo(inicio, fin) {
  * «utils/imagen.js», que sí necesita navegador.
  */
 export function validarPublicacion(
-  { titulo, descripcion, categoria, fechaInicio, fechaFin, lugar } = {},
+  { titulo, descripcion, categoria, fechaInicio, fechaFin, lugar, punto } = {},
   identificadoresOfrecidos = []
 ) {
   return {
@@ -471,6 +500,7 @@ export function validarPublicacion(
       descripcion: validarDescripcionDePublicacion(descripcion),
       categoria: validarCategoriaDeActor(categoria, identificadoresOfrecidos),
       lugar: validarLugar(lugar),
+      punto: validarPuntoDePublicacion(punto),
     }),
     ...validarPeriodo(fechaInicio, fechaFin),
   };

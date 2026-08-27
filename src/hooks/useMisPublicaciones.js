@@ -51,5 +51,19 @@ export function useMisPublicaciones(idActor) {
     setPublicaciones((actuales) => [publicacion, ...actuales]);
   }, []);
 
-  return { publicaciones, cargando, error, recargar, anadir };
+  /**
+   * Sustituye una publicación por su versión ya guardada — HU-22.
+   *
+   * Conserva su sitio en la lista en lugar de reordenar: el orden es por fecha de
+   * creación, y cambiar el punto no cambia cuándo se creó. Recolocar la tarjeta
+   * bajo el dedo de quien acaba de pulsar «Guardar» sería moverle lo que está
+   * mirando por un dato que no ha cambiado.
+   */
+  const reemplazar = useCallback((publicacion) => {
+    setPublicaciones((actuales) =>
+      actuales.map((actual) => (actual.id === publicacion.id ? publicacion : actual))
+    );
+  }, []);
+
+  return { publicaciones, cargando, error, recargar, anadir, reemplazar };
 }

@@ -10,6 +10,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  CENTRO_SANTA_MARTA,
   LIMITES_SANTA_MARTA,
   esLatitudValida,
   esLongitudValida,
@@ -114,5 +115,35 @@ describe('cómo se escribe una coordenada', () => {
 
   it('un punto que no existe no produce texto', () => {
     assert.equal(textoDeCoordenadas(null), '');
+  });
+});
+
+/**
+ * El centro del mapa — HU-22 · RF-08.
+ *
+ * Tres casos que parecen triviales y son los que sostienen que el mapa abra
+ * donde debe. «MapaDePunto» abre en este punto y a la vez impide arrastrar fuera
+ * del rectángulo: si el centro cayera fuera, Leaflet abriría peleándose consigo
+ * mismo, corrigiendo la vista en el primer fotograma.
+ */
+describe('el centro del mapa (HU-22)', () => {
+  it('cae dentro del rectángulo que acota el mapa', () => {
+    assert.equal(estaEnSantaMarta(CENTRO_SANTA_MARTA), true);
+  });
+
+  it('no es el centro geométrico del rectángulo, que caería en la Sierra', () => {
+    // Si alguien "corrige" el centro calculándolo del rectángulo, este caso lo
+    // detiene y el comentario de coordenadas.js explica por qué está mal.
+    const medioLat = (LIMITES_SANTA_MARTA.latMin + LIMITES_SANTA_MARTA.latMax) / 2;
+    const medioLon = (LIMITES_SANTA_MARTA.lonMin + LIMITES_SANTA_MARTA.lonMax) / 2;
+    assert.notEqual(CENTRO_SANTA_MARTA.lat, medioLat);
+    assert.notEqual(CENTRO_SANTA_MARTA.lon, medioLon);
+  });
+
+  it('está en el mar Caribe por el norte y no al revés: longitud negativa', () => {
+    // Colombia está al oeste de Greenwich. Una longitud positiva sería el error
+    // de signo clásico, y colocaría Santa Marta en Somalia.
+    assert.equal(CENTRO_SANTA_MARTA.lon < 0, true);
+    assert.equal(CENTRO_SANTA_MARTA.lat > 0, true);
   });
 });

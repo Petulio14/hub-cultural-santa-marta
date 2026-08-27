@@ -4,7 +4,7 @@ import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { useMiPerfilDeActor } from '../../hooks/useMiPerfilDeActor.js';
 import { useMisPublicaciones } from '../../hooks/useMisPublicaciones.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
-import { crearPublicacion } from '../../services/eventosService.js';
+import { actualizarPunto, crearPublicacion } from '../../services/eventosService.js';
 import FormularioDePublicacion from './FormularioDePublicacion.jsx';
 import TarjetaDePublicacion from './TarjetaDePublicacion.jsx';
 import './MisPublicaciones.css';
@@ -31,7 +31,7 @@ export default function MisPublicaciones() {
   const { perfil, cargando: cargandoPerfil } = useMiPerfilDeActor(uid);
   const idActor = perfil?.id ?? null;
 
-  const { publicaciones, cargando, error, anadir } = useMisPublicaciones(idActor);
+  const { publicaciones, cargando, error, anadir, reemplazar } = useMisPublicaciones(idActor);
   const { categorias, cargando: cargandoCategorias } = useCategoriasActivas();
 
   const [aviso, setAviso] = useState(null);
@@ -66,6 +66,25 @@ export default function MisPublicaciones() {
     } finally {
       setGuardando(false);
     }
+  }
+
+  /**
+   * Guarda el punto de una publicación ya creada — HU-22, tercer criterio.
+   *
+   * A diferencia de «publicar», este **deja escapar el error** en lugar de
+   * pintarlo arriba: el mapa que lo provocó está dentro de una tarjeta, puede
+   * quedar a varias pantallas del aviso general, y un mensaje que no se ve no
+   * avisa de nada. Lo recoge «EditorDePunto» y lo enseña junto a su mapa.
+   */
+  async function guardarPunto(idEvento, punto) {
+    const actualizada = await actualizarPunto(idEvento, punto);
+    reemplazar(actualizada);
+    setAviso({
+      tipo: 'exito',
+      texto: punto
+        ? `«${actualizada.titulo}» quedó situada en el mapa.`
+        : `«${actualizada.titulo}» ya no tiene punto: dejará de aparecer en el mapa.`,
+    });
   }
 
   if (cargandoPerfil) {
@@ -143,7 +162,11 @@ export default function MisPublicaciones() {
       {publicaciones.length > 0 && (
         <ul className="mis-publicaciones__lista">
           {publicaciones.map((publicacion) => (
-            <TarjetaDePublicacion key={publicacion.id} publicacion={publicacion} />
+            <TarjetaDePublicacion
+              key={publicacion.id}
+              publicacion={publicacion}
+              alGuardarPunto={guardarPunto}
+            />
           ))}
         </ul>
       )}

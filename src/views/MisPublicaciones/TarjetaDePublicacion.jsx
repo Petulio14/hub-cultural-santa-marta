@@ -1,5 +1,6 @@
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import { textoDeFecha, textoDelPeriodo, yaTermino } from '../../utils/fechas.js';
+import EditorDePunto from './EditorDePunto.jsx';
 
 /**
  * Una publicación en la lista del actor que la creó — HU-21.
@@ -25,7 +26,7 @@ const ESTADOS = {
   },
 };
 
-export default function TarjetaDePublicacion({ publicacion }) {
+export default function TarjetaDePublicacion({ publicacion, alGuardarPunto }) {
   const estado = ESTADOS[publicacion.estadoPublicacion] ?? ESTADOS.pendiente;
   const terminada = yaTermino(publicacion.fechaFin);
 
@@ -54,6 +55,14 @@ export default function TarjetaDePublicacion({ publicacion }) {
         <p className="tarjeta-publicacion__lugar">{publicacion.lugar}</p>
 
         <p className="tarjeta-publicacion__descripcion">{publicacion.descripcion}</p>
+
+        {/* HU-22 · tercer criterio: el punto se puede cambiar después de
+            guardar. El editor decide solo si se puede tocar, porque quien sabe
+            eso es el estado de moderación y no la tarjeta. */}
+        <EditorDePunto
+          publicacion={publicacion}
+          alGuardar={(punto) => alGuardarPunto(publicacion.id, punto)}
+        />
 
         {/* La fecha de creación no es decorativa: es el dato que el cuarto
             criterio de aceptación manda conservar, y la pone el servidor. */}

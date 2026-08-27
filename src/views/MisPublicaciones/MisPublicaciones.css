@@ -150,3 +150,135 @@
     align-items: start;
   }
 }
+
+
+/* ── Dónde ocurre · HU-22 · RF-08 ──────────────────────────────────────────── */
+
+.publicacion__ubicacion {
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 14px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.publicacion__ubicacion legend {
+  font-weight: 700;
+  color: var(--negro-texto);
+  padding: 0 6px;
+}
+
+.publicacion__acciones-ubicacion {
+  margin: 6px 0 0;
+}
+
+/* Que no se encuentre el sitio no es un fallo: en Santa Marta es lo normal, y
+   para eso está el mapa debajo. Por eso se avisa con el tono de una nota y no
+   con el del error, que se reserva para lo que impide guardar. */
+.publicacion__sin-resultados {
+  border-left: 4px solid var(--ocre);
+  background: var(--arena);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 10px 14px;
+  margin: 10px 0 0;
+}
+
+.publicacion__candidatos ul {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Cada candidato es un botón de ancho completo, igual que en el hub: a 360 px
+   una línea de texto pulsable tiene que ser una zona de toque de verdad. */
+.publicacion__candidato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--toque-minimo);
+  padding: 10px 14px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--gris-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.publicacion__candidato--elegido {
+  border-color: var(--turquesa-oscuro);
+  border-width: 2px;
+  background: var(--arena);
+}
+
+.publicacion__candidato--elegido .publicacion__candidato-nombre {
+  font-weight: 700;
+  color: var(--negro-texto);
+}
+
+.publicacion__candidato-punto {
+  font-size: 0.875rem;
+}
+
+.publicacion__punto {
+  margin: 10px 0 0;
+  color: var(--gris-texto);
+  font-size: 0.9375rem;
+}
+
+.publicacion__quitar-punto,
+.tarjeta-publicacion__quitar {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--terracota);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* La advertencia de publicar sin punto. Terracota y no rojo porque no es un
+   error: no impide guardar, avisa de una consecuencia. */
+.publicacion__aviso-sin-punto {
+  border-left: 4px solid var(--terracota);
+  background: var(--arena);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 12px 14px;
+  margin: 0;
+  color: var(--gris-texto);
+}
+
+/* ── El punto de una publicación ya guardada · HU-22, tercer criterio ─────── */
+
+.tarjeta-publicacion__punto {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+.tarjeta-publicacion__punto-estado,
+.tarjeta-publicacion__punto-bloqueado,
+.tarjeta-publicacion__punto-nuevo {
+  margin: 0 0 8px;
+  color: var(--gris-texto);
+  font-size: 0.9375rem;
+}
+
+.tarjeta-publicacion__editor {
+  margin-top: 10px;
+}
+
+.tarjeta-publicacion__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 0;
+}
