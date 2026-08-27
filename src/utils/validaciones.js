@@ -11,6 +11,7 @@
  */
 
 import { estaEnSantaMarta } from './coordenadas.js';
+import { esFechaValida, periodoCoherente } from './fechas.js';
 import { aIdentificador } from './texto.js';
 
 /** Mínimo exigido por el primer criterio de aceptación de HU-12. */
@@ -361,4 +362,116 @@ export function validarPerfilDeHub(
   }
 
   return errores;
+}
+// ── La publicación de un evento o experiencia · HU-21 · RF-05, RF-07 ─────────
+
+/** Tiene que caber en una tarjeta del catálogo sin ocupar tres líneas. */
+export const LONGITUD_MAXIMA_TITULO = 120;
+
+/** Por debajo de esto un título no dice qué es: «Taller» no es un título. */
+export const LONGITUD_MINIMA_TITULO = 5;
+
+/**
+ * El doble que la descripción de un actor, y a propósito.
+ *
+ * La del actor es una presentación —quién soy y qué hago—; la de un evento tiene
+ * que caber además la programación, los precios y las condiciones de asistencia.
+ * Dos mil caracteres de texto no pesan nada al lado de los 120 000 que puede
+ * ocupar la imagen del mismo documento (docs/18 §2).
+ */
+export const LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION = 2000;
+
+/** Lo mismo que se exige a la descripción de un actor, por la misma razón. */
+export const LONGITUD_MINIMA_DESCRIPCION_PUBLICACION = 30;
+
+export function validarTitulo(valor) {
+  const limpio = (valor ?? '').trim();
+
+  if (limpio === '') return 'Ponle un título: es lo primero que se lee en el catálogo.';
+  if (limpio.length < LONGITUD_MINIMA_TITULO) {
+    return `El título necesita al menos ${LONGITUD_MINIMA_TITULO} caracteres para decir de qué se trata.`;
+  }
+  if (limpio.length > LONGITUD_MAXIMA_TITULO) {
+    return `El título no puede pasar de ${LONGITUD_MAXIMA_TITULO} caracteres.`;
+  }
+  return null;
+}
+
+export function validarDescripcionDePublicacion(valor) {
+  const limpio = (valor ?? '').trim();
+
+  if (limpio === '') return 'Describe la experiencia: es lo que decide a alguien a asistir.';
+  if (limpio.length < LONGITUD_MINIMA_DESCRIPCION_PUBLICACION) {
+    return `Con menos de ${LONGITUD_MINIMA_DESCRIPCION_PUBLICACION} caracteres no se entiende la propuesta.`;
+  }
+  if (limpio.length > LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION) {
+    const sobran = limpio.length - LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION;
+    const cuenta = sobran === 1 ? 'sobra 1 carácter' : `sobran ${sobran} caracteres`;
+    return `La descripción no puede pasar de ${LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION} caracteres. Te ${cuenta}.`;
+  }
+  return null;
+}
+
+/** Dónde ocurre, escrito. El punto en el mapa es cosa de HU-22. */
+export function validarLugar(valor) {
+  const limpio = (valor ?? '').trim();
+
+  if (limpio === '') {
+    return 'Indica el lugar: sin él, quien quiera asistir no sabe adónde ir.';
+  }
+  if (limpio.length > LONGITUD_MAXIMA_DIRECCION) {
+    return `El lugar no puede pasar de ${LONGITUD_MAXIMA_DIRECCION} caracteres.`;
+  }
+  return null;
+}
+
+/**
+ * Las dos fechas — **segundo criterio de aceptación de HU-21**.
+ *
+ * El mensaje del orden invertido nombra las dos fechas en lugar de decir «fechas
+ * inválidas»: quien se equivoca aquí casi siempre ha escrito bien una de las dos
+ * y mal la otra, y hay que decirle cuál mirar.
+ *
+ * Se devuelve bajo la clave «fechaFin» a propósito. El error pertenece a la
+ * pareja, no a un campo, pero pintarlo junto al segundo control es lo que hace
+ * que se lea donde está el dedo: la fecha de fin es la última que se rellena.
+ */
+export function validarPeriodo(inicio, fin) {
+  const errores = {};
+
+  if (!esFechaValida(inicio)) {
+    errores.fechaInicio = 'Indica cuándo empieza, con día y hora.';
+  }
+  if (!esFechaValida(fin)) {
+    errores.fechaFin = 'Indica cuándo termina, con día y hora.';
+  }
+  if (esFechaValida(inicio) && esFechaValida(fin) && !periodoCoherente(inicio, fin)) {
+    errores.fechaFin =
+      'La fecha de finalización es anterior a la de inicio. Revisa las dos: nada puede terminar antes de empezar.';
+  }
+
+  return errores;
+}
+
+/**
+ * Valida el formulario completo de una publicación (HU-21).
+ *
+ * La imagen no entra aquí. Es opcional según el modelo de datos (docs/04 §6) y
+ * su validación no es del mismo tipo que las demás: depende del archivo elegido
+ * —tamaño, formato y peso una vez reducido—, y de eso se encarga
+ * «utils/imagen.js», que sí necesita navegador.
+ */
+export function validarPublicacion(
+  { titulo, descripcion, categoria, fechaInicio, fechaFin, lugar } = {},
+  identificadoresOfrecidos = []
+) {
+  return {
+    ...sinNulos({
+      titulo: validarTitulo(titulo),
+      descripcion: validarDescripcionDePublicacion(descripcion),
+      categoria: validarCategoriaDeActor(categoria, identificadoresOfrecidos),
+      lugar: validarLugar(lugar),
+    }),
+    ...validarPeriodo(fechaInicio, fechaFin),
+  };
 }

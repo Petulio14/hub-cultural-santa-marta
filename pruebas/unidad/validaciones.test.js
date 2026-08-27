@@ -1,5 +1,5 @@
 /**
- * Validación de los formularios — HU-12, HU-13, HU-16, HU-17, HU-18, HU-20.
+ * Validación de los formularios — HU-12, HU-13, HU-16, HU-17, HU-18, HU-20, HU-21.
  *
  * No necesitan emulador ni navegador porque lo que comprueban son funciones
  * puras. Es la razón de que la validación viva en «src/utils» y no dentro de la
@@ -14,12 +14,16 @@ import { describe, it } from 'node:test';
 import {
   LONGITUD_MAXIMA_CATEGORIA,
   LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
+  LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION,
   LONGITUD_MAXIMA_DIRECCION,
   LONGITUD_MAXIMA_LINEA,
   LONGITUD_MAXIMA_MANIFESTACION,
   LONGITUD_MAXIMA_NOMBRE_ACTOR,
+  LONGITUD_MAXIMA_TITULO,
   LONGITUD_MINIMA_CONTRASENA,
   LONGITUD_MINIMA_DESCRIPCION_ACTOR,
+  LONGITUD_MINIMA_DESCRIPCION_PUBLICACION,
+  LONGITUD_MINIMA_TITULO,
   MAXIMO_LINEAS_DE_TRABAJO,
   hayErrores,
   validarCategoria,
@@ -29,6 +33,8 @@ import {
   validarIngreso,
   validarPerfilDeActor,
   validarPerfilDeHub,
+  validarPeriodo,
+  validarPublicacion,
   validarRecuperacion,
   validarRegistro,
   validarTelefono,
@@ -450,5 +456,131 @@ describe('hub · contacto (RF-12)', () => {
 
   it('sin ninguno se bloquea', () => {
     assert.ok(hub({ contacto: {} }).contacto);
+  });
+});
+// ── La publicación de un evento · HU-21 · RF-05, RF-07 ──────────────────────
+
+/** Publicación correcta de la que parten las variantes. */
+const PUBLICACION_VALIDA = {
+  titulo: 'Taller de tambora para principiantes',
+  descripcion:
+    'Tres sesiones de introducción al toque de tambora, con instrumentos prestados. No hace falta experiencia previa.',
+  categoria: 'musica-y-danza',
+  fechaInicio: new Date(2026, 8, 1, 18, 0),
+  fechaFin: new Date(2026, 8, 1, 21, 0),
+  lugar: 'Casa de la Cultura, Santa Marta',
+};
+
+const CATEGORIAS = ['musica-y-danza', 'artes-visuales'];
+
+const publicacion = (cambios = {}) =>
+  validarPublicacion({ ...PUBLICACION_VALIDA, ...cambios }, CATEGORIAS);
+
+describe('publicación · el formulario completo (HU-21, primer criterio)', () => {
+  it('una publicación bien puesta no tiene errores', () => {
+    assert.equal(hayErrores(publicacion()), false);
+  });
+
+  it('sin categoría del catálogo no se guarda', () => {
+    assert.ok(publicacion({ categoria: 'inventada' }).categoria);
+  });
+
+  it('sin lugar no se guarda: nadie sabría adónde ir', () => {
+    assert.ok(publicacion({ lugar: '   ' }).lugar);
+  });
+});
+
+describe('publicación · el título', () => {
+  it('vacío se rechaza', () => {
+    assert.ok(publicacion({ titulo: '' }).titulo);
+  });
+
+  it('un título de una palabra corta no dice de qué se trata', () => {
+    assert.ok(publicacion({ titulo: 'Hoy' }).titulo);
+  });
+
+  it('acepta exactamente el mínimo', () => {
+    assert.equal(publicacion({ titulo: 'a'.repeat(LONGITUD_MINIMA_TITULO) }).titulo, undefined);
+  });
+
+  it('acepta exactamente el máximo y rechaza uno más', () => {
+    assert.equal(publicacion({ titulo: 'a'.repeat(LONGITUD_MAXIMA_TITULO) }).titulo, undefined);
+    assert.ok(publicacion({ titulo: 'a'.repeat(LONGITUD_MAXIMA_TITULO + 1) }).titulo);
+  });
+
+  it('los espacios de los extremos no cuentan como título', () => {
+    assert.ok(publicacion({ titulo: '          ' }).titulo);
+  });
+});
+
+describe('publicación · la descripción', () => {
+  it('demasiado corta no explica la propuesta', () => {
+    assert.ok(publicacion({ descripcion: 'Un taller.' }).descripcion);
+  });
+
+  it('acepta exactamente el mínimo', () => {
+    assert.equal(
+      publicacion({ descripcion: 'a'.repeat(LONGITUD_MINIMA_DESCRIPCION_PUBLICACION) })
+        .descripcion,
+      undefined
+    );
+  });
+
+  it('el aviso de exceso dice cuánto sobra', () => {
+    const mensaje = publicacion({
+      descripcion: 'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION + 16),
+    }).descripcion;
+    assert.match(mensaje, /sobran 16 caracteres/);
+  });
+
+  it('cuando sobra uno solo, el mensaje va en singular', () => {
+    const mensaje = publicacion({
+      descripcion: 'a'.repeat(LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION + 1),
+    }).descripcion;
+    assert.match(mensaje, /sobra 1 carácter/);
+  });
+
+  it('es más larga que la de un actor: no son el mismo texto', () => {
+    assert.ok(LONGITUD_MAXIMA_DESCRIPCION_PUBLICACION > LONGITUD_MAXIMA_DESCRIPCION_ACTOR);
+  });
+});
+
+describe('publicación · las dos fechas (HU-21, segundo criterio)', () => {
+  it('terminar antes de empezar bloquea el envío', () => {
+    const errores = publicacion({ fechaFin: new Date(2026, 8, 1, 17, 0) });
+    assert.ok(errores.fechaFin);
+    assert.equal(hayErrores(errores), true);
+  });
+
+  it('el mensaje explica qué pasa, no dice «fecha inválida»', () => {
+    const mensaje = publicacion({ fechaFin: new Date(2026, 8, 1, 17, 0) }).fechaFin;
+    assert.match(mensaje, /anterior a la de inicio/);
+    assert.match(mensaje, /terminar antes de empezar/);
+  });
+
+  it('el error se pinta junto a la fecha de fin, que es la última que se rellena', () => {
+    const errores = publicacion({ fechaFin: new Date(2026, 8, 1, 17, 0) });
+    assert.equal(errores.fechaInicio, undefined);
+  });
+
+  it('empezar y terminar a la vez es válido: un acto instantáneo', () => {
+    const cuando = new Date(2026, 8, 1, 18, 0);
+    assert.equal(hayErrores(publicacion({ fechaInicio: cuando, fechaFin: cuando })), false);
+  });
+
+  it('sin fechas se piden las dos por separado', () => {
+    const errores = validarPeriodo(null, null);
+    assert.ok(errores.fechaInicio);
+    assert.ok(errores.fechaFin);
+  });
+
+  it('una fecha imposible no es una fecha', () => {
+    assert.ok(validarPeriodo(new Date('vaya'), new Date(2026, 8, 1)).fechaInicio);
+  });
+
+  it('cuando falta una sola, no se inventa el error del orden', () => {
+    const errores = validarPeriodo(new Date(2026, 8, 1, 18, 0), null);
+    assert.equal(errores.fechaInicio, undefined);
+    assert.match(errores.fechaFin, /cuándo termina/);
   });
 });

@@ -1,0 +1,152 @@
+/* V-9 · Mis publicaciones — HU-21 */
+
+.mis-publicaciones {
+  padding-block: 32px;
+}
+
+.mis-publicaciones__intro,
+.mis-publicaciones__vacio {
+  max-width: 62ch;
+  color: var(--gris-texto);
+}
+
+.mis-publicaciones__aviso {
+  max-width: 62ch;
+  padding: 12px 16px;
+  border: 1px solid var(--turquesa-oscuro);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--turquesa-oscuro);
+  font-weight: 600;
+}
+
+.mis-publicaciones__aviso--error {
+  border-color: var(--terracota);
+  color: var(--terracota);
+}
+
+.publicacion__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 62ch;
+}
+
+.publicacion__fechas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-block: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+}
+
+.publicacion__fechas legend {
+  padding-inline: 6px;
+  font-weight: 600;
+}
+
+/* Las dos fechas van una junto a otra en cuanto hay sitio: se rellenan seguidas
+   y se comparan de un vistazo, que es lo que evita invertirlas. */
+@media (min-width: 768px) {
+  .publicacion__fechas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+  }
+
+  .publicacion__fechas legend,
+  .publicacion__fechas > .campo__ayuda {
+    grid-column: 1 / -1;
+  }
+}
+
+.mis-publicaciones__lista {
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarjeta-publicacion {
+  display: grid;
+  gap: 16px;
+}
+
+/* El selector lleva el padre para ganarle a «.imagen-actor { width: 100% }» de
+   global.css: las dos son una sola clase, empatan en especificidad y decidiría
+   el orden en que Vite junta las hojas. Es la misma trampa de la tarjeta del
+   directorio de actores y de la cabecera. */
+.tarjeta-publicacion .tarjeta-publicacion__imagen {
+  width: 96px;
+  height: 96px;
+}
+
+.tarjeta-publicacion__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tarjeta-publicacion__titulo {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.tarjeta-publicacion__estado {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--radio);
+  background: var(--arena);
+  border-left: 4px solid var(--ocre);
+  font-size: 0.9rem;
+}
+
+.tarjeta-publicacion__estado--aprobado {
+  border-left-color: var(--turquesa-oscuro);
+}
+
+.tarjeta-publicacion__estado--devuelto {
+  border-left-color: var(--terracota);
+}
+
+.tarjeta-publicacion__cuando {
+  margin: 0;
+  font-weight: 600;
+}
+
+.tarjeta-publicacion__pasada {
+  font-weight: 500;
+  color: var(--gris-texto);
+}
+
+.tarjeta-publicacion__lugar,
+.tarjeta-publicacion__descripcion,
+.tarjeta-publicacion__creada {
+  margin: 0;
+  color: var(--gris-texto);
+}
+
+.tarjeta-publicacion__descripcion {
+  /* La descripción puede ser muy larga: en la lista propia se recorta a tres
+     líneas. Quien la escribió ya sabe lo que dice, y lo que viene a mirar aquí
+     es el estado de revisión. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tarjeta-publicacion__creada {
+  font-size: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .tarjeta-publicacion {
+    grid-template-columns: 96px 1fr;
+    align-items: start;
+  }
+}
