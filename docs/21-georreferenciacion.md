@@ -290,7 +290,7 @@ de vida.
 
 **144 casos**, doce de ellos nuevos, todos sobre `allow update` de `eventos`. Se ejecutan en
 la integración continua: el emulador de Firestore no arranca en el equipo de desarrollo
-(docs/17 §10).
+(docs/17 §10). En verde en la ejecución [33101995202](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33101995202), del 27/08/2026, que es también donde se leyó la respuesta sobre `affectedKeys`.
 
 | Qué comprueba | Casos |
 | --- | --- |
