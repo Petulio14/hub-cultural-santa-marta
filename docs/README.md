@@ -27,6 +27,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [20-publicacion-de-eventos.md](20-publicacion-de-eventos.md) | [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21) | 5 | La publicación de un evento: hora local contra UTC, la fecha de creación que solo el servidor puede escribir, y el campo normalizado que ninguna persona mira. |
 | [21-georreferenciacion.md](21-georreferenciacion.md) | [HU-22](https://github.com/Petulio14/hub-cultural-santa-marta/issues/22) | 5 | El punto en el mapa: Leaflet sin envoltorio, el marcador que se dibuja con CSS, y la advertencia que solo se lee si detiene el envío. |
 | [22-edicion-y-eliminacion.md](22-edicion-y-eliminacion.md) | [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23) | 5 | Corregir y retirar lo propio: un formulario que sirve para las dos cosas, por qué no `window.confirm`, y tres historias seguidas encontrando reglas sin estrenar. |
+| [23-moderacion.md](23-moderacion.md) | [HU-24](https://github.com/Petulio14/hub-cultural-santa-marta/issues/24) | 5 | Moderar antes de publicar: la decisión y su constancia en una sola escritura, y qué significa «notificar» cuando no se puede enviar correo. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -55,7 +56,9 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 > mapa ([21](21-georreferenciacion.md)) y con
 > [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23), que cierra el
 > ciclo de vida de una publicación por el lado del autor ([22](22-edicion-y-eliminacion.md)).
-> Queda HU-24.
+> La cierra [HU-24](https://github.com/Petulio14/hub-cultural-santa-marta/issues/24), la
+> moderación, que es la tercera cola de aprobación y la primera en la que decidir deja
+> constancia ([23](23-moderacion.md)).
 
 ## Configuración en la raíz del repositorio
 

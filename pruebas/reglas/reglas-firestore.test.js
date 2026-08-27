@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -32,6 +32,7 @@ import {
   updateDoc,
   serverTimestamp,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 
 // Cada denegación esperada hace que el SDK imprima un PERMISSION_DENIED. Son el
@@ -451,6 +452,10 @@ describe('moderaciones · devolver exige observación escrita', () => {
   it('devolver sin observaciones NO se registra', async () => {
     await assertFails(
       setDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'moderacion-1'), {
+        // «idModeracion» se añade en HU-24, cuando la regla pasó a exigir la
+        // forma del documento. Sin él, este caso seguiría fallando pero por el
+        // motivo equivocado, y dejaría de comprobar lo que dice su nombre.
+        idModeracion: 'moderacion-1',
         idEvento: 'evento-pendiente',
         idAdministrador: UID_ADMIN,
         decision: 'devuelto',
@@ -462,6 +467,7 @@ describe('moderaciones · devolver exige observación escrita', () => {
   it('devolver con observaciones sí se registra', async () => {
     await assertSucceeds(
       setDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'moderacion-2'), {
+        idModeracion: 'moderacion-2',
         idEvento: 'evento-pendiente',
         idAdministrador: UID_ADMIN,
         decision: 'devuelto',
@@ -474,9 +480,13 @@ describe('moderaciones · devolver exige observación escrita', () => {
   it('un actor NO registra una moderación', async () => {
     await assertFails(
       setDoc(doc(comoUsuario(UID_ACTOR), 'moderaciones', 'moderacion-3'), {
+        idModeracion: 'moderacion-3',
         idEvento: 'evento-pendiente',
         idAdministrador: UID_ACTOR,
         decision: 'aprobado',
+        // Nula al aprobar, que es la forma que exige el modelo. Así el único
+        // motivo por el que este caso falla es quién lo escribe.
+        observaciones: null,
         fecha: serverTimestamp(),
       })
     );
@@ -1658,6 +1668,299 @@ describe('editar y eliminar una publicación (HU-23)', () => {
       // quedaba mal atendido (docs/17 §10); borrar algo que ya no está solo le
       // ocurre a quien lo borró en otra pestaña, y la lista ya lo ha quitado.
       await assertFails(deleteDoc(doc(comoUsuario(UID_ACTOR), 'eventos', 'no-existe-ed')));
+    });
+  });
+});
+
+/**
+ * Moderación de publicaciones — HU-24 · RF-13.
+ *
+ * Aquí se rompe la racha de HU-22 y HU-23: `moderaciones` **sí** tenía pruebas
+ * desde HU-11, seis casos sobre quién escribe y quién lee. Lo que le faltaba era
+ * otra cosa —la regla era más laxa que el modelo: no pedía `idModeracion`, ni
+ * `idEvento`, ni cerraba la puerta a campos inventados— y que nadie hubiera
+ * comprobado nunca que el registro es de verdad inmutable.
+ *
+ * Y falta lo que solo aparece cuando alguien modera de verdad: la decisión son
+ * **dos escrituras en un lote**, y de ahí salen dos preguntas que no se pueden
+ * responder leyendo la documentación.
+ */
+describe('moderación de publicaciones (HU-24)', () => {
+  const OBSERVACION = 'Falta la dirección exacta del lugar y la hora de finalización.';
+
+  const sembrarEvento = async (idEvento, cambios = {}) => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), 'eventos', idEvento), {
+        idEvento,
+        idActor: ID_ACTOR,
+        titulo: 'Taller de tambora',
+        tituloNormalizado: 'taller de tambora',
+        descripcion: 'Tres sesiones de introducción al toque de tambora.',
+        categoria: 'musica',
+        fechaInicio: new Date(2026, 8, 1, 18, 0),
+        fechaFin: new Date(2026, 8, 1, 21, 0),
+        lugar: 'Casa de la Cultura, Santa Marta',
+        coordenadas: null,
+        imagen: null,
+        estadoPublicacion: 'pendiente',
+        fechaCreacion: new Date(2026, 7, 20, 9, 0),
+        contadorConsultas: 0,
+        ...cambios,
+      });
+    });
+    return idEvento;
+  };
+
+  /** Un registro de moderación con la forma que el modelo declara (docs/04 §8). */
+  const registroDe = (idModeracion, idEvento, cambios = {}) => ({
+    idModeracion,
+    idEvento,
+    idAdministrador: UID_ADMIN,
+    decision: 'aprobado',
+    observaciones: null,
+    fecha: serverTimestamp(),
+    ...cambios,
+  });
+
+  describe('la forma del registro, que la regla no pedía hasta ahora', () => {
+    it('un registro bien formado se acepta', async () => {
+      await assertSucceeds(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-1'),
+          registroDe('mod-1', 'evento-cualquiera')
+        )
+      );
+    });
+
+    it('el identificador del documento tiene que coincidir con «idModeracion»', async () => {
+      // Igual que en «eventos» (HU-21): un registro que dijera llamarse una cosa
+      // y viviera en otra ruta es un registro que no se puede volver a encontrar.
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-2'),
+          registroDe('otro-cualquiera', 'evento-cualquiera')
+        )
+      );
+    });
+
+    it('sin «idEvento» no se registra: no se sabría de qué se decidió', async () => {
+      const sinEvento = registroDe('mod-3', 'evento-cualquiera');
+      delete sinEvento.idEvento;
+      await assertFails(
+        setDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-3'), sinEvento)
+      );
+    });
+
+    it('un campo que el modelo no declara no entra', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-4'),
+          registroDe('mod-4', 'evento-cualquiera', { motivoInterno: 'no me gusta' })
+        )
+      );
+    });
+
+    it('aprobar con observaciones escritas no se registra: el modelo las quiere nulas', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-5'),
+          registroDe('mod-5', 'evento-cualquiera', { observaciones: 'Muy bien' })
+        )
+      );
+    });
+
+    it('devolver con la observación en blanco tampoco', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-6'),
+          registroDe('mod-6', 'evento-cualquiera', {
+            decision: 'devuelto',
+            observaciones: '   ',
+          })
+        )
+      );
+    });
+
+    it('una decisión que no es de las dos del modelo se rechaza', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-7'),
+          registroDe('mod-7', 'evento-cualquiera', { decision: 'quizas' })
+        )
+      );
+    });
+
+    it('el administrador no puede firmar con el nombre de otro', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-8'),
+          registroDe('mod-8', 'evento-cualquiera', { idAdministrador: UID_OTRO })
+        )
+      );
+    });
+
+    it('ni fechar la decisión cuando le convenga', async () => {
+      await assertFails(
+        setDoc(
+          doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-9'),
+          registroDe('mod-9', 'evento-cualquiera', { fecha: new Date(2020, 0, 1) })
+        )
+      );
+    });
+  });
+
+  describe('el registro es inmutable (cuarto criterio)', () => {
+    it('ni el administrador que lo escribió puede corregirlo', async () => {
+      // Sin esto, «queda constancia» sería una costumbre: quien decide podría
+      // reescribir después lo que decidió, y el registro dejaría de servir para
+      // lo único que sirve.
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-1'), {
+          decision: 'devuelto',
+        })
+      );
+    });
+
+    it('ni borrarlo', async () => {
+      await assertFails(deleteDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-1')));
+    });
+  });
+
+  /**
+   * Las dos preguntas del lote.
+   *
+   * Moderar son dos escrituras —cambiar el estado del evento y crear el
+   * registro— y tienen que ocurrir las dos o ninguna, porque el cuarto criterio
+   * dice que de **cualquier** decisión queda constancia. `writeBatch` promete esa
+   * atomicidad, pero eso deja abiertas dos cosas que no se pueden dar por sabidas:
+   *
+   * 1. ¿Sigue valiendo `fecha == request.time` dentro de un lote? Son dos
+   *    escrituras enviadas juntas, y el momento de recepción no tiene por qué
+   *    coincidir con el de confirmación.
+   * 2. Si la parte del registro es inválida, ¿se revierte también el cambio de
+   *    estado? Es lo que hace que el criterio se cumpla siempre y no casi
+   *    siempre.
+   */
+  describe('la decisión es un lote, y eso plantea dos preguntas', () => {
+    it('«fecha == request.time» sigue valiendo dentro de un lote', async () => {
+      const id = await sembrarEvento('mod-evento-1');
+      const bd = comoUsuario(UID_ADMIN);
+      const lote = writeBatch(bd);
+
+      lote.update(doc(bd, 'eventos', id), { estadoPublicacion: 'aprobado' });
+      lote.set(doc(bd, 'moderaciones', 'mod-lote-1'), registroDe('mod-lote-1', id));
+
+      await assertSucceeds(lote.commit());
+    });
+
+    it('y las dos escrituras llegan: el evento queda aprobado y el registro existe', async () => {
+      const despues = await getDoc(doc(comoUsuario(UID_ADMIN), 'eventos', 'mod-evento-1'));
+      assert.equal(despues.data().estadoPublicacion, 'aprobado');
+
+      const registro = await getDoc(doc(comoUsuario(UID_ADMIN), 'moderaciones', 'mod-lote-1'));
+      assert.equal(registro.exists(), true);
+      assert.equal(registro.data().idEvento, 'mod-evento-1');
+    });
+
+    it('si el registro es inválido, el cambio de estado tampoco ocurre', async () => {
+      // El caso que sostiene el cuarto criterio. Con dos escrituras sueltas la
+      // publicación quedaría devuelta y sin constancia de quién la devolvió ni
+      // por qué, y el resultado visible sería el correcto: nadie se enteraría.
+      const id = await sembrarEvento('mod-evento-2');
+      const bd = comoUsuario(UID_ADMIN);
+      const lote = writeBatch(bd);
+
+      lote.update(doc(bd, 'eventos', id), { estadoPublicacion: 'devuelto' });
+      lote.set(
+        doc(bd, 'moderaciones', 'mod-lote-2'),
+        // Devolver sin observación: la regla lo rechaza.
+        registroDe('mod-lote-2', id, { decision: 'devuelto', observaciones: null })
+      );
+
+      await assertFails(lote.commit());
+
+      const despues = await getDoc(doc(comoUsuario(UID_ADMIN), 'eventos', id));
+      assert.equal(despues.data().estadoPublicacion, 'pendiente');
+    });
+
+    it('una devolución completa sí pasa entera', async () => {
+      const id = await sembrarEvento('mod-evento-3');
+      const bd = comoUsuario(UID_ADMIN);
+      const lote = writeBatch(bd);
+
+      lote.update(doc(bd, 'eventos', id), { estadoPublicacion: 'devuelto' });
+      lote.set(
+        doc(bd, 'moderaciones', 'mod-lote-3'),
+        registroDe('mod-lote-3', id, { decision: 'devuelto', observaciones: OBSERVACION })
+      );
+
+      await assertSucceeds(lote.commit());
+    });
+
+    it('un actor no puede moderar aunque lo intente en un lote', async () => {
+      const id = await sembrarEvento('mod-evento-4');
+      const bd = comoUsuario(UID_ACTOR);
+      const lote = writeBatch(bd);
+
+      // Sobre su propia publicación, que además puede editar. Lo que no puede es
+      // aprobarla: eso es lo que separa publicar de moderar.
+      lote.update(doc(bd, 'eventos', id), { estadoPublicacion: 'aprobado' });
+      lote.set(
+        doc(bd, 'moderaciones', 'mod-lote-4'),
+        registroDe('mod-lote-4', id, { idAdministrador: UID_ACTOR })
+      );
+
+      await assertFails(lote.commit());
+    });
+  });
+
+  describe('la cola y lo que el actor recibe', () => {
+    it('el administrador lista lo pendiente', async () => {
+      await assertSucceeds(
+        getDocs(
+          query(
+            collection(comoUsuario(UID_ADMIN), 'eventos'),
+            where('estadoPublicacion', '==', 'pendiente')
+          )
+        )
+      );
+    });
+
+    it('un actor NO lista lo pendiente de todos: alcanzaría lo ajeno', async () => {
+      // La consulta no devuelve menos filas: falla entera, que es la lección de
+      // HU-18 sobre filtrar en el servidor y no en memoria.
+      await assertFails(
+        getDocs(
+          query(
+            collection(comoUsuario(UID_ACTOR), 'eventos'),
+            where('estadoPublicacion', '==', 'pendiente')
+          )
+        )
+      );
+    });
+
+    it('el actor dueño lee las moderaciones de su evento', async () => {
+      // Es lo que convierte «notificarse al actor» en algo que ocurre: sin esta
+      // lectura, la observación existiría y no la leería nadie.
+      await assertSucceeds(
+        getDocs(
+          query(
+            collection(comoUsuario(UID_ACTOR), 'moderaciones'),
+            where('idEvento', '==', 'mod-evento-3')
+          )
+        )
+      );
+    });
+
+    it('otro actor NO lee las moderaciones de un evento ajeno', async () => {
+      await assertFails(
+        getDocs(
+          query(
+            collection(comoUsuario(UID_OTRO), 'moderaciones'),
+            where('idEvento', '==', 'mod-evento-3')
+          )
+        )
+      );
     });
   });
 });

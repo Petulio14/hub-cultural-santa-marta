@@ -4,6 +4,7 @@ import { textoDeFecha, textoDelPeriodo, yaTermino } from '../../utils/fechas.js'
 import { valoresDeFormulario } from '../../utils/publicaciones.js';
 import ConfirmacionDeBorrado from './ConfirmacionDeBorrado.jsx';
 import EditorDePunto from './EditorDePunto.jsx';
+import ObservacionesDeModeracion from './ObservacionesDeModeracion.jsx';
 import FormularioDePublicacion from './FormularioDePublicacion.jsx';
 
 /**
@@ -91,6 +92,12 @@ export default function TarjetaDePublicacion({
         >
           <strong>{estado.etiqueta}.</strong> {estado.explicacion}
         </p>
+
+        {/* HU-24 · tercer criterio: la devolución llega hasta aquí. La tarjeta
+            decía «Revisa las observaciones» desde HU-21 sin que hubiera ninguna
+            a la vista; esto es lo que la hacía verdad. Se pinta también en modo
+            edición: es lo que hay que tener delante mientras se corrige. */}
+        <ObservacionesDeModeracion publicacion={publicacion} />
 
         {editando ? (
           <>

@@ -324,3 +324,39 @@
 .tarjeta-publicacion__cuerpo .publicacion__formulario {
   margin-top: 4px;
 }
+
+
+/* ── Las observaciones de una devolución · HU-24 ───────────────────────────── */
+
+/*
+ * Terracota, como el resto de lo que exige atención de quien lee, y con el texto
+ * completo a la vista: una observación plegada tras un «ver más» sería otra vez
+ * una notificación que hay que ir a buscar.
+ */
+.tarjeta-publicacion__observaciones {
+  border-left: 4px solid var(--terracota);
+  background: var(--arena);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 12px 14px;
+  margin: 0 0 12px;
+  color: var(--gris-texto);
+}
+
+.tarjeta-publicacion__observaciones-titulo {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--negro-texto);
+}
+
+.tarjeta-publicacion__observaciones-fecha {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+.tarjeta-publicacion__observaciones-texto {
+  margin: 0;
+  /* Lo escribe una persona en un cuadro de texto: los saltos de línea que puso
+     son parte de lo que quiso decir. */
+  white-space: pre-wrap;
+}

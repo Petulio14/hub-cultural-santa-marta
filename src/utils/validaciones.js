@@ -505,3 +505,39 @@ export function validarPublicacion(
     ...validarPeriodo(fechaInicio, fechaFin),
   };
 }
+
+// ── La observación de una moderación · HU-24 · RF-13 ─────────────────────────
+
+/**
+ * El tope del formulario. La regla admite 2000, y la diferencia es la de
+ * siempre (docs/18 §2): esto es una promesa de que el texto se va a leer
+ * entero en la tarjeta del actor; aquello es el techo del abuso.
+ */
+export const LONGITUD_MAXIMA_OBSERVACION = 1000;
+
+/**
+ * Por debajo de esto una observación no dice qué corregir.
+ *
+ * «No» y «Rechazada» caben en la regla del servidor —que solo pide que haya
+ * algo escrito— y no le sirven de nada a quien tiene que arreglar su
+ * publicación. El tercer criterio pide una observación **escrita**, y una
+ * observación que no explica no lo cumple aunque pase la regla.
+ */
+export const LONGITUD_MINIMA_OBSERVACION = 15;
+
+export function validarObservacion(valor) {
+  const limpio = (valor ?? '').trim();
+
+  if (limpio === '') {
+    return 'Escribe qué debe corregir el autor: es lo único que va a recibir de vuelta.';
+  }
+  if (limpio.length < LONGITUD_MINIMA_OBSERVACION) {
+    return `Con menos de ${LONGITUD_MINIMA_OBSERVACION} caracteres no se entiende qué hay que corregir.`;
+  }
+  if (limpio.length > LONGITUD_MAXIMA_OBSERVACION) {
+    const sobran = limpio.length - LONGITUD_MAXIMA_OBSERVACION;
+    const cuenta = sobran === 1 ? 'sobra 1 carácter' : `sobran ${sobran} caracteres`;
+    return `La observación no puede pasar de ${LONGITUD_MAXIMA_OBSERVACION} caracteres. Te ${cuenta}.`;
+  }
+  return null;
+}
