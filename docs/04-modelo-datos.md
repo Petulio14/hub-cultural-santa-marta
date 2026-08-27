@@ -181,7 +181,7 @@ simples: hay que declararla en `firestore.indexes.json`.
 | --- | --- | --- | --- |
 | `eventos` | `estadoPublicacion` ASC, `categoria` ASC, `fechaInicio` ASC | Catálogo público filtrado por categoría y rango de fechas. | HU-26 |
 | `eventos` | `estadoPublicacion` ASC, `fechaInicio` ASC | Catálogo público ordenado por fecha. | HU-25 |
-| `eventos` | `idActor` ASC, `fechaCreacion` DESC | Publicaciones propias del actor cultural. | HU-23 |
+| `eventos` | `idActor` ASC, `fechaCreacion` DESC | Publicaciones propias del actor cultural. **No llegó a hacer falta**: `listarMisPublicaciones` filtra en el servidor y ordena en memoria, que no alcanza ningún documento de más porque ya están todos leídos y son los propios ([22 §8](22-edicion-y-eliminacion.md)). Se conserva la fila porque la diferencia entre lo planeado y lo construido es en sí misma un dato. | HU-23 |
 | `eventos` | `estadoPublicacion` ASC, `fechaCreacion` ASC | Cola de moderación ordenada por antigüedad. | HU-24 |
 | `eventos` | `estadoPublicacion` ASC, `contadorConsultas` DESC | Publicaciones más consultadas. | HU-34 |
 | `moderaciones` | `idEvento` ASC, `fecha` DESC | Historial de moderación de una publicación. | HU-24 |

@@ -26,6 +26,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [19-hubs-de-innovacion.md](19-hubs-de-innovacion.md) | [HU-20](https://github.com/Petulio14/hub-cultural-santa-marta/issues/20) | 5 | Los hubs de innovación, las tres piezas que salieron de duplicar, y por qué las coordenadas no se pueden obtener en silencio. |
 | [20-publicacion-de-eventos.md](20-publicacion-de-eventos.md) | [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21) | 5 | La publicación de un evento: hora local contra UTC, la fecha de creación que solo el servidor puede escribir, y el campo normalizado que ninguna persona mira. |
 | [21-georreferenciacion.md](21-georreferenciacion.md) | [HU-22](https://github.com/Petulio14/hub-cultural-santa-marta/issues/22) | 5 | El punto en el mapa: Leaflet sin envoltorio, el marcador que se dibuja con CSS, y la advertencia que solo se lee si detiene el envío. |
+| [22-edicion-y-eliminacion.md](22-edicion-y-eliminacion.md) | [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23) | 5 | Corregir y retirar lo propio: un formulario que sirve para las dos cosas, por qué no `window.confirm`, y tres historias seguidas encontrando reglas sin estrenar. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -51,7 +52,10 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 > [HU-21](https://github.com/Petulio14/hub-cultural-santa-marta/issues/21), que estrena
 > `eventos`, la colección central del modelo ([20](20-publicacion-de-eventos.md)), y sigue con
 > [HU-22](https://github.com/Petulio14/hub-cultural-santa-marta/issues/22), que la sitúa en el
-> mapa ([21](21-georreferenciacion.md)). Quedan HU-23 y HU-24.
+> mapa ([21](21-georreferenciacion.md)) y con
+> [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23), que cierra el
+> ciclo de vida de una publicación por el lado del autor ([22](22-edicion-y-eliminacion.md)).
+> Queda HU-24.
 
 ## Configuración en la raíz del repositorio
 

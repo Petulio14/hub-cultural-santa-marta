@@ -164,8 +164,8 @@ const despues = await getDoc(doc(visitante(), 'actoresCulturales', ID_ACTOR));
 assert.equal(despues.data().estado, 'aprobado');
 ```
 
-Esto es lo contrario de lo que hará HU-23 con las publicaciones, que **sí** vuelven a
-`pendiente` al editarse. La diferencia es intencionada: un evento anuncia una fecha y un
+Esto es lo contrario de lo que hace HU-23 con las publicaciones, que **sí** vuelven a
+`pendiente` al editarse ([22 §4](22-edicion-y-eliminacion.md)). La diferencia es intencionada: un evento anuncia una fecha y un
 lugar que pueden cambiar a algo que no debería publicarse; un perfil describe a quien ya fue
 admitido en la plataforma.
 
