@@ -284,27 +284,43 @@ El formulario de edición y la confirmación se montaron aislados, fuera de la r
 | Desbordamiento horizontal | ninguno a 981 px |
 
 **Lo que no se pudo medir aquí:** el ancho de 375 px. La emulación de tamaño no surtió efecto
-en esta sesión, así que la comprobación en móvil queda entera para la pasada en vivo, que es
-donde la Definición de Terminado la pide de todas formas.
+en esta sesión, así que la comprobación en móvil quedó entera para la pasada en vivo, que es
+donde la Definición de Terminado la pide de todas formas. **Se hizo**, y está en la última
+fila de la tabla de abajo.
 
 ### Comprobación en vivo
 
-Pendiente sobre el sitio publicado, con sesión de actor cultural. **Sin despliegue de reglas
-previo**: esta historia no las toca.
+Sobre el sitio publicado, con sesión de actor cultural. Sin despliegue de reglas previo:
+esta historia no las toca (§8).
 
-| # | Qué se hace | Qué debe ocurrir | Resultado |
-| --- | --- | --- | --- |
-| 1 | Pulsar «Editar» en una publicación propia | La tarjeta se convierte en el formulario, relleno | |
-| 2 | Comprobar las dos fechas del formulario | La misma hora con la que se guardó, sin saltar de día | |
-| 3 | Pulsar «Cancelar» | Vuelve la tarjeta, sin cambios | |
-| 4 | Cambiar el título y guardar | Se guarda y la tarjeta muestra el título nuevo | |
-| 5 | Editar una publicación **aprobada** | Aparece el aviso de que volverá a revisión | |
-| 6 | Guardar esos cambios | Queda «En revisión» | |
-| 7 | Mover el punto de una aprobada desde «Cambiar el punto» | Avisa igual, y al guardar queda «En revisión» | |
-| 8 | Pulsar «Eliminar» | Pregunta con el título delante; **no** se borra nada | |
-| 9 | Pulsar «Cancelar» en esa pregunta | La publicación sigue ahí | |
-| 10 | Pulsar «Eliminar» y luego «Sí, eliminar» | Desaparece de la lista y el aviso dice cuál se eliminó | |
-| 11 | Repetir la edición y el borrado a 360 px | Todo alcanzable, sin desbordamiento horizontal | |
+| Fecha | Qué se comprobó | Resultado |
+| --- | --- | --- |
+| 27/08/2026 | «Editar» convierte la tarjeta en el formulario, relleno | Correcto |
+| 27/08/2026 | Las dos fechas se abren con la hora con la que se guardaron | Correcto: ni se mueve la hora ni salta el día |
+| 27/08/2026 | «Cancelar» devuelve la tarjeta sin cambios | Correcto |
+| 27/08/2026 | Cambiar el título y guardar deja el título nuevo | Correcto |
+| 27/08/2026 | Editar una publicación **aprobada** avisa de que volverá a revisión | Correcto: el aviso sale antes de escribir, no al guardar |
+| 27/08/2026 | Al guardar esos cambios queda «En revisión» | Correcto: es el primer criterio, y lo impone la regla |
+| 27/08/2026 | Mover el punto de una aprobada avisa igual y la devuelve a revisión | Correcto: el límite que HU-22 documentó queda levantado (§6) |
+| 27/08/2026 | Un clic en «Eliminar» pregunta con el título delante y **no** borra | Correcto: es el segundo criterio |
+| 27/08/2026 | «Cancelar» en esa pregunta deja la publicación donde estaba | Correcto |
+| 27/08/2026 | «Eliminar» y después «Sí, eliminar» sí borra, y el aviso dice cuál | Correcto |
+| 27/08/2026 | Todo lo anterior a 360 px, sin desbordamiento horizontal | Correcto |
+
+Las **once** pasaron. La última cierra lo que quedó abierto en el banco de pruebas: la
+emulación de tamaño no había surtido efecto y el ancho de móvil se quedó sin medir. Ahora
+está medido donde de verdad cuenta, que es sobre un teléfono y no sobre una ventana
+encogida.
+
+La segunda es la que vale por `src/utils/publicaciones.js` entero. Se hizo sobre una
+publicación de tarde —a partir de las 19:00, que en UTC ya es el día siguiente— porque con
+una de la mañana el defecto de la conversión no se habría manifestado y la fila habría dicho
+«correcto» sin comprobar nada.
+
+Y la sexta y la séptima son el mismo criterio por dos caminos distintos: el formulario
+completo y el editor de punto. Que las dos devuelvan la publicación a revisión es lo que
+demuestra que el «vuelve a pendiente» no es una costumbre de un formulario, sino la regla
+actuando sobre cualquiera que escriba.
 
 ---
 
