@@ -305,7 +305,7 @@ _Pendiente. Se hace sobre el sitio publicado y **con los índices ya publicados*
 
 ## 11. Lo que queda fuera
 
-- **La búsqueda por palabra clave** es [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27), y se apoyará en estos mismos filtros. El campo `tituloNormalizado` la espera guardado desde HU-21.
+- **La búsqueda por palabra clave** era [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27) y ya está ([26](26-busqueda.md)). Se apoya en estos mismos filtros y se escribe en este mismo formulario, pero **no ocurre en el mismo sitio**: los filtros los aplica el servidor y el término se compara en memoria.
 - **Los filtros en la dirección**, para poder compartir un catálogo ya filtrado o volver atrás con el botón del navegador. Se dejó fuera a propósito: no lo pide ningún criterio y añade estado que mantener sincronizado. Anotado como trabajo futuro en [02 §6](02-alcance-mvp.md).
 - **Filtrar por lugar o por cercanía.** El punto está guardado desde HU-22 y Firestore no consulta por proximidad sin geohash; el mapa de [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30) resuelve la misma necesidad por otra vía.
 - **El filtro de categoría en el mapa** es el tercer criterio de HU-30, y reutilizará `filtros.js`.
