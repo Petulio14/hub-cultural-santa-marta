@@ -240,7 +240,7 @@ Sobre una publicación aprobada real, con un actor que tiene los tres canales:
 **Lo que no se comprobó aquí a propósito:** la escritura real del registro. Se pudo hacer y
 no se hizo: el documento habría ido a la colección de producción, y la regla —la de
 siempre— **no permite borrarlo**. Habría dejado un contacto inventado dentro de los
-indicadores que HU-34 va a presentar. Lo que sostiene el tercer criterio son los once casos
+indicadores que HU-34 va a presentar. Lo que sostiene el tercer criterio son los doce casos
 contra el emulador; el camino completo se recorre en la pasada en vivo, donde ese registro
 sí es legítimo.
 
