@@ -117,3 +117,39 @@
   justify-content: center;
   margin-top: 8px;
 }
+
+/* Los filtros — HU-26.
+
+   Van entre la introducción y la rejilla, no en una columna lateral: a 360 px
+   una columna lateral se convierte igualmente en una franja arriba, y tener dos
+   disposiciones para lo mismo son dos sitios donde arreglar cada cosa. */
+.filtros {
+  margin: 18px 0;
+}
+
+.filtros__grupo {
+  display: grid;
+  gap: 0 var(--espacio-tarjetas);
+  /* Los tres campos caben en fila desde que hay sitio, y se apilan solos por
+     debajo. «auto-fit» y no «auto-fill»: con dos campos visibles no se debe
+     reservar el hueco de un tercero que no está. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  padding: 4px 16px 12px;
+  margin: 0;
+}
+
+.filtros__titulo {
+  font-weight: 600;
+  color: var(--negro-texto);
+  padding: 0 6px;
+}
+
+.filtros__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 0;
+}

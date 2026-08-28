@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25, HU-26.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -2155,6 +2155,263 @@ describe('el catálogo público (HU-25)', () => {
         siguientes.includes('cat-empate-b'),
         true,
         'el cursor se llevó por delante a quien empataba'
+      );
+    });
+  });
+});
+
+/**
+ * Los filtros del catálogo — HU-26 · RF-10.
+ *
+ * Dos preguntas, y ninguna se responde leyendo documentación.
+ *
+ * La primera es de seguridad y hereda de HU-25: **añadir filtros es añadir
+ * maneras de pedir menos documentos**, y allí quedó demostrado que pedir menos
+ * no equivale a pedir los permitidos. Aquí se comprueba con los filtros nuevos,
+ * porque un `where` sobre la categoría se parece muchísimo al `where` que
+ * sostiene el primer criterio y no hace su trabajo.
+ *
+ * La segunda es de comportamiento: **«vigente en el rango» es un solapamiento**,
+ * y un solapamiento son dos desigualdades sobre dos campos distintos. Firestore
+ * no las admitía hasta 2024. Que las admita hoy no es una promesa que convenga
+ * creerse sobre el sitio publicado la víspera de la sustentación, así que se le
+ * pregunta al emulador con seis publicaciones colocadas alrededor de una
+ * estancia de tres días.
+ */
+describe('los filtros del catálogo (HU-26)', () => {
+  /** La estancia: llega el 5 de septiembre, se va el 7 por la noche. */
+  const LLEGADA = new Date(2026, 8, 5, 0, 0);
+  const SALIDA = new Date(2026, 8, 7, 23, 59, 59, 999);
+
+  const eventoDe = (idEvento, inicio, fin, categoria = 'musica') => ({
+    idEvento,
+    idActor: ID_ACTOR,
+    titulo: 'Actividad de prueba',
+    tituloNormalizado: 'actividad de prueba',
+    descripcion: 'Sembrada para comprobar el solapamiento de fechas.',
+    categoria,
+    fechaInicio: inicio,
+    fechaFin: fin,
+    lugar: 'Santa Marta',
+    coordenadas: null,
+    imagen: null,
+    estadoPublicacion: 'aprobado',
+    fechaCreacion: new Date(2026, 0, 1, 8, 0),
+    contadorConsultas: 0,
+  });
+
+  const dia = (numero, hora = 18) => new Date(2026, 8, numero, hora, 0);
+
+  /**
+   * La consulta del catálogo con filtros, tal y como la arma el servicio.
+   *
+   * «hasta» decide si hay una desigualdad o dos, y con ella si «fechaInicio»
+   * entra en el orden. Es la misma lista de campos que allí.
+   */
+  const consultaFiltrada = (bd, { categoria = null, desde, hasta = null } = {}) => {
+    const campos = hasta ? ['fechaFin', 'fechaInicio'] : ['fechaFin'];
+    return query(
+      collection(bd, 'eventos'),
+      where('estadoPublicacion', '==', 'aprobado'),
+      ...(categoria ? [where('categoria', '==', categoria)] : []),
+      where('fechaFin', '>=', desde),
+      ...(hasta ? [where('fechaInicio', '<=', hasta)] : []),
+      ...campos.map((campo) => orderBy(campo)),
+      orderBy(documentId())
+    );
+  };
+
+  const identificadores = (instantanea) => instantanea.docs.map((documento) => documento.id);
+
+  /** Solo los sembrados por este bloque: en la colección hay muchos más. */
+  const MIOS = [
+    'fil-antes',
+    'fil-empieza-antes',
+    'fil-dentro',
+    'fil-termina-despues',
+    'fil-envuelve',
+    'fil-despues',
+  ];
+  const soloMios = (leidos) => leidos.filter((id) => MIOS.includes(id));
+
+  before(async () => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      const bd = contexto.firestore();
+
+      // Termina antes de que llegue: no lo alcanza.
+      await setDoc(doc(bd, 'eventos', 'fil-antes'), eventoDe('fil-antes', dia(1), dia(3, 21)));
+      // Empezó la víspera y sigue en marcha: **este es el caso que decide la
+      // historia**. Con «¿empieza dentro del rango?» se quedaría fuera.
+      await setDoc(
+        doc(bd, 'eventos', 'fil-empieza-antes'),
+        eventoDe('fil-empieza-antes', dia(1), dia(6, 21))
+      );
+      // Empieza y termina durante la estancia. Y con otra categoría, para el
+      // caso de los dos filtros a la vez.
+      await setDoc(
+        doc(bd, 'eventos', 'fil-dentro'),
+        eventoDe('fil-dentro', dia(6), dia(6, 21), 'artesania')
+      );
+      // Empieza el último día y termina después de que se haya ido: sí lo ve.
+      await setDoc(
+        doc(bd, 'eventos', 'fil-termina-despues'),
+        eventoDe('fil-termina-despues', dia(7), dia(12, 21))
+      );
+      // Envuelve la estancia entera.
+      await setDoc(
+        doc(bd, 'eventos', 'fil-envuelve'),
+        eventoDe('fil-envuelve', dia(1), dia(30, 21))
+      );
+      // Empieza después de que se vaya: no lo alcanza.
+      await setDoc(
+        doc(bd, 'eventos', 'fil-despues'),
+        eventoDe('fil-despues', dia(10), dia(11, 21))
+      );
+    });
+  });
+
+  describe('filtrar no abre ninguna puerta', () => {
+    it('la consulta con categoría se autoriza a un visitante sin sesión', async () => {
+      await assertSucceeds(
+        getDocs(consultaFiltrada(visitante(), { categoria: 'musica', desde: LLEGADA }))
+      );
+    });
+
+    it('la consulta con rango de fechas también', async () => {
+      await assertSucceeds(
+        getDocs(consultaFiltrada(visitante(), { desde: LLEGADA, hasta: SALIDA }))
+      );
+    });
+
+    it('y las dos a la vez (tercer criterio)', async () => {
+      await assertSucceeds(
+        getDocs(
+          consultaFiltrada(visitante(), {
+            categoria: 'artesania',
+            desde: LLEGADA,
+            hasta: SALIDA,
+          })
+        )
+      );
+    });
+
+    it('pero filtrar por categoría SIN filtrar por estado se deniega', async () => {
+      // El caso que da sentido al grupo. Un «where» sobre la categoría se parece
+      // muchísimo al que sostiene el primer criterio y no hace su trabajo: sin
+      // el del estado, la consulta alcanza publicaciones pendientes de esa misma
+      // categoría y falla entera.
+      await assertFails(
+        getDocs(
+          query(collection(visitante(), 'eventos'), where('categoria', '==', 'musica'))
+        )
+      );
+    });
+
+    it('y filtrar solo por fechas, tampoco', async () => {
+      await assertFails(
+        getDocs(
+          query(
+            collection(visitante(), 'eventos'),
+            where('fechaFin', '>=', LLEGADA),
+            orderBy('fechaFin')
+          )
+        )
+      );
+    });
+  });
+
+  describe('«vigente en el rango» es un solapamiento', () => {
+    it('las cuatro que se solapan salen, y las dos que no, no', async () => {
+      const leidos = soloMios(
+        identificadores(
+          await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA, hasta: SALIDA }))
+        )
+      );
+
+      assert.deepEqual(
+        [...leidos].sort(),
+        ['fil-dentro', 'fil-empieza-antes', 'fil-envuelve', 'fil-termina-despues'].sort()
+      );
+    });
+
+    it('el festival que empezó la víspera se alcanza', async () => {
+      // Escrito aparte del caso anterior aunque lo cubra: es el que separa
+      // cumplir el criterio de cumplir su sentido, y si alguien cambia el
+      // solapamiento por «empieza dentro del rango» este dice cuál se rompió.
+      const leidos = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA, hasta: SALIDA }))
+      );
+      assert.equal(leidos.includes('fil-empieza-antes'), true);
+    });
+
+    it('sin el tope superior, lo que empieza después sí entraría', async () => {
+      // La contrapartida: demuestra que la segunda desigualdad hace trabajo. Sin
+      // ella «fil-despues» está dentro del resultado, así que el caso anterior
+      // no pasa por casualidad.
+      const conTope = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA, hasta: SALIDA }))
+      );
+      const sinTope = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA }))
+      );
+
+      assert.equal(conTope.includes('fil-despues'), false);
+      assert.equal(sinTope.includes('fil-despues'), true);
+    });
+
+    it('lo que terminó antes de llegar no se alcanza por ninguna de las dos vías', async () => {
+      const conTope = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA, hasta: SALIDA }))
+      );
+      const sinTope = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { desde: LLEGADA }))
+      );
+
+      assert.equal(conTope.includes('fil-antes'), false);
+      assert.equal(sinTope.includes('fil-antes'), false);
+    });
+  });
+
+  describe('los dos filtros a la vez (tercer criterio)', () => {
+    it('el resultado satisface las dos condiciones', async () => {
+      const leidos = soloMios(
+        identificadores(
+          await getDocs(
+            consultaFiltrada(visitante(), {
+              categoria: 'artesania',
+              desde: LLEGADA,
+              hasta: SALIDA,
+            })
+          )
+        )
+      );
+
+      // «fil-dentro» es la única de artesanía, y cae dentro de la estancia. Las
+      // otras tres que se solapan son de música y no salen.
+      assert.deepEqual(leidos, ['fil-dentro']);
+    });
+
+    it('la categoría sola devuelve más que la categoría con el rango', async () => {
+      // Que combinar restrinja y no sume es lo que dice el criterio, y se mide
+      // comparando los dos resultados en lugar de mirar uno solo.
+      const soloCategoria = identificadores(
+        await getDocs(consultaFiltrada(visitante(), { categoria: 'musica', desde: LLEGADA }))
+      );
+      const conRango = identificadores(
+        await getDocs(
+          consultaFiltrada(visitante(), {
+            categoria: 'musica',
+            desde: LLEGADA,
+            hasta: SALIDA,
+          })
+        )
+      );
+
+      assert.equal(conRango.length < soloCategoria.length, true);
+      assert.equal(
+        conRango.every((id) => soloCategoria.includes(id)),
+        true,
+        'el rango trajo algo que la categoría sola no traía'
       );
     });
   });

@@ -59,6 +59,58 @@ export function paraEntradaDeFecha(fecha) {
   return `${dia}T${hora}`;
 }
 
+/** Lo que «<input type="date">» entiende: «2026-09-01». */
+const FORMA_DE_DIA = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Texto de un «<input type="date">» a `Date`, **en hora local** — HU-26.
+ *
+ * Aquí vuelve la trampa de la cabecera de este archivo por una puerta nueva, y
+ * peor: `new Date('2026-09-01')` **sí** se interpreta en UTC, porque la
+ * especificación trata las cadenas de solo fecha como instantes UTC y las de
+ * fecha y hora sin zona como locales. En Santa Marta eso deja el día empezando a
+ * las 19:00 del día anterior, así que un evento del 31 de agosto entraría en un
+ * rango que empieza el 1 de septiembre.
+ *
+ * Por eso se compone con el constructor de tres números, que sí es local, y no
+ * se pasa nunca por el analizador de cadenas.
+ */
+export function desdeEntradaDeDia(texto) {
+  const limpio = (texto ?? '').trim();
+  if (!FORMA_DE_DIA.test(limpio)) return null;
+
+  const [ano, mes, dia] = limpio.split('-').map(Number);
+  const fecha = new Date(ano, mes - 1, dia);
+
+  // «2026-02-31» pasa la forma y no existe: el constructor lo desplaza al 3 de
+  // marzo en silencio. Se compara lo que salió con lo que se pidió.
+  const coherente =
+    fecha.getFullYear() === ano && fecha.getMonth() === mes - 1 && fecha.getDate() === dia;
+  return coherente ? fecha : null;
+}
+
+/**
+ * El último instante de ese día, en hora local — HU-26.
+ *
+ * Un rango de fechas se escribe en días y **un día tiene final**. Sin esto, el
+ * límite superior de «hasta el 5 de septiembre» sería las 00:00 del día 5, y una
+ * actividad que empieza a las 18:00 de ese mismo día quedaría fuera del rango
+ * que la persona acaba de pedir para incluirla. Es el error que no se ve, porque
+ * el resultado parece razonable: sale una lista, solo que le falta el último día.
+ */
+export function finDelDia(fecha) {
+  if (!esFechaValida(fecha)) return null;
+  return new Date(
+    fecha.getFullYear(),
+    fecha.getMonth(),
+    fecha.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
+}
+
 /** El día, escrito: «1 de septiembre de 2026». */
 export function textoDelDia(fecha) {
   if (!esFechaValida(fecha)) return '';
