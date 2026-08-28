@@ -81,6 +81,7 @@ registra aquí y **no se incorpora a ningún sprint**.
 | TF-02 | Llevar los filtros del catálogo a la dirección, para poder compartir un catálogo ya filtrado y volver atrás con el botón del navegador. | 28/08/2026 | HU-26 | Registrada, fuera de sprint |
 | TF-03 | Búsqueda exhaustiva sobre todo el catálogo con un índice de texto externo, en lugar del tope de doscientas actividades. Exige el plan Blaze, igual que las imágenes en Storage y el aviso por correo. | 28/08/2026 | HU-27 | Registrada, fuera de sprint |
 | TF-04 | Mensajería dentro de la plataforma, con el mensaje guardado y respondido desde el sitio en lugar de abrir WhatsApp o el correo. Exige almacenar el mensaje y la identidad de quien escribe —lo contrario de RNF-06— y notificar al actor, que pide Cloud Functions. | 28/08/2026 | HU-29 | Registrada, fuera de sprint |
+| TF-05 | Agrupación de marcadores en el mapa cuando la densidad lo exija. Hoy no la exige y añadirla sería una dependencia (`leaflet.markercluster`) para un problema que no existe; el tope de doscientos acota cuánto puede crecer antes de que haga falta. | 28/08/2026 | HU-30 | Registrada, fuera de sprint |
 
 ## 6. Constancia de aceptación
 

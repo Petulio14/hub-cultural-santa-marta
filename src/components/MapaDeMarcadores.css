@@ -1,0 +1,64 @@
+/* El mapa de toda la oferta cultural — HU-30 · RF-11. */
+
+/*
+ * Leaflet necesita un alto explícito: mide el contenedor al crearse y un div sin
+ * alto le da cero, con lo que no pinta nada y tampoco avisa.
+ *
+ * Más alto que los otros dos mapas del proyecto, y con razón: aquí el mapa **es**
+ * la vista. Se usa «dvh» y no «vh» porque en un móvil la barra del navegador
+ * aparece y desaparece, y «vh» mide la ventana sin ella: el mapa quedaría cortado
+ * por abajo justo mientras se recorre.
+ */
+.mapa-marcadores__lienzo {
+  height: 60dvh;
+  min-height: 360px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  /* Sin esto, las esquinas de las teselas se salen del borde redondeado. */
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .mapa-marcadores__lienzo {
+    height: 68dvh;
+  }
+}
+
+/* El aviso del gesto de dos dedos. Va encima del mapa y no dentro: dentro lo
+   taparía el primer marcador que cayera ahí, y hay que leerlo antes de tocar. */
+.mapa-marcadores__gesto {
+  margin: 0 0 10px;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 10px 14px;
+  color: var(--gris-texto);
+}
+
+/* La ficha que se abre al pulsar un marcador. Los estilos van aquí y no en el
+   componente porque su contenido lo crea Leaflet dentro de su propio globo. */
+.ficha-mapa {
+  min-width: 180px;
+}
+
+.ficha-mapa__categoria {
+  display: inline-block;
+  margin: 0 0 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+/* Es un «h2» dentro del globo: encabeza la ficha de esa actividad. Se le baja el
+   tamaño porque el globo no es la página. */
+.ficha-mapa__titulo {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.ficha-mapa__cuando {
+  margin: 0 0 10px;
+  color: var(--negro-texto);
+}

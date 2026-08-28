@@ -4,7 +4,10 @@
 > parte hasta [HU-28](27-detalle-de-la-publicacion.md), seis historias después: la ficha
 > de cada actividad lo enseña en un mapa reducido que **no se toca**, y que comparte con
 > este el marcador y las teselas pero nada de su comportamiento
-> ([27 §4](27-detalle-de-la-publicacion.md)). El mapa de toda la oferta es HU-30.
+> ([27 §4](27-detalle-de-la-publicacion.md)). Y desde
+> [HU-30](29-mapa-interactivo.md) se ve además junto a todos los demás, que es lo
+> único que sirve para decidir según dónde se está: **ocho historias** tardó este
+> punto en dibujarse en alguna parte.
 
 > **Historia de usuario:** HU-22 · Sprint 5
 > **Épica:** E3 — Publicación y moderación de contenido

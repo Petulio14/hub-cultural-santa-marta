@@ -1,0 +1,43 @@
+/* V-6 · la oferta cultural sobre el mapa — HU-30 */
+
+.mapa-vista__intro {
+  max-width: 65ch;
+  color: var(--gris-texto);
+}
+
+/* Un solo campo, así que no necesita rejilla; sí un ancho que no lo deje
+   estirarse hasta el borde de una pantalla de 1366 px. */
+.mapa-vista__filtro {
+  max-width: 320px;
+  margin-bottom: 12px;
+}
+
+.mapa-vista__recuento {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.mapa-vista__aviso {
+  border: 1px solid var(--terracota);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--terracota);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.mapa-vista__vacio {
+  max-width: 60ch;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 18px;
+  margin-bottom: 12px;
+}
+
+.mapa-vista__vacio p {
+  margin: 0 0 12px;
+}
+
+.mapa-vista__vacio p:last-child {
+  margin-bottom: 0;
+}
