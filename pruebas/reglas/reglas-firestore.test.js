@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -24,11 +24,15 @@ import {
   collection,
   deleteDoc,
   doc,
+  documentId,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   setDoc,
   setLogLevel,
+  startAfter,
   updateDoc,
   serverTimestamp,
   where,
@@ -1961,6 +1965,179 @@ describe('moderación de publicaciones (HU-24)', () => {
           )
         )
       );
+    });
+  });
+});
+
+/**
+ * El catálogo público — HU-25 · RF-09.
+ *
+ * El primer criterio —«deben listarse únicamente las publicaciones aprobadas»—
+ * ya tenía casos desde HU-21: un visitante lista lo aprobado y no puede pedir la
+ * colección entera. Lo que trae esta historia y aquellos no cubrían es que la
+ * consulta del catálogo **no es** aquella consulta: lleva orden, un cursor y un
+ * tope de resultados, y cada una de las tres cosas es una manera distinta de
+ * pedir menos documentos.
+ *
+ * De ahí la pregunta que da sentido a este bloque: **¿pedir pocos equivale a
+ * pedir los permitidos?** Si «limit(12)» bastara para leer una colección que
+ * contiene documentos denegados, el primer criterio no lo sostendría el servidor
+ * sino la buena voluntad del cliente. Se le pregunta al emulador en lugar de
+ * suponerlo, que es lo que HU-24 hizo con el lote.
+ *
+ * Lo que este bloque **no** demuestra: que los índices compuestos estén
+ * publicados. El emulador los construye al vuelo, así que una consulta que aquí
+ * pasa puede fallar en producción con «failed-precondition» hasta que se ejecute
+ * «firebase deploy --only firestore:indexes» (docs/24 §5).
+ */
+describe('el catálogo público (HU-25)', () => {
+  const AYER = new Date(2026, 0, 10, 20, 0);
+  const MANANA = new Date(2027, 0, 10, 20, 0);
+  /** Instante desde el que consulta el catálogo, entre las dos fechas de arriba. */
+  const AHORA = new Date(2026, 6, 1, 12, 0);
+
+  const eventoDe = (idEvento, cambios) => ({
+    idEvento,
+    idActor: ID_ACTOR,
+    titulo: 'Noche de tambora',
+    tituloNormalizado: 'noche de tambora',
+    descripcion: 'Toque abierto en la plaza, con instrumentos prestados.',
+    categoria: 'musica',
+    fechaInicio: new Date(2026, 0, 10, 18, 0),
+    fechaFin: MANANA,
+    lugar: 'Plaza de San Francisco',
+    coordenadas: null,
+    imagen: null,
+    estadoPublicacion: 'aprobado',
+    fechaCreacion: new Date(2026, 0, 1, 8, 0),
+    contadorConsultas: 0,
+    ...cambios,
+  });
+
+  /** La consulta que envía «listarPublicacionesAprobadas», tal cual. */
+  const consultaDelCatalogo = (bd, despuesDe = null) =>
+    query(
+      collection(bd, 'eventos'),
+      where('estadoPublicacion', '==', 'aprobado'),
+      where('fechaFin', '>=', AHORA),
+      orderBy('fechaFin'),
+      orderBy(documentId()),
+      ...(despuesDe ? [startAfter(despuesDe.fechaFin, despuesDe.id)] : []),
+      limit(13)
+    );
+
+  const identificadores = (instantanea) => instantanea.docs.map((documento) => documento.id);
+
+  before(async () => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      const bd = contexto.firestore();
+
+      await setDoc(doc(bd, 'eventos', 'cat-vigente'), eventoDe('cat-vigente'));
+      await setDoc(
+        doc(bd, 'eventos', 'cat-terminado'),
+        eventoDe('cat-terminado', { fechaFin: AYER })
+      );
+      // Pendiente y con fecha futura: el único motivo para dejarlo fuera es su
+      // estado, así que si se colara sería por el filtro y no por la fecha.
+      await setDoc(
+        doc(bd, 'eventos', 'cat-pendiente'),
+        eventoDe('cat-pendiente', { estadoPublicacion: 'pendiente' })
+      );
+
+      // Dos que terminan **en el mismo instante**: es el empate que obliga al
+      // segundo criterio de orden.
+      await setDoc(doc(bd, 'eventos', 'cat-empate-a'), eventoDe('cat-empate-a'));
+      await setDoc(doc(bd, 'eventos', 'cat-empate-b'), eventoDe('cat-empate-b'));
+    });
+  });
+
+  describe('pedir menos no es pedir lo permitido', () => {
+    it('la consulta del catálogo, entera, se autoriza a un visitante sin sesión', async () => {
+      await assertSucceeds(getDocs(consultaDelCatalogo(visitante())));
+    });
+
+    it('«limit» NO sustituye al filtro de lo aprobado', async () => {
+      // Esta es la pregunta del bloque. Si el tope bastara, la vista sería el
+      // único guardián del primer criterio; falla, así que lo es el servidor.
+      await assertFails(getDocs(query(collection(visitante(), 'eventos'), limit(12))));
+    });
+
+    it('ordenar tampoco: un orden no es una condición', async () => {
+      await assertFails(
+        getDocs(query(collection(visitante(), 'eventos'), orderBy('fechaFin'), limit(12)))
+      );
+    });
+
+    it('y la página siguiente tampoco se lo salta', async () => {
+      // Un cursor mueve el punto de partida; no reduce a qué documentos alcanza
+      // la consulta. Importa porque «cargarMas» construye la consulta otra vez y
+      // podría perder el «where» por el camino sin que nada en pantalla lo diga.
+      await assertFails(
+        getDocs(
+          query(
+            collection(visitante(), 'eventos'),
+            orderBy('fechaFin'),
+            startAfter(AHORA),
+            limit(12)
+          )
+        )
+      );
+    });
+  });
+
+  describe('lo que trae la página', () => {
+    it('lo aprobado y vigente sí está', async () => {
+      const leidos = identificadores(await getDocs(consultaDelCatalogo(visitante())));
+      assert.equal(leidos.includes('cat-vigente'), true);
+    });
+
+    it('lo pendiente no está, aunque su fecha sea futura (primer criterio)', async () => {
+      const leidos = identificadores(await getDocs(consultaDelCatalogo(visitante())));
+      assert.equal(leidos.includes('cat-pendiente'), false);
+    });
+
+    it('lo que ya terminó queda fuera de la consulta, no de la vista', async () => {
+      // La diferencia importa: fuera de la consulta no se descarga ni se paga.
+      const leidos = identificadores(await getDocs(consultaDelCatalogo(visitante())));
+      assert.equal(leidos.includes('cat-terminado'), false);
+    });
+  });
+
+  describe('el cursor y el empate de fechas', () => {
+    it('con dos que terminan a la misma hora, la página siguiente no se salta a ninguno', async () => {
+      // La pregunta que no se resuelve leyendo documentación: un cursor de un
+      // solo valor sobre un empate, ¿se salta al segundo o lo repite? Aquí se
+      // pregunta con el desempate puesto, que es como lo envía el servicio.
+      const primera = await getDocs(
+        query(
+          collection(visitante(), 'eventos'),
+          where('estadoPublicacion', '==', 'aprobado'),
+          where('fechaFin', '>=', AHORA),
+          orderBy('fechaFin'),
+          orderBy(documentId()),
+          limit(1)
+        )
+      );
+      const ultimo = primera.docs[0];
+
+      const siguiente = await getDocs(
+        query(
+          collection(visitante(), 'eventos'),
+          where('estadoPublicacion', '==', 'aprobado'),
+          where('fechaFin', '>=', AHORA),
+          orderBy('fechaFin'),
+          orderBy(documentId()),
+          startAfter(ultimo.data().fechaFin, ultimo.id),
+          limit(13)
+        )
+      );
+
+      const leidos = identificadores(siguiente);
+      assert.equal(leidos.includes(ultimo.id), false, 'el cursor repitió al último');
+      // Los tres vigentes —«cat-empate-a», «cat-empate-b» y «cat-vigente»—
+      // comparten «fechaFin», así que este es justo el caso en que un cursor sin
+      // desempate se llevaría por delante a los que empatan con el primero.
+      assert.equal(leidos.length, 2, 'el cursor se saltó a alguien que empataba');
     });
   });
 });

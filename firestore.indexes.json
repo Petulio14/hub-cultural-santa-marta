@@ -37,6 +37,20 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "estadoPublicacion",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fechaFin",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "eventos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "idActor",
           "order": "ASCENDING"
         },

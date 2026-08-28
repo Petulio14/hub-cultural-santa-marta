@@ -1,0 +1,119 @@
+/* V-2 · catálogo público — HU-25 */
+
+.catalogo__intro {
+  max-width: 65ch;
+  color: var(--gris-texto);
+}
+
+.catalogo__recuento {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.catalogo__aviso {
+  border: 1px solid var(--terracota);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--terracota);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+/* Cuarto criterio: el catálogo vacío ocupa sitio y ofrece a dónde ir. Un
+   párrafo suelto en medio de la página se lee como un fallo de carga. */
+.catalogo__vacio {
+  max-width: 60ch;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 18px;
+}
+
+.catalogo__vacio p {
+  margin: 0 0 12px;
+}
+
+.catalogo__vacio p:last-child {
+  margin-bottom: 0;
+}
+
+/* La misma rejilla del directorio de actores: una columna a 360 px, dos a 768 y
+   tres a 1366 (docs/10 §2). Doce por página son filas completas en las tres. */
+.catalogo__rejilla {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+.tarjeta-evento {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* La fotografía encabeza la tarjeta a todo lo ancho, al revés que en el
+   directorio de actores. Allí una franja de retratos se leía como un muro de
+   caras; aquí la imagen es el reclamo: quien recorre un catálogo de planes mira
+   antes la fotografía que el título.
+
+   Proporción fija y recorte centrado para que doce tarjetas formen filas rectas
+   sin depender de cómo venga cada imagen. */
+.tarjeta-evento__imagen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+.tarjeta-evento__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+}
+
+.tarjeta-evento__categoria {
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+/* Se recorta a dos líneas: un título largo no puede empujar la fecha y el lugar
+   fuera de la altura que comparten las tarjetas de una misma fila. El texto
+   sigue completo en el documento, así que un lector de pantalla lo lee entero. */
+.tarjeta-evento__titulo {
+  margin: 0;
+  font-size: 1.15rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tarjeta-evento__cuando {
+  margin: 0;
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.tarjeta-evento__lugar {
+  margin: 0;
+  color: var(--gris-texto);
+}
+
+.catalogo__mas {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
