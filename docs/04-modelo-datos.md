@@ -292,6 +292,17 @@ resuelve la búsqueda **sobre el conjunto ya cargado en el cliente**, comparando
 —normalizado a minúsculas y sin tildes— contra `tituloNormalizado` y `descripcion`. Por eso
 `tituloNormalizado` se persiste en el documento en lugar de calcularse en cada consulta.
 
+Cumplido en [26](26-busqueda.md), con dos precisiones que conviene traer aquí:
+
+- **«El conjunto ya cargado» resultó no valer.** Buscar dentro de las doce de una página
+encuentra dentro de doce. Con término escrito se pide de una vez todo lo que cumple los
+filtros del servidor, hasta un tope de doscientas, y la vista dice cuándo lo alcanza
+([26 §2 y §3](26-busqueda.md)).
+- **`tituloNormalizado` ahorra menos de lo que este párrafo suponía.** El razonamiento vale
+para una comparación en el servidor; hecha en memoria, normalizar al vuelo cuesta
+microsegundos, y la descripción hay que normalizarla así de todas formas porque nunca se
+guardó normalizada ([26 §4](26-busqueda.md)). El campo se conserva y se usa.
+
 ---
 
 *Elaboración propia (2026).*

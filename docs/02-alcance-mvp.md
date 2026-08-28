@@ -79,6 +79,7 @@ registra aquí y **no se incorpora a ningún sprint**.
 | --- | --- | --- | --- | --- |
 | TF-01 | Deshacer la eliminación de una publicación: papelera o borrado lógico en lugar de definitivo. | 27/08/2026 | HU-23 | Registrada, fuera de sprint |
 | TF-02 | Llevar los filtros del catálogo a la dirección, para poder compartir un catálogo ya filtrado y volver atrás con el botón del navegador. | 28/08/2026 | HU-26 | Registrada, fuera de sprint |
+| TF-03 | Búsqueda exhaustiva sobre todo el catálogo con un índice de texto externo, en lugar del tope de doscientas actividades. Exige el plan Blaze, igual que las imágenes en Storage y el aviso por correo. | 28/08/2026 | HU-27 | Registrada, fuera de sprint |
 
 ## 6. Constancia de aceptación
 

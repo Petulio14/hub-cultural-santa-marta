@@ -7,8 +7,16 @@
  */
 import { desdeEntradaDeDia, finDelDia } from './fechas.js';
 
-/** Ningún filtro puesto. Es también lo que restituye «Limpiar» (cuarto criterio). */
-export const FILTROS_VACIOS = { categoria: '', desde: '', hasta: '' };
+/**
+ * Ningún filtro puesto. Es también lo que restituye «Limpiar» (cuarto criterio).
+ *
+ * «texto» entra en HU-27 y es el único de los cuatro que **no viaja al
+ * servidor**: Firestore no sabe buscar dentro de un texto, así que se compara en
+ * memoria sobre lo que la consulta trajo (docs/26 §1). Vive aquí de todas formas
+ * porque para la persona que lo escribe es un filtro más: se pone con los otros,
+ * se aplica con el mismo botón y se quita con el mismo «Limpiar».
+ */
+export const FILTROS_VACIOS = { categoria: '', desde: '', hasta: '', texto: '' };
 
 /** ¿Hay alguno puesto? Lo pregunta la vista para saber qué mensaje escribir. */
 export function hayFiltros(filtros) {
@@ -57,6 +65,9 @@ export function rangoInvertido(filtros) {
  *
  * «hasta» sale nulo cuando no se ha escrito, y esa distinción importa: el
  * servicio la usa para decidir si la consulta lleva una desigualdad o dos.
+ *
+ * «texto» no sale: no es un límite de la consulta y el servicio no sabría qué
+ * hacer con él.
  */
 export function limitesDeConsulta(filtros, ahora = new Date()) {
   const desdeEscrito = desdeEntradaDeDia(filtros?.desde);

@@ -128,17 +128,28 @@
 }
 
 .filtros__grupo {
-  display: grid;
-  gap: 0 var(--espacio-tarjetas);
-  /* Los tres campos caben en fila desde que hay sitio, y se apilan solos por
-     debajo. «auto-fit» y no «auto-fill»: con dos campos visibles no se debe
-     reservar el hueco de un tercero que no está. */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   border: 1px solid var(--gris-borde);
   border-radius: var(--radio);
   background: var(--blanco);
   padding: 4px 16px 12px;
   margin: 0;
+}
+
+/* La palabra clave ocupa su propia línea — HU-27. No entra en la rejilla de
+   abajo: en una fila de cuatro quedaría del ancho de un desplegable, y un campo
+   de texto tan estrecho como un «Desde» invita a escribir una palabra cuando lo
+   que se busca cabe en varias. */
+.filtros__busqueda {
+  max-width: 42ch;
+}
+
+/* Los tres campos de afinar caben en fila desde que hay sitio, y se apilan solos
+   por debajo. «auto-fit» y no «auto-fill»: con dos campos visibles no se debe
+   reservar el hueco de un tercero que no está. */
+.filtros__afinar {
+  display: grid;
+  gap: 0 var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
 }
 
 .filtros__titulo {
@@ -152,4 +163,15 @@
   flex-wrap: wrap;
   gap: 10px;
   margin: 12px 0 0;
+}
+
+/* El aviso de que la búsqueda tocó su tope — HU-27.
+   No es un error: la búsqueda funcionó, solo que no lo miró todo. Por eso no
+   lleva el rojo de «.catalogo__aviso» sino el borde discontinuo de las notas. */
+.catalogo__tope {
+  max-width: 65ch;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  color: var(--gris-texto);
 }

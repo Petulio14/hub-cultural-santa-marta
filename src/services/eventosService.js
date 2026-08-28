@@ -92,6 +92,9 @@ function aPublicacion(documento) {
     id: documento.id,
     idActor: datos.idActor,
     titulo: datos.titulo ?? '',
+    // Lo pide la búsqueda de HU-27, que compara contra él en lugar de volver a
+    // normalizar el título en cada comparación (docs/04 §11).
+    tituloNormalizado: datos.tituloNormalizado ?? '',
     descripcion: datos.descripcion ?? '',
     categoria: datos.categoria ?? '',
     fechaInicio: aFecha(datos.fechaInicio),

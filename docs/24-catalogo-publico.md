@@ -306,6 +306,6 @@ _Pendiente. Se hace sobre el sitio publicado y **con el índice ya publicado**: 
 ## 10. Lo que queda fuera
 
 - **Los filtros por categoría y por rango de fechas** eran [HU-26](https://github.com/Petulio14/hub-cultural-santa-marta/issues/26), y ya están ([25](25-filtros-del-catalogo.md)). El catálogo que dejó esta historia es el catálogo entero; el rango de fechas de HU-26 es lo que permite alcanzar por fecha lo que §1 decide no enseñar por defecto.
-- **La búsqueda por palabra clave** es [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27). El campo `tituloNormalizado` la espera guardado desde HU-21.
+- **La búsqueda por palabra clave** era [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27) y ya está ([26](26-busqueda.md)). Con término escrito, la carga progresiva de §3 se apaga: buscar dentro de doce encuentra dentro de doce.
 - **El detalle de una publicación** es [HU-28](https://github.com/Petulio14/hub-cultural-santa-marta/issues/28), y con él el enlace desde la tarjeta.
 - **El mapa** de la misma oferta es [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30). Con esta historia el punto que HU-22 dejó guardado sigue sin verse en ninguna parte; ahí es donde se verá.
