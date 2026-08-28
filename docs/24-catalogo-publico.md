@@ -248,14 +248,30 @@ once, o decir que hay más cuando lo que hay es exactamente el borde de doce—.
 
 ### Las reglas · `npm run probar:reglas`
 
-**Nueve casos nuevos.**
+**Nueve casos nuevos**, en tres grupos.
 
 | Qué comprueba | Casos |
 | --- | --- |
-| Pedir menos no es pedir lo permitido: `limit`, orden y cursor no sustituyen al filtro | 4 |
+| Pedir menos no es pedir lo permitido: `limit`, orden y cursor no sustituyen al filtro, y la consulta completa sí se autoriza | 4 |
 | Lo que trae la página: lo vigente sí, lo pendiente no, lo terminado tampoco | 3 |
-| El cursor con desempate no se salta a quien empata en fecha | 1 |
-| La consulta completa del catálogo se autoriza a un visitante sin sesión | 1 |
+| El empate de fechas: las empatadas salen juntas y en orden, y el cursor cae exactamente entre dos de ellas | 2 |
+
+#### El caso del empate, que primero midió otra cosa
+
+La primera ejecución en integración continua lo dejó
+[en rojo](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33196317619):
+esperaba dos publicaciones detrás del cursor y llegaron ocho.
+
+**No era el cursor ni la regla.** El caso daba por hecho que la colección contenía solo los
+cinco documentos que él mismo había sembrado, y en ese archivo hay publicaciones aprobadas
+desde HU-21: ocho de ellas terminan después del instante desde el que consulta el caso.
+Contar era la manera equivocada de preguntarlo.
+
+Reescrito, ahora compara la página que devuelve el cursor **contra la lista entera** —tiene
+que ser exactamente la lista menos su primer elemento— y no contra un número. Es la misma
+lección que HU-21 anotó con `UIDS_SIN_PERFIL[10]`, por otra puerta: un caso que se apoya en
+el estado que dejaron los anteriores mide lo que ese estado quiera, no lo que su nombre
+anuncia.
 
 > **Lo que este bloque no demuestra.** Que los índices estén publicados. El emulador los
 > construye al vuelo, así que una consulta que ahí pasa puede fallar en producción con

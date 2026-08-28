@@ -2104,40 +2104,58 @@ describe('el catálogo público (HU-25)', () => {
   });
 
   describe('el cursor y el empate de fechas', () => {
-    it('con dos que terminan a la misma hora, la página siguiente no se salta a ninguno', async () => {
-      // La pregunta que no se resuelve leyendo documentación: un cursor de un
-      // solo valor sobre un empate, ¿se salta al segundo o lo repite? Aquí se
-      // pregunta con el desempate puesto, que es como lo envía el servicio.
-      const primera = await getDocs(
-        query(
-          collection(visitante(), 'eventos'),
-          where('estadoPublicacion', '==', 'aprobado'),
-          where('fechaFin', '>=', AHORA),
-          orderBy('fechaFin'),
-          orderBy(documentId()),
-          limit(1)
-        )
-      );
-      const ultimo = primera.docs[0];
-
-      const siguiente = await getDocs(
-        query(
-          collection(visitante(), 'eventos'),
-          where('estadoPublicacion', '==', 'aprobado'),
-          where('fechaFin', '>=', AHORA),
-          orderBy('fechaFin'),
-          orderBy(documentId()),
-          startAfter(ultimo.data().fechaFin, ultimo.id),
-          limit(13)
-        )
+    /** La misma consulta del catálogo, sin tope: aquí interesa la lista entera. */
+    const ordenadas = (bd, despuesDe = null) =>
+      query(
+        collection(bd, 'eventos'),
+        where('estadoPublicacion', '==', 'aprobado'),
+        where('fechaFin', '>=', AHORA),
+        orderBy('fechaFin'),
+        orderBy(documentId()),
+        ...(despuesDe ? [startAfter(despuesDe.fechaFin, despuesDe.id)] : [])
       );
 
-      const leidos = identificadores(siguiente);
-      assert.equal(leidos.includes(ultimo.id), false, 'el cursor repitió al último');
-      // Los tres vigentes —«cat-empate-a», «cat-empate-b» y «cat-vigente»—
-      // comparten «fechaFin», así que este es justo el caso en que un cursor sin
-      // desempate se llevaría por delante a los que empatan con el primero.
-      assert.equal(leidos.length, 2, 'el cursor se saltó a alguien que empataba');
+    /** Los tres que terminan en el mismo instante, en orden de identificador. */
+    const EMPATADOS = ['cat-empate-a', 'cat-empate-b', 'cat-vigente'];
+
+    it('las que empatan salen juntas y en orden de identificador', async () => {
+      // El desempate no es una precaución: es lo que hace que «después de esta»
+      // signifique algo cuando tres documentos comparten la fecha que ordena.
+      const todas = identificadores(await getDocs(ordenadas(visitante())));
+      const posiciones = EMPATADOS.map((id) => todas.indexOf(id));
+
+      assert.equal(posiciones.includes(-1), false, 'falta alguna de las empatadas');
+      assert.deepEqual(
+        posiciones,
+        [posiciones[0], posiciones[0] + 1, posiciones[0] + 2],
+        'las empatadas no salieron juntas y en orden'
+      );
+    });
+
+    it('el cursor cae exactamente entre dos que terminan a la misma hora', async () => {
+      // La pregunta que no se resuelve leyendo documentación: sobre un empate,
+      // ¿el cursor se salta al segundo o lo repite? Ni una cosa ni la otra, y se
+      // comprueba contra la lista entera en lugar de contra un recuento: en esta
+      // colección hay publicaciones de las historias anteriores, y cuántas haya
+      // no es asunto de este caso.
+      const todas = identificadores(await getDocs(ordenadas(visitante())));
+      const posicion = todas.indexOf('cat-empate-a');
+
+      const siguientes = identificadores(
+        await getDocs(ordenadas(visitante(), { fechaFin: MANANA, id: 'cat-empate-a' }))
+      );
+
+      assert.deepEqual(
+        siguientes,
+        todas.slice(posicion + 1),
+        'el cursor no dejó exactamente una detrás'
+      );
+      assert.equal(siguientes.includes('cat-empate-a'), false, 'el cursor repitió el suyo');
+      assert.equal(
+        siguientes.includes('cat-empate-b'),
+        true,
+        'el cursor se llevó por delante a quien empataba'
+      );
     });
   });
 });
