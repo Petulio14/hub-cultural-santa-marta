@@ -17,6 +17,22 @@
 export const TAMANO_DE_PAGINA = 12;
 
 /**
+ * Cuántas publicaciones pide el mapa de HU-30 — que **no** pagina.
+ *
+ * Un mapa con la mitad de los marcadores no es medio mapa: es un mapa que
+ * miente sobre dónde hay oferta cultural. Paginar ahí no tiene sentido, así que
+ * se piden todas de una vez con un tope, igual que hace la búsqueda de HU-27.
+ *
+ * Vale doscientas, el mismo número que «TOPE_DE_BUSQUEDA», y aun así son dos
+ * constantes y no una. No es duplicación por descuido: responden a criterios
+ * distintos y pueden separarse sin que nadie tenga que averiguar a cuál de las
+ * dos vistas le importaba el número. Lo que comparten hoy es la razón —una
+ * consulta sin límite crece con el catálogo y cada documento se paga—, no el
+ * valor.
+ */
+export const TOPE_DEL_MAPA = 200;
+
+/**
  * Separa la página de la señal de que hay más.
  *
  * Se le piden al servidor **trece** para enseñar doce. Es la forma barata de
