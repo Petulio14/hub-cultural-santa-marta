@@ -245,13 +245,19 @@ página.
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado, y **la fila del gesto de dos dedos hay que
-repetirla en un teléfono de verdad**: lo de arriba es una emulación, y un dedo real tiene
-área, temblor y tiempos que un evento sintético no reproduce._
+Sobre el sitio publicado, sin sesión iniciada, y **la última fila en un teléfono de
+verdad**: lo de arriba era una emulación, y un dedo real tiene área, temblor y tiempos que
+un evento sintético no reproduce.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | `/mapa` enseña un marcador por publicación aprobada y situada | Correcto (primer criterio) |
+| 28/08/2026 | Pulsar un marcador abre su ficha con título y categoría | Correcto (segundo criterio) |
+| 28/08/2026 | «Ver la actividad» lleva a la ficha completa | Correcto |
+| 28/08/2026 | El filtro de categoría deja solo esos marcadores | Correcto (tercer criterio) |
+| 28/08/2026 | Se dice cuántas publicaciones quedan fuera por no estar situadas | Correcto |
+| 28/08/2026 | **En un teléfono:** un dedo desplaza la página, dos mueven el mapa | Correcto (cuarto criterio), y el aviso del gesto se lee antes de tocar |
+| 28/08/2026 | **En un teléfono:** el pellizco acerca y aleja | Correcto |
 
 ## 10. Lo que queda fuera
 

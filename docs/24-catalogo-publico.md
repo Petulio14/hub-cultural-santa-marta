@@ -310,12 +310,18 @@ fusionar, no antes de escribir.
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado y **con el índice ya publicado**: sin él, la
-única fila que se puede comprobar es la del aviso de error._
+Sobre el sitio publicado, sin sesión iniciada y con el índice ya publicado. Es la primera
+comprobación del proyecto que se hace **como visitante**: sin cuenta, sin haber entrado
+nunca, que es exactamente el público al que sirve esta historia.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | `/eventos` lista las publicaciones aprobadas | Correcto |
+| 28/08/2026 | Lo que ya terminó **no** aparece | Correcto: la publicación que acabó antes de la fecha de consulta queda fuera |
+| 28/08/2026 | Cada tarjeta lleva los cinco datos del segundo criterio | Imagen, categoría, título, periodo y lugar |
+| 28/08/2026 | La categoría se lee con su nombre, no con su identificador | Correcto |
+| 28/08/2026 | El recuento concuerda con lo que hay en la rejilla | Correcto |
+| 28/08/2026 | Sin sesión iniciada no se pide cuenta en ningún momento | Correcto |
 
 ## 10. Lo que queda fuera
 
