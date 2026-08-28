@@ -248,7 +248,8 @@ once, o decir que hay más cuando lo que hay es exactamente el borde de doce—.
 
 ### Las reglas · `npm run probar:reglas`
 
-**Nueve casos nuevos**, en tres grupos.
+**186 casos**, nueve de ellos nuevos, en tres grupos. Todo en verde en la
+[ejecución 33196516276](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33196516276).
 
 | Qué comprueba | Casos |
 | --- | --- |
