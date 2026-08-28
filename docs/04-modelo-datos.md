@@ -182,7 +182,8 @@ simples: hay que declararla en `firestore.indexes.json`.
 | Colección | Campos del índice | Consulta que habilita | Historia |
 | --- | --- | --- | --- |
 | `eventos` | `estadoPublicacion` ASC, `categoria` ASC, `fechaInicio` ASC | Catálogo público filtrado por categoría y rango de fechas. | HU-26 |
-| `eventos` | `estadoPublicacion` ASC, `fechaInicio` ASC | Catálogo público ordenado por fecha. | HU-25 |
+| `eventos` | `estadoPublicacion` ASC, `fechaFin` ASC | **El que usa el catálogo público**: lo aprobado que todavía no ha terminado, ordenado por lo que le queda. Filtrar por `fechaFin` obliga a ordenar por `fechaFin`, y esa es toda la historia ([24 §1](24-catalogo-publico.md)). | HU-25 |
+| `eventos` | `estadoPublicacion` ASC, `fechaInicio` ASC | Se planeó para el catálogo de HU-25 y **no es el que usa**. Se conserva porque lo necesita el rango de fechas de HU-26. | HU-25, HU-26 |
 | `eventos` | `idActor` ASC, `fechaCreacion` DESC | Publicaciones propias del actor cultural. **No llegó a hacer falta**: `listarMisPublicaciones` filtra en el servidor y ordena en memoria, que no alcanza ningún documento de más porque ya están todos leídos y son los propios ([22 §8](22-edicion-y-eliminacion.md)). Se conserva la fila porque la diferencia entre lo planeado y lo construido es en sí misma un dato. | HU-23 |
 | `eventos` | `estadoPublicacion` ASC, `fechaCreacion` ASC | Cola de moderación ordenada por antigüedad. | HU-24 |
 | `eventos` | `estadoPublicacion` ASC, `contadorConsultas` DESC | Publicaciones más consultadas. | HU-34 |
@@ -206,6 +207,14 @@ simples: hay que declararla en `firestore.indexes.json`.
       "fields": [
         { "fieldPath": "estadoPublicacion", "order": "ASCENDING" },
         { "fieldPath": "fechaInicio", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "eventos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estadoPublicacion", "order": "ASCENDING" },
+        { "fieldPath": "fechaFin", "order": "ASCENDING" }
       ]
     },
     {

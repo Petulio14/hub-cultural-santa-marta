@@ -256,7 +256,7 @@ se sitúa (HU-22), se modera (HU-24), se devuelve, se corrige (HU-23) y vuelve a
 
 | Qué | Dónde va |
 | --- | --- |
-| El catálogo público donde aparece lo aprobado | HU-25 |
+| El catálogo público donde aparece lo aprobado | HU-25, **hecho** ([24](24-catalogo-publico.md)) |
 | El mapa donde aparece lo aprobado y situado | HU-30 |
 | Ver el historial completo de moderaciones de una publicación | no está pedido; el modelo lo permite y `listarModeracionesDeEvento` ya lo devuelve entero |
 | Avisar al actor por correo en el momento | requiere Cloud Functions y plan Blaze (§3); fuera del alcance por RNF-10 |
@@ -267,6 +267,11 @@ que esta historia deja hecho es lo que lo hará cierto cuando existan: el estado
 `aprobado`, y desde HU-21 la regla de lectura pública se apoya exactamente en ese valor, con
 casos que lo demuestran. Queda anotado para no darlo por comprobado dos veces, igual que se
 hizo en `docs/20` §8.
+
+> **Media nota, saldada.** HU-25 construyó el catálogo, y la mitad del segundo criterio que
+> quedaba en promesa se puede comprobar ya: una publicación aprobada aparece ahí, y una
+> pendiente no llega siquiera a descargarse ([24 §2](24-catalogo-publico.md)). La otra mitad
+> —el mapa— sigue esperando a HU-30.
 
 ---
 
