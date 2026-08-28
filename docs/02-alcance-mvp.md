@@ -78,6 +78,7 @@ registra aquí y **no se incorpora a ningún sprint**.
 | # | Funcionalidad propuesta | Fecha de identificación | Origen | Estado |
 | --- | --- | --- | --- | --- |
 | TF-01 | Deshacer la eliminación de una publicación: papelera o borrado lógico en lugar de definitivo. | 27/08/2026 | HU-23 | Registrada, fuera de sprint |
+| TF-02 | Llevar los filtros del catálogo a la dirección, para poder compartir un catálogo ya filtrado y volver atrás con el botón del navegador. | 28/08/2026 | HU-26 | Registrada, fuera de sprint |
 
 ## 6. Constancia de aceptación
 
