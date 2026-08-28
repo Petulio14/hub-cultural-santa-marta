@@ -184,7 +184,8 @@ código.
 
 ### Las reglas · `npm run probar:reglas`
 
-**Ocho casos nuevos.**
+**204 casos**, siete de ellos nuevos. Todo en verde a la primera en la
+[ejecución 33217549509](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33217549509).
 
 | Qué comprueba | Casos |
 | --- | --- |
