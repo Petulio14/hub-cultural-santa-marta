@@ -174,6 +174,21 @@ vista que lo necesita queda rota durante ese rato para todo el que entre, con un
 firebase deploy --only firestore:indexes
 ```
 
+> **Lo que pasó de verdad.** Los cuatro índices de HU-25 y HU-26 se fusionaron sin
+> desplegarse, y el catálogo del sitio publicado estuvo respondiendo «no está
+> disponible» hasta el **28/08/2026**, cuando se ejecutó el comando de arriba. Se
+> descubrió comparando `firebase firestore:indexes` con `firestore.indexes.json`, no
+> mirando la página, y de ahí sale la comprobación que conviene añadir al cierre de
+> cualquier historia que declare un índice:
+>
+> ```bash
+> firebase firestore:indexes
+> ```
+>
+> Si el número que imprime no coincide con el del archivo, el despliegue no ocurrió.
+> Una regla que dice «hay que publicar» no sirve de nada sin una forma barata de
+> comprobar que se publicó.
+
 ## 6. Cierre de HU-08
 
 | Criterio de aceptación | Evidencia |
