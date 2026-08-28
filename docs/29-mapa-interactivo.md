@@ -202,7 +202,10 @@ es lo que hay debajo.
 
 ### Las reglas · `npm run probar:reglas`
 
-**216 casos, sin casos nuevos**, y es deliberado (§8).
+**216 casos, sin casos nuevos**, y es deliberado (§8). Se ejecutan igualmente, y en
+verde, en la
+[ejecución 33219927168](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33219927168):
+una historia que no añade permisos tiene que dejar intactos los que había.
 
 ### En el navegador
 
