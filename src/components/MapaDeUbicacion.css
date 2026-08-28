@@ -1,0 +1,23 @@
+/* El mapa que solo enseña dónde queda algo — HU-28 · RF-11. */
+
+/*
+ * Leaflet necesita un alto explícito: mide el contenedor al crearse y un div sin
+ * alto le da cero, con lo que no pinta nada y tampoco avisa.
+ *
+ * Más bajo que el de HU-22 —240 frente a 320— y a propósito. Aquel es el sitio
+ * donde se está trabajando; este es un dato más de una ficha que se lee de
+ * arriba abajo, y ocupar media pantalla lo convertiría en el protagonista.
+ */
+.mapa-ubicacion__lienzo {
+  height: 240px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  /* Sin esto, las esquinas de las teselas se salen del borde redondeado. */
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .mapa-ubicacion__lienzo {
+    height: 300px;
+  }
+}

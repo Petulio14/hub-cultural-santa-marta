@@ -25,37 +25,5 @@
   }
 }
 
-/*
- * El marcador es un elemento HTML —un «divIcon»—, no el PNG de Leaflet, cuya
- * ruta se rompe al empaquetar. Se dibuja con una gota: un círculo al que se le
- * redondean tres esquinas de cuatro y se gira 45°, de modo que la que queda en
- * pico apunte hacia abajo.
- */
-.mapa-punto__aguja {
-  display: block;
-  width: 24px;
-  height: 24px;
-  background: var(--terracota);
-  border: 2px solid var(--blanco);
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  box-shadow: var(--sombra-tarjeta);
-  /* La caja del icono mide 34 de alto y la gota 24: el resto es la punta. */
-  margin: 0 0 10px 0;
-}
-
-/* Leaflet marca el marcador arrastrable con su propio cursor; se respeta. */
-.mapa-punto__marcador {
-  background: none;
-  border: none;
-}
-
-/*
- * El foco del teclado sobre el mapa tiene que verse. Leaflet pone «tabindex» en
- * su contenedor para poder desplazarlo con las flechas, y sin esto el foco
- * entraría ahí sin ninguna señal visible (WCAG 2.4.7).
- */
-.mapa-punto__lienzo:focus-visible {
-  outline: 3px solid var(--turquesa);
-  outline-offset: 2px;
-}
+/* El marcador y el foco del teclado están en mapa.css: los comparten los dos
+   mapas del proyecto desde HU-28. */

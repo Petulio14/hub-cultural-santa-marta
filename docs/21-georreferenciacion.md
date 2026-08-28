@@ -1,5 +1,11 @@
 # Situar la publicación en el mapa
 
+> **Dónde acaba viéndose.** El punto que esta historia guarda no se dibujó en ninguna
+> parte hasta [HU-28](27-detalle-de-la-publicacion.md), seis historias después: la ficha
+> de cada actividad lo enseña en un mapa reducido que **no se toca**, y que comparte con
+> este el marcador y las teselas pero nada de su comportamiento
+> ([27 §4](27-detalle-de-la-publicacion.md)). El mapa de toda la oferta es HU-30.
+
 > **Historia de usuario:** HU-22 · Sprint 5
 > **Épica:** E3 — Publicación y moderación de contenido
 > **Objetivo específico:** 2

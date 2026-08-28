@@ -1,0 +1,111 @@
+/* V-3 · ficha completa de una publicación — HU-28 */
+
+.detalle {
+  max-width: 70ch;
+}
+
+.detalle__migas {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+}
+
+/* El aviso de que se está viendo algo que el público no ve. Mismo trato que en
+   el perfil de actor: se dice con palabras, no solo con un color de fondo. */
+.detalle__borrador {
+  border: 1px dashed var(--ocre);
+  border-radius: var(--radio);
+  background: var(--arena);
+  color: var(--negro-texto);
+  padding: 12px 16px;
+}
+
+.detalle__aviso {
+  border: 1px solid var(--terracota);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--terracota);
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+/* A todo el ancho de la ficha, al contrario que en el directorio de actores:
+   aquí ya se ha decidido mirar esta actividad, y la fotografía es lo que la
+   describe antes que ninguna palabra. */
+.detalle__imagen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radio);
+}
+
+.detalle__categoria {
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 2px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+.detalle__cuando {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.detalle__pasada {
+  font-weight: 400;
+  color: var(--terracota);
+}
+
+/* Respeta los saltos de línea que escribió quien publicó, sin interpretar nada
+   más de lo que tecleó. La misma decisión que en el perfil de actor. */
+.detalle__descripcion {
+  white-space: pre-wrap;
+}
+
+.detalle__lugar {
+  margin-bottom: 12px;
+}
+
+/* Debajo del mapa y en pequeño: es el dato exacto para quien lo necesite, no
+   algo que nadie venga a leer. */
+.detalle__coordenadas {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+.detalle__sin-mapa,
+.detalle__sin-actor {
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  color: var(--gris-texto);
+}
+
+/* La misma disposición que la tarjeta del directorio: cuadrado pequeño al lado
+   del nombre, que a 96 px identifica sin apropiarse del bloque. */
+.detalle__actor {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.detalle__actor .detalle__actor-imagen {
+  flex: 0 0 auto;
+  width: 96px;
+}
+
+.detalle__actor-nombre {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detalle__actor-manifestacion {
+  margin: 4px 0 0;
+  color: var(--gris-texto);
+}
