@@ -154,6 +154,26 @@ Para comprobar antes de fusionar sin tocar producción está el **despliegue de 
 que Vercel crea para cada pull request: corre el código nuevo contra el mismo proyecto de
 Firebase.
 
+### 5.2 Los índices se publican **antes** de fusionar
+
+Añadido tras HU-25, y es el orden contrario al de arriba. La asimetría tiene una razón
+sola: una regla nueva **rechaza** al cliente viejo, y un índice nuevo no le estorba a
+nadie.
+
+| | Publicarlo antes de fusionar | Publicarlo después |
+| --- | --- | --- |
+| **Reglas** | La regla nueva rechaza a la aplicación que está viva | Correcto |
+| **Índices** | Correcto: un índice de más no estorba | La consulta nueva falla hasta que el índice termine de construirse |
+
+Un índice compuesto tarda minutos en construirse. Publicado después de fusionar, la
+vista que lo necesita queda rota durante ese rato para todo el que entre, con un error
+`failed-precondition` que **no se arregla reintentando**
+([24 §5](24-catalogo-publico.md)).
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
 ## 6. Cierre de HU-08
 
 | Criterio de aceptación | Evidencia |

@@ -51,6 +51,18 @@ export function traducir(fallo) {
   if (codigo === 'not-found') {
     return new ErrorDeDatos('Ese documento ya no existe.', { codigo });
   }
+  // El fallo propio de HU-25: una consulta que combina filtro y orden necesita
+  // un índice compuesto, y hasta que Firestore termina de construirlo la
+  // consulta no se puede resolver. Firestore lo llama «failed-precondition» y
+  // adjunta en el mensaje un enlace para crearlo, que solo sirve a quien
+  // administra el proyecto. Se distingue del error genérico porque no se arregla
+  // reintentando: hay que publicar el índice y esperar (docs/24 §5).
+  if (codigo === 'failed-precondition') {
+    return new ErrorDeDatos(
+      'El catálogo no está disponible en este momento. Vuelve a intentarlo en unos minutos.',
+      { codigo }
+    );
+  }
   if (codigo === 'resource-exhausted') {
     return new ErrorDeDatos(
       'La plataforma alcanzó su cuota diaria de uso. Inténtalo mañana.',

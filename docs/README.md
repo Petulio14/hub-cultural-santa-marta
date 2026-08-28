@@ -1,6 +1,6 @@
 # Documentación del proyecto
 
-Evidencia verificable de las historias de usuario de los sprints 1 a 5. Cada documento
+Evidencia verificable de las historias de usuario de los sprints 1 a 6. Cada documento
 corresponde a una historia del backlog y es la prueba que respalda su cierre en el tablero.
 
 | Documento | Historia | Sprint | Contenido |
@@ -28,6 +28,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [21-georreferenciacion.md](21-georreferenciacion.md) | [HU-22](https://github.com/Petulio14/hub-cultural-santa-marta/issues/22) | 5 | El punto en el mapa: Leaflet sin envoltorio, el marcador que se dibuja con CSS, y la advertencia que solo se lee si detiene el envío. |
 | [22-edicion-y-eliminacion.md](22-edicion-y-eliminacion.md) | [HU-23](https://github.com/Petulio14/hub-cultural-santa-marta/issues/23) | 5 | Corregir y retirar lo propio: un formulario que sirve para las dos cosas, por qué no `window.confirm`, y tres historias seguidas encontrando reglas sin estrenar. |
 | [23-moderacion.md](23-moderacion.md) | [HU-24](https://github.com/Petulio14/hub-cultural-santa-marta/issues/24) | 5 | Moderar antes de publicar: la decisión y su constancia en una sola escritura, y qué significa «notificar» cuando no se puede enviar correo. |
+| [24-catalogo-publico.md](24-catalogo-publico.md) | [HU-25](https://github.com/Petulio14/hub-cultural-santa-marta/issues/25) | 6 | El catálogo público: por qué «limit» no es un filtro, trece documentos para enseñar doce, y el índice que se publica antes de fusionar. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -45,13 +46,14 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **Cerrado el 22/08/2026, veinticuatro días antes del vencimiento.** Las cinco historias completas: proyecto de React con su estructura y enrutador ([08](08-estructura-del-proyecto.md)), navegación y página de inicio ([09](09-navegacion-e-inicio.md)), adaptación a los tres anchos ([10](10-responsive.md)), reglas de seguridad publicadas y probadas ([11](11-reglas-de-seguridad.md)) y despliegue continuo en [hub-cultural-santa-marta.vercel.app](https://hub-cultural-santa-marta.vercel.app) ([12](12-despliegue-continuo.md)). |
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 | Sprint 5 | 13/10/2026 | HU-18 a HU-24 | **Cerrado el 27/08/2026, cuarenta y siete días antes del vencimiento.** Dos épicas completas. La **E2**: perfil del actor cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de innovación ([19](19-hubs-de-innovacion.md)). La **E3**, el ciclo de vida entero de una publicación: crearla ([20](20-publicacion-de-eventos.md)), situarla en el mapa ([21](21-georreferenciacion.md)), corregirla y retirarla ([22](22-edicion-y-eliminacion.md)) y moderarla antes de que se vea ([23](23-moderacion.md)). Las siete comprobadas en el sitio publicado con cuentas reales de administrador y de actor cultural. |
+| Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **En curso.** Abre la épica E4 con el catálogo público ([24](24-catalogo-publico.md)), que es la primera vista del proyecto pensada para quien **no tiene cuenta**. |
 
 
-> **Lo que queda por delante.** Con la E3 cerrada, lo publicado ya existe, está situado y está
-> moderado — pero **todavía no hay dónde verlo**: el catálogo público es HU-25 y el mapa es
-> HU-30. Es la deuda que el Sprint 5 deja abierta a propósito, y está anotada en
-> [20 §8](20-publicacion-de-eventos.md) y [23 §9](23-moderacion.md) para que las filas de
-> verificación que se apoyan en ella no se den por cerradas dos veces.
+> **Lo que queda por delante.** [HU-25](24-catalogo-publico.md) salda la mitad de la deuda
+> que el Sprint 5 dejó abierta a propósito: lo aprobado ya tiene dónde verse. Queda la otra
+> mitad —el punto que HU-22 guarda en cada publicación sigue sin dibujarse en ninguna parte
+> hasta HU-30—, y queda que el catálogo se pueda **recorrer**: filtrar es HU-26, buscar es
+> HU-27 y abrir el detalle es HU-28.
 
 ## Configuración en la raíz del repositorio
 

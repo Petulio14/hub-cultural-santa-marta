@@ -36,14 +36,19 @@ import {
   collection,
   deleteDoc,
   doc,
+  documentId,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { TAMANO_DE_PAGINA, partirPagina } from '../utils/paginacion.js';
 import { normalizarTexto } from '../utils/texto.js';
 import { ErrorDeDatos, intentar } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
@@ -301,14 +306,67 @@ export async function listarMisPublicaciones(idActor) {
   );
 }
 
+
 /**
- * El **tercer criterio** —«no debe aparecer en el catálogo hasta ser aprobada»—
- * no tiene función aquí, y es a propósito.
+ * El catálogo público — **HU-25**, primer y tercer criterio.
  *
- * El catálogo público lo construye HU-25. Escribir hoy un «listarAprobadas» que
- * nadie llama sería dejar API muerta esperando a una historia que puede pedirla
- * distinta —con paginación, con filtros de HU-26—. Lo que sostiene el criterio
- * mientras tanto no es código de lectura sino la regla que lo impide: una
- * consulta de visitante que alcance una publicación pendiente **falla**, y hay
- * casos de prueba que lo demuestran (docs/20 §7).
+ * Es la función que el comentario final de HU-21 dejó sin escribir a propósito,
+ * y llega con tres decisiones que entonces no se podían tomar.
+ *
+ * 1. **Solo lo aprobado, y lo decide el servidor.** El «where» no está para que
+ *    la vista tenga menos que descartar: sin él la consulta alcanzaría
+ *    publicaciones pendientes y **fallaría entera**, porque la regla las
+ *    deniega. Hay un caso desde HU-21 que lo demuestra pidiendo la colección
+ *    completa, y otro nuevo que comprueba que «limit» no lo salva (docs/24 §3).
+ *
+ * 2. **Lo terminado no sale, y eso obliga a ordenar por «fechaFin».** Firestore
+ *    exige que el primer «orderBy» sea el campo de la desigualdad, así que
+ *    decidir «que no aparezca lo que ya pasó» cuesta el orden por cuándo
+ *    empieza. Es un intercambio real y se elige con los ojos abiertos: un
+ *    catálogo que abre con el festival del año pasado no sirve para planear una
+ *    estancia, y ordenar por lo que queda —primero lo que está a punto de
+ *    acabarse— es una segunda respuesta razonable para quien está de paso. Nada
+ *    de esto esconde nada: la fecha completa está en cada tarjeta.
+ *
+ *    Filtrar la fecha en memoria habría evitado el índice nuevo y roto la
+ *    paginación: descartar cinco de trece deja una página de siete y el visitante
+ *    no sabe por qué. Ordenar en memoria sí se hace en las otras dos listas,
+ *    porque ahí están todos los documentos leídos; aquí, por definición, no.
+ *
+ * 3. **El cursor no es una instantánea de Firestore.** «startAfter» admite el
+ *    documento entero, y eso obligaría al gancho a guardar un objeto del SDK
+ *    para devolverlo después: un gancho que sostiene una instantánea es un
+ *    gancho que habla el idioma de Firestore, que es justo lo que prohíbe
+ *    docs/03 §3. Se pasa la última publicación ya traducida y aquí se sacan los
+ *    dos valores que ordenan.
+ *
+ *    Los **dos**, no solo la fecha. Dos eventos que terminan a la misma hora no
+ *    son raros —las 22:00 de un sábado—, y un cursor de un solo valor sobre un
+ *    empate se salta uno de los dos o lo repite. El identificador es el desempate
+ *    que Firestore añade solo al final de todo índice compuesto, y aquí se
+ *    escribe para poder nombrarlo en el cursor.
  */
+export async function listarPublicacionesAprobadas({
+  despuesDe = null,
+  tamano = TAMANO_DE_PAGINA,
+  desde = new Date(),
+} = {}) {
+  exigirConfiguracion();
+
+  const consulta = query(
+    collection(db, COLECCION),
+    where('estadoPublicacion', '==', 'aprobado'),
+    where('fechaFin', '>=', desde),
+    orderBy('fechaFin'),
+    orderBy(documentId()),
+    ...(despuesDe ? [startAfter(despuesDe.fechaFin, despuesDe.id)] : []),
+    // Trece para enseñar doce: el de más es la única señal barata de que queda
+    // algo detrás (docs/24 §4).
+    limit(tamano + 1)
+  );
+
+  return intentar(async () => {
+    const { pagina, hayMas } = partirPagina((await getDocs(consulta)).docs, tamano);
+    return { publicaciones: pagina.map(aPublicacion), hayMas };
+  });
+}
