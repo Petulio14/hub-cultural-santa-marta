@@ -289,10 +289,24 @@ anuncia.
 | `npm run verificar` | sin incidencias |
 | `npm run build` | limpio |
 
-**Lo que no se pudo medir aquí:** el catálogo con contenido. La consulta necesita el índice
-publicado (§5), y el orden de despliegue de esta historia lo pone antes de fusionar, no
-antes de escribir. La rejilla, la carga progresiva y el catálogo vacío quedan enteros para
-la pasada en vivo.
+**Lo que no se pudo medir al escribir esta historia:** el catálogo con contenido. La
+consulta necesita el índice publicado (§5), y el orden de despliegue lo pone antes de
+fusionar, no antes de escribir.
+
+> **Medido después, el 28/08/2026.** Los cuatro índices se publicaron ese día con
+> `firebase deploy --only firestore:indexes`, y `firebase firestore:indexes` confirma los
+> diez declarados. Con ellos en su sitio se repitió la comprobación contra los datos
+> reales del proyecto, y esto es lo que dio:
+>
+> | Comprobación | Resultado |
+> | --- | --- |
+> | La consulta del catálogo devuelve lo aprobado | Correcto: 1 actividad |
+> | Lo que ya terminó **no** aparece | Correcto: de las dos publicaciones aprobadas, la que acabó el 27/08 queda fuera |
+> | El recuento se escribe en singular con un solo resultado | «1 actividad en total.» |
+>
+> La segunda fila es §1 funcionando: el catálogo esconde lo terminado, y se ve porque hay
+> dos publicaciones aprobadas y solo sale una. La rejilla con más de doce elementos y la
+> carga progresiva siguen sin poder medirse: harían falta trece publicaciones.
 
 ### Comprobación en vivo
 

@@ -1,5 +1,11 @@
 # El perfil del actor cultural
 
+> **Para qué acabaron sirviendo los canales de contacto.** Los tres campos opcionales
+> que esta historia guarda son lo que HU-29 ofrece desde la ficha de cada actividad, con
+> el mensaje ya empezado ([28](28-contacto-directo.md)). Las funciones de
+> `contacto.js` siguen sirviendo aquí **sin mensaje**, que es como las llamó esta
+> historia: desde el perfil no se pregunta por ninguna actividad en concreto.
+
 > **Historia de usuario:** HU-18 · Sprint 5
 > **Épica:** E2 — Perfiles de actores culturales y hubs
 > **Objetivo específico:** 2

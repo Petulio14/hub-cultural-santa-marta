@@ -290,10 +290,27 @@ esperaba.
 | `npm run verificar` | sin incidencias |
 | `npm run build` | limpio |
 
-**Lo que no se pudo medir aquí:** ningún filtro contra datos reales. Los tres índices no
-están publicados, y **el de HU-25 tampoco lo estaba**: la consulta sin filtros respondió
-`failed-precondition` pidiendo exactamente `estadoPublicacion` + `fechaFin` + `__name__`.
-Queda entero para la pasada en vivo, después del despliegue de §9.
+**Lo que no se pudo medir al escribir esta historia:** ningún filtro contra datos reales.
+Los tres índices no estaban publicados, y **el de HU-25 tampoco**: la consulta sin filtros
+respondía `failed-precondition` pidiendo exactamente `estadoPublicacion` + `fechaFin` +
+`__name__`.
+
+> **Medido después, el 28/08/2026.** Los cuatro índices se publicaron ese día con
+> `firebase deploy --only firestore:indexes`, y `firebase firestore:indexes` confirma los
+> diez declarados. Con ellos en su sitio se repitió la comprobación contra los datos
+> reales del proyecto, y esto es lo que dio:
+>
+> | Comprobación | Resultado |
+> | --- | --- |
+> | Filtrar por la categoría que sí tiene la actividad | La devuelve |
+> | Filtrar por otra categoría | Lista vacía, no error |
+> | Un rango de fechas que **se solapa** con la actividad | La devuelve |
+> | Un rango de diciembre, que no se solapa | Lista vacía |
+>
+> Las dos últimas filas son lo que el emulador no podía demostrar: **la consulta de dos
+> desigualdades sobre campos distintos se resuelve en producción**, con los índices
+> declarados en §9 y sin `failed-precondition`. Es la pregunta de §2, respondida esta vez
+> por Firestore y no por su emulador.
 
 ### Comprobación en vivo
 

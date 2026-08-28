@@ -109,3 +109,50 @@
   margin: 4px 0 0;
   color: var(--gris-texto);
 }
+
+/* Contacto directo con quien organiza — HU-29. */
+
+.contacto {
+  margin-top: 16px;
+}
+
+.contacto__canales {
+  margin-top: 12px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  padding: 16px;
+}
+
+/* Se dice antes de escribir, no después: quien va a mandar el mensaje es la
+   persona, con su número y su nombre, y tiene derecho a saberlo. */
+.contacto__aviso {
+  margin: 0 0 12px;
+  color: var(--gris-texto);
+}
+
+.contacto__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* El mensaje preparado se enseña entero, con «pre-wrap» por si algún día lleva
+   saltos, y entrecomillado por «q» para que se lea como una cita y no como una
+   instrucción de la plataforma. */
+.contacto__mensaje {
+  margin: 14px 0 0;
+  color: var(--gris-texto);
+  white-space: pre-wrap;
+}
+
+.detalle__sin-contacto {
+  margin-top: 16px;
+  border: 1px dashed var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  color: var(--gris-texto);
+}

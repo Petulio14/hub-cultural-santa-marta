@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import MapaDeUbicacion from '../../components/MapaDeUbicacion.jsx';
+import ContactoDelActor from './ContactoDelActor.jsx';
 import { useNombresDeCategoria } from '../../hooks/useNombresDeCategoria.js';
 import { leerActor } from '../../services/actoresService.js';
 import { leerPublicacionAprobada } from '../../services/eventosService.js';
@@ -10,7 +11,8 @@ import { textoDelPeriodo, yaTermino } from '../../utils/fechas.js';
 import './DetalleEvento.css';
 
 /**
- * V-3 · Ficha completa de una publicación — HU-28 · RF-09, RF-11.
+ * V-3 · Ficha completa de una publicación — HU-28 · RF-09, RF-11; HU-29 ·
+ * RF-12, RF-15.
  *
  * Es la vista que hace pulsable la tarjeta del catálogo. HU-25 la dejó sin
  * enlazar a propósito —enlazar a «en construcción» es peor que no enlazar
@@ -28,7 +30,8 @@ import './DetalleEvento.css';
  * aprobadas. Entonces se dice, y no se enlaza a una dirección que responderá que
  * ese perfil no está disponible (docs/27 §3).
  *
- * Los canales de contacto **no** están aquí: son el primer criterio de HU-29.
+ * Los canales de contacto llegan en HU-29, detrás de un botón y solo si el
+ * actor los autorizó (docs/28 §2).
  */
 export default function DetalleEvento() {
   const { id } = useParams();
@@ -167,19 +170,27 @@ export default function DetalleEvento() {
           está disponible se dice y no se enlaza: un enlace que lleva a «ese
           perfil no está disponible» es peor que la frase que lo explica. */}
       {actor ? (
-        <div className="detalle__actor">
-          <ImagenDeActor
-            imagen={actor.imagen}
-            nombre={actor.nombre}
-            className="detalle__actor-imagen"
-          />
-          <div>
-            <p className="detalle__actor-nombre">
-              <Link to={`/actores/${actor.id}`}>{actor.nombre}</Link>
-            </p>
-            <p className="detalle__actor-manifestacion">{actor.manifestacion}</p>
+        <>
+          <div className="detalle__actor">
+            <ImagenDeActor
+              imagen={actor.imagen}
+              nombre={actor.nombre}
+              className="detalle__actor-imagen"
+            />
+            <div>
+              <p className="detalle__actor-nombre">
+                <Link to={`/actores/${actor.id}`}>{actor.nombre}</Link>
+              </p>
+              <p className="detalle__actor-manifestacion">{actor.manifestacion}</p>
+            </div>
           </div>
-        </div>
+
+          {/* HU-29 · primer criterio. Debajo de quién organiza y no dentro:
+              quién organiza es un dato de la actividad, y contactar es una
+              acción. Sin perfil disponible no hay a quién escribir, así que
+              tampoco hay botón (docs/27 §3). */}
+          <ContactoDelActor publicacion={publicacion} actor={actor} />
+        </>
       ) : (
         <p className="detalle__sin-actor">
           El perfil de quien organiza esta actividad no está disponible en este momento.

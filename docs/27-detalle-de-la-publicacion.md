@@ -233,7 +233,7 @@ desde la tarjeta necesita ese despliegue._
 
 ## 10. Lo que queda fuera
 
-- **Los canales de contacto del actor** son el primer criterio de [HU-29](https://github.com/Petulio14/hub-cultural-santa-marta/issues/29). El perfil ya los muestra desde HU-18; lo que falta es traerlos a esta ficha con un mensaje inicial preparado.
+- **Los canales de contacto del actor** eran el primer criterio de [HU-29](https://github.com/Petulio14/hub-cultural-santa-marta/issues/29) y ya están ([28](28-contacto-directo.md)): detrás de un botón, solo los que el actor autorizó, y con el mensaje empezado. Cuando el perfil no está disponible tampoco hay botón, que es la consecuencia directa de §3.
 - **Contar la consulta** para los indicadores es [HU-34](https://github.com/Petulio14/hub-cultural-santa-marta/issues/34), con el obstáculo que anota §8.
 - **Las demás publicaciones del mismo actor**, que serían un buen enlace desde aquí y desde el perfil. No lo pide ningún criterio.
 - **El mapa con todas las publicaciones** es [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30), y reutilizará las piezas de `mapa.js`.

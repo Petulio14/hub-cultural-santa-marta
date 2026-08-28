@@ -230,11 +230,25 @@ una historia que no añade permisos tiene que dejar intactos los que había.
 | `npm run verificar` | sin incidencias |
 | `npm run build` | limpio |
 
-**Lo que no se pudo medir aquí, otra vez:** ninguna búsqueda contra datos reales. Se
-comprobó contra el proyecto de Firebase con `firebase firestore:indexes` y **los cuatro
-índices siguen sin publicar** —el de HU-25 y los tres de HU-26—, así que la consulta
-responde `failed-precondition` antes de que haya nada donde buscar. No es un defecto de esta
-historia; es el despliegue de [12 §5.2](12-despliegue-continuo.md) todavía pendiente.
+**Lo que no se pudo medir al escribir esta historia, otra vez:** ninguna búsqueda contra
+datos reales. `firebase firestore:indexes` decía que **los cuatro índices seguían sin
+publicar** —el de HU-25 y los tres de HU-26—, así que la consulta respondía
+`failed-precondition` antes de que hubiera nada donde buscar. No era un defecto de esta
+historia: era el despliegue de [12 §5.2](12-despliegue-continuo.md) pendiente.
+
+> **Medido después, el 28/08/2026.** Los cuatro índices se publicaron ese día con
+> `firebase deploy --only firestore:indexes`, y `firebase firestore:indexes` confirma los
+> diez declarados. Con ellos en su sitio se repitió la comprobación contra los datos
+> reales del proyecto, y esto es lo que dio:
+>
+> | Comprobación | Resultado |
+> | --- | --- |
+> | Buscar «ACORDEON», en mayúsculas y sin tilde | Encuentra «manejo de acordeón» |
+> | Buscar «acordeón», con tilde | El mismo resultado |
+> | Buscar una palabra que no está | Cero resultados, sin error |
+>
+> Las dos primeras filas son el tercer criterio comprobado sobre un título guardado de
+> verdad, y no solo sobre el catálogo inventado de las pruebas unitarias.
 
 ### Comprobación en vivo
 
