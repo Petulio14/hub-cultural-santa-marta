@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listarPublicacionesAprobadas } from '../services/eventosService.js';
+import { FILTROS_VACIOS, hayFiltros, limitesDeConsulta } from '../utils/filtros.js';
 import { anadirPagina } from '../utils/paginacion.js';
 
 const MENSAJE_DE_FALLO =
   'No se pudo leer el catálogo. Revisa la conexión y vuelve a intentarlo.';
 
 /**
- * El catálogo público, página a página — HU-25 · RF-09.
+ * El catálogo público, página a página y con filtros — HU-25, ampliado en HU-26.
  *
  * Se parece a «useMisPublicaciones» y se distingue en lo único que importa:
  * aquella trae la lista entera de una vez porque son las publicaciones de una
@@ -23,8 +24,20 @@ const MENSAJE_DE_FALLO =
  * El fallo también se guarda aparte de la lista. Si la tercera página falla, las
  * veinticuatro tarjetas anteriores siguen siendo verdad: se enseñan, con el aviso
  * debajo y el botón para reintentar.
+ *
+ * **Los filtros son estado del gancho y no de la vista** (HU-26). Podrían vivir
+ * en el formulario y llegar aquí como argumento, y entonces «cargarMas» tendría
+ * que recibirlos otra vez en cada llamada: la página siguiente se pide con los
+ * mismos filtros que la primera, y basta que uno de los dos sitios se olvide de
+ * pasarlos para que «Ver más» traiga el catálogo sin filtrar. Al vivir aquí, la
+ * primera consulta y las siguientes leen el mismo dato.
+ *
+ * Cambiar un filtro **es una consulta nueva**, no una página más: la lista se
+ * sustituye, el cursor se olvida y se vuelve a empezar. Por eso el efecto
+ * depende de «filtros» y no hay nada que reiniciar a mano.
  */
 export function useCatalogo() {
+  const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [publicaciones, setPublicaciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [cargandoMas, setCargandoMas] = useState(false);
@@ -33,8 +46,9 @@ export function useCatalogo() {
 
   useEffect(() => {
     let vigente = true;
+    setCargando(true);
 
-    listarPublicacionesAprobadas()
+    listarPublicacionesAprobadas(limitesDeConsulta(filtros))
       .then((leido) => {
         if (!vigente) return;
         // Sustituye en lugar de añadir. En desarrollo StrictMode monta el
@@ -47,13 +61,17 @@ export function useCatalogo() {
       .catch((fallo) => vigente && setError(fallo?.message ?? MENSAJE_DE_FALLO))
       .finally(() => vigente && setCargando(false));
 
+    // «vigente» importa más desde HU-26: cambiar de filtro deja una consulta en
+    // el aire, y si la anterior tarda más que la nueva escribiría sus resultados
+    // encima. El catálogo enseñaría entonces lo que se pidió antes, con el
+    // formulario diciendo otra cosa.
     return () => {
       vigente = false;
     };
-  }, []);
+  }, [filtros]);
 
   /**
-   * La página siguiente — tercer criterio de aceptación.
+   * La página siguiente — tercer criterio de aceptación de HU-25.
    *
    * El cursor es la última publicación que ya se tiene, no un contador de
    * páginas. Contar páginas se rompe en cuanto el catálogo cambia entre una y
@@ -68,7 +86,10 @@ export function useCatalogo() {
 
     setCargandoMas(true);
     try {
-      const leido = await listarPublicacionesAprobadas({ despuesDe: publicaciones.at(-1) });
+      const leido = await listarPublicacionesAprobadas({
+        ...limitesDeConsulta(filtros),
+        despuesDe: publicaciones.at(-1),
+      });
       setPublicaciones((actuales) => anadirPagina(actuales, leido.publicaciones));
       setHayMas(leido.hayMas);
       setError(null);
@@ -77,7 +98,21 @@ export function useCatalogo() {
     } finally {
       setCargandoMas(false);
     }
-  }, [cargandoMas, hayMas, publicaciones]);
+  }, [cargandoMas, hayMas, publicaciones, filtros]);
 
-  return { publicaciones, cargando, cargandoMas, hayMas, error, cargarMas };
+  /** Cuarto criterio de HU-26: se restituye el catálogo completo. */
+  const limpiar = useCallback(() => setFiltros(FILTROS_VACIOS), []);
+
+  return {
+    publicaciones,
+    cargando,
+    cargandoMas,
+    hayMas,
+    error,
+    cargarMas,
+    filtros,
+    aplicar: setFiltros,
+    limpiar,
+    filtrado: hayFiltros(filtros),
+  };
 }

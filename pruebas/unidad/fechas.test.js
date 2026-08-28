@@ -15,8 +15,10 @@ import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  desdeEntradaDeDia,
   desdeEntradaDeFecha,
   esFechaValida,
+  finDelDia,
   mismoDia,
   paraEntradaDeFecha,
   periodoCoherente,
@@ -153,6 +155,53 @@ describe('si ya terminó', () => {
   });
 });
 
+describe('el rango de días (HU-26)', () => {
+  it('un día se abre a las 00:00 de ese día', () => {
+    const dia = desdeEntradaDeDia('2026-09-01');
+    assert.equal(dia.getFullYear(), 2026);
+    assert.equal(dia.getMonth(), 8);
+    assert.equal(dia.getDate(), 1);
+    assert.equal(dia.getHours(), 0);
+    assert.equal(dia.getMinutes(), 0);
+  });
+
+  it('lo que no tenga la forma exacta se rechaza', () => {
+    // «01/09/2026» y «2026-9-1» se leen igual de bien y ninguna es lo que envía
+    // el control; admitirlas sería adivinar en qué orden van los números.
+    assert.equal(desdeEntradaDeDia('01/09/2026'), null);
+    assert.equal(desdeEntradaDeDia('2026-9-1'), null);
+    assert.equal(desdeEntradaDeDia('2026-09-01T18:00'), null);
+  });
+
+  it('un día que no existe se rechaza en lugar de desplazarse', () => {
+    // «new Date(2026, 1, 31)» no falla: devuelve el 3 de marzo. Un filtro que
+    // acepta el 31 de febrero y busca en marzo es peor que uno que dice que no.
+    assert.equal(desdeEntradaDeDia('2026-02-31'), null);
+    assert.equal(desdeEntradaDeDia('2026-13-01'), null);
+  });
+
+  it('un valor ausente da null y no revienta', () => {
+    assert.equal(desdeEntradaDeDia(undefined), null);
+    assert.equal(desdeEntradaDeDia(''), null);
+  });
+
+  it('el final del día es su último milisegundo, no el principio del siguiente', () => {
+    // Que sea 23:59:59.999 y no las 00:00 del día siguiente evita que una
+    // actividad que empieza exactamente a medianoche entre en el rango anterior.
+    const fin = finDelDia(new Date(2026, 8, 5, 9, 30));
+    assert.equal(fin.getDate(), 5);
+    assert.equal(fin.getHours(), 23);
+    assert.equal(fin.getMinutes(), 59);
+    assert.equal(fin.getSeconds(), 59);
+    assert.equal(fin.getMilliseconds(), 999);
+  });
+
+  it('el final de un día inválido es null', () => {
+    assert.equal(finDelDia(new Date('cualquier cosa')), null);
+    assert.equal(finDelDia(null), null);
+  });
+});
+
 /**
  * La comprobación en otra zona horaria.
  *
@@ -194,6 +243,26 @@ describe('en la zona horaria de Santa Marta (UTC−5)', () => {
     assert.equal(
       enBogota('f.paraEntradaDeFecha(new Date(2026, 8, 1, 19, 0))'),
       '2026-09-01T19:00'
+    );
+  });
+
+  it('un día del control de fecha empieza el día que dice', () => {
+    // El caso que da nombre a esta historia. «new Date('2026-09-01')» se
+    // interpreta en UTC —la especificación trata las cadenas de solo fecha como
+    // instantes UTC— y en UTC−5 eso es el **31 de agosto a las 19:00**. Un
+    // rango «desde el 1 de septiembre» empezaría la víspera.
+    assert.equal(enBogota("f.desdeEntradaDeDia('2026-09-01').getDate()"), '1');
+    assert.equal(enBogota("new Date('2026-09-01').getDate()"), '31');
+  });
+
+  it('y termina a las 23:59 de ese mismo día', () => {
+    assert.equal(
+      enBogota("f.finDelDia(f.desdeEntradaDeDia('2026-09-05')).getDate()"),
+      '5'
+    );
+    assert.equal(
+      enBogota("f.finDelDia(f.desdeEntradaDeDia('2026-09-05')).getHours()"),
+      '23'
     );
   });
 

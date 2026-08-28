@@ -308,7 +308,8 @@ export async function listarMisPublicaciones(idActor) {
 
 
 /**
- * El catálogo público — **HU-25**, primer y tercer criterio.
+ * El catálogo público — **HU-25**, primer y tercer criterio; **HU-26**, los
+ * cuatro.
  *
  * Es la función que el comentario final de HU-21 dejó sin escribir a propósito,
  * y llega con tres decisiones que entonces no se podían tomar.
@@ -317,7 +318,8 @@ export async function listarMisPublicaciones(idActor) {
  *    la vista tenga menos que descartar: sin él la consulta alcanzaría
  *    publicaciones pendientes y **fallaría entera**, porque la regla las
  *    deniega. Hay un caso desde HU-21 que lo demuestra pidiendo la colección
- *    completa, y otro nuevo que comprueba que «limit» no lo salva (docs/24 §3).
+ *    completa, y otros que comprueban que ni «limit», ni el orden, ni el cursor
+ *    lo sustituyen (docs/24 §2).
  *
  * 2. **Lo terminado no sale, y eso obliga a ordenar por «fechaFin».** Firestore
  *    exige que el primer «orderBy» sea el campo de la desigualdad, así que
@@ -338,30 +340,63 @@ export async function listarMisPublicaciones(idActor) {
  *    para devolverlo después: un gancho que sostiene una instantánea es un
  *    gancho que habla el idioma de Firestore, que es justo lo que prohíbe
  *    docs/03 §3. Se pasa la última publicación ya traducida y aquí se sacan los
- *    dos valores que ordenan.
+ *    valores que ordenan.
  *
- *    Los **dos**, no solo la fecha. Dos eventos que terminan a la misma hora no
- *    son raros —las 22:00 de un sábado—, y un cursor de un solo valor sobre un
- *    empate se salta uno de los dos o lo repite. El identificador es el desempate
- *    que Firestore añade solo al final de todo índice compuesto, y aquí se
- *    escribe para poder nombrarlo en el cursor.
+ *    Y se sacan **de la misma lista** que construye los «orderBy». No es
+ *    elegancia: un cursor con menos valores de los que hay órdenes, o en otro
+ *    orden, no devuelve resultados raros —revienta en ejecución—, y desde HU-26
+ *    la cantidad de órdenes ya no es fija.
+ *
+ * ---
+ *
+ * **HU-26 añade los filtros, y con ellos la parte difícil.**
+ *
+ * La categoría es una igualdad más y no tiene misterio. El rango de fechas sí,
+ * porque «vigente en el rango» es un **solapamiento**:
+ *
+ *     fechaFin    >= el día que la persona llega
+ *     fechaInicio <= el día que se va
+ *
+ * Son dos desigualdades sobre **dos campos distintos**, que es exactamente lo
+ * que Firestore no admitía hasta 2024 y hoy admite con dos condiciones: que
+ * todos los campos con desigualdad aparezcan en el «orderBy», y que aparezcan
+ * antes que cualquier otro. De ahí que «fechaInicio» se sume al orden **solo
+ * cuando hay tope**, y de ahí que el cursor tenga entonces tres valores en lugar
+ * de dos.
+ *
+ * La alternativa barata era preguntar «¿empieza dentro del rango?», una sola
+ * desigualdad y ningún índice nuevo. Deja fuera el festival de una semana que
+ * empezó la víspera de la llegada, que es justo el que la persona sí puede ver:
+ * sería cumplir la letra del criterio al precio de su sentido (docs/25 §2).
  */
 export async function listarPublicacionesAprobadas({
   despuesDe = null,
   tamano = TAMANO_DE_PAGINA,
   desde = new Date(),
+  categoria = null,
+  hasta = null,
 } = {}) {
   exigirConfiguracion();
+
+  /** Los campos que ordenan. El cursor se construye con esta misma lista. */
+  const campos = hasta ? ['fechaFin', 'fechaInicio'] : ['fechaFin'];
 
   const consulta = query(
     collection(db, COLECCION),
     where('estadoPublicacion', '==', 'aprobado'),
+    ...(categoria ? [where('categoria', '==', categoria)] : []),
     where('fechaFin', '>=', desde),
-    orderBy('fechaFin'),
+    ...(hasta ? [where('fechaInicio', '<=', hasta)] : []),
+    ...campos.map((campo) => orderBy(campo)),
+    // El desempate. Dos actividades que terminan a la misma hora no son raras
+    // —las 22:00 de un sábado— y sobre un empate un cursor sin él se salta una
+    // de las dos o la repite.
     orderBy(documentId()),
-    ...(despuesDe ? [startAfter(despuesDe.fechaFin, despuesDe.id)] : []),
+    ...(despuesDe
+      ? [startAfter(...campos.map((campo) => despuesDe[campo]), despuesDe.id)]
+      : []),
     // Trece para enseñar doce: el de más es la única señal barata de que queda
-    // algo detrás (docs/24 §4).
+    // algo detrás (docs/24 §3).
     limit(tamano + 1)
   );
 

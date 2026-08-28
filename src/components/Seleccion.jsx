@@ -12,6 +12,12 @@ import { useId } from 'react';
  * La primera opción está deshabilitada a propósito: es un rótulo, no un valor.
  * Sin ella el desplegable arrancaría con la primera categoría ya elegida y
  * cualquiera guardaría sin darse cuenta una clasificación que no eligió.
+ *
+ * **«vaciaElegible» invierte eso, y solo lo usa un filtro** (HU-26). El motivo de
+ * arriba es de un formulario que guarda: ahí «ninguna» no es una respuesta. En
+ * un filtro sí lo es —«todas las categorías» es la respuesta por defecto y hay
+ * que poder volver a ella—, así que la opción vacía deja de ser un rótulo y pasa
+ * a ser una opción de pleno derecho.
  */
 export default function Seleccion({
   etiqueta,
@@ -19,6 +25,7 @@ export default function Seleccion({
   alCambiar,
   opciones,
   vacia = 'Elige una opción',
+  vaciaElegible = false,
   error = null,
   ayuda = null,
   requerido = true,
@@ -51,7 +58,7 @@ export default function Seleccion({
         required={requerido}
         {...resto}
       >
-        <option value="" disabled>
+        <option value="" disabled={!vaciaElegible}>
           {vacia}
         </option>
         {opciones.map((opcion) => (
