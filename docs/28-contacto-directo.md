@@ -207,14 +207,15 @@ concede ningún permiso nuevo: **quita** los documentos mal formados que antes p
 
 ### Las reglas · `npm run probar:reglas`
 
-**Once casos nuevos.**
+**216 casos**, doce de ellos nuevos. Todo en verde a la primera en la
+[ejecución 33218451990](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33218451990).
 
 | Qué comprueba | Casos |
 | --- | --- |
 | El tercer criterio: se registra, con tipo válido y fecha del servidor | 3 |
 | El hueco de `hasOnly`: sin `idEvento`, vacío, no textual, o con el identificador cambiado | 4 |
 | El registro es inmutable: ni el administrador lo edita ni lo borra | 2 |
-| Quién lee: el administrador sí; el actor dueño del evento, no; un visitante, tampoco | 2 |
+| Quién lee: el administrador sí; el actor dueño del evento, no; un visitante, tampoco | 3 |
 
 ### En el navegador
 
