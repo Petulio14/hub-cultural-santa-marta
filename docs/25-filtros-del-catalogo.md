@@ -265,7 +265,11 @@ firebase deploy --only firestore:indexes
 
 ### Las reglas · `npm run probar:reglas`
 
-**Once casos nuevos.**
+**197 casos**, once de ellos nuevos. Todo en verde a la primera en la
+[ejecución 33202220530](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33202220530),
+que es la que responde la pregunta de §2: Firestore resuelve hoy las dos desigualdades
+sobre campos distintos, y el solapamiento de la tabla de §1 sale exactamente como se
+esperaba.
 
 | Qué comprueba | Casos |
 | --- | --- |
