@@ -65,7 +65,7 @@ publicación que cualquiera puede leer y cuyo autor no.
 | **Actor desactivado** | **visible** | **denegado** |
 | Administrador | visible | visible |
 
-Sin comprobarlo, la vista estaría tratando ese caso «por si acaso». Con los cuatro casos de
+Sin comprobarlo, la vista estaría tratando ese caso «por si acaso». Con los tres casos de
 prueba que lo fijan, lo trata porque está demostrado que ocurre.
 
 Lo que hace la ficha entonces es **decirlo y no enlazar**:
