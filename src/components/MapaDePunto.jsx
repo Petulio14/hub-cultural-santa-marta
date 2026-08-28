@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { CENTRO_SANTA_MARTA, LIMITES_SANTA_MARTA, esPuntoValido } from '../utils/coordenadas.js';
+import { CENTRO_SANTA_MARTA, esPuntoValido } from '../utils/coordenadas.js';
+import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas } from './mapa.js';
 import './MapaDePunto.css';
 
 /**
@@ -25,14 +25,12 @@ import './MapaDePunto.css';
  * «useRef» y no en el estado: no son datos que se pinten, son objetos vivos, y
  * meterlos en «useState» provocaría un repintado por cada arrastre del ratón.
  *
- * ## El marcador dibujado con CSS
+ * ## El marcador y las teselas viven aparte
  *
- * Leaflet trae sus iconos como archivos PNG cuya ruta calcula a partir de la del
- * script. Con un empaquetador esa ruta deja de existir y el marcador desaparece
- * sin error en consola: el defecto clásico de Leaflet con Vite. Se usa un
- * «divIcon» —un marcador que es un elemento HTML— y el problema no llega a
- * existir. De regalo, el color sale de la paleta de «variables.css» en vez de ser
- * el azul de Leaflet, que es lo que exige «npm run verificar».
+ * Estaban aquí hasta HU-28, que trajo un segundo mapa. El marcador dibujado con
+ * CSS, la capa de OpenStreetMap con su atribución y el rectángulo del distrito
+ * son ahora de «mapa.js», que explica por qué cada uno es como es. Lo que se
+ * queda aquí es lo único que no comparten: **cómo se comporta este mapa**.
  *
  * ## Este mapa no es el único camino
  *
@@ -42,21 +40,6 @@ import './MapaDePunto.css';
  * tabulador y cuyos candidatos son botones. El mapa afina lo que el buscador
  * aproxima; quien no pueda usarlo llega igual al punto (WCAG 2.1.1).
  */
-
-/** El icono es un elemento HTML, así que se estiliza en MapaDePunto.css. */
-const MARCADOR = L.divIcon({
-  className: 'mapa-punto__marcador',
-  html: '<span class="mapa-punto__aguja" aria-hidden="true"></span>',
-  iconSize: [24, 34],
-  // La punta de la aguja, no su centro: el marcador señala el sitio con la
-  // punta, y anclarlo al centro dejaría el punto real 17 px más abajo.
-  iconAnchor: [12, 34],
-});
-
-const RECUADRO = L.latLngBounds(
-  [LIMITES_SANTA_MARTA.latMin, LIMITES_SANTA_MARTA.lonMin],
-  [LIMITES_SANTA_MARTA.latMax, LIMITES_SANTA_MARTA.lonMax]
-);
 
 export default function MapaDePunto({
   punto,
@@ -90,14 +73,10 @@ export default function MapaDePunto({
       maxBounds: RECUADRO,
       maxBoundsViscosity: 1,
       minZoom: 11,
-      maxZoom: 18,
+      maxZoom: ZOOM_MAXIMO,
     });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      // La atribución no es cortesía: la licencia de OpenStreetMap la exige.
-      attribution: '&copy; colaboradores de <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 18,
-    }).addTo(instancia);
+    capaDeTeselas().addTo(instancia);
 
     instancia.on('click', (evento) => {
       avisar.current({ lat: evento.latlng.lat, lon: evento.latlng.lng });

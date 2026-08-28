@@ -1,6 +1,6 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25, HU-26.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25, HU-26, HU-28.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -2413,6 +2413,116 @@ describe('los filtros del catálogo (HU-26)', () => {
         true,
         'el rango trajo algo que la categoría sola no traía'
       );
+    });
+  });
+});
+
+/**
+ * El detalle de una publicación — HU-28 · RF-09, RF-11.
+ *
+ * La ficha necesita **dos** lecturas donde el catálogo hacía una: la publicación
+ * y el perfil de quien la organiza. Y las dos no van siempre juntas.
+ *
+ * Que un visitante lea un evento aprobado ya estaba comprobado desde HU-21, y
+ * que lea un perfil aprobado desde HU-18. Lo que ninguna de las dos cubría es la
+ * **combinación**, que es donde aparece el caso que esta vista tiene que saber
+ * manejar: las reglas dejan leer públicamente solo los perfiles aprobados, y
+ * desactivar una cuenta (HU-15) no retira las publicaciones que ya lo estaban.
+ * Existe entonces una publicación visible cuyo autor no lo es.
+ *
+ * Sin estos casos, la vista trataría ese caso «por si acaso». Con ellos, lo
+ * trata porque está demostrado que ocurre.
+ */
+describe('el detalle de una publicación (HU-28)', () => {
+  const UID_INACTIVO = 'uid-actor-desactivado-con-evento';
+
+  before(async () => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      const bd = contexto.firestore();
+
+      await setDoc(doc(bd, 'usuarios', UID_INACTIVO), {
+        uid: UID_INACTIVO,
+        rol: 'actor',
+        estado: 'inactivo',
+        correo: 'desactivado-con-evento@ejemplo.co',
+      });
+
+      // Perfil desactivado por el administrador (HU-15). Deja de ser público.
+      await setDoc(doc(bd, 'actoresCulturales', UID_INACTIVO), {
+        idActor: UID_INACTIVO,
+        uid: UID_INACTIVO,
+        nombre: 'Colectivo que cerró',
+        manifestacion: 'Danza folclórica',
+        descripcion: 'Perfil desactivado después de haber publicado.',
+        categoria: 'musica',
+        contacto: { telefono: null, correo: null, whatsapp: null },
+        estado: 'inactivo',
+      });
+
+      // Su publicación sigue aprobada: desactivar la cuenta no la retira.
+      await setDoc(doc(bd, 'eventos', 'det-de-inactivo'), {
+        idEvento: 'det-de-inactivo',
+        idActor: UID_INACTIVO,
+        titulo: 'Muestra de danza',
+        tituloNormalizado: 'muestra de danza',
+        descripcion: 'Aprobada antes de que la cuenta se desactivara.',
+        categoria: 'musica',
+        fechaInicio: new Date(2026, 8, 1, 18, 0),
+        fechaFin: new Date(2027, 0, 10, 21, 0),
+        lugar: 'Parque de los Novios',
+        coordenadas: new GeoPoint(11.2422, -74.2133),
+        imagen: null,
+        estadoPublicacion: 'aprobado',
+        fechaCreacion: new Date(2026, 0, 1, 8, 0),
+        contadorConsultas: 0,
+      });
+    });
+  });
+
+  describe('las dos lecturas de la ficha', () => {
+    it('un visitante lee la publicación aprobada', async () => {
+      await assertSucceeds(getDoc(doc(visitante(), 'eventos', 'evento-aprobado')));
+    });
+
+    it('y lee el perfil del actor que la organiza (segundo criterio)', async () => {
+      // Es lo que hace posible el enlace al perfil. Sin esta lectura, el segundo
+      // criterio se cumpliría pintando un enlace que lleva a una página vacía.
+      await assertSucceeds(getDoc(doc(visitante(), 'actoresCulturales', ID_ACTOR)));
+    });
+  });
+
+  describe('una publicación visible cuyo autor no lo es', () => {
+    it('la publicación de una cuenta desactivada se sigue leyendo', async () => {
+      await assertSucceeds(getDoc(doc(visitante(), 'eventos', 'det-de-inactivo')));
+    });
+
+    it('pero su perfil NO', async () => {
+      // De aquí sale la frase de la ficha: «el perfil de quien organiza esta
+      // actividad no está disponible en este momento». No es prudencia, es el
+      // resultado de esta regla.
+      await assertFails(getDoc(doc(visitante(), 'actoresCulturales', UID_INACTIVO)));
+    });
+
+    it('el administrador sí ve las dos cosas', async () => {
+      // La contrapartida: si el perfil fuera invisible para todos, quien tiene
+      // que decidir si reactivar la cuenta no podría ni mirarlo.
+      await assertSucceeds(
+        getDoc(doc(comoUsuario(UID_ADMIN), 'actoresCulturales', UID_INACTIVO))
+      );
+      await assertSucceeds(getDoc(doc(comoUsuario(UID_ADMIN), 'eventos', 'det-de-inactivo')));
+    });
+  });
+
+  describe('una dirección que no lleva a ninguna parte', () => {
+    it('pedir una publicación inexistente se deniega, no responde «no existe»', async () => {
+      // Lo que permite que el servicio devuelva null en los dos casos y la vista
+      // diga lo mismo: distinguirlos convertiría «/eventos/:id» en un detector
+      // de publicaciones pendientes.
+      await assertFails(getDoc(doc(visitante(), 'eventos', 'no-existe-esta-publicacion')));
+    });
+
+    it('y una pendiente responde exactamente igual', async () => {
+      await assertFails(getDoc(doc(visitante(), 'eventos', 'evento-pendiente')));
     });
   });
 });

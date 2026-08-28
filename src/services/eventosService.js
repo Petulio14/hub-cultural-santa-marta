@@ -50,7 +50,7 @@ import {
 } from 'firebase/firestore';
 import { TAMANO_DE_PAGINA, partirPagina } from '../utils/paginacion.js';
 import { normalizarTexto } from '../utils/texto.js';
-import { ErrorDeDatos, intentar } from './errores.js';
+import { ErrorDeDatos, intentar, traducir } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'eventos';
@@ -407,4 +407,34 @@ export async function listarPublicacionesAprobadas({
     const { pagina, hayMas } = partirPagina((await getDocs(consulta)).docs, tamano);
     return { publicaciones: pagina.map(aPublicacion), hayMas };
   });
+}
+
+/**
+ * Una publicación por su identificador — **HU-28**, primer criterio.
+ *
+ * Es la función que HU-25 escribió, retiró antes de confirmar y dejó anotada
+ * para esta historia (docs/24 §7). Entonces era API muerta esperando a una
+ * historia que podía pedirla distinta; ahora la pide alguien.
+ *
+ * **Devuelve null tanto si no existe como si la regla deniega leerla**, que es
+ * exactamente lo que hace «leerActor» y por el mismo motivo (docs/17 §10): un
+ * identificador de evento es aleatorio, y responder «existe pero no puedes» a
+ * unos y «no existe» a otros convertiría esta dirección en un detector de
+ * publicaciones pendientes. La vista dice lo mismo en los dos casos.
+ *
+ * No se pide «aprobado» en ninguna condición de aquí, y no hace falta: la regla
+ * ya deja leer un evento a su dueño y al administrador. Un actor que abre el
+ * enlace de su propia publicación pendiente la ve, que es lo razonable, y el
+ * catálogo sigue sin listarla porque eso lo decide la consulta y no esta lectura.
+ */
+export async function leerPublicacionAprobada(idEvento) {
+  exigirConfiguracion();
+
+  try {
+    const instantanea = await getDoc(doc(db, COLECCION, idEvento));
+    return instantanea.exists() ? aPublicacion(instantanea) : null;
+  } catch (fallo) {
+    if (fallo?.code === 'permission-denied') return null;
+    throw traducir(fallo);
+  }
 }

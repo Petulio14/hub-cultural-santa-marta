@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import { textoDelPeriodo } from '../../utils/fechas.js';
 
@@ -9,11 +10,16 @@ import { textoDelPeriodo } from '../../utils/fechas.js';
  * doce tarjetas con mil caracteres cada una no son un catálogo que se recorra,
  * son un texto largo partido en cajas. Se lee en el detalle, que es HU-28.
  *
- * **Todavía no se puede pulsar, y es a propósito.** Abrir el detalle es el
- * primer criterio de HU-28; enlazarlo hoy llevaría a la pantalla «V-3 · en
- * construcción», que es peor que no ofrecer el enlace. Es la misma decisión que
- * tomó el servicio en HU-21 al no escribir un «listarAprobadas» que nadie
- * llamaba: la pieza la pone la historia que la necesita.
+ * **Se pulsa desde HU-28**, y no antes. HU-25 la dejó sin enlazar a propósito
+ * porque el destino era la pantalla «V-3 · en construcción», y llevar allí es
+ * peor que no ofrecer el enlace. Es la misma decisión que tomó el servicio en
+ * HU-21 al no escribir un «listarAprobadas» que nadie llamaba: la pieza la pone
+ * la historia que la necesita.
+ *
+ * El enlace es **el título** y no la tarjeta entera, igual que en el directorio
+ * de actores. Una tarjeta-enlace obliga a envolver imagen, fechas y lugar dentro
+ * del enlace, y entonces un lector de pantalla lee los cinco datos de corrido
+ * como el nombre de un único vínculo. El título dice a dónde lleva.
  *
  * Se distingue de «TarjetaDePublicacion», la del actor que la escribió, en lo
  * que enseña y por eso no se comparten. Aquella lleva el estado de revisión, las
@@ -38,7 +44,9 @@ export default function TarjetaDeEvento({ publicacion, nombreDeCategoria }) {
       <div className="tarjeta-evento__cuerpo">
         {categoria && <p className="tarjeta-evento__categoria">{categoria}</p>}
 
-        <h2 className="tarjeta-evento__titulo">{publicacion.titulo}</h2>
+        <h2 className="tarjeta-evento__titulo">
+          <Link to={`/eventos/${publicacion.id}`}>{publicacion.titulo}</Link>
+        </h2>
 
         {/* Un párrafo y no un «time», aunque sea una fecha. «time» sin
             «datetime» obliga a que su contenido **sea** una fecha en formato
