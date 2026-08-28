@@ -252,11 +252,16 @@ historia: era el despliegue de [12 §5.2](12-despliegue-continuo.md) pendiente.
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado y **con los cuatro índices ya publicados**._
+Sobre el sitio publicado, sin sesión iniciada.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | Una palabra del título encuentra la actividad | Correcto (primer criterio) |
+| 28/08/2026 | Una palabra que solo está en la descripción también | Correcto |
+| 28/08/2026 | Escribirla en mayúsculas da el mismo resultado | Correcto (tercer criterio) |
+| 28/08/2026 | Escribirla sin tilde da el mismo resultado | Correcto |
+| 28/08/2026 | Una palabra que no está avisa y ofrece limpiar | Correcto (segundo criterio) |
+| 28/08/2026 | El recuento dice sobre cuántas se buscó | Correcto: «n de m revisadas» |
 
 ## 11. Lo que queda fuera
 

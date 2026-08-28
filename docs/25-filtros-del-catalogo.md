@@ -314,11 +314,17 @@ respondía `failed-precondition` pidiendo exactamente `estadoPublicacion` + `fec
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado y **con los índices ya publicados**._
+Sobre el sitio publicado, sin sesión iniciada y con los cuatro índices ya publicados.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | Filtrar por una categoría deja solo esa categoría | Correcto (primer criterio) |
+| 28/08/2026 | Filtrar por una categoría sin actividades da lista vacía, no error | Correcto, con su mensaje orientador |
+| 28/08/2026 | Un rango de fechas que se solapa con la actividad la trae | Correcto (segundo criterio) |
+| 28/08/2026 | Un rango que no se solapa no trae nada | Correcto |
+| 28/08/2026 | Categoría y fechas a la vez restringen, no suman | Correcto (tercer criterio) |
+| 28/08/2026 | «Limpiar los filtros» restituye el catálogo completo | Correcto (cuarto criterio) |
+| 28/08/2026 | Un rango del revés avisa y no consulta | Correcto: «La fecha de salida es anterior a la de llegada.» |
 
 ## 11. Lo que queda fuera
 

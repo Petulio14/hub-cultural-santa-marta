@@ -249,11 +249,17 @@ ninguno así en el proyecto.
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado y **después de publicar las reglas** (§8)._
+Sobre el sitio publicado, sin sesión iniciada y con las reglas ya publicadas. Es la única
+de las seis historias del sprint que necesitaba ese despliegue.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | «Contactar con…» despliega los canales autorizados y ninguno más | Correcto (primer criterio) |
+| 28/08/2026 | WhatsApp abre con el mensaje ya escrito | Correcto (segundo criterio) |
+| 28/08/2026 | El correo abre con asunto y cuerpo, y sin ningún «+» en el texto | Correcto |
+| 28/08/2026 | El teléfono abre el marcador con el número puesto | Correcto: sin mensaje, que es lo que «tel:» permite |
+| 28/08/2026 | El mensaje se enseña antes de abrir nada y se puede cambiar | Correcto |
+| 28/08/2026 | Queda constancia de la interacción | Correcto (tercer criterio): el registro se crea con la regla ya apretada |
 
 ## 10. Lo que queda fuera
 

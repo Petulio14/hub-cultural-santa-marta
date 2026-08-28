@@ -222,14 +222,17 @@ son los casos de reglas de §3; la primera es una condición de tres líneas.
 
 ### Comprobación en vivo
 
-_Pendiente. Se hace sobre el sitio publicado. **Los cuatro índices de HU-25 y HU-26 siguen
-sin publicarse**, comprobado con `firebase firestore:indexes`, así que el catálogo no lista
-nada y la ficha solo se alcanza por su dirección directa. La fila que comprueba el enlace
-desde la tarjeta necesita ese despliegue._
+Sobre el sitio publicado, sin sesión iniciada y con los índices ya publicados, que es lo
+que faltaba para poder comprobar la primera fila.
 
 | Fecha | Qué se comprobó | Resultado |
 | --- | --- | --- |
-| | | |
+| 28/08/2026 | El título de una tarjeta del catálogo abre su ficha | Correcto (primer criterio) |
+| 28/08/2026 | La ficha lleva descripción, fechas, lugar, categoría, imagen y actor | Correcto |
+| 28/08/2026 | El mapa reducido enseña el punto guardado | Correcto (tercer criterio) |
+| 28/08/2026 | El enlace lleva al perfil del actor | Correcto (segundo criterio) |
+| 28/08/2026 | Una dirección inventada no revienta | «Esa actividad no está disponible», con vuelta al catálogo |
+| 28/08/2026 | La dirección de una ficha se puede copiar y compartir | Correcto: se abre directa, sin pasar por el catálogo |
 
 ## 10. Lo que queda fuera
 

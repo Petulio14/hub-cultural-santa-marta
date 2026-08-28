@@ -1,7 +1,12 @@
 # Documentación del proyecto
 
-Evidencia verificable de las historias de usuario de los sprints 1 a 6. Cada documento
-corresponde a una historia del backlog y es la prueba que respalda su cierre en el tablero.
+Evidencia verificable de las historias de usuario de los sprints 1 a 6. Con el Sprint 6
+cerrado quedan completas **seis de las ocho épicas** del backlog, de la E0 a la E5:
+todo lo que el prototipo **hace**. Las dos que faltan son de acabado y de cierre —E6,
+calidad y experiencia (HU-31 a HU-36); E7, entrega y validación (HU-37 a HU-40)—.
+
+Cada documento corresponde a una historia del backlog y es la prueba que respalda su cierre
+en el tablero.
 
 | Documento | Historia | Sprint | Contenido |
 | --- | --- | --- | --- |
@@ -51,21 +56,32 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **Cerrado el 22/08/2026, veinticuatro días antes del vencimiento.** Las cinco historias completas: proyecto de React con su estructura y enrutador ([08](08-estructura-del-proyecto.md)), navegación y página de inicio ([09](09-navegacion-e-inicio.md)), adaptación a los tres anchos ([10](10-responsive.md)), reglas de seguridad publicadas y probadas ([11](11-reglas-de-seguridad.md)) y despliegue continuo en [hub-cultural-santa-marta.vercel.app](https://hub-cultural-santa-marta.vercel.app) ([12](12-despliegue-continuo.md)). |
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 | Sprint 5 | 13/10/2026 | HU-18 a HU-24 | **Cerrado el 27/08/2026, cuarenta y siete días antes del vencimiento.** Dos épicas completas. La **E2**: perfil del actor cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de innovación ([19](19-hubs-de-innovacion.md)). La **E3**, el ciclo de vida entero de una publicación: crearla ([20](20-publicacion-de-eventos.md)), situarla en el mapa ([21](21-georreferenciacion.md)), corregirla y retirarla ([22](22-edicion-y-eliminacion.md)) y moderarla antes de que se vea ([23](23-moderacion.md)). Las siete comprobadas en el sitio publicado con cuentas reales de administrador y de actor cultural. |
-| Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **Las seis historias construidas; pendiente la comprobación en vivo de la última.** La épica **E4** completa: el catálogo público ([24](24-catalogo-publico.md)) —primera vista del proyecto pensada para quien **no tiene cuenta**—, preguntable por categoría y fechas ([25](25-filtros-del-catalogo.md)) y por palabra clave ([26](26-busqueda.md)), con ficha propia para cada actividad ([27](27-detalle-de-la-publicacion.md)) desde la que se contacta con quien la organiza ([28](28-contacto-directo.md)). Y la **E5**, de una sola historia: toda la oferta sobre el mapa ([29](29-mapa-interactivo.md)). |
+| Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **Cerrado el 28/08/2026, sesenta días antes del vencimiento.** Dos épicas completas. La **E4**: el catálogo público ([24](24-catalogo-publico.md)) —primera vista del proyecto pensada para quien **no tiene cuenta**—, preguntable por categoría y fechas ([25](25-filtros-del-catalogo.md)) y por palabra clave ([26](26-busqueda.md)), con ficha propia para cada actividad ([27](27-detalle-de-la-publicacion.md)) desde la que se contacta con quien la organiza ([28](28-contacto-directo.md)). Y la **E5**, de una sola historia: toda la oferta sobre el mapa ([29](29-mapa-interactivo.md)). Las seis comprobadas en el sitio publicado **como visitante sin cuenta**, y la última además en un teléfono. |
 
 
 > **Lo que queda por delante.** [HU-25](24-catalogo-publico.md) salda la mitad de la deuda
 > que el Sprint 5 dejó abierta a propósito: lo aprobado ya tiene dónde verse. Queda la otra
 > **Lo que el Sprint 6 deja hecho.** La deuda que el Sprint 5 dejó abierta a propósito
-> está saldada entera: lo publicado se descubre ([24](24-catalogo-publico.md)), se
-> filtra ([25](25-filtros-del-catalogo.md)), se busca ([26](26-busqueda.md)), se abre
-> ([27](27-detalle-de-la-publicacion.md)), se contacta ([28](28-contacto-directo.md))
-> y **se ve sobre el mapa** ([29](29-mapa-interactivo.md)). El punto que HU-22 guarda
-> desde el Sprint 5 tardó ocho historias en dibujarse en alguna parte.
+> está saldada entera: lo publicado se descubre ([24](24-catalogo-publico.md)), se filtra
+> ([25](25-filtros-del-catalogo.md)), se busca ([26](26-busqueda.md)), se abre
+> ([27](27-detalle-de-la-publicacion.md)), se contacta ([28](28-contacto-directo.md)) y
+> **se ve sobre el mapa** ([29](29-mapa-interactivo.md)). El punto que HU-22 guarda desde
+> el Sprint 5 tardó ocho historias en dibujarse en alguna parte.
 >
-> Lo que viene es el Sprint 7: validación de formularios (HU-31), accesibilidad
-> (HU-32), el ajuste final del responsive (HU-33) y los indicadores de uso (HU-34),
-> que ya tienen dos obstáculos anotados —el contador que un visitante no puede tocar
+> Con las dos épicas cerradas, el prototipo **hace lo que la plataforma promete**: un
+> actor cultural publica y un visitante lo encuentra y le escribe, sin que ninguno de los
+> dos necesite al otro delante.
+>
+> **La lección del sprint no es de código.** Cuatro índices se fusionaron sin desplegarse
+> y el catálogo publicado estuvo respondiendo «no está disponible» durante cuatro
+> historias, sin que ninguna prueba fallara: en integración continua estaban en verde,
+> porque el emulador construye los índices al vuelo. Se descubrió comparando
+> `firebase firestore:indexes` con el archivo, y esa comparación es ahora parte del
+> cierre de cualquier historia que declare un índice ([12 §5.2](12-despliegue-continuo.md)).
+>
+> Lo que viene es el Sprint 7: validación de formularios (HU-31), accesibilidad (HU-32),
+> el ajuste final del responsive (HU-33) y los indicadores de uso (HU-34), que ya tienen
+> dos obstáculos anotados —el contador que un visitante no puede tocar
 > ([27 §8](27-detalle-de-la-publicacion.md)) y el recuento que es una cota inferior
 > ([28 §6](28-contacto-directo.md))—.
 
