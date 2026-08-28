@@ -415,8 +415,18 @@ service cloud.firestore {
     match /interacciones/{idInteraccion} {
       allow read: if soyAdmin();
 
+      // **HU-29 exige por fin lo que el modelo declaraba desde HU-05.**
+      //
+      // «hasOnly» acota por arriba y no por abajo: admite menos claves de las
+      // que enumera. Hasta aquí pasaba un documento con solo «tipo» y «fecha»,
+      // sin ningún evento al que referirse, y un registro así no lo puede contar
+      // ningún indicador de HU-34. Es el mismo hueco que HU-24 encontró en
+      // «moderaciones», por la misma puerta (docs/28 §5).
       allow create: if request.resource.data.keys().hasOnly(
                          ['idInteraccion', 'idEvento', 'tipo', 'fecha'])
+        && request.resource.data.idInteraccion == idInteraccion
+        && request.resource.data.idEvento is string
+        && request.resource.data.idEvento.size() > 0
         && request.resource.data.tipo in ['consulta', 'contacto']
         && request.resource.data.fecha == request.time;
 

@@ -1,6 +1,7 @@
 /**
  * Pruebas de las reglas de seguridad de Cloud Firestore — HU-11, HU-12, HU-15, HU-16,
- * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25, HU-26, HU-28.
+ * HU-17, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23, HU-24, HU-25, HU-26, HU-28,
+ * HU-29.
  *
  * Son los seis casos del criterio de aceptación, más las contrapartidas
  * positivas: una regla que lo deniega todo también pasaría las seis
@@ -2523,6 +2524,117 @@ describe('el detalle de una publicación (HU-28)', () => {
 
     it('y una pendiente responde exactamente igual', async () => {
       await assertFails(getDoc(doc(visitante(), 'eventos', 'evento-pendiente')));
+    });
+  });
+});
+
+/**
+ * Contacto directo y su registro anonimizado — HU-29 · RF-12, RF-15.
+ *
+ * `interacciones` tiene regla desde HU-11 y tres casos desde entonces. Esta es
+ * la primera historia que **escribe** en ella de verdad, y al hacerlo apareció
+ * lo mismo que HU-24 encontró en `moderaciones`: **la regla era más laxa que el
+ * modelo**.
+ *
+ * `hasOnly` acota por arriba y no por abajo —admite menos claves de las que
+ * enumera—, así que pasaba un documento con solo `tipo` y `fecha`, sin ningún
+ * evento al que referirse. Un registro así no lo puede contar ningún indicador
+ * de HU-34: no es que ensucie la colección, es que no significa nada.
+ *
+ * Los tres casos de HU-11 siguen valiendo tal cual, y **por el motivo que dicen**:
+ * el primero envía los cuatro campos con el identificador correcto, y el segundo
+ * lo rechaza `hasOnly`, que es lo que rechazaba antes. Aquí no hizo falta el
+ * ajuste que HU-24 tuvo que hacerle a los suyos.
+ */
+describe('el registro de un contacto (HU-29)', () => {
+  const interaccionDe = (idInteraccion, cambios = {}) => ({
+    idInteraccion,
+    idEvento: 'evento-aprobado',
+    tipo: 'contacto',
+    fecha: serverTimestamp(),
+    ...cambios,
+  });
+
+  const registrar = (idInteraccion, cambios) =>
+    setDoc(doc(visitante(), 'interacciones', idInteraccion), interaccionDe(idInteraccion, cambios));
+
+  describe('el tercer criterio: queda constancia sin identificar a nadie', () => {
+    it('un visitante sin sesión registra un contacto', async () => {
+      await assertSucceeds(registrar('cont-1'));
+    });
+
+    it('y el tipo tiene que ser uno de los dos del modelo', async () => {
+      await assertFails(registrar('cont-2', { tipo: 'espionaje' }));
+    });
+
+    it('la fecha la pone el servidor, no quien escribe', async () => {
+      // Sin esto, los indicadores de HU-34 se podrían fechar a conveniencia.
+      await assertFails(registrar('cont-3', { fecha: new Date(2020, 0, 1) }));
+    });
+  });
+
+  describe('el hueco que dejaba «hasOnly»', () => {
+    it('sin «idEvento» ya NO se registra', async () => {
+      // Lo que arregla esta historia. Antes pasaba, y dejaba en la colección un
+      // contacto que no se sabe con quién fue.
+      await assertFails(
+        setDoc(doc(visitante(), 'interacciones', 'cont-4'), {
+          idInteraccion: 'cont-4',
+          tipo: 'contacto',
+          fecha: serverTimestamp(),
+        })
+      );
+    });
+
+    it('con «idEvento» vacío tampoco', async () => {
+      await assertFails(registrar('cont-5', { idEvento: '' }));
+    });
+
+    it('ni con un «idEvento» que no sea texto', async () => {
+      await assertFails(registrar('cont-6', { idEvento: 42 }));
+    });
+
+    it('el identificador de dentro tiene que ser el de la ruta', async () => {
+      // Si no, un documento diría llamarse una cosa y vivir en otra, y el
+      // recuento de HU-34 no podría agrupar por nada.
+      await assertFails(
+        setDoc(doc(visitante(), 'interacciones', 'cont-7'), interaccionDe('otro-cualquiera'))
+      );
+    });
+  });
+
+  describe('el registro es inmutable, y eso no estaba probado', () => {
+    it('nadie lo edita, ni siquiera el administrador', async () => {
+      await assertFails(
+        updateDoc(doc(comoUsuario(UID_ADMIN), 'interacciones', 'cont-1'), {
+          tipo: 'consulta',
+        })
+      );
+    });
+
+    it('ni lo borra', async () => {
+      // Es la misma decisión que en «moderaciones» (docs/23 §4): un registro que
+      // se puede reescribir no es constancia de nada. Y aquí importa más,
+      // porque de estos documentos salen los indicadores que se van a presentar.
+      await assertFails(deleteDoc(doc(comoUsuario(UID_ADMIN), 'interacciones', 'cont-1')));
+    });
+  });
+
+  describe('quién puede leerlas', () => {
+    it('el administrador sí', async () => {
+      await assertSucceeds(getDoc(doc(comoUsuario(UID_ADMIN), 'interacciones', 'cont-1')));
+    });
+
+    it('el actor dueño del evento NO lee las de su propia publicación', async () => {
+      // Podría parecer razonable dárselas: son sus contactos. No se hace, y es
+      // deliberado. El documento lleva el evento y la hora, y quien recibió un
+      // mensaje a esa misma hora puede cruzar las dos cosas: sería reconstruir
+      // por la puerta de atrás el dato que RNF-06 dice no recoger.
+      await assertFails(getDoc(doc(comoUsuario(UID_ACTOR), 'interacciones', 'cont-1')));
+    });
+
+    it('y un visitante tampoco lista la colección', async () => {
+      await assertFails(getDocs(collection(visitante(), 'interacciones')));
     });
   });
 });

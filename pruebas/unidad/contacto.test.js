@@ -12,9 +12,11 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   aNumeroMarcable,
+  asuntoDeContacto,
   enlaceDeCorreo,
   enlaceDeTelefono,
   enlaceDeWhatsapp,
+  mensajeDeContacto,
 } from '../../src/utils/contacto.js';
 
 describe('número marcable (HU-18)', () => {
@@ -69,5 +71,89 @@ describe('enlaces de contacto (RF-12)', () => {
     assert.equal(enlaceDeTelefono(''), null);
     assert.equal(enlaceDeWhatsapp(null), null);
     assert.equal(enlaceDeCorreo('   '), null);
+  });
+});
+
+/**
+ * El mensaje inicial — HU-29 · RF-12, segundo criterio.
+ *
+ * Lo que se prueba aquí es la **codificación**, que es donde está el defecto que
+ * no se ve: un enlace mal codificado parece correcto en el código y solo se
+ * descubre al abrir el correo o WhatsApp de verdad, con el texto roto delante.
+ */
+describe('el mensaje inicial (HU-29)', () => {
+  const TITULO = 'Cumbia y tambora';
+
+  it('dice de dónde viene y por qué actividad se pregunta', () => {
+    const mensaje = mensajeDeContacto(TITULO);
+    assert.equal(mensaje.includes('Hub Cultural de Santa Marta'), true);
+    assert.equal(mensaje.includes(TITULO), true);
+  });
+
+  it('el asunto del correo también nombra la actividad', () => {
+    assert.equal(asuntoDeContacto(TITULO).includes(TITULO), true);
+  });
+
+  it('un título ausente no rompe el mensaje', () => {
+    assert.equal(typeof mensajeDeContacto(undefined), 'string');
+    assert.equal(typeof asuntoDeContacto(null), 'string');
+  });
+});
+
+describe('los enlaces con mensaje (HU-29)', () => {
+  const MENSAJE = 'Hola, ¿queda cupo?';
+
+  it('WhatsApp lleva el mensaje en «text»', () => {
+    const enlace = enlaceDeWhatsapp('3001234567', MENSAJE);
+    assert.equal(enlace.startsWith('https://wa.me/573001234567?text='), true);
+  });
+
+  it('sin mensaje, el enlace de WhatsApp es el de HU-18, sin cola', () => {
+    // Lo sigue usando el perfil de actor, que no sabe de qué actividad se
+    // pregunta porque desde allí no se pregunta por ninguna.
+    assert.equal(enlaceDeWhatsapp('3001234567'), 'https://wa.me/573001234567');
+  });
+
+  it('el correo lleva asunto y cuerpo', () => {
+    const enlace = enlaceDeCorreo('gaitas@ejemplo.co', {
+      asunto: 'Consulta',
+      cuerpo: MENSAJE,
+    });
+    assert.equal(enlace.startsWith('mailto:gaitas@ejemplo.co?'), true);
+    assert.equal(enlace.includes('subject=Consulta'), true);
+    assert.equal(enlace.includes('&body='), true);
+  });
+
+  it('sin asunto ni cuerpo, el correo es el de HU-18, sin interrogante', () => {
+    assert.equal(enlaceDeCorreo('gaitas@ejemplo.co'), 'mailto:gaitas@ejemplo.co');
+  });
+
+  it('solo el asunto no deja un «&» colgando', () => {
+    const enlace = enlaceDeCorreo('gaitas@ejemplo.co', { asunto: 'Consulta' });
+    assert.equal(enlace, 'mailto:gaitas@ejemplo.co?subject=Consulta');
+  });
+
+  it('**el espacio se codifica «%20» y no «+»**', () => {
+    // La trampa de esta historia. «URLSearchParams» codifica con las reglas de
+    // un formulario web, donde el espacio es «+»; un cliente de correo no aplica
+    // esas reglas y dejaría el «+» literal en el asunto.
+    const enlace = enlaceDeCorreo('a@b.co', { asunto: 'Consulta sobre algo' });
+    assert.equal(enlace.includes('%20'), true);
+    assert.equal(enlace.includes('+'), false);
+  });
+
+  it('y las tildes y las comillas angulares viajan codificadas', () => {
+    const enlace = enlaceDeWhatsapp('3001234567', 'más «información»');
+    assert.equal(enlace.includes('%C3%A1'), true);
+    assert.equal(enlace.includes('%C2%AB'), true);
+    // Que ni el interrogante ni el ampersand del mensaje partan la dirección.
+    const conSignos = enlaceDeCorreo('a@b.co', { asunto: '¿Y & cuándo?', cuerpo: 'x' });
+    assert.equal(conSignos.split('?').length, 2);
+    assert.equal(conSignos.split('&').length, 2);
+  });
+
+  it('sin número o sin correo no hay enlace, aunque haya mensaje', () => {
+    assert.equal(enlaceDeWhatsapp('', MENSAJE), null);
+    assert.equal(enlaceDeCorreo(null, { cuerpo: MENSAJE }), null);
   });
 });

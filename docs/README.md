@@ -32,6 +32,7 @@ corresponde a una historia del backlog y es la prueba que respalda su cierre en 
 | [25-filtros-del-catalogo.md](25-filtros-del-catalogo.md) | [HU-26](https://github.com/Petulio14/hub-cultural-santa-marta/issues/26) | 6 | Filtrar por categoría y por fechas: «vigente en el rango» es un solapamiento, dos desigualdades sobre campos distintos, y la trampa de las fechas por tercera vez. |
 | [26-busqueda.md](26-busqueda.md) | [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27) | 6 | Buscar por palabra clave: la primera historia que se resuelve fuera de la base de datos, el tope que se dice en pantalla, y por palabras y no por cadena. |
 | [27-detalle-de-la-publicacion.md](27-detalle-de-la-publicacion.md) | [HU-28](https://github.com/Petulio14/hub-cultural-santa-marta/issues/28) | 6 | La ficha de una actividad: el punto de HU-22 dibujado por primera vez, el mapa que no se toca, y una publicación visible cuyo autor no lo es. |
+| [28-contacto-directo.md](28-contacto-directo.md) | [HU-29](https://github.com/Petulio14/hub-cultural-santa-marta/issues/29) | 6 | Contactar sin intermediarios: por qué una llamada no lleva mensaje, el espacio que no siempre es «%20», y lo que del visitante no se guarda. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -49,15 +50,16 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 3 | 15/09/2026 | HU-07 a HU-11 | **Cerrado el 22/08/2026, veinticuatro días antes del vencimiento.** Las cinco historias completas: proyecto de React con su estructura y enrutador ([08](08-estructura-del-proyecto.md)), navegación y página de inicio ([09](09-navegacion-e-inicio.md)), adaptación a los tres anchos ([10](10-responsive.md)), reglas de seguridad publicadas y probadas ([11](11-reglas-de-seguridad.md)) y despliegue continuo en [hub-cultural-santa-marta.vercel.app](https://hub-cultural-santa-marta.vercel.app) ([12](12-despliegue-continuo.md)). |
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 | Sprint 5 | 13/10/2026 | HU-18 a HU-24 | **Cerrado el 27/08/2026, cuarenta y siete días antes del vencimiento.** Dos épicas completas. La **E2**: perfil del actor cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de innovación ([19](19-hubs-de-innovacion.md)). La **E3**, el ciclo de vida entero de una publicación: crearla ([20](20-publicacion-de-eventos.md)), situarla en el mapa ([21](21-georreferenciacion.md)), corregirla y retirarla ([22](22-edicion-y-eliminacion.md)) y moderarla antes de que se vea ([23](23-moderacion.md)). Las siete comprobadas en el sitio publicado con cuentas reales de administrador y de actor cultural. |
-| Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **En curso.** Abre la épica E4 con el catálogo público ([24](24-catalogo-publico.md)), que es la primera vista del proyecto pensada para quien **no tiene cuenta**, y lo hace preguntable por categoría y por fechas ([25](25-filtros-del-catalogo.md)) y por palabra clave ([26](26-busqueda.md)), y cada actividad tiene ya su ficha propia ([27](27-detalle-de-la-publicacion.md)). |
+| Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **En curso.** Abre la épica E4 con el catálogo público ([24](24-catalogo-publico.md)), que es la primera vista del proyecto pensada para quien **no tiene cuenta**, y lo hace preguntable por categoría y por fechas ([25](25-filtros-del-catalogo.md)) y por palabra clave ([26](26-busqueda.md)), y cada actividad tiene ya su ficha propia ([27](27-detalle-de-la-publicacion.md)) desde la que se contacta con quien la organiza ([28](28-contacto-directo.md)), lo que **cierra la épica E4**. |
 
 
 > **Lo que queda por delante.** [HU-25](24-catalogo-publico.md) salda la mitad de la deuda
 > que el Sprint 5 dejó abierta a propósito: lo aprobado ya tiene dónde verse. Queda la otra
 > mitad: el punto que HU-22 guarda ya se dibuja en la ficha de cada actividad
 > ([27](27-detalle-de-la-publicacion.md)), pero **el mapa de toda la oferta sigue siendo
-> HU-30**. Del recorrido del catálogo están los filtros ([26](25-filtros-del-catalogo.md)),
-> la búsqueda ([27](26-busqueda.md)) y el detalle; queda contactar (HU-29).
+> HU-30**, la última historia del sprint y la única de la épica E5. Con
+> [HU-29](28-contacto-directo.md) la E4 queda cerrada: descubrir, filtrar, buscar,
+> abrir y contactar.
 
 ## Configuración en la raíz del repositorio
 
