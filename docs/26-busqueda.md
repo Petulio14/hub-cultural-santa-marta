@@ -214,7 +214,10 @@ tres criterios enteros:
 
 ### Las reglas · `npm run probar:reglas`
 
-**Sin casos nuevos**, y es deliberado (§9).
+**197 casos, los mismos que dejó HU-26: sin casos nuevos**, y es deliberado (§9).
+Se ejecutan igualmente, y en verde, en la
+[ejecución 33210325425](https://github.com/Petulio14/hub-cultural-santa-marta/actions/runs/33210325425):
+una historia que no añade permisos tiene que dejar intactos los que había.
 
 ### En el navegador
 
