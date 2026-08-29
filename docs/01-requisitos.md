@@ -80,3 +80,7 @@ Cada requisito no funcional cuenta con un criterio de verificación medible.
 ---
 
 *Elaboración propia (2026). Documento aprobado por el asesor como condición de cierre del Sprint 1.*
+
+Validación HU-01: Juan Pablo
+Se revisa el documento de requisitos y se evidencia la relación de las limitaciones con los requisitos. También se encuentran definidos los 15 requisitos funcionales y los 10 requisitos no funcionales con sus respectivos criterios de verificación.  
+Los primeros tres criterios se encuentran cumplidos.
