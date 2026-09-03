@@ -211,3 +211,10 @@ cierra la comprobación sobre el conjunto.
 ---
 
 *Elaboración propia (2026).*
+
+* Juan Pablo Vasquez 
+Se realizan pruebas de la plataforma en diferentes tamaños de pantalla, verificando su funcionamiento en computador, tablet y celular. Se comprobó que el contenido se adapta correctamente sin generar desplazamiento horizontal, que el menú cambia a su versión compacta en móvil y que los botones y elementos interactivos mantienen un tamaño adecuado para su uso táctil.
+Los criterios de aceptación se cumplen .
+
+se anexan las respectivas evidencias de los criteriores a analizar
+
