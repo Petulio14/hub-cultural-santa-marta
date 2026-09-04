@@ -127,3 +127,18 @@ HU-25 el bloque de eventos próximos de la maqueta, que necesita datos reales.
 ---
 
 *Elaboración propia (2026).*
+
+* Juan Pablo Vasquez : Se revisa la navegación desde la página de inicio, verificando los accesos a eventos, actores culturales, hubs y mapa. Se comprobó que las opciones llevan correctamente a sus respectivas vistas y que es posible regresar al inicio desde la navegación.
+También se verificó que la vista de actores culturales ya se encuentra implementada y permite visualizar los perfiles publicados, ademas de que en la pagina principal vemos los
+4 actores principales .
+
+se verifica en la pagina web que al dar click en el apartado de los 4 
+botones principales este reacciona de manera rapida practicamente en menos de 2 minutos .
+
+se anexan en carpeta evidencias las respectivas fotografias de la validacion
+de los criterios.
+
+Los criterios de aceptación se cumplen y se da aval a la HU-09.
+
+
+
