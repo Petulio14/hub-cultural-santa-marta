@@ -1,4 +1,4 @@
-# Guía de construcción del prototipo en Figma
+git status# Guía de construcción del prototipo en Figma
 
 > **Historia:** HU-06 · Sprint 2
 > **Requisitos:** RNF-01, RNF-03, RNF-07

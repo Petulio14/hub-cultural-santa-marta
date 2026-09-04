@@ -177,3 +177,6 @@ Publicadas y en vigor sobre `hub-cultural-santa-marta` desde el 22/08/2026.
 ---
 
 *Elaboración propia (2026).*
+
+* Juan Pablo Vasquez 
+La HU-11 se completa satisfactoriamente mediante la definición, publicación y validación de las reglas de seguridad de Cloud Firestore. La implementación nos garantiza que únicamente los usuarios autorizados puedan acceder o modificar la información según su rol y nivel de permisos, protegiendo los datos frente a accesos indebidos desde cualquier cliente. La solución fue sometida a pruebas automatizadas que verificaron los escenarios de autenticación, propiedad de recursos y visibilidad de eventos, obteniendo un resultado de 21 casos exitosos sin fallos. Con ello se asegura el cumplimiento de los requisitos no funcionales asociados al control de acceso y la autenticación delegada.
