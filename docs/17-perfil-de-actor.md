@@ -480,3 +480,7 @@ Firestore a mensajes en español, como ya hacía `authService.js` con los de Aut
 | Cola de moderación con registro en `moderaciones` | HU-24 |
 | Buscar o filtrar dentro del directorio | HU-26, HU-27, sobre el catálogo |
 | Perfil del hub de innovación | HU-20 |
+
+*Juan Pablo Vasquez*
+Se procede a validar los 3 criterios de aceptación en el panel publicado. Las categorías creadas aparecen inmediatamente en los formularios, las categorías con publicaciones asociadas no se eliminan sino que se desactivan conservando su clasificación, y el listado muestra el número de publicaciones asociadas. También se verificó la interfaz en diferentes resoluciones sin desbordamientos.
+se anexan evidencias  de fotografias al doc .

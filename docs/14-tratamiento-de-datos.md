@@ -166,3 +166,8 @@ donde RNF-06 tiene que poder señalar qué está cubierto y qué no.
 ---
 
 *Elaboración propia (2026).*
+
+*Juan Pablo Vasquez *
+
+Se realizó la prueba de recuperación de contraseña de manera exitosa.  Ademas se verificó el envío del enlace al correo, el manejo del mensaje para no revelar si una cuenta existe y el cambio de contraseña. Finalmente, se comprobó el inicio de sesión con la nueva contraseña.  
+

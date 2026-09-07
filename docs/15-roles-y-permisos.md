@@ -174,3 +174,10 @@ cualquier lectura o escritura que la vista intentara.
 ---
 
 *Elaboración propia (2026).*
+
+* Juan Pablo Vasquez * 
+
+ Se implementa y verifica el control de acceso por roles en la interfaz y en las reglas de seguridad de Firebase. Ademas se comprueba  los 4 criterios de aceptación, incluyendo el acceso de administradores, restricción de actores culturales, consulta pública de visitantes y bloqueo de accesos no autorizados. La funcionalidad fue probada exitosamente y quedó documentada ; se anexan evidencias en la carpeta
+ evidencias del proyceto. 
+
+ 
