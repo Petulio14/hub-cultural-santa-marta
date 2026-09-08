@@ -200,3 +200,6 @@ firebase deploy --only firestore:indexes
 ---
 
 *Elaboración propia (2026).*
+
+
+Se realizaron las prueba del registro de actor cultural. Se verifican el registro con datos válidos, el control de correos ya registrados y la validación de los campos obligatorios. También se comprobó que al finalizar el registro se inicia la sesión y se redirige al perfil correctamente,funcionario de manera responsive sin problema

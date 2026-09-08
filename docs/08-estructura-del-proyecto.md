@@ -183,3 +183,11 @@ Queda fuera de esta historia, por corresponder a otras: el contenido de la pági
 ---
 
 *Elaboración propia (2026).*
+
+
+Se creó el proyecto base en React y se organizó la estructura de carpetas para separar componentes, vistas, servicios y utilidades. También se configuró el sistema de rutas de la aplicación, incluyendo una página de error (404) para manejar accesos a rutas inexistentes.
+
+notas Juan Pablo Vasquez 
+ Ademas Se verificó el correcto funcionamiento del proyecto mediante pruebas de ejecución local , comprobando que la aplicación inicia sin errores en consola y que la navegación responde de acuerdo con lo esperado. Esta implementación deja preparada la base sobre la cual se desarrollarán las demás funcionalidades del sistema.
+
+ se anexan evidencias : en ruta \evidencias\h7.1 , 7.2 ,7,2
