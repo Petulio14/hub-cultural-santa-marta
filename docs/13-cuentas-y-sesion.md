@@ -349,3 +349,10 @@ enlace terminado en `&lang=es`. La corrección queda verificada, no solo despleg
 ---
 
 *Elaboración propia (2026).*
+
+Juan Pablo Vasquez
+Se realizaron las pruebas de inicio y cierre de sesión. Se verificó el acceso con credenciales correctas, el mensaje mostrado con datos incorrectos, la restricción de las vistas privadas después de cerrar sesión y la permanencia de la sesión al recargar la página.
+Los criterios cumplen
+
+adicionalmente se comparten los anexos de la validacion . 
+
