@@ -340,3 +340,10 @@ estar bien hecha, y la razón de que diga «no se puede deshacer» con esas pala
 ---
 
 *Elaboración propia (2026).*
+
+*Juan Pablo Vasquez*
+
+se valida que los actores culturales pueden georreferenciar sus publicaciones seleccionando un punto en el mapa, almacenando correctamente las coordenadas de latitud y longitud. También se verificó que el sistema advierte al usuario cuando intenta guardar una publicación sin ubicación, informándole que esta no aparecerá en el mapa, y que las coordenadas previamente registradas pueden modificarse al editar la publicación. La funcionalidad fue implementada y validada mediante las tareas asociadas a los PR #78 y #79, cumpliendo los criterios de aceptación .
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

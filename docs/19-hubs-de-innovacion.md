@@ -241,3 +241,8 @@ se hizo **sin sesión**, y el menú que se rompió es el que nunca se midió.
 | Elegir el punto arrastrando un marcador | HU-22 lo hace para las publicaciones; el hub podría reutilizarlo entonces |
 | Imagen del hub | Sin historia asignada; el modelo no la contempla |
 | Buscar o filtrar dentro del directorio de hubs | Fuera del alcance del MVP |
+
+*Juan Pablo Vasquez*
+Durante la validación de la HU-19 se comprueba en simultáneo la carga de imágenes JPG/PNG de hasta 2 MB, el rechazo de archivos no válidos y la imagen predeterminada cuando no se carga ninguna, ademas de si en el pérfil de actor no hay imagen , nos genera una imagen predeterminada .
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

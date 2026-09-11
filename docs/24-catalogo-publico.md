@@ -329,3 +329,11 @@ nunca, que es exactamente el público al que sirve esta historia.
 - **La búsqueda por palabra clave** era [HU-27](https://github.com/Petulio14/hub-cultural-santa-marta/issues/27) y ya está ([26](26-busqueda.md)). Con término escrito, la carga progresiva de §3 se apaga: buscar dentro de doce encuentra dentro de doce.
 - **El detalle de una publicación** era [HU-28](https://github.com/Petulio14/hub-cultural-santa-marta/issues/28) y ya está ([27](27-detalle-de-la-publicacion.md)). Con él llegó el enlace desde la tarjeta, que esta historia dejó sin poner a propósito: el enlace es **el título**, no la tarjeta entera.
 - **El mapa** de la misma oferta es [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30). Con esta historia el punto que HU-22 dejó guardado sigue sin verse en ninguna parte; ahí es donde se verá.
+
+*Juan Pablo Vasquez*
+
+Se valida que el administrador pueda revisar las publicaciones pendientes desde el panel de moderación, aprobarlas para hacerlas visibles en el catálogo y mapa, o devolverlas exigiendo una observación obligatoria para el actor cultural. Además, se comprueba que cada decisión quede registrada con el administrador responsable, la acción realizada, la observación y la fecha correspondiente.
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+

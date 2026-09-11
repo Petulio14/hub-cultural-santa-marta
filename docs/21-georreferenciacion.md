@@ -377,3 +377,14 @@ ha pedido.
 ---
 
 *Elaboración propia (2026).*
+
+*Juan Pablo Vasquez*
+
+se valida módulo para que los actores culturales publiquen eventos y experiencias culturales mediante un formulario con título, descripción, categoría, fechas, ubicación e imagen. Las publicaciones se guardan con estado pendiente de aprobación, validando que las fechas sean correctas y registrando el autor y la fecha de creación. Además, se verificó que el contenido no sea visible en el catálogo público hasta que sea aprobado por el administrador
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+
+
+
+

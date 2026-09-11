@@ -236,3 +236,10 @@ formularios y en los filtros», que es el mismo vocabulario de la etiqueta de ca
 ---
 
 *Elaboración propia (2026).*
+
+
+*Juan Pablo Vasquez *
+se comprueban los 4 criterios de aceptación. El registro incluye la política de tratamiento, se bloquea el registro sin consentimiento, se almacena el consentimiento con fecha y versión en Firebase y existe un canal documentado para solicitudes de supresión. Las pruebas fueron exitosas y la funcionalidad quedó documentada.
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

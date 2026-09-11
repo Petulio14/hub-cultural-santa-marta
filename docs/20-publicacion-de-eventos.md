@@ -300,3 +300,11 @@ el catálogo. Queda anotado para no darlas por cerradas dos veces.
 | El catálogo público con sus filtros | HU-25 y HU-26 |
 | Buscar por palabra clave | HU-27, que es para lo que existe `tituloNormalizado` |
 | Contar las consultas | HU-34, sobre `contadorConsultas` |
+
+*Juan Pablo Vasquez*
+Se realizó la validación de la HU-20, comprobando el registro del hub con su nombre, descripción, líneas de trabajo, dirección y datos de contacto. También se verificó que las coordenadas se almacenen correctamente para la ubicación en el mapa y que el hub pueda aparecer en el directorio público. Finalmente, se revisó el funcionamiento la publicación publica del hub de manera satisfactoria .
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+
+

@@ -265,3 +265,10 @@ un evento sintético no reproduce.
 - **El filtro por fechas en el mapa.** El tercer criterio pide solo la categoría, y es coherente: el catálogo se lee para decidir *cuándo*, y el mapa se mira para decidir *por dónde*. `filtros.js` ya lo soportaría si algún día se pide.
 - **Situarse a uno mismo en el mapa.** Requiere permiso de geolocalización y no lo pide ningún criterio.
 - **La optimización final del mapa en móvil** es [HU-33](https://github.com/Petulio14/hub-cultural-santa-marta/issues/33), que es la otra historia que la vista V-6 tenía anotada desde HU-07.
+
+
+*Juan Pablo Vasquez*
+se valida la funcionalidad de contacto directo entre los visitantes y los actores culturales. Comprobéaque desde la vista de detalle de una actividad se mostraran únicamente los canales de contacto autorizados por el actor cultural y que, al seleccionarlos, se abriera la aplicación correspondiente con un mensaje inicial predefinido. Además, el registro anonimizado de las interacciones para fines estadísticos, sin almacenar información personal de los visitantes.
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

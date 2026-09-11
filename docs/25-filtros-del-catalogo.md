@@ -332,3 +332,9 @@ Sobre el sitio publicado, sin sesión iniciada y con los cuatro índices ya publ
 - **Los filtros en la dirección**, para poder compartir un catálogo ya filtrado o volver atrás con el botón del navegador. Se dejó fuera a propósito: no lo pide ningún criterio y añade estado que mantener sincronizado. Anotado como trabajo futuro en [02 §6](02-alcance-mvp.md).
 - **Filtrar por lugar o por cercanía.** El punto está guardado desde HU-22 y Firestore no consulta por proximidad sin geohash; el mapa de [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30) resuelve la misma necesidad por otra vía.
 - **El filtro de categoría en el mapa** es el tercer criterio de HU-30, y reutilizará `filtros.js`.
+
+*Juan Pablo Vasquez*
+Durante la validación de la HU-25 implementé y verifiqué el catálogo público de oferta cultural para visitantes. Comprobé que solo se mostraran las publicaciones aprobadas y que cada registro incluyera imagen, título, categoría, fecha y lugar. Además, validé la carga progresiva para catálogos con más de 12 elementos  mostrándose correctamente los eventos y al final de pagina da la opcion para seguir viendo dado el caso de que hallan mas y el mensaje informativo cuando no existen resultados. 
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

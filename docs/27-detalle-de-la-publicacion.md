@@ -240,3 +240,11 @@ que faltaba para poder comprobar la primera fila.
 - **Contar la consulta** para los indicadores es [HU-34](https://github.com/Petulio14/hub-cultural-santa-marta/issues/34), con el obstáculo que anota §8.
 - **Las demás publicaciones del mismo actor**, que serían un buen enlace desde aquí y desde el perfil. No lo pide ningún criterio.
 - **El mapa con todas las publicaciones** era [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30) y ya está ([29](29-mapa-interactivo.md)): el tercer mapa del proyecto, construido sobre las piezas de `mapa.js` que esta historia extrajo, y con la decisión táctil **contraria** a la de §4.
+
+*Juan Pablo Vasquez*
+Durante la validación de la HU-27 implementa y verifica la funcionalidad de búsqueda por palabra clave dentro del catálogo público. se comprueba que al ingresar un término se mostraran las publicaciones cuyo título o descripción contenían coincidencias, que las búsquedas sin resultados presentaran un mensaje informativo sugiriendo limpiar los filtros y que la búsqueda funcionara correctamente independientemente del uso de mayúsculas, minúsculas o tildes. Además, validé la búsqueda en memoria sobre el conjunto de datos cargado en el cliente, se valida su correcto funcionamiento .
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+
+

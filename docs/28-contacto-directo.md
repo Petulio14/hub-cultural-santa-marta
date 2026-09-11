@@ -267,3 +267,10 @@ de las seis historias del sprint que necesitaba ese despliegue.
 - **Un formulario de contacto dentro de la plataforma**, con el mensaje guardado y respondido desde aquí. Exigiría almacenar el mensaje y la identidad de quien escribe, que es exactamente lo que RNF-06 evita, y notificar al actor, que exige Cloud Functions ([23 §3](23-moderacion.md)).
 - **Saber si el contacto llegó a producirse.** El enlace abre WhatsApp; lo que pase después ocurre fuera y la plataforma no lo ve. Se registra la intención, no el resultado, y así se llama en la tabla de indicadores.
 - **El mapa de toda la oferta** es [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30), lo último del sprint.
+
+*Juan Pablo Vasquez*
+se verifica la vista de detalle de las actividades culturales. Comprueba que al seleccionar una publicación desde el catálogo se mostrara toda la información asociada, incluyendo descripción, fechas, lugar, categoría, imagen y actor cultural responsable. También validé el acceso directo al perfil del actor cultural desde la ficha de la actividad y la visualización de la ubicación en un mapa cuando la publicación contaba con coordenadas registradas en la pagina.
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+

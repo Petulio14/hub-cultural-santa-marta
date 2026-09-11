@@ -483,4 +483,5 @@ Firestore a mensajes en español, como ya hacía `authService.js` con los de Aut
 
 *Juan Pablo Vasquez*
 Se procede a validar los 3 criterios de aceptación en el panel publicado. Las categorías creadas aparecen inmediatamente en los formularios, las categorías con publicaciones asociadas no se eliminan sino que se desactivan conservando su clasificación, y el listado muestra el número de publicaciones asociadas. También se verificó la interfaz en diferentes resoluciones sin desbordamientos.
-se anexan evidencias  de fotografias al doc .
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .

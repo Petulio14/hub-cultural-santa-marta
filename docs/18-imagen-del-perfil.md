@@ -290,3 +290,10 @@ desplegar.
 | Imagen de las publicaciones | HU-21, con este mismo mecanismo |
 | Varias imágenes por perfil | Fuera del alcance del MVP ([02 §3](02-alcance-mvp.md)) |
 | Firebase Storage | El día que haya presupuesto: §1 |
+
+
+*Juan Pablo Vasquez*
+Se realizó la validación de la HU-18, comprobando la creación y edición del perfil del actor cultural con sus datos, manifestación, descripción, categoría y contacto. También se verificó que el perfil quede asociado a la cuenta, que otro usuario no pueda modificarlo por medio del link aparte a su rol y que los cambios se reflejen en la vista pública. Además, se revisó el límite de caracteres de la descripción y la visualización del perfil en el directorio público.
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+

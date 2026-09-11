@@ -276,3 +276,12 @@ hizo en `docs/20` §8.
 ---
 
 *Elaboración propia (2026).*
+
+*Juan Pablo Vasquez*
+
+se valida que los actores culturales pueden editar y eliminar únicamente sus propias publicaciones. Se verificó que al modificar una publicación los cambios se guardan correctamente y el contenido regresa al estado de pendiente de aprobación para su revisión. También se comprobó que, antes de eliminar una publicación, el sistema solicita una confirmación al usuario para evitar borrados accidentales. Adicionalmente, se validó que los usuarios no pueden editar ni eliminar publicaciones de otros actores culturales ya que la vista no esta dicha opción y estas acciones son bloqueadas tanto desde la interfaz como por las reglas de seguridad de Firebase. La funcionalidad fue implementada y comprobada mediante los PR #80 y #81 . 
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
+
+

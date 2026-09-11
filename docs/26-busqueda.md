@@ -269,3 +269,9 @@ Sobre el sitio publicado, sin sesión iniciada.
 - **Ordenar por relevancia.** El resultado conserva el orden del catálogo —lo más próximo a terminar primero—, que para quien está de paso dice más que una puntuación de coincidencia.
 - **Buscar en el nombre del actor o en el lugar.** El criterio nombra título y descripción; ampliarlo sería decidir por cuenta propia qué más es «la actividad».
 - **Resaltar el término en las tarjetas.** No lo pide ningún criterio y obliga a inyectar marcado dentro de texto que escribió otra persona.
+
+*Juan Pablo Vasquez*
+Durante la validación de la HU-26 se cargan y validan los filtros del catálogo público para que los visitantes pudieran buscar actividades culturales por categoría y por rango de fechas. se comprueba que cada filtro funcionara correctamente de manera individual, que la combinación de ambos mostrara únicamente los resultados que cumplían las dos condiciones y que al limpiar los filtros se restaurara el catálogo completo
+
+se anexan las respectivas fotos de la validacion 
+en carpeta evidencias .
