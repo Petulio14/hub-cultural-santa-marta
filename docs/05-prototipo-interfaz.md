@@ -158,6 +158,49 @@ licencia y autorización de las personas retratadas**, o no entra.
 En ambos casos el fondo es **decorativo**: no porta información, y por eso no necesita
 texto alternativo (WCAG 2.1, criterio 1.1.1).
 
+### El fondo, cambiado el 19/09/2026
+
+Lo de arriba describe **un** fondo, vectorial, igual en las nueve vistas y al 8 %. Lo que
+se implementó es otra cosa y conviene que quede dicho, porque es una decisión distinta y
+no el cumplimiento de la de arriba:
+
+| | Lo especificado | Lo implementado |
+| --- | --- | --- |
+| Cuántos | uno, común a todas las vistas | **tres**, uno por vista |
+| Dónde | las nueve vistas | `/`, `/actores` y `/mapa`; las demás siguen en arena lisa |
+| Qué es | silueta vectorial de la Sierra sobre el Caribe | **ilustración figurativa**, desenfocada |
+| Cuánto se ve | 8 % de opacidad | 25 %, sobre un velo de arena del 75 % |
+
+Lo que **no** cambia es lo único que la sección 3 y WCAG exigen: el fondo sigue siendo
+decorativo, sigue sin llevar texto alternativo y el contraste del texto que cae encima está
+medido sobre el peor píxel de las tres imágenes —5,19 : 1 en el caso más justo, que es un
+enlace— en [`docs/10` §2 quater](10-responsive.md).
+
+Que se vea más que el 8 % especificado no es un descuido: una silueta vectorial en dos
+tonos al 8 % es un relieve, y una ilustración a todo color al 8 % es una mancha gris. Para
+que la imagen siga leyéndose como imagen se aclara y se satura antes de componerla, de modo
+que aporte **color** sin aportar **contraste**. El detalle está en `docs/10`.
+
+### Autoría de las tres imágenes
+
+La regla de la sección anterior —*«si en algún momento se decide versionar una fotografía,
+aquí van autoría, fecha, licencia y autorización de las personas retratadas, o no entra»*—
+se escribió para fotografías y estas no lo son: son ilustraciones, y las figuras humanas
+que aparecen no corresponden a personas identificables, así que no hay autorización de
+imagen que recabar (Ley 1581 de 2012, art. 9).
+
+Queda igualmente lo demás, porque los archivos **sí** están versionados:
+
+| Dato | |
+| --- | --- |
+| Archivos | `recursos/fondos/inicio.png`, `actores culturales.png`, `mapa.png` |
+| Añadidos al repositorio | 19/09/2026 |
+| Autoría y herramienta | _Pendiente de confirmar por el autor del trabajo._ |
+| Licencia o condiciones de uso | _Pendiente._ |
+
+_No se cierra esta sección hasta que esas dos filas estén escritas._ Es la misma exigencia
+que el propio documento se puso antes de que hubiera ninguna imagen que declarar.
+
 ## 5. Requisitos de accesibilidad del diseño
 
 Condiciones que el archivo de Figma debe reflejar para no arrastrar deuda a HU-32:

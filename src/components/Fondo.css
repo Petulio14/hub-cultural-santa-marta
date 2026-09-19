@@ -1,0 +1,36 @@
+/*
+ * La capa del fondo. Fija a la ventana y detrás de todo: «z-index: -1» la deja
+ * por encima del color del body y por debajo del contenido, sin necesidad de
+ * subir a nadie más en la pila.
+ */
+.fondo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/*
+ * El velo de arena, que es lo que hace legible todo lo que va encima.
+ *
+ * No es un color nuevo: es «--arena», el mismo fondo de siempre, con opacidad.
+ * Así la página conserva su color y la imagen queda como un tinte cálido por
+ * debajo, en lugar de competir con el texto.
+ *
+ * El 75 % está medido, no elegido a ojo: «python herramientas/medir-fondos.py»
+ * compone este mismo velo sobre las tres imágenes y busca el **peor píxel de
+ * las tres**. Sale 7,38 : 1 con el texto corriente y 5,19 : 1 con el color de
+ * los enlaces, que es el más justo de los que llegan a caer aquí.
+ *
+ * Si se cambia este número hay que cambiarlo también en ese guion, que no puede
+ * leer una hoja de estilos. Es el único sitio donde el valor está repetido.
+ */
+.fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--arena);
+  opacity: 0.75;
+}
