@@ -81,7 +81,7 @@ export default function FiltrosDelCatalogo({ filtros, alAplicar, alLimpiar, filt
             // «todas» es una respuesta y hay que poder volver a ella.
             vacia={cargando ? 'Leyendo las categorías…' : 'Todas las categorías'}
             vaciaElegible
-            ayuda="sSeleccione una categoría"
+            ayuda="Elige una categoría"
             requerido={false}
             disabled={cargando}
           />
