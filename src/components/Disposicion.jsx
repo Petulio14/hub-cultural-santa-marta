@@ -1,5 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import Cabecera from './Cabecera.jsx';
+import Fondo from './Fondo.jsx';
 import PieDePagina from './PieDePagina.jsx';
 import { useTituloDeRuta } from '../hooks/useTituloDeRuta.js';
 
@@ -15,6 +16,9 @@ export default function Disposicion() {
       <a className="saltar-al-contenido" href="#contenido">
         Saltar al contenido
       </a>
+      {/* Va el primero y es decorativo: no debe interponerse entre el salto al
+          contenido y la cabecera al recorrer la página con el tabulador. */}
+      <Fondo />
       <Cabecera />
       <main className="disposicion__principal" id="contenido">
         <Outlet />

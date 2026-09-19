@@ -204,6 +204,104 @@ maquetación; queda anotado como lo primero que hay que aligerar, y el sitio nat
 hacerlo es [HU-33](https://github.com/Petulio14/hub-cultural-santa-marta/issues/33), que
 vuelve sobre esta misma cabecera.
 
+## 2 quater. El fondo de las vistas (19/09/2026)
+
+Tres vistas dejan de tener el fondo de arena liso y pasan a tener una imagen muy
+desenfocada por debajo de todo: `/` (inicio), `/actores` y `/mapa`. Las demás se quedan
+como estaban. Lo que se cambia respecto de lo especificado en
+[`docs/05` §4 bis](05-prototipo-interfaz.md) está anotado allí.
+
+La capa es `position: fixed` y no un `background` del `body`. Dos motivos: el body mide lo
+que mide el contenido, así que en una vista larga la imagen se estiraría o se repetiría; y
+`background-attachment: fixed`, que sería la forma de evitarlo, es justo lo que los
+navegadores de iOS pintan a tirones al desplazar.
+
+### Nueve megas que no se sirven
+
+Los originales son tres PNG de 1672 × 941 px y **2,7 a 3,3 MB cada uno**. Puestos tal cual
+en `public/`, Vite los copia a `dist/` y se publican los tres: nueve megas en una cabecera
+de página, contra un RNF-04 que pide **menos de tres segundos en 4G**.
+
+No se sirven. Se preparan antes, con
+[`herramientas/preparar-fondos.py`](../herramientas/preparar-fondos.py), y los originales
+viven en `recursos/fondos/`, fuera de lo que se publica. Cuatro pasos:
+
+| Paso | Por qué |
+| --- | --- |
+| Reducir a 480 px de ancho | El desenfoque destruye el detalle: guardar 1672 px es guardar lo que nadie verá. El navegador la estira otra vez y la suaviza un poco más |
+| Desenfocar (radio 20) | Aquí y no con `filter: blur()` en CSS, que obligaría a descargar los tres megas y a desenfocar en cada pintado lo que ya está decidido |
+| Aclarar un 40 % | Lo que limita el contraste del texto es el píxel **más oscuro** del fondo; aclarar sube ese suelo |
+| Saturar ×2,2 | Y esto es lo que hace que la imagen se siga viendo |
+
+El resultado:
+
+| Imagen | Original | Servida |
+| --- | --- | --- |
+| `fondo-inicio.jpg` | 2,70 MB | **4,9 KB** |
+| `fondo-actores.jpg` | 2,80 MB | **4,8 KB** |
+| `fondo-mapa.jpg` | 3,25 MB | **4,7 KB** |
+
+**99,8 % menos**, y lo que se pierde es exactamente la nitidez que el desenfoque iba a
+borrar de todos modos. Las tres juntas son 14 KB: el 4 % de lo que pesa el logotipo de la
+UAEMex, que dibuja 28 píxeles de alto en la cabecera.
+
+### Por qué aclarar y saturar, que parece contradictorio
+
+Porque el contraste de WCAG se calcula sobre la **luminancia**, y la saturación casi no la
+toca. Aclarar sube el suelo de luminancia —lo que salva el contraste— pero apaga el color;
+saturar lo devuelve sin volver a bajar ese suelo.
+
+Medido sobre las tres imágenes, con el velo de arena al 75 %:
+
+| Tratamiento | Peor contraste del enlace | Croma medio |
+| --- | --- | --- |
+| Sin aclarar ni saturar, velo 85 % | 5,17 : 1 | 18,6 |
+| Sin aclarar ni saturar, velo 75 % | 4,28 : 1 | 24,6 |
+| **Aclarado 40 % y saturado ×2,2, velo 75 %** | **5,19 : 1** | **30,0** |
+
+La tercera fila tiene **más color que las dos y mejor contraste que las dos**. Bajar el
+velo sin más —segunda fila— compra color a costa del texto y deja el enlace en 4,28 : 1,
+por debajo del mínimo; aclarar y saturar lo compra sin pagarlo.
+
+El croma es la media de `max(R,G,B) − min(R,G,B)` sobre los píxeles ya compuestos: cuánto
+color queda en pantalla, que es lo que aquí se quería conservar.
+
+### El contraste, medido
+
+[`herramientas/medir-fondos.py`](../herramientas/medir-fondos.py) compone el velo sobre
+las tres imágenes y busca el **peor píxel de las tres**, que resulta ser `#ebd2c9`. No mira
+dónde cae el texto: mira el peor sitio donde podría caer.
+
+| Color de texto | Sobre el peor píxel | WCAG 4,5 : 1 |
+| --- | --- | --- |
+| `--turquesa-oscuro` (enlaces) | 5,19 : 1 | pasa |
+| `--gris-texto` | 7,38 : 1 | pasa |
+| `--negro-texto` | 12,40 : 1 | pasa |
+
+Esos tres son los que **de verdad** caen sobre el fondo. Recorriendo las tres vistas en el
+navegador y quedándose con los elementos cuyo fondo heredado es la página, no aparece
+ningún otro color:
+
+```
+/         negro-texto 25,6px/700  ← «Cuatro formas de empezar»
+/actores  negro-texto 36px/700 · gris-texto 16px/400 · negro-texto 16px/600
+/mapa     negro-texto 36px/700 · gris-texto 16px/400 · negro-texto 16px/600
+          turquesa-oscuro 16px/600  ← el enlace «catálogo» del recuento
+```
+
+**`--terracota` no está en la tabla y es a propósito**: con este velo se queda en 3,77 : 1
+y no pasaría. Puede no estar porque solo se usa en avisos y errores, y todos van dentro de
+una caja blanca. Si algún día un texto en terracota queda sobre el fondo, hay que añadirlo
+al guion y volver a medir; está escrito en su cabecera para que no dependa de acordarse.
+
+### El número que está repetido
+
+El 75 % del velo vive en `.fondo::after` y otra vez en `medir-fondos.py`, porque un guion
+de Python no lee una hoja de estilos. Es la única duplicación de esta función y está dicha
+en los dos sitios. Si cambia en uno y no en el otro, la medición deja de medir lo que se
+sirve **sin que nada falle**, que es la forma de error que este sprint ya pagó una vez con
+los índices de Firestore.
+
 ## 3. Verificación en los tres anchos
 
 Recorriendo las nueve direcciones públicas del enrutador en cada ancho:
