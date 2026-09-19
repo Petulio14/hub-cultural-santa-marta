@@ -3,7 +3,7 @@ import { fondoDeRuta } from '../routes/fondos.js';
 import './Fondo.css';
 
 /**
- * La imagen desenfocada del fondo, detrás de todo el contenido.
+ * La imagen desvanecida del fondo, detrás de todo el contenido.
  *
  * Va en una capa fija y no en el «background» del body por dos motivos: el body
  * mide lo que mide el contenido —en una vista larga la imagen se repetiría o se
