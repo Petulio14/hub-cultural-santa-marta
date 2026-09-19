@@ -49,7 +49,14 @@ elemento a la altura de su fila. La verificación en los tres anchos es HU-10.
 El tercer criterio de aceptación pide que ese camino exista **siempre** y sea visible. Hay
 dos permanentes, y no uno, porque en una vista larga la cabecera queda fuera de la pantalla:
 
-1. **La marca de la cabecera**, arriba a la izquierda, con el logotipo institucional.
+1. **El nombre del sitio**, arriba a la izquierda, junto a los logotipos
+   institucionales. Hasta el 19/09/2026 el enlace era la marca entera, logotipo
+   incluido; al pasar de un logotipo a tres —Tecnológico de Antioquia, Universidad
+   Autónoma del Estado de México y Universidad del Magdalena— se quedó en el nombre.
+   Pulsar el sello de una universidad para aterrizar en el inicio de esta plataforma
+   llevaría a un sitio distinto del que se anuncia, y el enlace pasaría a leerse con
+   los tres rótulos seguidos antes del suyo. El camino existe igual y sigue estando
+   en el mismo rincón de todas las vistas, que es lo que el criterio pide.
 2. **«Volver al inicio»**, en el pie.
 
 Recorriendo las once direcciones del enrutador se comprueba que ninguna queda sin salida:

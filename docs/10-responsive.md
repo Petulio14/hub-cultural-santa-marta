@@ -131,6 +131,79 @@ Cuando se repita en HU-33 tiene que recorrerlas **con sesión iniciada en cada u
 roles**, porque el menú —que es lo que más ancho pide de toda la estructura— depende del rol
 y no de la ruta.
 
+## 2 ter. Tres logotipos en la cabecera (19/09/2026)
+
+La marca pasa de un logotipo a tres: **Tecnológico de Antioquia**, **Universidad Autónoma
+del Estado de México** y **Universidad del Magdalena**, en la misma placa blanca y separados
+por un filete, porque son tres instituciones y no una marca compuesta.
+
+Eso son 86 px más de marca —de 254 a 340—, y la marca es justamente lo que la sección 2 bis
+dejó sin ceder ancho. Así que había que decidir otra vez quién cede.
+
+### Lo que dejó de estar prohibido
+
+El `flex-wrap: nowrap` que la cabecera tenía desde 768 px. Con una marca de 254 px sobraba
+sitio y daba igual; con 340 deja de dar igual, porque prohibido repartirse en filas lo único
+que el menú podía hacer al quedarse sin espacio era **encogerse y partirse por dentro**.
+
+Quitarlo no cambia la regla de 2 bis —quien cede sigue siendo el menú— sino **cómo** cede:
+el menú que no cabe al lado de la marca baja entero a la fila siguiente, donde dispone del
+ancho completo, en lugar de estrujarse en su caja hasta romperse.
+
+Donde más se nota es a 768 px, y sale ganando: la cabecera crece seis píxeles y el menú
+pierde una fila entera. La medición está debajo.
+
+Esos seis píxeles son la placa, que es más alta porque los dos sellos son casi cuadrados y
+el logotipo del Tecnológico es apaisado: a la misma altura los sellos se verían más pequeños
+de lo que son, y se compensa subiéndolos un poco, que es como se equilibra un conjunto de
+logotipos —por masa óptica y no por medida.
+
+### Medido en los tres anchos
+
+Con el menú del actor cultural, que es el más largo que existe:
+
+| Ancho | Caso | Alto de la cabecera | Filas del menú |
+| --- | --- | --- | --- |
+| 360 px | visitante | 118 → 118 px | menú compacto, tras el botón |
+| 360 px | actor | 118 → 118 px | menú compacto, tras el botón |
+| 768 px | visitante | 112 → **118 px** | 2 → **1** |
+| 768 px | actor | 160 → **166 px** | 3 → **2** |
+| 1366 px | visitante | 64 → 64 px | 1 → 1 |
+| 1366 px | actor | 64 → 64 px | 1 → 1 |
+
+Sin desbordamiento horizontal en ninguno de los seis casos.
+
+**A 1366 px no cambia nada**, que era lo que había que comprobar: es el ancho que la sección
+2 bis costó y el que la sección 3 mide. El menú de un actor pide ahora 1.320 px para caber
+en una fila y el de un visitante 907; antes eran 1.234 y 821.
+
+**A 360 px tampoco cambia el número de filas.** La cabecera de un teléfono ya ocupaba dos
+antes de esto: con un solo logotipo la marca medía 217 px y el botón «Menú» pedía 100, que
+con los 16 de separación son 333 sobre los 328 disponibles. Se quedaba a cinco píxeles. Lo
+que sí cambia es dónde queda el botón: antes caía pegado a la izquierda, debajo de los
+logotipos, como si se hubiera descolgado; ahora un margen automático lo lleva al borde
+derecho, que es donde se busca un menú.
+
+### El enlace al inicio
+
+Dejó de ser la marca entera y pasó a ser **el nombre del sitio**. Los logotipos ya no están
+dentro del enlace, y cada uno conserva su `alt` con el nombre de la institución: son la
+atribución académica del trabajo, no adorno. El motivo está en
+[`docs/09` §3](09-navegacion-e-inicio.md).
+
+### Lo que queda anotado
+
+El logotipo de la UAEMex es un SVG de **365 KB** —130 KB comprimido— para dibujar 28 px de
+alto: es un trazado automático de 820 recorridos. Comprimido contra comprimido son **once
+veces la hoja de estilos entera del proyecto**, y viaja en la cabecera de todas las vistas.
+
+RNF-04 pide que la vista principal cargue en **menos de tres segundos en conexión 4G**, así
+que esto no es un detalle estético. No se toca aquí porque no es un defecto de diseño
+responsive y porque sustituir el archivo de una marca institucional no es una decisión de
+maquetación; queda anotado como lo primero que hay que aligerar, y el sitio natural para
+hacerlo es [HU-33](https://github.com/Petulio14/hub-cultural-santa-marta/issues/33), que
+vuelve sobre esta misma cabecera.
+
 ## 3. Verificación en los tres anchos
 
 Recorriendo las nueve direcciones públicas del enrutador en cada ancho:

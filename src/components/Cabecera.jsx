@@ -9,12 +9,20 @@ import './Cabecera.css';
 /**
  * Cabecera común a todas las vistas.
  *
- * El logotipo institucional va sobre placa blanca porque la marca es verde
- * oscuro y la barra es azul profundo: sobre el fondo directo el contraste
+ * Los logotipos institucionales van sobre placa blanca porque sus marcas son
+ * oscuras y la barra es azul profundo: sobre el fondo directo el contraste
  * quedaría por debajo de 4,5 : 1 (docs/05-prototipo-interfaz.md §4 bis).
  *
- * La marca es además el camino de regreso al inicio desde cualquier vista
- * (tercer criterio de aceptación de HU-09), reforzado por el enlace del pie.
+ * Son tres —Tecnológico de Antioquia, Universidad Autónoma del Estado de México
+ * y Universidad del Magdalena— y por eso **el enlace al inicio es el nombre del
+ * sitio y no la placa**. Antes el logotipo entero era el enlace, y con uno solo
+ * eso funcionaba; con tres, pulsar el sello de una universidad para acabar en el
+ * inicio de esta plataforma sería llevar a otro sitio del que se anuncia, y el
+ * enlace pasaría a nombrarse con los tres rótulos seguidos antes del suyo.
+ *
+ * El camino de regreso al inicio desde cualquier vista sigue existiendo y sigue
+ * estando arriba a la izquierda (tercer criterio de aceptación de HU-09),
+ * reforzado por el enlace del pie.
  *
  * Por debajo de 768 px el menú se presenta compacto (HU-10). Quién decide si
  * está compacto es el CSS, no este componente: aquí solo se guarda si el panel
@@ -63,14 +71,31 @@ export default function Cabecera() {
   return (
     <header className="cabecera">
       <div className="contenedor cabecera__interior">
-        <Link className="cabecera__marca" to="/">
+        <div className="cabecera__marca">
+          {/* Cada logotipo lleva su «alt» con el nombre de la institución: son
+              la atribución académica del trabajo, no adorno, así que ninguno
+              puede quedarse sin nombre accesible. */}
           <span className="cabecera__placa">
-            <img src="/logo-tdea.png" alt="Tecnológico de Antioquia" />
+            <img
+              className="cabecera__logo"
+              src="/logo-tdea.png"
+              alt="Tecnológico de Antioquia"
+            />
+            <img
+              className="cabecera__logo cabecera__logo--sello"
+              src="/UAEMex.svg"
+              alt="Universidad Autónoma del Estado de México"
+            />
+            <img
+              className="cabecera__logo cabecera__logo--sello"
+              src="/UDM.png"
+              alt="Universidad del Magdalena"
+            />
           </span>
-          <span className="cabecera__nombre">
+          <Link className="cabecera__nombre" to="/">
             Hub Cultural<small>Santa Marta</small>
-          </span>
-        </Link>
+          </Link>
+        </div>
 
         <button
           type="button"

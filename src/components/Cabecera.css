@@ -34,29 +34,60 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: var(--toque-minimo);
   margin-right: auto;
-  color: inherit;
-  text-decoration: none;
 }
 
 .cabecera__placa {
   display: flex;
   align-items: center;
+  /* Seis y no ocho: con un logotipo la separación se pagaba una vez y con tres
+     se paga cuatro —dos huecos y dos filetes—, y cada píxel de la placa sale
+     del menú, que es lo único que puede ceder. */
+  gap: 6px;
   background: var(--blanco);
   border-radius: 6px;
   padding: 4px 8px;
 }
 
-.cabecera__placa img {
+.cabecera__logo {
   display: block;
   height: 20px;
   width: auto;
 }
 
+/*
+ * Un filete entre logotipos. Sin él los tres se leen como una sola marca
+ * compuesta, y no lo son: son tres instituciones distintas. El filete va en el
+ * segundo y el tercero, nunca antes del primero.
+ */
+.cabecera__logo + .cabecera__logo {
+  border-left: 1px solid var(--gris-borde);
+  padding-left: 6px;
+}
+
+/*
+ * Los dos sellos son casi cuadrados y el logotipo del Tecnológico es apaisado.
+ * A la misma altura los sellos se ven más pequeños de lo que son: una letra
+ * ocupa su caja de arriba abajo y un círculo se estrecha en los extremos. Se
+ * compensa con altura, que es como se equilibra un conjunto de logotipos —por
+ * masa óptica y no por medida—, y por eso es un número distinto y no un
+ * descuido. El sobrante se queda en cuatro píxeles y no en seis porque un sello
+ * casi cuadrado paga en ancho cada píxel de alto, y el ancho es justo lo que
+ * escasea en esta barra.
+ */
+.cabecera__logo--sello {
+  height: 24px;
+}
+
 .cabecera__nombre {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  /* El enlace al inicio ya no es toda la marca sino el nombre, y sigue teniendo
+     que ser alcanzable con el dedo (HU-10). */
+  min-height: var(--toque-minimo);
+  color: inherit;
+  text-decoration: none;
   font-weight: 700;
   font-size: 1rem;
   line-height: 1.15;
@@ -79,6 +110,11 @@
 .cabecera__hamburguesa {
   display: inline-flex;
   align-items: center;
+  /* Con tres logotipos la marca ya no deja sitio al botón en la misma fila de
+     un teléfono, así que baja a la suya. El margen automático lo devuelve al
+     borde derecho, que es donde se busca un menú: sin él quedaba pegado a la
+     izquierda, debajo de los logotipos, como si se hubiera caído. */
+  margin-left: auto;
   gap: 8px;
   min-height: var(--toque-minimo);
   min-width: var(--toque-minimo);
@@ -214,9 +250,18 @@
  * abierto y vuelve a ampliarla, no queda un menú a medias.
  */
 @media (min-width: 768px) {
-  .cabecera__interior {
-    flex-wrap: nowrap;
-  }
+  /*
+   * Aquí había un «flex-wrap: nowrap». Con una marca de 254 px sobraba sitio y
+   * daba igual; con tres logotipos son 340 y deja de dar igual: prohibido
+   * repartirse en filas, lo único que el menú podía hacer al quedarse sin
+   * espacio era **encogerse y partirse por dentro**, y eso a 768 px convertía
+   * una cabecera de dos filas en una de tres.
+   *
+   * Sin la prohibición, el menú que no cabe al lado de la marca baja **entero**
+   * a la fila siguiente, donde dispone del ancho completo. Sigue siendo el menú
+   * quien cede —la marca no se toca, tercer criterio de HU-09— pero cede de la
+   * forma que no lo rompe: una fila más, no un menú a medias.
+   */
 
   .cabecera__hamburguesa {
     display: none;
@@ -256,8 +301,12 @@
     text-align: right;
   }
 
-  .cabecera__placa img {
+  .cabecera__logo {
     height: 26px;
+  }
+
+  .cabecera__logo--sello {
+    height: 28px;
   }
 
   .cabecera__nombre {
