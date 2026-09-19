@@ -140,6 +140,22 @@ Callarlo dejaría creer que el mapa enseña toda la oferta, así que el recuento
 > 2 actividades situadas. Otras 3 están publicadas sin situar y solo aparecen en el
 > catálogo.
 
+### El singular, corregido el 19/09/2026
+
+La frase de arriba solo existía en plural, y con una sola publicación sin situar salía
+**«Otras 1 están publicadas sin situar»**. No se vio al cerrar la historia porque los datos
+de entonces tenían tres sin situar, y el caso de una sola apareció después.
+
+> 12 actividades situadas. **Otra más está publicada sin situar** y solo aparece en el
+> catálogo.
+
+El singular no lleva número: «otra» ya dice que es una. Y es el caso que más se lee, porque
+sale justo cuando la oferta situada casi lo es toda.
+
+Es el mismo descuido que en el resto de la vista no ocurre —«actividad situada» frente a
+«actividades situadas» está dos líneas más arriba en el mismo párrafo, y las cuatro vistas
+con recuento lo resuelven así—; faltaba únicamente en esta mitad de la frase.
+
 El descarte ocurre **en memoria**, y no contradice lo que HU-25 dejó escrito. Allí filtrar en
 memoria era un defecto porque rompía la paginación —descartar cinco de trece deja una página
 de siete—, y aquí no hay paginación que romper. Firestore tampoco sabría hacerlo sin una
