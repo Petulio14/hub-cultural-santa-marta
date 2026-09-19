@@ -120,12 +120,18 @@ export default function MapaInteractivo() {
           {publicaciones.length === 1 ? 'actividad situada' : 'actividades situadas'}
           {categoria && ' en esta categoría'}.
           {/* Se dice cuántas quedan fuera por no tener punto. Sin esto, el mapa
-              parecería enseñar toda la oferta y no la enseña. */}
+              parecería enseñar toda la oferta y no la enseña.
+
+              El singular no lleva número: «otra» ya dice que es una, y «Otras 1»
+              era la frase que salía cuando la oferta situada casi lo era toda,
+              que es precisamente cuando alguien se para a leer el recuento. */}
           {sinSituar > 0 && (
             <>
               {' '}
-              Otras {sinSituar} están publicadas sin situar y solo aparecen en el{' '}
-              <Link to="/eventos">catálogo</Link>.
+              {sinSituar === 1
+                ? 'Otra más está publicada sin situar y solo aparece'
+                : `Otras ${sinSituar} están publicadas sin situar y solo aparecen`}{' '}
+              en el <Link to="/eventos">catálogo</Link>.
             </>
           )}
         </p>
