@@ -5,19 +5,17 @@
  * componente que pinta el fondo y cualquier comprobación posterior tienen que
  * leer la misma tabla. Es un dato de navegación, no una ruta.
  *
- * ## Por qué las imágenes vienen ya desenfocadas
+ * ## Por qué las imágenes vienen ya desvanecidas
  *
- * El desenfoque no se hace en CSS con «filter: blur()». Podría, pero entonces
- * el navegador tendría que descargar la imagen nítida —tres megas— y desenfocar
- * en cada pintado lo que nadie va a ver nítido nunca. Se hace una vez, al
- * preparar el archivo, y de paso se descarta la resolución que el desenfoque ya
- * ha destruido: de 1672 px se baja a 480, que el navegador vuelve a estirar
- * sobre la pantalla suavizándolo todavía un poco más.
+ * Se ven nítidas pero muy claras, con solo el 12 % de la imagen sobre el color
+ * de arena. Ese desvanecido va dentro del archivo y no en CSS: una imagen con
+ * tan poco contraste interno comprime mucho mejor, y cada una se queda en unos
+ * 90 KB en lugar de los tres megas del original.
  *
- * Son 5 KB por imagen en lugar de tres megas, y **la nitidez perdida es
- * exactamente la que el desenfoque iba a borrar**. Los originales se conservan
- * en «recursos/fondos/», fuera de «public/» para que no se publiquen; se
- * regeneran con «python herramientas/preparar-fondos.py» (docs/10 §2 quater).
+ * El 12 % no es a ojo. Las tres imágenes tienen píxeles negros puros, y el
+ * texto tiene que leerse incluso encima de ellos (docs/10 §2 quater). Los
+ * originales se conservan en «recursos/fondos/», fuera de «public/» para que no
+ * se publiquen; se regeneran con «python herramientas/preparar-fondos.py».
  *
  * ## Por qué solo tres vistas
  *

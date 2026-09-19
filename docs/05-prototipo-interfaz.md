@@ -168,18 +168,18 @@ no el cumplimiento de la de arriba:
 | --- | --- | --- |
 | Cuántos | uno, común a todas las vistas | **tres**, uno por vista |
 | Dónde | las nueve vistas | `/`, `/actores` y `/mapa`; las demás siguen en arena lisa |
-| Qué es | silueta vectorial de la Sierra sobre el Caribe | **ilustración figurativa**, desenfocada |
-| Cuánto se ve | 8 % de opacidad | 25 %, sobre un velo de arena del 75 % |
+| Qué es | silueta vectorial de la Sierra sobre el Caribe | **ilustración figurativa**, nítida |
+| Cuánto se ve | 8 % de opacidad | 12 %, fundida con el color de arena |
 
 Lo que **no** cambia es lo único que la sección 3 y WCAG exigen: el fondo sigue siendo
 decorativo, sigue sin llevar texto alternativo y el contraste del texto que cae encima está
-medido sobre el peor píxel de las tres imágenes —5,19 : 1 en el caso más justo, que es un
+medido sobre el peor píxel de las tres imágenes —4,71 : 1 en el caso más justo, que es un
 enlace— en [`docs/10` §2 quater](10-responsive.md).
 
 Que se vea más que el 8 % especificado no es un descuido: una silueta vectorial en dos
-tonos al 8 % es un relieve, y una ilustración a todo color al 8 % es una mancha gris. Para
-que la imagen siga leyéndose como imagen se aclara y se satura antes de componerla, de modo
-que aporte **color** sin aportar **contraste**. El detalle está en `docs/10`.
+tonos al 8 % es un relieve, y una ilustración con detalle al 8 % apenas se distingue del
+color liso. El 12 % es el máximo que deja legible un enlace incluso sobre los píxeles negros
+de las imágenes; el detalle está en `docs/10`.
 
 ### Autoría de las tres imágenes
 

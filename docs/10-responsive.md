@@ -206,8 +206,8 @@ vuelve sobre esta misma cabecera.
 
 ## 2 quater. El fondo de las vistas (19/09/2026)
 
-Tres vistas dejan de tener el fondo de arena liso y pasan a tener una imagen muy
-desenfocada por debajo de todo: `/` (inicio), `/actores` y `/mapa`. Las demás se quedan
+Tres vistas dejan de tener el fondo de arena liso y pasan a tener una imagen **nítida pero
+muy clara** por debajo de todo: `/` (inicio), `/actores` y `/mapa`. Las demás se quedan
 como estaban. Lo que se cambia respecto de lo especificado en
 [`docs/05` §4 bis](05-prototipo-interfaz.md) está anotado allí.
 
@@ -216,67 +216,69 @@ que mide el contenido, así que en una vista larga la imagen se estiraría o se 
 `background-attachment: fixed`, que sería la forma de evitarlo, es justo lo que los
 navegadores de iOS pintan a tirones al desplazar.
 
-### Nueve megas que no se sirven
+### Primero desenfocada, y no se veía
 
-Los originales son tres PNG de 1672 × 941 px y **2,7 a 3,3 MB cada uno**. Puestos tal cual
-en `public/`, Vite los copia a `dist/` y se publican los tres: nueve megas en una cabecera
-de página, contra un RNF-04 que pide **menos de tres segundos en 4G**.
+La primera versión (PR #97) desenfocaba la imagen hasta dejarla en manchas de color. Al
+verla publicada el autor la descartó: *las imágenes no se ven*. Y era cierto; a esa
+intensidad lo que quedaba era un degradado cálido, no una escena. Se sustituye por la
+imagen nítida y desvanecida, que es lo que se pedía.
 
-No se sirven. Se preparan antes, con
-[`herramientas/preparar-fondos.py`](../herramientas/preparar-fondos.py), y los originales
-viven en `recursos/fondos/`, fuera de lo que se publica. Cuatro pasos:
+### Nítida cambia el problema del contraste
 
-| Paso | Por qué |
-| --- | --- |
-| Reducir a 480 px de ancho | El desenfoque destruye el detalle: guardar 1672 px es guardar lo que nadie verá. El navegador la estira otra vez y la suaviza un poco más |
-| Desenfocar (radio 20) | Aquí y no con `filter: blur()` en CSS, que obligaría a descargar los tres megas y a desenfocar en cada pintado lo que ya está decidido |
-| Aclarar un 40 % | Lo que limita el contraste del texto es el píxel **más oscuro** del fondo; aclarar sube ese suelo |
-| Saturar ×2,2 | Y esto es lo que hace que la imagen se siga viendo |
+Desenfocada, cada píxel era el promedio de sus vecinos y los oscuros se diluían. Nítida no:
+**las tres imágenes tienen píxeles negros puros**, `#000000`, en pelo, sombras y contornos.
+El texto tiene que leerse también encima de ellos, así que lo que decide cuánto se puede
+ver la imagen es ese píxel.
 
-El resultado:
+Y hay un segundo factor que solo aparece midiendo el archivo real: la compresión JPEG deja
+**halos más oscuros alrededor de los bordes nítidos**. Un negro desvanecido al 15 % debería
+quedarse en `#d2cec9`; en el archivo comprimido aparecía `#c7c2bc`. Una medición que
+simulase el desvanecido sin comprimir habría dado por bueno un fondo que no lo es.
 
-| Imagen | Original | Servida |
+Medido sobre los tres archivos ya comprimidos, con el enlace (`--turquesa-oscuro`), que es
+el color más justo de los que caen encima:
+
+| Imagen visible | Peor contraste del enlace | Peso de las tres |
 | --- | --- | --- |
-| `fondo-inicio.jpg` | 2,70 MB | **4,9 KB** |
-| `fondo-actores.jpg` | 2,80 MB | **4,8 KB** |
-| `fondo-mapa.jpg` | 3,25 MB | **4,7 KB** |
+| 15 % | **4,22 : 1** ✗ | 321 KB |
+| 13 % | 4,57 : 1 | 289 KB |
+| **12 %** | **4,71 : 1** | **273 KB** |
 
-**99,8 % menos**, y lo que se pierde es exactamente la nitidez que el desenfoque iba a
-borrar de todos modos. Las tres juntas son 14 KB: el 4 % de lo que pesa el logotipo de la
-UAEMex, que dibuja 28 píxeles de alto en la cabecera.
+Se queda en **12 %**. El 13 % pasa, pero por cinco centésimas, y un límite no es un margen.
+Subir la calidad del JPEG apenas mueve el número —4,73 en lugar de 4,71 al 12 %— y cuesta
+un 45 % más de peso: lo que manda es cuánto se ve la imagen.
 
-### Por qué aclarar y saturar, que parece contradictorio
+### El desvanecido va dentro del archivo
 
-Porque el contraste de WCAG se calcula sobre la **luminancia**, y la saturación casi no la
-toca. Aclarar sube el suelo de luminancia —lo que salva el contraste— pero apaga el color;
-saturar lo devuelve sin volver a bajar ese suelo.
+[`herramientas/preparar-fondos.py`](../herramientas/preparar-fondos.py) reduce cada original
+a 1600 px, lo funde con el color de arena dejando visible el 12 % y lo guarda en JPEG. No se
+hace con un velo de CSS encima por peso: una imagen con tan poco contraste interno comprime
+mucho mejor.
 
-Medido sobre las tres imágenes, con el velo de arena al 75 %:
+| Imagen | Original | Nítida a todo color | Servida, ya desvanecida |
+| --- | --- | --- | --- |
+| `fondo-inicio.jpg` | 2,70 MB | 269 KB | **86 KB** |
+| `fondo-actores.jpg` | 2,80 MB | 282 KB | **83 KB** |
+| `fondo-mapa.jpg` | 3,25 MB | 355 KB | **105 KB** |
 
-| Tratamiento | Peor contraste del enlace | Croma medio |
-| --- | --- | --- |
-| Sin aclarar ni saturar, velo 85 % | 5,17 : 1 | 18,6 |
-| Sin aclarar ni saturar, velo 75 % | 4,28 : 1 | 24,6 |
-| **Aclarado 40 % y saturado ×2,2, velo 75 %** | **5,19 : 1** | **30,0** |
+Cada vista descarga solo la suya. Los originales viven en `recursos/fondos/`, fuera de
+`public/`: todo lo que hay en esa carpeta se copia a `dist/` y se publica.
 
-La tercera fila tiene **más color que las dos y mejor contraste que las dos**. Bajar el
-velo sin más —segunda fila— compra color a costa del texto y deja el enlace en 4,28 : 1,
-por debajo del mínimo; aclarar y saturar lo compra sin pagarlo.
+El color de arena **no se escribe en el guion**: lo lee de `src/styles/variables.css`. Si
+`--arena` cambia, basta con volver a ejecutarlo; la regla de que ningún color se escribe
+fuera de la paleta se mantiene también aquí.
 
-El croma es la media de `max(R,G,B) − min(R,G,B)` sobre los píxeles ya compuestos: cuánto
-color queda en pantalla, que es lo que aquí se quería conservar.
+### El contraste, medido sobre lo que se sirve
 
-### El contraste, medido
-
-[`herramientas/medir-fondos.py`](../herramientas/medir-fondos.py) compone el velo sobre
-las tres imágenes y busca el **peor píxel de las tres**, que resulta ser `#ebd2c9`. No mira
-dónde cae el texto: mira el peor sitio donde podría caer.
+[`herramientas/medir-fondos.py`](../herramientas/medir-fondos.py) abre los tres `fondo-*.jpg`
+tal como se publican y busca el **peor píxel de las tres**, que resulta ser `#d5ccc3`. No
+simula nada y no mira dónde cae el texto: mira el peor sitio donde podría caer.
 
 | Color de texto | Sobre el peor píxel | WCAG 4,5 : 1 |
 | --- | --- | --- |
-| `--turquesa-oscuro` (enlaces) | 5,19 : 1 | pasa |
-| `--gris-texto` | 7,38 : 1 | pasa |
-| `--negro-texto` | 12,40 : 1 | pasa |
+| `--turquesa-oscuro` (enlaces) | 4,71 : 1 | pasa |
+| `--gris-texto` | 6,70 : 1 | pasa |
+| `--negro-texto` | 11,26 : 1 | pasa |
 
 Esos tres son los que **de verdad** caen sobre el fondo. Recorriendo las tres vistas en el
 navegador y quedándose con los elementos cuyo fondo heredado es la página, no aparece
@@ -289,18 +291,26 @@ ningún otro color:
           turquesa-oscuro 16px/600  ← el enlace «catálogo» del recuento
 ```
 
-**`--terracota` no está en la tabla y es a propósito**: con este velo se queda en 3,77 : 1
-y no pasaría. Puede no estar porque solo se usa en avisos y errores, y todos van dentro de
-una caja blanca. Si algún día un texto en terracota queda sobre el fondo, hay que añadirlo
-al guion y volver a medir; está escrito en su cabecera para que no dependa de acordarse.
+**`--terracota` no está en la tabla y es a propósito:** solo se usa en avisos y errores, y
+todos van dentro de una caja blanca. Si algún día un texto en terracota queda sobre el
+fondo, hay que añadirlo al guion y volver a medir; está escrito en su cabecera para que no
+dependa de acordarse.
 
-### El número que está repetido
+### Lo que el contraste no mide
 
-El 75 % del velo vive en `.fondo::after` y otra vez en `medir-fondos.py`, porque un guion
-de Python no lee una hoja de estilos. Es la única duplicación de esta función y está dicha
-en los dos sitios. Si cambia en uno y no en el otro, la medición deja de medir lo que se
-sirve **sin que nada falle**, que es la forma de error que este sprint ya pagó una vez con
-los índices de Firestore.
+La razón de WCAG compara dos colores; no sabe si detrás del texto hay una superficie lisa o
+una escena con bordes. Una imagen nítida, aunque sea muy clara, **compite** con la letra de
+una forma que un degradado no hacía. En el mapa se nota más: la ilustración trae escrito su
+propio rótulo «SANTA MARTA» y queda detrás del título de la vista. El título se lee —es
+negro, grande y está a 11,26 : 1 en el peor punto—, pero es texto sobre texto, y cualquier
+revisión de legibilidad de HU-32 debería mirarlo con ojos y no solo con el guion.
+
+### Una trampa del servidor de desarrollo
+
+Al reescribir `Fondo.css` con el servidor en marcha, Vite siguió sirviendo la hoja
+**vacía**: la capa existía pero sin posición ni tamaño, y el fondo parecía no funcionar. No
+era el CSS, era la caché; se arregla reiniciando `npm run dev`. Se anota porque la primera
+sospecha fue la opacidad, y se habría corregido algo que estaba bien.
 
 ## 3. Verificación en los tres anchos
 
