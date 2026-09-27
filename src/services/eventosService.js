@@ -50,7 +50,7 @@ import {
 } from 'firebase/firestore';
 import { TAMANO_DE_PAGINA, partirPagina } from '../utils/paginacion.js';
 import { normalizarTexto } from '../utils/texto.js';
-import { ErrorDeDatos, intentar, traducir } from './errores.js';
+import { ErrorDeDatos, exigirRespuesta, intentar, traducir } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'eventos';
@@ -293,7 +293,7 @@ export async function listarPublicacionesPendientes() {
   );
 
   return intentar(async () =>
-    (await getDocs(consulta))
+    exigirRespuesta(await getDocs(consulta), 'las publicaciones pendientes')
       .docs.map(aPublicacion)
       .sort((a, b) => (a.fechaCreacion?.getTime() ?? 0) - (b.fechaCreacion?.getTime() ?? 0))
   );
@@ -305,7 +305,9 @@ export async function listarMisPublicaciones(idActor) {
 
   const consulta = query(collection(db, COLECCION), where('idActor', '==', idActor));
   return intentar(async () =>
-    (await getDocs(consulta)).docs.map(aPublicacion).sort(porCreacionDescendente)
+    exigirRespuesta(await getDocs(consulta), 'tus publicaciones')
+      .docs.map(aPublicacion)
+      .sort(porCreacionDescendente)
   );
 }
 
@@ -404,7 +406,8 @@ export async function listarPublicacionesAprobadas({
   );
 
   return intentar(async () => {
-    const { pagina, hayMas } = partirPagina((await getDocs(consulta)).docs, tamano);
+    const instantanea = exigirRespuesta(await getDocs(consulta), 'el catálogo');
+    const { pagina, hayMas } = partirPagina(instantanea.docs, tamano);
     return { publicaciones: pagina.map(aPublicacion), hayMas };
   });
 }
@@ -431,7 +434,10 @@ export async function leerPublicacionAprobada(idEvento) {
   exigirConfiguracion();
 
   try {
-    const instantanea = await getDoc(doc(db, COLECCION, idEvento));
+    const instantanea = exigirRespuesta(
+      await getDoc(doc(db, COLECCION, idEvento)),
+      'esa publicación'
+    );
     return instantanea.exists() ? aPublicacion(instantanea) : null;
   } catch (fallo) {
     if (fallo?.code === 'permission-denied') return null;

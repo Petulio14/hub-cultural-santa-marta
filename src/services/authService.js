@@ -25,6 +25,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { ErrorDeDominio } from '../utils/errores.js';
 import { auth, configuracionCompleta, db } from './firebase.js';
 
 /** Versión de la política aceptada al registrarse (HU-16). */
@@ -37,7 +38,7 @@ export const SESION_VACIA = { cargando: false, usuario: null, rol: null, perfil:
  * Error de dominio. La vista lo muestra sin traducir nada: el mensaje ya está
  * escrito para quien lo va a leer, y «campo» indica junto a qué campo ponerlo.
  */
-export class ErrorDeCuenta extends Error {
+export class ErrorDeCuenta extends ErrorDeDominio {
   constructor(mensaje, { campo = null, codigo = null } = {}) {
     super(mensaje);
     this.name = 'ErrorDeCuenta';

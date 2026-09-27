@@ -7,6 +7,7 @@ import {
   enlaceDeTelefono,
   enlaceDeWhatsapp,
 } from '../../utils/contacto.js';
+import { mensajeDe } from '../../utils/errores.js';
 import './DirectorioHubs.css';
 
 /**
@@ -35,7 +36,7 @@ export default function DirectorioHubs() {
         (fallo) =>
           vigente &&
           setError(
-            fallo?.message ?? 'No se pudo leer el directorio. Revisa la conexión y recarga.'
+            mensajeDe(fallo, 'No se pudo leer el directorio. Revisa la conexión y recarga.')
           )
       )
       .finally(() => vigente && setCargando(false));

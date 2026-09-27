@@ -31,7 +31,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { ErrorDeDatos, intentar, traducir } from './errores.js';
+import { ErrorDeDatos, exigirRespuesta, intentar, traducir } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'actoresCulturales';
@@ -123,7 +123,7 @@ function camposEditables({ nombre, manifestacion, descripcion, categoria, contac
 export async function leerMiPerfil(uid) {
   exigirConfiguracion();
   return intentar(async () => {
-    const instantanea = await getDoc(doc(db, COLECCION, uid));
+    const instantanea = exigirRespuesta(await getDoc(doc(db, COLECCION, uid)), 'tu perfil');
     return instantanea.exists() ? aActor(instantanea) : null;
   });
 }
@@ -171,7 +171,11 @@ export async function guardarMiPerfil(uid, datos) {
 export async function listarActoresAprobados() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'aprobado'));
-  return intentar(async () => (await getDocs(consulta)).docs.map(aActor).sort(porNombre));
+  return intentar(async () =>
+    exigirRespuesta(await getDocs(consulta), 'el directorio de actores')
+      .docs.map(aActor)
+      .sort(porNombre)
+  );
 }
 
 /**
@@ -185,7 +189,7 @@ export async function listarActoresAprobados() {
 export async function leerActor(idActor) {
   exigirConfiguracion();
   try {
-    const instantanea = await getDoc(doc(db, COLECCION, idActor));
+    const instantanea = exigirRespuesta(await getDoc(doc(db, COLECCION, idActor)), 'ese perfil');
     return instantanea.exists() ? aActor(instantanea) : null;
   } catch (fallo) {
     if (fallo?.code === 'permission-denied') return null;
@@ -197,7 +201,11 @@ export async function leerActor(idActor) {
 export async function listarActoresPendientes() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'pendiente'));
-  return intentar(async () => (await getDocs(consulta)).docs.map(aActor).sort(porNombre));
+  return intentar(async () =>
+    exigirRespuesta(await getDocs(consulta), 'los perfiles pendientes')
+      .docs.map(aActor)
+      .sort(porNombre)
+  );
 }
 
 /**

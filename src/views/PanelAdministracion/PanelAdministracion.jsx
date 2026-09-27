@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import Campo from '../../components/Campo.jsx';
 import { useCategorias } from '../../hooks/useCategorias.js';
+import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
 import {
   cambiarEstadoDeCategoria,
   crearCategoria,
   renombrarCategoria,
 } from '../../services/categoriasService.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { hayErrores, validarCategoria } from '../../utils/validaciones.js';
 import FilaDeCategoria from './FilaDeCategoria.jsx';
 import HubsPendientes from './HubsPendientes.jsx';
@@ -38,11 +40,17 @@ export default function PanelAdministracion() {
   const [errores, setErrores] = useState({});
   const [aviso, setAviso] = useState(null);
   const [ocupada, setOcupada] = useState(false);
+  const formularioRef = useFocoEnElPrimerError(errores);
 
   /**
    * Toda escritura pasa por aquí: deja el aviso escrito, recarga el listado y
    * libera el formulario pase lo que pase. Repetir este try en cada acción es
    * como se olvida un «finally».
+   *
+   * **Devuelve si salió bien**, y eso es de HU-31. Antes no devolvía nada, así
+   * que quien llamaba no tenía forma de distinguir un guardado de un fallo: la
+   * fila que renombra una categoría se cerraba igual en los dos casos y se
+   * llevaba por delante lo escrito (segundo criterio de aceptación).
    */
   async function ejecutar(accion, mensajeDeExito) {
     setOcupada(true);
@@ -51,11 +59,13 @@ export default function PanelAdministracion() {
       await accion();
       await recargar();
       setAviso({ tipo: 'exito', texto: mensajeDeExito });
+      return true;
     } catch (fallo) {
       setAviso({
         tipo: 'error',
-        texto: fallo?.message ?? 'No se pudo completar la operación. Inténtalo de nuevo.',
+        texto: mensajeDe(fallo, 'No se pudo completar la operación. Inténtalo de nuevo.'),
       });
+      return false;
     } finally {
       setOcupada(false);
     }
@@ -99,7 +109,7 @@ export default function PanelAdministracion() {
         </p>
       )}
 
-      <form className="panel__alta" onSubmit={crear} noValidate>
+      <form className="panel__alta" onSubmit={crear} noValidate ref={formularioRef}>
         <h3>Añadir una categoría</h3>
         <Campo
           etiqueta="Nombre"
@@ -162,6 +172,7 @@ export default function PanelAdministracion() {
                 key={categoria.id}
                 categoria={categoria}
                 ocupada={ocupada}
+                identificadoresExistentes={categorias.map((otra) => otra.id)}
                 alRenombrar={(id, datos) =>
                   ejecutar(() => renombrarCategoria(id, datos), `Categoría renombrada.`)
                 }

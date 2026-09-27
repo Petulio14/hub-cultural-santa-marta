@@ -14,6 +14,15 @@
  *    pierda la clasificación de un evento es que el documento no se borre nunca.
  * 2. **El identificador no cambia al renombrar.** «eventos.categoria» guarda ese
  *    identificador; cambiarlo dejaría huérfanas las publicaciones existentes.
+ *
+ * ## Lo que HU-31 vino a arreglar
+ *
+ * Este servicio es de HU-17, y «errores.js» se extrajo después, en HU-20. Nadie
+ * volvió a pasar por aquí: hasta HU-31 ninguna de sus siete funciones traducía
+ * un fallo de Firestore, así que un corte de red o un permiso denegado llegaban
+ * a la pantalla como «Missing or insufficient permissions.». Es exactamente el
+ * defecto que «errores.js» nació para cerrar, sobreviviendo en el único sitio
+ * que no se revisó al extraerlo.
  */
 import {
   collection,
@@ -26,12 +35,14 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { ErrorDeDominio } from '../utils/errores.js';
 import { aIdentificador } from '../utils/texto.js';
+import { exigirRespuesta, intentar } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'categorias';
 
-export class ErrorDeCategoria extends Error {
+export class ErrorDeCategoria extends ErrorDeDominio {
   constructor(mensaje, { campo = null } = {}) {
     super(mensaje);
     this.name = 'ErrorDeCategoria';
@@ -66,8 +77,13 @@ const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, 'es');
 /** Todas las categorías, activas o no. Es la vista del administrador. */
 export async function listarCategorias() {
   exigirConfiguracion();
-  const instantanea = await getDocs(collection(db, COLECCION));
-  return instantanea.docs.map(aCategoria).sort(porNombre);
+  return intentar(async () => {
+    const instantanea = exigirRespuesta(
+      await getDocs(collection(db, COLECCION)),
+      'el catálogo de categorías'
+    );
+    return instantanea.docs.map(aCategoria).sort(porNombre);
+  });
 }
 
 /**
@@ -87,8 +103,10 @@ export async function listarCategoriasActivas() {
  */
 export async function contarPublicaciones(idCategoria) {
   exigirConfiguracion();
-  const consulta = query(collection(db, 'eventos'), where('categoria', '==', idCategoria));
-  return (await getCountFromServer(consulta)).data().count;
+  return intentar(async () => {
+    const consulta = query(collection(db, 'eventos'), where('categoria', '==', idCategoria));
+    return (await getCountFromServer(consulta)).data().count;
+  });
 }
 
 /** Las categorías con su recuento, que es lo que muestra el listado del panel. */
@@ -119,18 +137,24 @@ export async function crearCategoria({ nombre, descripcion = '' }) {
   }
 
   const referencia = doc(db, COLECCION, id);
-  if ((await getDoc(referencia)).exists()) {
-    throw new ErrorDeCategoria('Ya existe una categoría con ese nombre.', { campo: 'nombre' });
-  }
 
-  const categoria = {
-    idCategoria: id,
-    nombre: nombreLimpio,
-    descripcion: descripcion.trim(),
-    activa: true,
-  };
-  await setDoc(referencia, categoria);
-  return { id, ...categoria, publicaciones: 0 };
+  // El ErrorDeCategoria de aquí dentro sale intacto: «traducir» deja pasar todo
+  // lo que hereda de ErrorDeDominio, y «Ya existe una categoría con ese nombre»
+  // dice mucho más que el mensaje genérico que lo sustituiría.
+  return intentar(async () => {
+    if ((await getDoc(referencia)).exists()) {
+      throw new ErrorDeCategoria('Ya existe una categoría con ese nombre.', { campo: 'nombre' });
+    }
+
+    const categoria = {
+      idCategoria: id,
+      nombre: nombreLimpio,
+      descripcion: descripcion.trim(),
+      activa: true,
+    };
+    await setDoc(referencia, categoria);
+    return { id, ...categoria, publicaciones: 0 };
+  });
 }
 
 /**
@@ -139,14 +163,16 @@ export async function crearCategoria({ nombre, descripcion = '' }) {
  */
 export async function renombrarCategoria(id, { nombre, descripcion = '' }) {
   exigirConfiguracion();
-  await updateDoc(doc(db, COLECCION, id), {
-    nombre: nombre.trim(),
-    descripcion: descripcion.trim(),
-  });
+  await intentar(() =>
+    updateDoc(doc(db, COLECCION, id), {
+      nombre: nombre.trim(),
+      descripcion: descripcion.trim(),
+    })
+  );
 }
 
 /** Desactiva o reactiva. No hay eliminar: ver la cabecera de este archivo. */
 export async function cambiarEstadoDeCategoria(id, activa) {
   exigirConfiguracion();
-  await updateDoc(doc(db, COLECCION, id), { activa });
+  await intentar(() => updateDoc(doc(db, COLECCION, id), { activa }));
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listarPublicacionesAprobadas } from '../services/eventosService.js';
 import { TOPE_DE_BUSQUEDA, filtrarPorTermino } from '../utils/busqueda.js';
+import { mensajeDe } from '../utils/errores.js';
 import { FILTROS_VACIOS, hayFiltros, limitesDeConsulta } from '../utils/filtros.js';
 import { anadirPagina } from '../utils/paginacion.js';
 
@@ -82,7 +83,7 @@ export function useCatalogo() {
         setTopeAlcanzado(conTermino && leido.hayMas);
         setError(null);
       })
-      .catch((fallo) => vigente && setError(fallo?.message ?? MENSAJE_DE_FALLO))
+      .catch((fallo) => vigente && setError(mensajeDe(fallo, MENSAJE_DE_FALLO)))
       .finally(() => vigente && setCargando(false));
 
     // «vigente» importa más desde HU-26: cambiar de filtro deja una consulta en
@@ -123,7 +124,7 @@ export function useCatalogo() {
       setHayMas(leido.hayMas);
       setError(null);
     } catch (fallo) {
-      setError(fallo?.message ?? MENSAJE_DE_FALLO);
+      setError(mensajeDe(fallo, MENSAJE_DE_FALLO));
     } finally {
       setCargandoMas(false);
     }

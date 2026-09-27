@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { leerMiHub } from '../services/hubsService.js';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * El hub de quien tiene la sesión abierta — HU-20.
@@ -24,7 +25,7 @@ export function useMiHub(uid) {
       setHub(await leerMiHub(uid));
       setError(null);
     } catch (fallo) {
-      setError(fallo?.message ?? 'No se pudo leer tu hub. Revisa la conexión y recarga.');
+      setError(mensajeDe(fallo, 'No se pudo leer tu hub. Revisa la conexión y recarga.'));
     } finally {
       setCargando(false);
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listarModeracionesDeEvento } from '../../services/moderacionService.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { textoDeFecha } from '../../utils/fechas.js';
 
 /**
@@ -59,7 +60,7 @@ export default function ObservacionesDeModeracion({ publicacion }) {
       } catch (fallo) {
         if (vigente) {
           setError(
-            fallo?.message ?? 'No se pudieron leer las observaciones. Recarga la página.'
+            mensajeDe(fallo, 'No se pudieron leer las observaciones. Recarga la página.')
           );
         }
       } finally {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import MapaDeUbicacion from '../../components/MapaDeUbicacion.jsx';
+import { mensajeDe } from '../../utils/errores.js';
 import ContactoDelActor from './ContactoDelActor.jsx';
 import { useNombresDeCategoria } from '../../hooks/useNombresDeCategoria.js';
 import { leerActor } from '../../services/actoresService.js';
@@ -60,7 +61,7 @@ export default function DetalleEvento() {
         (fallo) =>
           vigente &&
           setError(
-            fallo?.message ?? 'No se pudo leer la publicación. Revisa la conexión y recarga.'
+            mensajeDe(fallo, 'No se pudo leer la publicación. Revisa la conexión y recarga.')
           )
       )
       .finally(() => vigente && setCargando(false));

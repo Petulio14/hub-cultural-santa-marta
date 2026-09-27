@@ -9,6 +9,7 @@ import {
   enlaceDeTelefono,
   enlaceDeWhatsapp,
 } from '../../utils/contacto.js';
+import { mensajeDe } from '../../utils/errores.js';
 import './PerfilActor.css';
 
 /**
@@ -43,7 +44,7 @@ export default function PerfilActor() {
       .catch(
         (fallo) =>
           vigente &&
-          setError(fallo?.message ?? 'No se pudo leer el perfil. Revisa la conexión y recarga.')
+          setError(mensajeDe(fallo, 'No se pudo leer el perfil. Revisa la conexión y recarga.'))
       )
       .finally(() => vigente && setCargando(false));
 

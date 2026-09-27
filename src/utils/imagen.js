@@ -22,6 +22,8 @@
  * final, separada del resto.
  */
 
+import { ErrorDeDominio } from './errores.js';
+
 /** Lo que puede pesar el archivo elegido. Primer criterio de aceptación. */
 export const LIMITE_ARCHIVO = 2 * 1024 * 1024;
 
@@ -148,7 +150,7 @@ function leerComoDataUri(archivo) {
   return new Promise((resolver, rechazar) => {
     const lector = new FileReader();
     lector.onload = () => resolver(lector.result);
-    lector.onerror = () => rechazar(new Error('No se pudo leer el archivo.'));
+    lector.onerror = () => rechazar(new ErrorDeDominio('No se pudo leer el archivo.'));
     lector.readAsDataURL(archivo);
   });
 }
@@ -157,7 +159,7 @@ function cargarImagen(dataUri) {
   return new Promise((resolver, rechazar) => {
     const imagen = new Image();
     imagen.onload = () => resolver(imagen);
-    imagen.onerror = () => rechazar(new Error('Ese archivo no se pudo abrir como imagen.'));
+    imagen.onerror = () => rechazar(new ErrorDeDominio('Ese archivo no se pudo abrir como imagen.'));
     imagen.src = dataUri;
   });
 }
@@ -195,7 +197,10 @@ export async function reducirImagen(archivo, { lado = LADO_MAXIMO } = {}) {
     if (esGuardable(reducida)) return reducida;
   }
 
-  throw new Error(
+  // ErrorDeDominio y no Error: este mensaje dice qué hacer —«prueba con una
+  // menos detallada»— y «mensajeDe» solo deja pasar lo que hereda de ahí. Como
+  // Error llano lo habría sustituido por el respaldo genérico de la vista.
+  throw new ErrorDeDominio(
     `Esa imagen no se pudo reducir por debajo de ${pesoLegible(
       LIMITE_GUARDADO
     )} sin destrozarla. Prueba con una menos detallada o recórtala antes.`

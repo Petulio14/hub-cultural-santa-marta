@@ -127,8 +127,18 @@ export function validarCategoria({ nombre }, identificadoresExistentes = []) {
   return {};
 }
 
+/**
+ * Si queda algo que corregir — revisado en HU-31.
+ *
+ * Cuenta los mensajes, no las claves. Tres formularios borran el error de un
+ * campo escribiendo «{ ...actuales, [campo]: undefined }», que deja la clave
+ * puesta: contando claves, un formulario donde ya se corrigió todo seguía
+ * diciendo que tenía errores. Hoy no rompe nada porque las vistas preguntan
+ * siempre por el resultado recién validado y no por su estado, pero es la clase
+ * de trampa que se cobra en la siguiente vista que se escriba.
+ */
 export function hayErrores(errores) {
-  return Object.keys(errores).length > 0;
+  return Object.values(errores).some((mensaje) => mensaje != null);
 }
 
 /** Deja fuera los campos correctos: el objeto solo lleva lo que hay que corregir. */

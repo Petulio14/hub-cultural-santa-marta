@@ -38,6 +38,7 @@
  */
 
 import { estaEnSantaMarta } from '../utils/coordenadas.js';
+import { ErrorDeDominio } from '../utils/errores.js';
 
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
 
@@ -46,7 +47,7 @@ const INTERVALO_MINIMO = 1100;
 
 let ultimaConsulta = 0;
 
-export class ErrorDeGeocodificacion extends Error {
+export class ErrorDeGeocodificacion extends ErrorDeDominio {
   constructor(mensaje) {
     super(mensaje);
     this.name = 'ErrorDeGeocodificacion';

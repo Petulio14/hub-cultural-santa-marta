@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MapaDePunto from '../../components/MapaDePunto.jsx';
 import { textoDeCoordenadas } from '../../utils/coordenadas.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { validarPuntoDePublicacion } from '../../utils/validaciones.js';
 
 /**
@@ -52,7 +53,7 @@ export default function EditorDePunto({ publicacion, alGuardar }) {
       await alGuardar(punto);
       setAbierto(false);
     } catch (fallo) {
-      setError(fallo?.message ?? 'No se pudo guardar el punto. Revisa la conexión.');
+      setError(mensajeDe(fallo, 'No se pudo guardar el punto. Revisa la conexión.'));
     } finally {
       setGuardando(false);
     }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
+import { mensajeDe } from '../../utils/errores.js';
 import { textoDeFecha, textoDelPeriodo, yaTermino } from '../../utils/fechas.js';
 import { valoresDeFormulario } from '../../utils/publicaciones.js';
 import ConfirmacionDeBorrado from './ConfirmacionDeBorrado.jsx';
@@ -41,6 +42,7 @@ export default function TarjetaDePublicacion({
   publicacion,
   categorias,
   cargandoCategorias,
+  errorDeCategorias = null,
   alGuardarPunto,
   alGuardarCambios,
   alEliminar,
@@ -68,7 +70,7 @@ export default function TarjetaDePublicacion({
       return guardada;
     } catch (fallo) {
       setErrorDeEdicion(
-        fallo?.message ?? 'No se pudieron guardar los cambios. Revisa la conexión.'
+        mensajeDe(fallo, 'No se pudieron guardar los cambios. Revisa la conexión.')
       );
       return null;
     } finally {
@@ -120,6 +122,7 @@ export default function TarjetaDePublicacion({
             <FormularioDePublicacion
               categorias={categorias}
               cargandoCategorias={cargandoCategorias}
+              errorDeCategorias={errorDeCategorias}
               alEnviar={guardar}
               guardando={guardando}
               valoresIniciales={valoresDeFormulario(publicacion)}

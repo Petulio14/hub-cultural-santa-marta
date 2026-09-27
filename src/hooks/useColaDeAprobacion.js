@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * Una cola de aprobación del panel de administración — HU-18, HU-20.
@@ -46,7 +47,7 @@ export function useColaDeAprobacion({ listar, cambiarEstado, mensajes }) {
       setPendientes(await listar());
       setError(null);
     } catch (fallo) {
-      setError(fallo?.message ?? mensajes.alFallarLectura);
+      setError(mensajeDe(fallo, mensajes.alFallarLectura));
     } finally {
       setCargando(false);
     }
@@ -71,7 +72,7 @@ export function useColaDeAprobacion({ listar, cambiarEstado, mensajes }) {
       } catch (fallo) {
         setAviso({
           tipo: 'error',
-          texto: fallo?.message ?? 'No se pudo cambiar el estado. Inténtalo de nuevo.',
+          texto: mensajeDe(fallo, 'No se pudo cambiar el estado. Inténtalo de nuevo.'),
         });
       } finally {
         setOcupada(false);

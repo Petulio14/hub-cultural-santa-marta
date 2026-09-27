@@ -1,20 +1,49 @@
 import { useState } from 'react';
 import Campo from '../../components/Campo.jsx';
+import { validarCategoria } from '../../utils/validaciones.js';
 
 /**
- * Una categoría dentro del listado del panel — HU-17.
+ * Una categoría dentro del listado del panel — HU-17, revisada en HU-31.
  *
  * Tiene tres estados: en reposo, renombrándose y con la advertencia de
  * eliminación abierta. Están aquí y no en la vista porque son de la fila: abrir
  * el renombrado de una no debe afectar a las demás.
+ *
+ * ## Las dos cosas que HU-31 corrigió
+ *
+ * **Validaba con una regla escrita a mano** —«al menos tres caracteres»— en
+ * lugar de con «validarCategoria», que es la que usa el formulario de alta tres
+ * archivos más arriba. La consecuencia no era el mínimo, que coincidía: era todo
+ * lo demás. Por aquí pasaban un nombre de doscientos caracteres, uno hecho solo
+ * de signos y, sobre todo, **un nombre que ya tenía otra categoría**. Renombrar
+ * no cambia el identificador, así que dos filas podían acabar llamándose igual
+ * y el filtro del catálogo las habría ofrecido dos veces sin forma de
+ * distinguirlas.
+ *
+ * **Y se cerraba aunque el guardado fallara.** «alRenombrar» no devolvía nada
+ * —el «try» vive en la vista—, así que la fila volvía a reposo en los dos casos
+ * y se llevaba por delante el nombre recién escrito, que es literalmente lo que
+ * el segundo criterio de aceptación prohíbe. Ahora se queda abierta con el texto
+ * puesto, y el aviso de arriba explica qué pasó.
  */
-export default function FilaDeCategoria({ categoria, alRenombrar, alCambiarEstado, ocupada }) {
+export default function FilaDeCategoria({
+  categoria,
+  alRenombrar,
+  alCambiarEstado,
+  ocupada,
+  identificadoresExistentes = [],
+}) {
   const [modo, setModo] = useState('reposo');
   const [nombre, setNombre] = useState(categoria.nombre);
   const [descripcion, setDescripcion] = useState(categoria.descripcion);
   const [error, setError] = useState(null);
 
   const enUso = categoria.publicaciones > 0;
+
+  // Todas menos ella misma: dejarse dentro haría que renombrarse a su propio
+  // nombre —al corregir solo la descripción, por ejemplo— se rechazara por
+  // duplicado.
+  const ajenas = identificadoresExistentes.filter((id) => id !== categoria.id);
 
   function cancelar() {
     setModo('reposo');
@@ -25,13 +54,12 @@ export default function FilaDeCategoria({ categoria, alRenombrar, alCambiarEstad
 
   async function guardar(evento) {
     evento.preventDefault();
-    if (nombre.trim().length < 3) {
-      setError('El nombre debe tener al menos tres caracteres.');
-      return;
-    }
-    setError(null);
-    await alRenombrar(categoria.id, { nombre, descripcion });
-    setModo('reposo');
+
+    const problema = validarCategoria({ nombre }, ajenas).nombre ?? null;
+    setError(problema);
+    if (problema) return;
+
+    if (await alRenombrar(categoria.id, { nombre, descripcion })) setModo('reposo');
   }
 
   if (modo === 'renombrar') {
