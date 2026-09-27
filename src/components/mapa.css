@@ -29,9 +29,15 @@
  * El foco del teclado sobre un mapa tiene que verse. Leaflet pone «tabindex» en
  * su contenedor para poder desplazarlo con las flechas, y sin esto el foco
  * entraría ahí sin ninguna señal visible (WCAG 2.4.7).
+ *
+ * **Y ya no hay regla propia, que es el arreglo de HU-32.** Había una que
+ * pintaba «--turquesa» sobre dos de los tres lienzos, y hacía tres cosas mal: se
+ * olvidaba del mapa de HU-30, que es el único que es una vista entera; usaba un
+ * color más claro que el anillo general, y por tanto peor —sobre el azul de agua
+ * de OpenStreetMap, «--turquesa» da 3,13 : 1 y «--turquesa-oscuro» 4,66 : 1—; y
+ * repetía en tres sitios lo que global.css ya dice para todo el proyecto.
+ *
+ * El anillo de los tres lienzos es ahora el general. Esta nota se queda porque
+ * lo que hay que recordar no es la regla, es que Leaflet mete un «tabindex» que
+ * nadie escribió.
  */
-.mapa-punto__lienzo:focus-visible,
-.mapa-ubicacion__lienzo:focus-visible {
-  outline: 3px solid var(--turquesa);
-  outline-offset: 2px;
-}

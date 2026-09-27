@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import Campo from '../../components/Campo.jsx';
+import { useFocoAlAbrir } from '../../hooks/useFocoAlAbrir.js';
 import { validarCategoria } from '../../utils/validaciones.js';
 
 /**
@@ -25,6 +26,19 @@ import { validarCategoria } from '../../utils/validaciones.js';
  * y se llevaba por delante el nombre recién escrito, que es literalmente lo que
  * el segundo criterio de aceptación prohíbe. Ahora se queda abierta con el texto
  * puesto, y el aviso de arriba explica qué pasó.
+ *
+ * ## Y lo que corrigió HU-32
+ *
+ * Los dos botones que abren algo —«Renombrar» y «Eliminar»— **se desmontan al
+ * pulsarlos**, y el navegador devuelve el foco a «body»: con teclado se perdía el
+ * sitio dentro de una tabla que puede tener diez filas iguales. Los recoge
+ * «useFocoAlAbrir».
+ *
+ * En la advertencia el foco va a **«Cancelar»** y no a «Desactivar», aunque en
+ * pantalla «Desactivar» esté primero. Desactivar una categoría no borra nada
+ * —las publicaciones conservan su clasificación—, pero sí la retira de todos los
+ * formularios y de los filtros, y eso no es lo que debe ejecutar una tecla de
+ * más.
  */
 export default function FilaDeCategoria({
   categoria,
@@ -37,6 +51,8 @@ export default function FilaDeCategoria({
   const [nombre, setNombre] = useState(categoria.nombre);
   const [descripcion, setDescripcion] = useState(categoria.descripcion);
   const [error, setError] = useState(null);
+  const regionRef = useFocoAlAbrir(modo !== 'reposo');
+  const idAdvertencia = useId();
 
   const enUso = categoria.publicaciones > 0;
 
@@ -66,7 +82,12 @@ export default function FilaDeCategoria({
     return (
       <tr>
         <td colSpan={4}>
-          <form className="categorias__edicion" onSubmit={guardar} noValidate>
+          <form
+            className="categorias__edicion"
+            onSubmit={guardar}
+            noValidate
+            ref={regionRef}
+          >
             <Campo etiqueta="Nombre" valor={nombre} alCambiar={setNombre} error={error} />
             <Campo
               etiqueta="Descripción"
@@ -113,8 +134,8 @@ export default function FilaDeCategoria({
 
       <td>
         {modo === 'advertencia' ? (
-          <div className="categorias__advertencia" role="alert">
-            <p>
+          <div className="categorias__advertencia" role="alert" ref={regionRef}>
+            <p id={idAdvertencia}>
               {enUso ? (
                 <>
                   Esta categoría clasifica <strong>{categoria.publicaciones}</strong>{' '}
@@ -147,6 +168,8 @@ export default function FilaDeCategoria({
                 className="boton boton--secundario"
                 type="button"
                 onClick={() => setModo('reposo')}
+                data-foco-inicial
+                aria-describedby={idAdvertencia}
               >
                 Cancelar
               </button>

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { useFocoAlAbrir } from '../../hooks/useFocoAlAbrir.js';
 import { mensajeDe } from '../../utils/errores.js';
 
 /**
@@ -31,11 +32,31 @@ import { mensajeDe } from '../../utils/errores.js';
  * Quien haga doble clic por costumbre —o por un ratón que rebota— cancela, no
  * borra. Poner el botón destructivo bajo el dedo que acaba de pulsar es regalarle
  * la segunda pulsación al accidente.
+ *
+ * Desde HU-32 «Cancelar» es además **lo que recibe el foco**, por lo mismo: el
+ * equivalente con teclado de ese doble clic es un Intro repetido.
+ *
+ * ## Lo que HU-32 corrigió
+ *
+ * **Decía «role="alertdialog"» y no es un diálogo.** ARIA reserva ese papel para
+ * una ventana modal: algo que tapa la pantalla, recibe el foco y lo retiene
+ * mientras está abierto. Esto es lo contrario a propósito —vive dentro de la
+ * tarjeta, sin tapar nada, por lo dicho arriba—, así que el papel prometía a un
+ * lector de pantalla un comportamiento que nunca iba a ocurrir. Ahora es un
+ * «group» con su nombre, que es lo que de verdad es.
+ *
+ * **Y el foco se perdía.** El botón «Eliminar» se desmonta al pulsarlo, y el
+ * navegador devuelve el foco a «body»: con teclado había que recorrer la página
+ * desde la cabecera para volver a la pregunta que se acababa de abrir. Lo recoge
+ * «useFocoAlAbrir». La pregunta va enlazada con «aria-describedby» al botón que
+ * recibe el foco, así que se lee al llegar sin necesidad de una región viva.
  */
 export default function ConfirmacionDeBorrado({ publicacion, alConfirmar }) {
   const [preguntando, setPreguntando] = useState(false);
   const [borrando, setBorrando] = useState(false);
   const [error, setError] = useState(null);
+  const regionRef = useFocoAlAbrir(preguntando);
+  const idPregunta = useId();
 
   async function confirmar() {
     setBorrando(true);
@@ -67,8 +88,13 @@ export default function ConfirmacionDeBorrado({ publicacion, alConfirmar }) {
   }
 
   return (
-    <span className="tarjeta-publicacion__confirmacion" role="alertdialog" aria-label="Confirmar la eliminación">
-      <span className="tarjeta-publicacion__pregunta">
+    <span
+      className="tarjeta-publicacion__confirmacion"
+      role="group"
+      aria-label="Confirmar la eliminación"
+      ref={regionRef}
+    >
+      <span className="tarjeta-publicacion__pregunta" id={idPregunta}>
         Se va a eliminar <strong>«{publicacion.titulo}»</strong>. No se puede deshacer.
       </span>
 
@@ -83,6 +109,8 @@ export default function ConfirmacionDeBorrado({ publicacion, alConfirmar }) {
         type="button"
         onClick={() => setPreguntando(false)}
         disabled={borrando}
+        data-foco-inicial
+        aria-describedby={idPregunta}
       >
         Cancelar
       </button>

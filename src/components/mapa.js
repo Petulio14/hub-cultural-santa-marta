@@ -61,3 +61,47 @@ export function capaDeTeselas() {
     maxZoom: ZOOM_MAXIMO,
   });
 }
+
+/**
+ * Los mandos del mapa, en español — HU-32 · segundo criterio de aceptación.
+ *
+ * Leaflet rotula los suyos en inglés y no hay manera de traducirlos desde fuera:
+ * el botón de acercar se anuncia «Zoom in» y el crédito de la biblioteca lleva
+ * «A JavaScript library for interactive maps». Con el ratón eso es un detalle
+ * —los botones dicen «+» y «−»—, pero un lector de pantalla **solo tiene el
+ * rótulo**, así que quien recorre el mapa con teclado y voz se encuentra dos
+ * mandos en otro idioma en medio de una página en español.
+ *
+ * Se aplica a los tres mapas después de crearlos, que es el único momento en que
+ * los mandos ya existen.
+ *
+ * Los botones se buscan **por su clase** y no por «instancia.zoomControl
+ * ._zoomInButton», que era la primera versión. Ese campo empieza por guion bajo:
+ * es interior de Leaflet y puede cambiar de nombre en cualquier versión, y como
+ * el acceso iba con «?.» el día que cambiara los rótulos volverían al inglés
+ * **sin que nada fallara**. «leaflet-control-zoom-in» es parte de su hoja de
+ * estilos, que es lo más parecido a una interfaz pública que ofrece para esto.
+ */
+const ROTULOS = {
+  '.leaflet-control-zoom-in': ['Acercar', 'Acercar el mapa'],
+  '.leaflet-control-zoom-out': ['Alejar', 'Alejar el mapa'],
+};
+
+export function rotularEnEspanol(instancia) {
+  const contenedor = instancia.getContainer();
+  for (const [selector, [titulo, nombre]] of Object.entries(ROTULOS)) {
+    const boton = contenedor.querySelector(selector);
+    if (!boton) continue;
+    boton.setAttribute('title', titulo);
+    boton.setAttribute('aria-label', nombre);
+  }
+
+  // El crédito de Leaflet se conserva —su licencia no lo exige, pero se usa su
+  // trabajo— y se escribe en español. La atribución de OpenStreetMap, que sí es
+  // condición de uso, la pone «capaDeTeselas» y no se toca aquí.
+  instancia.attributionControl?.setPrefix(
+    '<a href="https://leafletjs.com/" title="Biblioteca de mapas Leaflet">Leaflet</a>'
+  );
+
+  return instancia;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import L from 'leaflet';
 import { CENTRO_SANTA_MARTA, esPuntoValido } from '../utils/coordenadas.js';
-import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas } from './mapa.js';
+import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas, rotularEnEspanol } from './mapa.js';
 import './MapaDePunto.css';
 
 /**
@@ -76,6 +76,7 @@ export default function MapaDePunto({
       maxZoom: ZOOM_MAXIMO,
     });
 
+    rotularEnEspanol(instancia);
     capaDeTeselas().addTo(instancia);
 
     instancia.on('click', (evento) => {

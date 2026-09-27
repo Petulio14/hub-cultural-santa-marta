@@ -55,7 +55,24 @@ img {
 :focus-visible {
   outline: 3px solid var(--turquesa-oscuro);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+/*
+ * El anillo no se ve sobre las dos superficies oscuras — HU-32, cuarto criterio.
+ *
+ * «--turquesa-oscuro» sobre «--azul-profundo» da **1,55 : 1**, y WCAG 1.4.11
+ * pide 3 : 1 para el anillo de foco, que no es texto pero lleva información. Con
+ * «outline-offset» el anillo se pinta **fuera** del elemento, así que el fondo
+ * contra el que se ve no es el del enlace: es la barra. En un botón eso salva la
+ * situación —el anillo cae sobre la página, 6,75 : 1— y en la cabecera y el pie
+ * la condena.
+ *
+ * Blanco sobre la barra azul da 11,55 : 1. Son las dos únicas superficies
+ * oscuras del proyecto; si aparece una tercera, se añade aquí.
+ */
+.cabecera :focus-visible,
+.pie :focus-visible {
+  outline-color: var(--blanco);
 }
 
 /* Salto al contenido: primer elemento enfocable de la página, invisible hasta
@@ -113,11 +130,14 @@ img {
   color: var(--blanco);
 }
 
+/* El borde es lo único que delimita un botón secundario —relleno blanco sobre
+   fondo arena son 1,11 : 1—, así que lleva el gris de los controles y no el de
+   la decoración (WCAG 1.4.11). */
 .boton--secundario,
 .enlace-boton--secundario {
   background: var(--blanco);
   color: var(--turquesa-oscuro);
-  border-color: var(--gris-borde);
+  border-color: var(--gris-control);
 }
 
 /* Lo que no se puede deshacer (HU-23). Terracota es el color de la paleta que
@@ -174,10 +194,12 @@ img {
   color: var(--gris-texto);
 }
 
+/* El borde lleva «--gris-control»: es lo que dice dónde empieza el campo, y a
+   eso WCAG 1.4.11 le pide 3 : 1. Ver la nota de variables.css. */
 .campo__control {
   min-height: var(--toque-minimo);
   padding: 10px 12px;
-  border: 1px solid var(--gris-borde);
+  border: 1px solid var(--gris-control);
   border-radius: var(--radio);
   background: var(--blanco);
   color: var(--negro-texto);

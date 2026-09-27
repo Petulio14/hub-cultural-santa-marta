@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
+import { useFocoAlAbrir } from '../../hooks/useFocoAlAbrir.js';
 import { mensajeDe } from '../../utils/errores.js';
 import { textoDeFecha, textoDelPeriodo, yaTermino } from '../../utils/fechas.js';
 import { valoresDeFormulario } from '../../utils/publicaciones.js';
@@ -54,6 +55,13 @@ export default function TarjetaDePublicacion({
   const [guardando, setGuardando] = useState(false);
   const [errorDeEdicion, setErrorDeEdicion] = useState(null);
 
+  // «Editar» se desmonta al pulsarlo y el foco caía a «body», así que con teclado
+  // había que recorrer la página entera para llegar al formulario que se acababa
+  // de abrir (HU-32, segundo criterio). Aquí no hay «data-foco-inicial»: el
+  // primer control enfocable de la región es el campo «Título», que es
+  // exactamente donde hay que empezar.
+  const regionRef = useFocoAlAbrir(editando);
+
   /**
    * Devuelve la publicación guardada, o null si falló.
    *
@@ -102,7 +110,7 @@ export default function TarjetaDePublicacion({
         <ObservacionesDeModeracion publicacion={publicacion} />
 
         {editando ? (
-          <>
+          <div ref={regionRef}>
             {/* Se avisa antes de tocar nada, no después de guardar: quien edita
                 algo ya publicado tiene derecho a saber que lo va a retirar del
                 catálogo mientras lo revisan otra vez. */}
@@ -135,7 +143,7 @@ export default function TarjetaDePublicacion({
               }}
               limpiarAlGuardar={false}
             />
-          </>
+          </div>
         ) : (
           <>
             <p className="tarjeta-publicacion__cuando">

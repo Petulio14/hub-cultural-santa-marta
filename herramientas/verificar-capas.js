@@ -11,6 +11,9 @@
  * 3. Paleta única — ningún color hexadecimal fuera de «src/styles/variables.css».
  *    Los contrastes de docs/05-prototipo-interfaz.md §3 solo se sostienen si los
  *    valores viven en un único sitio.
+ * 4. Texto alternativo — toda «img» lleva «alt» y todo «svg» escrito a mano lleva
+ *    o «aria-hidden» o un nombre accesible. Es el primer criterio de aceptación de
+ *    HU-32, y hasta ahora solo existía como un grep escrito en docs/31 §2.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -66,6 +69,45 @@ for (const archivo of archivos.filter((a) => a.endsWith('.css'))) {
   }
 }
 
+// 4 · Texto alternativo
+//
+// Se comprueba sobre la etiqueta de apertura entera, que en este proyecto puede
+// ocupar seis líneas, y por eso «[^>]*» con la bandera «s» y no una línea.
+//
+// Un «alt» vacío es válido y es lo correcto para una imagen decorativa, así que
+// se acepta: lo que no se acepta es que no esté, porque entonces el lector de
+// pantalla lee el nombre del archivo.
+//
+// Para un «svg» dibujado a mano lo correcto es casi siempre «aria-hidden»: es lo
+// que hace la imagen predeterminada de un perfil, que no añade nada a un nombre
+// que ya está escrito al lado. Si el dibujo sí dice algo, necesita «role="img"»
+// con «aria-label» o un «title» dentro.
+// Solo «.jsx», y sin comentarios. Las dos cosas por el mismo motivo: la primera
+// versión de esta regla señalaba «src/utils/imagen.js», que no tiene ni una línea
+// de JSX y sí una frase que dice «lo que sabe cargar una <img>». Una regla que
+// avisa de un comentario se desactiva a la semana.
+const APERTURA_IMG = /<img\b[^>]*>/gs;
+const APERTURA_SVG = /<svg\b[^>]*>/gs;
+const COMENTARIOS = /\/\*[\s\S]*?\*\/|\/\/[^\n]*/g;
+for (const archivo of archivos.filter((a) => a.endsWith('.jsx'))) {
+  const contenido = readFileSync(archivo, 'utf8').replace(COMENTARIOS, '');
+  const relativa = nombre(archivo);
+
+  for (const [etiqueta] of contenido.matchAll(APERTURA_IMG)) {
+    if (!/\balt\s*=/.test(etiqueta)) {
+      fallos.push(`${relativa} tiene una <img> sin «alt»; una imagen sin texto alternativo se anuncia por el nombre del archivo`);
+    }
+  }
+
+  for (const [etiqueta] of contenido.matchAll(APERTURA_SVG)) {
+    const oculto = /\baria-hidden\s*=\s*[{"']?true/.test(etiqueta);
+    const nombrado = /\baria-label\s*=/.test(etiqueta) || /\baria-labelledby\s*=/.test(etiqueta);
+    if (!oculto && !nombrado) {
+      fallos.push(`${relativa} tiene un <svg> que no está oculto con «aria-hidden» ni nombrado con «aria-label»`);
+    }
+  }
+}
+
 const total = archivos.length;
 console.log(`Verificación estructural · ${total} archivos en src/, ${vistas.length} vistas`);
 
@@ -73,6 +115,7 @@ if (fallos.length === 0) {
   console.log('  acceso a datos solo por src/services/ : correcto');
   console.log('  todas las vistas enrutadas             : correcto');
   console.log('  colores solo en variables.css          : correcto');
+  console.log('  toda imagen con texto alternativo      : correcto');
   console.log('\nSin incidencias.');
   process.exit(0);
 }

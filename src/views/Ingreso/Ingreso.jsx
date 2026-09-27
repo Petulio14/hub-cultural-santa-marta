@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Campo from '../../components/Campo.jsx';
 import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
@@ -77,6 +77,23 @@ export default function Ingreso() {
   // no; en HU-31 salió a «useFocoEnElPrimerError» para que ninguno se lo pierda.
   const formularioRef = useFocoEnElPrimerError(errores);
 
+  /*
+   * El foco de la pestaña elegida con las flechas — HU-32.
+   *
+   * Un efecto y no «requestAnimationFrame», que era la primera versión. En una
+   * pestaña de navegador que no está a la vista el navegador deja de servir
+   * fotogramas, así que el foco se habría quedado esperando uno que no llega. Un
+   * efecto corre tras el repintado siempre, mirando o sin mirar.
+   */
+  const pestanaPorEnfocar = useRef(null);
+  useEffect(() => {
+    const pedida = pestanaPorEnfocar.current;
+    if (!pedida) return;
+    pestanaPorEnfocar.current = null;
+    const id = pedida === 'registro' ? 'pestana-registro' : 'pestana-ingreso';
+    document.getElementById(id)?.focus();
+  }, [modo]);
+
   const escribir = (campo) => (valor) => {
     setFormulario((anterior) => ({ ...anterior, [campo]: valor }));
     setErrores(({ [campo]: _descartado, ...resto }) => resto);
@@ -88,6 +105,41 @@ export default function Ingreso() {
     setErrores({});
     setErrorGeneral(null);
     setFormulario((anterior) => ({ ...FORMULARIO_VACIO, correo: anterior.correo }));
+  }
+
+  /**
+   * Las flechas cambian de pestaña — HU-32 · segundo criterio de aceptación.
+   *
+   * Inicio y Fin van con ellas en el patrón de ARIA, y con dos pestañas hacen lo
+   * mismo que las flechas; se admiten igual porque quien las usa las usa en todas
+   * partes y no tiene por qué saber cuántas pestañas hay.
+   *
+   * El foco se mueve a mano porque «cambiarModo» vuelve a pintar las dos
+   * pestañas: la que se elige pasa a ser la única tabulable, y sin esto el foco
+   * se quedaría en la que acaba de dejar de serlo.
+   */
+  function moverEntrePestanas(evento) {
+    const teclas = {
+      ArrowRight: 'siguiente',
+      ArrowLeft: 'anterior',
+      Home: 'ingreso',
+      End: 'registro',
+    };
+    const gesto = teclas[evento.key];
+    if (!gesto) return;
+
+    evento.preventDefault();
+    const destino =
+      gesto === 'ingreso' || gesto === 'registro'
+        ? gesto
+        : modo === 'registro'
+          ? 'ingreso'
+          : 'registro';
+
+    cambiarModo(destino);
+    // El foco se pide aquí y se mueve en el efecto de abajo, tras el repintado:
+    // en este instante la pestaña de destino todavía tiene «tabIndex» -1.
+    pestanaPorEnfocar.current = destino;
   }
 
   async function enviar(evento) {
@@ -146,13 +198,30 @@ export default function Ingreso() {
   return (
     <section className="contenedor acceso">
       <div className="acceso__caja">
-        <div className="acceso__pestanas" role="tablist" aria-label="Ingreso o registro">
+        {/*
+            Las pestañas cumplen el patrón de ARIA entero desde HU-32.
+            Declarar «role="tablist"» promete dos cosas que aquí faltaban: que las
+            flechas cambian de pestaña y que el tabulador entra y sale del grupo
+            de una vez, sin pasar por la que no está elegida. Un lector de
+            pantalla anuncia «pestaña 1 de 2» y quien lo oye pulsa la flecha
+            derecha; si no pasa nada, el componente miente sobre lo que es.
+        */}
+        <div
+          className="acceso__pestanas"
+          role="tablist"
+          aria-label="Ingreso o registro"
+          onKeyDown={moverEntrePestanas}
+        >
           <button
             type="button"
             role="tab"
             id="pestana-ingreso"
             aria-selected={!esRegistro}
             aria-controls="panel-acceso"
+            /* Solo la elegida es tabulable: es lo que ARIA llama «tabindex
+               rotatorio», y es lo que hace que el tabulador salte al panel en
+               lugar de recorrer las pestañas una a una. */
+            tabIndex={esRegistro ? -1 : 0}
             className={esRegistro ? 'acceso__pestana' : 'acceso__pestana acceso__pestana--activa'}
             onClick={() => cambiarModo('ingreso')}
           >
@@ -164,6 +233,7 @@ export default function Ingreso() {
             id="pestana-registro"
             aria-selected={esRegistro}
             aria-controls="panel-acceso"
+            tabIndex={esRegistro ? 0 : -1}
             className={esRegistro ? 'acceso__pestana acceso__pestana--activa' : 'acceso__pestana'}
             onClick={() => cambiarModo('registro')}
           >
