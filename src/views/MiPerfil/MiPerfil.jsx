@@ -5,9 +5,11 @@ import Campo from '../../components/Campo.jsx';
 import CampoDeImagen from '../../components/CampoDeImagen.jsx';
 import Seleccion from '../../components/Seleccion.jsx';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
+import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
 import { useMiPerfilDeActor } from '../../hooks/useMiPerfilDeActor.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
 import { guardarMiPerfil } from '../../services/actoresService.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { reducirImagen, validarArchivoDeImagen } from '../../utils/imagen.js';
 import {
   LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
@@ -54,13 +56,18 @@ export default function MiPerfil() {
   const uid = usuario?.uid ?? null;
 
   const { perfil, cargando, error, aplicar } = useMiPerfilDeActor(uid);
-  const { categorias, cargando: cargandoCategorias } = useCategoriasActivas();
+  const {
+    categorias,
+    cargando: cargandoCategorias,
+    error: errorDeCategorias,
+  } = useCategoriasActivas();
 
   const [formulario, setFormulario] = useState(FORMULARIO_VACIO);
   const [errores, setErrores] = useState({});
   const [aviso, setAviso] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [reduciendo, setReduciendo] = useState(false);
+  const formularioRef = useFocoEnElPrimerError(errores);
 
   // El formulario se rellena cuando llega el perfil, no en cada renderizado: a
   // partir de ahí lo que hay escrito en pantalla es de quien está escribiendo.
@@ -114,7 +121,7 @@ export default function MiPerfil() {
     } catch (fallo) {
       setErrores((actuales) => ({
         ...actuales,
-        imagen: fallo?.message ?? 'No se pudo preparar esa imagen. Prueba con otra.',
+        imagen: mensajeDe(fallo, 'No se pudo preparar esa imagen. Prueba con otra.'),
       }));
     } finally {
       setReduciendo(false);
@@ -148,9 +155,10 @@ export default function MiPerfil() {
     } catch (fallo) {
       setAviso({
         tipo: 'error',
-        texto:
-          fallo?.message ??
-          'No se pudo guardar el perfil. Revisa la conexión e inténtalo de nuevo.',
+        texto: mensajeDe(
+          fallo,
+          'No se pudo guardar el perfil. Revisa la conexión e inténtalo de nuevo.'
+        ),
       });
     } finally {
       setGuardando(false);
@@ -166,7 +174,13 @@ export default function MiPerfil() {
     );
   }
 
-  const sinCategorias = !cargandoCategorias && categorias.length === 0;
+  // «No hay ninguna» y «no se pudieron leer» dejaban la lista igual de vacía, y
+  // hasta HU-31 la vista contaba la primera versión en los dos casos: ante un
+  // corte de red le decía a un actor cultural que el administrador todavía no
+  // había creado ninguna categoría. Un mensaje comprensible que además es
+  // falso es peor que el error técnico que el tercer criterio prohíbe, porque
+  // manda a quien lo lee a esperar algo que ya está hecho.
+  const sinCategorias = !cargandoCategorias && !errorDeCategorias && categorias.length === 0;
 
   return (
     <section className="contenedor mi-perfil">
@@ -208,6 +222,13 @@ export default function MiPerfil() {
         </p>
       )}
 
+      {errorDeCategorias && (
+        <p className="mi-perfil__aviso mi-perfil__aviso--error" role="alert">
+          {errorDeCategorias} Mientras tanto no se puede guardar el perfil, porque hay que
+          elegir una categoría.
+        </p>
+      )}
+
       {sinCategorias && (
         <p className="mi-perfil__aviso mi-perfil__aviso--error" role="alert">
           Todavía no hay ninguna categoría cultural disponible. El administrador tiene que crear
@@ -215,7 +236,7 @@ export default function MiPerfil() {
         </p>
       )}
 
-      <form className="mi-perfil__formulario" onSubmit={guardar} noValidate>
+      <form className="mi-perfil__formulario" onSubmit={guardar} noValidate ref={formularioRef}>
         <Campo
           etiqueta="Nombre del actor o del colectivo"
           valor={formulario.nombre}
@@ -241,7 +262,7 @@ export default function MiPerfil() {
           vacia={cargandoCategorias ? 'Leyendo las categorías…' : 'Elige una categoría'}
           error={errores.categoria}
           ayuda="Clasifica tu perfil dentro del directorio y de los filtros del catálogo."
-          disabled={cargandoCategorias || sinCategorias}
+          disabled={cargandoCategorias || sinCategorias || Boolean(errorDeCategorias)}
         />
 
         <AreaDeTexto
@@ -314,7 +335,7 @@ export default function MiPerfil() {
         <button
           className="boton"
           type="submit"
-          disabled={guardando || reduciendo || sinCategorias}
+          disabled={guardando || reduciendo || sinCategorias || Boolean(errorDeCategorias)}
         >
           {guardando ? 'Guardando…' : perfil ? 'Guardar cambios' : 'Crear mi perfil'}
         </button>

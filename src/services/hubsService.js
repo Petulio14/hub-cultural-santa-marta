@@ -28,7 +28,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { ErrorDeDatos, intentar } from './errores.js';
+import { ErrorDeDatos, exigirRespuesta, intentar } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 const COLECCION = 'hubs';
@@ -99,7 +99,7 @@ function camposEditables({ nombre, descripcion, lineasDeTrabajo, direccion, punt
 export async function leerMiHub(uid) {
   exigirConfiguracion();
   return intentar(async () => {
-    const instantanea = await getDoc(doc(db, COLECCION, uid));
+    const instantanea = exigirRespuesta(await getDoc(doc(db, COLECCION, uid)), 'tu hub');
     return instantanea.exists() ? aHub(instantanea) : null;
   });
 }
@@ -150,14 +150,18 @@ export async function guardarMiHub(uid, datos) {
 export async function listarHubsAprobados() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'aprobado'));
-  return intentar(async () => (await getDocs(consulta)).docs.map(aHub).sort(porNombre));
+  return intentar(async () =>
+    exigirRespuesta(await getDocs(consulta), 'el directorio de hubs').docs.map(aHub).sort(porNombre)
+  );
 }
 
 /** Los hubs que esperan aprobación. Solo el administrador puede leerlos. */
 export async function listarHubsPendientes() {
   exigirConfiguracion();
   const consulta = query(collection(db, COLECCION), where('estado', '==', 'pendiente'));
-  return intentar(async () => (await getDocs(consulta)).docs.map(aHub).sort(porNombre));
+  return intentar(async () =>
+    exigirRespuesta(await getDocs(consulta), 'los hubs pendientes').docs.map(aHub).sort(porNombre)
+  );
 }
 
 /** Mueve el estado de un hub. Es potestad exclusiva del administrador. */

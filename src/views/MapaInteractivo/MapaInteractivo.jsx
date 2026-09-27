@@ -6,6 +6,7 @@ import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { useNombresDeCategoria } from '../../hooks/useNombresDeCategoria.js';
 import { listarPublicacionesAprobadas } from '../../services/eventosService.js';
 import { esPuntoValido } from '../../utils/coordenadas.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { FILTROS_VACIOS, limitesDeConsulta } from '../../utils/filtros.js';
 import { TOPE_DEL_MAPA } from '../../utils/paginacion.js';
 import './MapaInteractivo.css';
@@ -68,7 +69,7 @@ export default function MapaInteractivo() {
       .catch(
         (fallo) =>
           vigente &&
-          setError(fallo?.message ?? 'No se pudo leer el mapa. Revisa la conexión y recarga.')
+          setError(mensajeDe(fallo, 'No se pudo leer el mapa. Revisa la conexión y recarga.'))
       )
       .finally(() => vigente && setCargando(false));
 

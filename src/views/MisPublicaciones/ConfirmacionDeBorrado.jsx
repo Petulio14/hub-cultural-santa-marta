@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { mensajeDe } from '../../utils/errores.js';
 
 /**
  * Confirmar antes de eliminar — **segundo criterio de HU-23** · RF-06.
@@ -45,7 +46,7 @@ export default function ConfirmacionDeBorrado({ publicacion, alConfirmar }) {
       // la publicación, y apagarlo sería escribir sobre un componente que ya no
       // existe.
     } catch (fallo) {
-      setError(fallo?.message ?? 'No se pudo eliminar la publicación. Revisa la conexión.');
+      setError(mensajeDe(fallo, 'No se pudo eliminar la publicación. Revisa la conexión.'));
       setBorrando(false);
     }
   }

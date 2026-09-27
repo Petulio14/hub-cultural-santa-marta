@@ -7,7 +7,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { ErrorDeDatos, intentar } from './errores.js';
+import { ErrorDeDatos, exigirRespuesta, intentar } from './errores.js';
 import { configuracionCompleta, db } from './firebase.js';
 
 /**
@@ -145,7 +145,7 @@ export async function listarModeracionesDeEvento(idEvento) {
   const consulta = query(collection(db, MODERACIONES), where('idEvento', '==', idEvento));
 
   return intentar(async () =>
-    (await getDocs(consulta))
+    exigirRespuesta(await getDocs(consulta), 'las observaciones')
       .docs.map(aModeracion)
       .sort((a, b) => (b.fecha?.getTime() ?? 0) - (a.fecha?.getTime() ?? 0))
   );

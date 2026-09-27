@@ -1,6 +1,6 @@
 # Documentación del proyecto
 
-Evidencia verificable de las historias de usuario de los sprints 1 a 6. Con el Sprint 6
+Evidencia verificable de las historias de usuario de los sprints 1 a 7. Con el Sprint 6
 cerrado quedan completas **seis de las ocho épicas** del backlog, de la E0 a la E5:
 todo lo que el prototipo **hace**. Las dos que faltan son de acabado y de cierre —E6,
 calidad y experiencia (HU-31 a HU-36); E7, entrega y validación (HU-37 a HU-40)—.
@@ -39,6 +39,7 @@ en el tablero.
 | [27-detalle-de-la-publicacion.md](27-detalle-de-la-publicacion.md) | [HU-28](https://github.com/Petulio14/hub-cultural-santa-marta/issues/28) | 6 | La ficha de una actividad: el punto de HU-22 dibujado por primera vez, el mapa que no se toca, y una publicación visible cuyo autor no lo es. |
 | [28-contacto-directo.md](28-contacto-directo.md) | [HU-29](https://github.com/Petulio14/hub-cultural-santa-marta/issues/29) | 6 | Contactar sin intermediarios: por qué una llamada no lleva mensaje, el espacio que no siempre es «%20», y lo que del visitante no se guarda. |
 | [29-mapa-interactivo.md](29-mapa-interactivo.md) | [HU-30](https://github.com/Petulio14/hub-cultural-santa-marta/issues/30) | 6 | La oferta cultural sobre el mapa: un dedo desplaza la página y dos mueven el mapa, la ficha que no se escribe con HTML, y un atributo que se acepta sin hacer nada. |
+| [30-validacion-y-errores.md](30-validacion-y-errores.md) | [HU-31](https://github.com/Petulio14/hub-cultural-santa-marta/issues/31) | 7 | Los cuatro criterios pasados por los seis formularios: el error que se pintaba fuera de la pantalla, la fila que se cerraba perdiendo lo escrito, y el fallo de conexión que no llegaba a ser un fallo. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
@@ -57,6 +58,7 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 | Sprint 4 | 29/09/2026 | HU-12 a HU-17 | **Cerrado el 22/08/2026, treinta y siete días antes del vencimiento.** La épica E1 completa: registro, sesión y recuperación de contraseña ([13](13-cuentas-y-sesion.md)), consentimiento de tratamiento de datos con su política publicada ([14](14-tratamiento-de-datos.md)), control por rol en las dos capas ([15](15-roles-y-permisos.md)) y el catálogo de categorías ([16](16-categorias.md)). Comprobado en producción con cuentas reales de administrador y de actor cultural. |
 | Sprint 5 | 13/10/2026 | HU-18 a HU-24 | **Cerrado el 27/08/2026, cuarenta y siete días antes del vencimiento.** Dos épicas completas. La **E2**: perfil del actor cultural ([17](17-perfil-de-actor.md)), su imagen ([18](18-imagen-del-perfil.md)) y los hubs de innovación ([19](19-hubs-de-innovacion.md)). La **E3**, el ciclo de vida entero de una publicación: crearla ([20](20-publicacion-de-eventos.md)), situarla en el mapa ([21](21-georreferenciacion.md)), corregirla y retirarla ([22](22-edicion-y-eliminacion.md)) y moderarla antes de que se vea ([23](23-moderacion.md)). Las siete comprobadas en el sitio publicado con cuentas reales de administrador y de actor cultural. |
 | Sprint 6 | 27/10/2026 | HU-25 a HU-30 | **Cerrado el 28/08/2026, sesenta días antes del vencimiento.** Dos épicas completas. La **E4**: el catálogo público ([24](24-catalogo-publico.md)) —primera vista del proyecto pensada para quien **no tiene cuenta**—, preguntable por categoría y fechas ([25](25-filtros-del-catalogo.md)) y por palabra clave ([26](26-busqueda.md)), con ficha propia para cada actividad ([27](27-detalle-de-la-publicacion.md)) desde la que se contacta con quien la organiza ([28](28-contacto-directo.md)). Y la **E5**, de una sola historia: toda la oferta sobre el mapa ([29](29-mapa-interactivo.md)). Las seis comprobadas en el sitio publicado **como visitante sin cuenta**, y la última además en un teléfono. |
+| Sprint 7 | 10/11/2026 | HU-31 a HU-36 | **En curso.** [HU-31](30-validacion-y-errores.md) terminada: los cuatro criterios comprobados uno a uno sobre los seis formularios, con tres defectos corregidos —el error que se pintaba fuera de la pantalla, la fila de categoría que se cerraba perdiendo lo escrito y el fallo de conexión que Firestore no llega a lanzar—. Pendiente el recorrido con cuenta iniciada de actor cultural y de administrador. |
 
 
 > **Lo que queda por delante.** [HU-25](24-catalogo-publico.md) salda la mitad de la deuda
@@ -79,11 +81,16 @@ del repositorio, los 8 hitos y el tablero de GitHub Projects. Los datos de orige
 > `firebase firestore:indexes` con el archivo, y esa comparación es ahora parte del
 > cierre de cualquier historia que declare un índice ([12 §5.2](12-despliegue-continuo.md)).
 >
-> Lo que viene es el Sprint 7: validación de formularios (HU-31), accesibilidad (HU-32),
-> el ajuste final del responsive (HU-33) y los indicadores de uso (HU-34), que ya tienen
-> dos obstáculos anotados —el contador que un visitante no puede tocar
-> ([27 §8](27-detalle-de-la-publicacion.md)) y el recuento que es una cota inferior
+> Lo que viene es el Sprint 7: validación de formularios (HU-31, **ya terminada**),
+> accesibilidad (HU-32), el ajuste final del responsive (HU-33) y los indicadores de uso
+> (HU-34), que ya tienen dos obstáculos anotados —el contador que un visitante no puede
+> tocar ([27 §8](27-detalle-de-la-publicacion.md)) y el recuento que es una cota inferior
 > ([28 §6](28-contacto-directo.md))—.
+>
+> **Y uno nuevo que dejó HU-31**, este para HU-33: sin conexión, Firestore no falla. Las
+> lecturas ya lo distinguen ([30 §4.2](30-validacion-y-errores.md)); **las escrituras no**.
+> «Guardar» sin red responde que sí, la escritura se encola y quien cierre la pestaña
+> pierde el cambio sin que nada se lo diga.
 
 ## Configuración en la raíz del repositorio
 

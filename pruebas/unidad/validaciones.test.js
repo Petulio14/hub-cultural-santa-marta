@@ -688,3 +688,28 @@ describe('moderación · la observación al devolver (HU-24)', () => {
     assert.equal(LONGITUD_MAXIMA_OBSERVACION < 2000, true);
   });
 });
+
+describe('hayErrores (HU-31)', () => {
+  it('lo vacío no tiene errores', () => {
+    assert.equal(hayErrores({}), false);
+  });
+
+  it('un mensaje sí lo es', () => {
+    assert.equal(hayErrores({ nombre: 'Escribe el nombre.' }), true);
+  });
+
+  /* Tres formularios borran el error de un campo con
+     «{ ...actuales, [campo]: undefined }», que deja la clave puesta. Contando
+     claves, un formulario ya corregido seguía diciendo que le faltaba algo. No
+     llegó a romper nada porque las vistas preguntan por el resultado recién
+     validado y no por su estado, pero era cuestión de que alguien lo hiciera. */
+  it('una clave sin mensaje no cuenta como error', () => {
+    assert.equal(hayErrores({ nombre: undefined }), false);
+    assert.equal(hayErrores({ nombre: null }), false);
+    assert.equal(hayErrores({ nombre: undefined, correo: undefined }), false);
+  });
+
+  it('y un mensaje entre claves vacías sí cuenta', () => {
+    assert.equal(hayErrores({ nombre: undefined, correo: 'Escribe tu correo.' }), true);
+  });
+});

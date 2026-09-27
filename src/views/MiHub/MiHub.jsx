@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AreaDeTexto from '../../components/AreaDeTexto.jsx';
 import Campo from '../../components/Campo.jsx';
+import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
 import { useMiHub } from '../../hooks/useMiHub.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
 import { guardarMiHub } from '../../services/hubsService.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { aLineasDeTrabajo } from '../../utils/texto.js';
 import {
   LONGITUD_MAXIMA_DESCRIPCION_ACTOR,
@@ -54,6 +56,7 @@ export default function MiHub() {
   const [errores, setErrores] = useState({});
   const [aviso, setAviso] = useState(null);
   const [guardando, setGuardando] = useState(false);
+  const formularioRef = useFocoEnElPrimerError(errores);
 
   useEffect(() => {
     if (!hub) return;
@@ -120,7 +123,7 @@ export default function MiHub() {
       setAviso({
         tipo: 'error',
         texto:
-          fallo?.message ?? 'No se pudo guardar el hub. Revisa la conexión e inténtalo de nuevo.',
+          mensajeDe(fallo, 'No se pudo guardar el hub. Revisa la conexión e inténtalo de nuevo.'),
       });
     } finally {
       setGuardando(false);
@@ -174,7 +177,7 @@ export default function MiHub() {
         </p>
       )}
 
-      <form className="mi-hub__formulario" onSubmit={guardar} noValidate>
+      <form className="mi-hub__formulario" onSubmit={guardar} noValidate ref={formularioRef}>
         <Campo
           etiqueta="Nombre del hub"
           valor={formulario.nombre}

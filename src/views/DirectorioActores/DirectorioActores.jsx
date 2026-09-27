@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import { listarActoresAprobados } from '../../services/actoresService.js';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
+import { mensajeDe } from '../../utils/errores.js';
 import './DirectorioActores.css';
 
 /**
@@ -36,7 +37,7 @@ export default function DirectorioActores() {
         (fallo) =>
           vigente &&
           setError(
-            fallo?.message ?? 'No se pudo leer el directorio. Revisa la conexión y recarga.'
+            mensajeDe(fallo, 'No se pudo leer el directorio. Revisa la conexión y recarga.')
           )
       )
       .finally(() => vigente && setCargando(false));

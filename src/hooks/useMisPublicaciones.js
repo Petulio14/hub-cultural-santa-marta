@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listarMisPublicaciones } from '../services/eventosService.js';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * Las publicaciones del actor que tiene la sesión abierta — HU-21.
@@ -29,7 +30,7 @@ export function useMisPublicaciones(idActor) {
       setError(null);
     } catch (fallo) {
       setError(
-        fallo?.message ?? 'No se pudieron leer tus publicaciones. Revisa la conexión y recarga.'
+        mensajeDe(fallo, 'No se pudieron leer tus publicaciones. Revisa la conexión y recarga.')
       );
     } finally {
       setCargando(false);

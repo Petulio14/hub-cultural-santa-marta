@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listarCategoriasActivas } from '../services/categoriasService.js';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * Las categorías que hoy se ofrecen — HU-17, para HU-18 y HU-21.
@@ -27,7 +28,7 @@ export function useCategoriasActivas() {
         (fallo) =>
           vigente &&
           setError(
-            fallo?.message ?? 'No se pudo leer el catálogo de categorías. Recarga la página.'
+            mensajeDe(fallo, 'No se pudo leer el catálogo de categorías. Recarga la página.')
           )
       )
       .finally(() => vigente && setCargando(false));

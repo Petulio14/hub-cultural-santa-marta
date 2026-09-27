@@ -1,5 +1,5 @@
 /**
- * Errores de acceso a datos, en español — HU-18, HU-19, HU-20.
+ * Errores de acceso a datos, en español — HU-18, HU-19, HU-20, revisado en HU-31.
  *
  * Cuando algo falla en Firestore, el kit lanza un error con su código y su
  * mensaje **en inglés**: «Missing or insufficient permissions.» Eso es lo que
@@ -16,13 +16,14 @@
  * todos los fallos de credencial comparten mensaje para no delatar quién tiene
  * cuenta—, así que no se unifican.
  */
+import { ErrorDeDominio } from '../utils/errores.js';
 
 /**
  * Error de dominio. La vista lo muestra sin traducir nada: el mensaje ya está
  * escrito para quien lo va a leer, «campo» indica junto a qué campo ponerlo y
  * «codigo» conserva el original de Firestore para poder diagnosticar.
  */
-export class ErrorDeDatos extends Error {
+export class ErrorDeDatos extends ErrorDeDominio {
   constructor(mensaje, { campo = null, codigo = null } = {}) {
     super(mensaje);
     this.name = 'ErrorDeDatos';
@@ -31,9 +32,17 @@ export class ErrorDeDatos extends Error {
   }
 }
 
-/** Traduce el fallo, o lo deja pasar si ya es un mensaje nuestro. */
+/**
+ * Traduce el fallo, o lo deja pasar si ya es un mensaje nuestro.
+ *
+ * «ErrorDeDominio» y no «ErrorDeDatos» desde HU-31, y la diferencia importa:
+ * «crearCategoria» lanza un ErrorDeCategoria —«Ya existe una categoría con ese
+ * nombre»— que al envolver el servicio en «intentar» pasaría por aquí. Con la
+ * comprobación estrecha se habría convertido en «No se pudo completar la
+ * operación», que es verdad y no sirve de nada.
+ */
 export function traducir(fallo) {
-  if (fallo instanceof ErrorDeDatos) return fallo;
+  if (fallo instanceof ErrorDeDominio) return fallo;
 
   const codigo = fallo?.code ?? '';
 
@@ -80,4 +89,40 @@ export async function intentar(operacion) {
   } catch (fallo) {
     throw traducir(fallo);
   }
+}
+
+/**
+ * El vacío que no es vacío — HU-31 · tercer criterio de aceptación.
+ *
+ * Traducir los fallos de Firestore no cumple el criterio entero, y eso se
+ * descubrió probándolo: **sin conexión, «getDocs» no falla.** El kit resuelve la
+ * lectura contra su caché local, y si la colección nunca se leyó en esa sesión
+ * la caché está vacía, así que la promesa se cumple con cero documentos. No hay
+ * excepción que traducir. Se esperaron treinta segundos por si llegaba tarde y
+ * no llegó nunca.
+ *
+ * La consecuencia se vio en el directorio de actores con la red cortada:
+ * «Todavía no hay ningún perfil publicado», cuando había cuatro. El mensaje es
+ * comprensible —que es lo que pedía el criterio— y es falso, que es peor que el
+ * error técnico que venía a sustituir: manda a quien lo lee a no volver.
+ *
+ * Lo que distingue un caso del otro es «metadata.fromCache», que el kit pone a
+ * cierto cuando la respuesta no vino del servidor. De ahí las tres situaciones:
+ *
+ * - **Del servidor**, vacío o no: es la verdad. Se devuelve tal cual.
+ * - **De la caché y con datos**: se devuelven. Enseñar lo último que se supo es
+ *   mejor que un error, y es lo que hace cualquier aplicación que funciona sin
+ *   red.
+ * - **De la caché y vacío**: no se sabe nada. Aquí sí se lanza el error de
+ *   conexión, que es lo que el criterio pide que se lea.
+ */
+export function exigirRespuesta(instantanea, queSeLeia) {
+  const vacia = 'empty' in instantanea ? instantanea.empty : !instantanea.exists();
+  if (vacia && instantanea.metadata?.fromCache) {
+    throw new ErrorDeDatos(
+      `No hay conexión con el servidor, así que no se pudo leer ${queSeLeia}. Revisa tu red y vuelve a intentarlo.`,
+      { codigo: 'sin-conexion' }
+    );
+  }
+  return instantanea;
 }

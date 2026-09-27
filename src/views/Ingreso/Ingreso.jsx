@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Campo from '../../components/Campo.jsx';
+import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
 import { useSesion } from '../../hooks/useSesion.jsx';
 import { destinoTrasIngresar } from '../../routes/roles.js';
 import {
@@ -70,14 +71,11 @@ export default function Ingreso() {
   const [errorGeneral, setErrorGeneral] = useState(null);
   const [enviando, setEnviando] = useState(false);
   const [correoEnviado, setCorreoEnviado] = useState(false);
-  const formularioRef = useRef(null);
 
-  // Tras un envío rechazado el foco va al primer campo con error. Sin esto, quien
-  // navega con teclado tiene que recorrer el formulario entero para encontrarlo.
-  useEffect(() => {
-    if (!hayErrores(errores)) return;
-    formularioRef.current?.querySelector('[aria-invalid="true"]')?.focus();
-  }, [errores]);
+  // Tras un envío rechazado el foco va al primer campo con error. Estaba escrito
+  // aquí desde HU-12 y era lo único que este formulario hacía y los otros cinco
+  // no; en HU-31 salió a «useFocoEnElPrimerError» para que ninguno se lo pierda.
+  const formularioRef = useFocoEnElPrimerError(errores);
 
   const escribir = (campo) => (valor) => {
     setFormulario((anterior) => ({ ...anterior, [campo]: valor }));

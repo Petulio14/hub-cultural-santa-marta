@@ -3,6 +3,8 @@ import AreaDeTexto from '../../components/AreaDeTexto.jsx';
 import Campo from '../../components/Campo.jsx';
 import CampoDeImagen from '../../components/CampoDeImagen.jsx';
 import Seleccion from '../../components/Seleccion.jsx';
+import { useFocoEnElPrimerError } from '../../hooks/useFocoEnElPrimerError.js';
+import { mensajeDe } from '../../utils/errores.js';
 import { desdeEntradaDeFecha } from '../../utils/fechas.js';
 import { reducirImagen, validarArchivoDeImagen } from '../../utils/imagen.js';
 import { PUBLICACION_VACIA } from '../../utils/publicaciones.js';
@@ -47,6 +49,8 @@ import UbicacionDeLaPublicacion from './UbicacionDeLaPublicacion.jsx';
 export default function FormularioDePublicacion({
   categorias,
   cargandoCategorias,
+  // Por qué no basta con la lista vacía: ver el comentario de «sinCategorias».
+  errorDeCategorias = null,
   alEnviar,
   guardando,
   valoresIniciales = null,
@@ -64,6 +68,7 @@ export default function FormularioDePublicacion({
   const [errores, setErrores] = useState({});
   const [reduciendo, setReduciendo] = useState(false);
   const [avisoSinPunto, setAvisoSinPunto] = useState(false);
+  const formularioRef = useFocoEnElPrimerError(errores);
 
   const escribir = (campo) => (valor) => {
     setFormulario((actual) => ({ ...actual, [campo]: valor }));
@@ -100,7 +105,7 @@ export default function FormularioDePublicacion({
     } catch (fallo) {
       setErrores((actuales) => ({
         ...actuales,
-        imagen: fallo?.message ?? 'No se pudo preparar esa imagen. Prueba con otra.',
+        imagen: mensajeDe(fallo, 'No se pudo preparar esa imagen. Prueba con otra.'),
       }));
     } finally {
       setReduciendo(false);
@@ -143,10 +148,31 @@ export default function FormularioDePublicacion({
     }
   }
 
-  const sinCategorias = !cargandoCategorias && categorias.length === 0;
+  // Que la lista llegue vacía puede significar dos cosas —que no hay ninguna
+  // categoría creada o que no se pudieron leer— y hasta HU-31 el formulario no
+  // distinguía: en los dos casos se limitaba a deshabilitar el desplegable y el
+  // botón, sin decir nada. Quien acababa de escribir la descripción entera se
+  // encontraba con que «Enviar a revisión» no respondía y sin una sola línea que
+  // explicara por qué.
+  const sinCategorias = !cargandoCategorias && !errorDeCategorias && categorias.length === 0;
+  const bloqueado = sinCategorias || Boolean(errorDeCategorias);
 
   return (
-    <form className="publicacion__formulario" onSubmit={enviar} noValidate>
+    <form className="publicacion__formulario" onSubmit={enviar} noValidate ref={formularioRef}>
+      {errorDeCategorias && (
+        <p className="publicacion__aviso-sin-punto" role="alert">
+          {errorDeCategorias} Sin ellas no se puede clasificar la publicación, así que el envío
+          queda en espera. Lo que hayas escrito se conserva.
+        </p>
+      )}
+
+      {sinCategorias && (
+        <p className="publicacion__aviso-sin-punto" role="alert">
+          Todavía no hay ninguna categoría cultural disponible. El administrador tiene que crear
+          al menos una antes de que puedas publicar.
+        </p>
+      )}
+
       <Campo
         etiqueta="Título"
         valor={formulario.titulo}
@@ -163,7 +189,7 @@ export default function FormularioDePublicacion({
         vacia={cargandoCategorias ? 'Leyendo las categorías…' : 'Elige una categoría'}
         error={errores.categoria}
         ayuda="Clasifica la publicación dentro de los filtros del catálogo."
-        disabled={cargandoCategorias || sinCategorias}
+        disabled={cargandoCategorias || bloqueado}
       />
 
       <AreaDeTexto
@@ -233,7 +259,7 @@ export default function FormularioDePublicacion({
         <button
           className="boton"
           type="submit"
-          disabled={guardando || reduciendo || sinCategorias}
+          disabled={guardando || reduciendo || bloqueado}
         >
           {guardando
             ? textoGuardando

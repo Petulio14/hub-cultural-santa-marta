@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { leerMiPerfil } from '../services/actoresService.js';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * El perfil del actor que tiene la sesión abierta — HU-18.
@@ -25,7 +26,7 @@ export function useMiPerfilDeActor(uid) {
       setPerfil(await leerMiPerfil(uid));
       setError(null);
     } catch (fallo) {
-      setError(fallo?.message ?? 'No se pudo leer tu perfil. Revisa la conexión y recarga.');
+      setError(mensajeDe(fallo, 'No se pudo leer tu perfil. Revisa la conexión y recarga.'));
     } finally {
       setCargando(false);
     }

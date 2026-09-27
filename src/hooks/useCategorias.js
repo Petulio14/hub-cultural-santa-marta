@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listarCategoriasConRecuento } from '../services/categoriasService.js';
+import { mensajeDe } from '../utils/errores.js';
 
 /**
  * Las categorías con su recuento de publicaciones — HU-17.
@@ -26,7 +27,7 @@ export function useCategorias() {
       setError(null);
     } catch (fallo) {
       setError(
-        fallo?.message ?? 'No se pudieron leer las categorías. Revisa la conexión y recarga.'
+        mensajeDe(fallo, 'No se pudieron leer las categorías. Revisa la conexión y recarga.')
       );
     } finally {
       setCargando(false);

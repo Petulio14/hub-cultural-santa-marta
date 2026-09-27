@@ -10,6 +10,7 @@ import {
   crearPublicacion,
   eliminarPublicacion,
 } from '../../services/eventosService.js';
+import { mensajeDe } from '../../utils/errores.js';
 import FormularioDePublicacion from './FormularioDePublicacion.jsx';
 import TarjetaDePublicacion from './TarjetaDePublicacion.jsx';
 import './MisPublicaciones.css';
@@ -38,7 +39,11 @@ export default function MisPublicaciones() {
 
   const { publicaciones, cargando, error, anadir, reemplazar, quitar } =
     useMisPublicaciones(idActor);
-  const { categorias, cargando: cargandoCategorias } = useCategoriasActivas();
+  const {
+    categorias,
+    cargando: cargandoCategorias,
+    error: errorDeCategorias,
+  } = useCategoriasActivas();
 
   const [aviso, setAviso] = useState(null);
   const [guardando, setGuardando] = useState(false);
@@ -65,8 +70,7 @@ export default function MisPublicaciones() {
       setAviso({
         tipo: 'error',
         texto:
-          fallo?.message ??
-          'No se pudo guardar la publicación. Revisa la conexión e inténtalo de nuevo.',
+          mensajeDe(fallo, 'No se pudo guardar la publicación. Revisa la conexión e inténtalo de nuevo.'),
       });
       return null;
     } finally {
@@ -181,6 +185,7 @@ export default function MisPublicaciones() {
       <FormularioDePublicacion
         categorias={categorias}
         cargandoCategorias={cargandoCategorias}
+        errorDeCategorias={errorDeCategorias}
         alEnviar={publicar}
         guardando={guardando}
       />
@@ -209,6 +214,7 @@ export default function MisPublicaciones() {
               publicacion={publicacion}
               categorias={categorias}
               cargandoCategorias={cargandoCategorias}
+              errorDeCategorias={errorDeCategorias}
               alGuardarPunto={guardarPunto}
               alGuardarCambios={guardarCambios}
               alEliminar={borrar}
