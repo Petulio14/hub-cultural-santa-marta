@@ -111,6 +111,15 @@ img {
   padding-block: 24px 40px;
 }
 
+/* En el teléfono el aire de arriba baja a la unidad de la rejilla — HU-33. No
+   es solo del mapa: son 8 px que gana cada vista en la pantalla más pequeña, y
+   el margen lateral a 360 px ya es 16, así que 16 arriba es lo coherente. */
+@media (max-width: 767px) {
+  .disposicion__principal {
+    padding-block: 16px 32px;
+  }
+}
+
 /* Todo elemento interactivo cumple el área mínima de toque de HU-10. */
 .boton,
 .enlace-boton {
