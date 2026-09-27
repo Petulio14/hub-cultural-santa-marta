@@ -1,4 +1,4 @@
-/* V-6 · la oferta cultural sobre el mapa — HU-30 */
+/* V-6 · la oferta cultural sobre el mapa — HU-30, ajustada en HU-33 */
 
 .mapa-vista__intro {
   max-width: 65ch;
@@ -40,4 +40,50 @@
 
 .mapa-vista__vacio p:last-child {
   margin-bottom: 0;
+}
+
+/*
+ * Lo que hay por encima del mapa, apretado en el teléfono — HU-33 · tercer
+ * criterio de aceptación.
+ *
+ * El lienzo mide el 60 % de la ventana, que es una altura útil de sobra. El
+ * problema estaba en dónde empieza: medido a 360 × 640, el título, la
+ * presentación, el filtro, el recuento y el aviso del gesto sumaban **533 px de
+ * los 640**, así que al abrir la vista se veían 107 px de mapa. En una pantalla
+ * de 780 px se veían 247.
+ *
+ * Nada de eso se puede quitar: el aviso del gesto hay que leerlo antes de tocar
+ * (HU-30), el recuento dice cuántas actividades no están situadas, y esconder en
+ * el teléfono lo que se enseña en el escritorio sería dar menos a quien ya tiene
+ * menos pantalla. Lo que sí se puede es dejar de gastar en aire y en cuerpo de
+ * letra lo que hace falta para el mapa.
+ *
+ * La medida está en docs/32 §3. Queda en pie que en una pantalla de 640 px el
+ * mapa sigue pidiendo un desplazamiento para verse entero: eso no lo arregla el
+ * espaciado, lo arreglaría quitar contenido.
+ */
+@media (max-width: 767px) {
+  .mapa-vista h1 {
+    margin-bottom: 6px;
+  }
+
+  .mapa-vista__intro {
+    margin-bottom: 10px;
+    font-size: 0.9375rem;
+  }
+
+  .mapa-vista__filtro {
+    margin-bottom: 8px;
+  }
+
+  .mapa-vista__recuento {
+    margin-bottom: 10px;
+    font-size: 0.9375rem;
+  }
+
+  /* El campo del filtro no necesita además el margen con que se separa de otro
+     campo: aquí está solo. */
+  .mapa-vista__filtro .campo {
+    margin-bottom: 0;
+  }
 }

@@ -345,5 +345,6 @@ información que se transmita por ahí. Se deja, anotado.
 - **Nivel AAA.** El criterio pide AA y a AA se midió. El contraste de 7 : 1 que pide AAA lo
   cumplen ya casi todos los pares de texto, pero no `--turquesa-oscuro` sobre `--arena`, que
   es el color de los enlaces.
-- **La escritura sin conexión**, que sigue siendo lo que [HU-31 §7](30-validacion-y-errores.md)
-  dejó anotado para HU-33.
+- **La escritura sin conexión**, que [HU-31 §7](30-validacion-y-errores.md) dejó anotada.
+  Estuvo apuntada a HU-33 y no era su sitio: va al registro de hallazgos de **HU-35**
+  ([32 §5](32-responsive-final.md)).

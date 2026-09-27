@@ -34,6 +34,27 @@
   color: var(--gris-texto);
 }
 
+/*
+ * Y en el teléfono, apretado — HU-33.
+ *
+ * Es el bloque que más ocupaba de todo lo que hay antes del mapa: 72 px, que a
+ * 16 px de cuerpo son tres líneas más el relleno. Con 14 px caben en dos. El
+ * aviso se sigue leyendo entero y sigue estando antes del mapa, que es lo único
+ * que HU-30 exigía de él; lo que cambia es que ya no cuesta una décima parte de
+ * la pantalla.
+ *
+ * Y es justo aquí donde importa: el aviso **solo tiene sentido en el teléfono**
+ * —habla del gesto de dos dedos—, así que apretarlo no le quita nada a nadie en
+ * escritorio, donde ni se pinta.
+ */
+@media (max-width: 767px) {
+  .mapa-marcadores__gesto {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+}
+
 /* La ficha que se abre al pulsar un marcador. Los estilos van aquí y no en el
    componente porque su contenido lo crea Leaflet dentro de su propio globo. */
 .ficha-mapa {

@@ -41,3 +41,35 @@
  * lo que hay que recordar no es la regla, es que Leaflet mete un «tabindex» que
  * nadie escribió.
  */
+
+/*
+ * Los botones de zoom, con área de toque — HU-33 · tercer criterio.
+ *
+ * Leaflet los dibuja de 26 px, que en pantalla son 30 con el borde. El proyecto
+ * fijó en HU-10 un área mínima de toque de 44 px para todo lo interactivo, y
+ * estos se habían quedado fuera de esa cuenta por una razón concreta: **cuando
+ * HU-10 la hizo, no había ningún mapa**. El recuento de «0 elementos por debajo
+ * de 44 × 44» de docs/10 §3 se midió sobre vistas que todavía eran
+ * marcadores de posición.
+ *
+ * Importa más aquí que en otros sitios: el criterio pide que el mapa «permita su
+ * manipulación» en móvil, y acercar y alejar es la mitad de manipular un mapa.
+ * Con un dedo sobre 30 px se falla, y fallar en un mapa significa arrastrarlo
+ * sin querer.
+ *
+ * Solo en el teléfono: con ratón, 30 px se aciertan de sobra y agrandarlos
+ * taparía mapa sin necesidad.
+ */
+@media (max-width: 767px) {
+  /* «.leaflet-touch» va delante a propósito. Leaflet detecta la pantalla táctil,
+     se pone esa clase y sube sus botones de 26 a 30 px con «.leaflet-touch
+     .leaflet-bar a», que es más específica que «.leaflet-control-zoom a». La
+     primera versión de esta regla no ganaba, y se vio midiendo: seguían en 30. */
+  .leaflet-touch .leaflet-control-zoom a,
+  .leaflet-control-zoom a {
+    width: var(--toque-minimo);
+    height: var(--toque-minimo);
+    line-height: var(--toque-minimo);
+    font-size: 1.25rem;
+  }
+}

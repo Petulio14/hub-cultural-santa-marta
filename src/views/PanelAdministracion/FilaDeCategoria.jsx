@@ -124,15 +124,26 @@ export default function FilaDeCategoria({
         )}
       </th>
 
-      <td className="categorias__numero">{categoria.publicaciones}</td>
+      {/* Cada celda lleva escrito el nombre de su columna — HU-33.
+          Solo se ve por debajo de 768 px, donde la fila deja de ser una fila y
+          pasa a ser una tarjeta: sin el rótulo, «3» y «Se ofrece» quedarían
+          sueltos debajo del nombre sin decir de qué son. Es texto de verdad y no
+          un «::before» con «content», porque lo que hay en un pseudoelemento
+          unos lectores de pantalla lo leen y otros no. */}
+      <td className="categorias__numero">
+        <span className="categorias__rotulo">Publicaciones</span>
+        {categoria.publicaciones}
+      </td>
 
       <td>
+        <span className="categorias__rotulo">Estado</span>
         <span className={categoria.activa ? 'etiqueta etiqueta--activa' : 'etiqueta'}>
           {categoria.activa ? 'Se ofrece' : 'No se ofrece'}
         </span>
       </td>
 
       <td>
+        <span className="categorias__rotulo">Acciones</span>
         {modo === 'advertencia' ? (
           <div className="categorias__advertencia" role="alert" ref={regionRef}>
             <p id={idAdvertencia}>

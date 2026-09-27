@@ -43,19 +43,110 @@
 
 /*
  * ── Listado de categorías ────────────────────────────────────────────────
- * En móvil la tabla no se encoge: se desplaza dentro de su propio contenedor.
- * Reducir las columnas hasta que quepan deja los números ilegibles, y partir la
- * tabla en tarjetas duplicaría el marcado. Desplazar conserva la relación entre
- * la fila y su encabezado, que es lo que anuncia un lector de pantalla.
+ *
+ * Es una tabla de verdad a partir de 768 px y una lista de tarjetas por debajo.
+ *
+ * ## Lo que había, y por qué HU-33 lo cambió
+ *
+ * La tabla llevaba «display: block» con «overflow-x: auto», es decir, se
+ * desplazaba de lado dentro de su propia caja. La nota que lo acompañaba decía
+ * que así «se conserva la relación entre la fila y su encabezado», y el segundo
+ * criterio de aceptación de HU-33 pide otra cosa: **que se adapte a un formato
+ * legible**. Medido a 360 px, la tabla ocupaba 531 px dentro de una caja de 326:
+ * un tercio quedaba fuera, y lo que quedaba fuera era la columna «Acciones»
+ * entera, o sea los dos botones.
+ *
+ * Y había un defecto más serio, que solo aparece al recorrerla con teclado: una
+ * caja que se desplaza **necesita poder recibir el foco** para que alguien sin
+ * ratón pueda desplazarla (WCAG 2.1.1). Esta tenía «tabIndex» −1, así que con
+ * teclado no había forma de llegar a esos botones. Se midió, no se dedujo.
+ *
+ * ## Lo que hay ahora
+ *
+ * Por debajo de 768 px cada fila se convierte en una tarjeta y cada celda se
+ * pone debajo de la anterior con el nombre de su columna escrito al lado. No se
+ * duplica marcado: son tres «span» que se ocultan en escritorio. Desaparece el
+ * desplazamiento lateral, y con él la caja que no se podía enfocar.
+ *
+ * El precio está dicho: **por debajo de 768 px esto deja de ser una tabla
+ * también para un lector de pantalla**, porque «display: block» sobre las filas
+ * y las celdas se lleva por delante sus papeles. Por eso el rótulo de cada
+ * columna es texto de verdad dentro de la celda: lo que se pierde en estructura
+ * se recupera escrito, y ninguna cifra queda sin decir de qué es.
  */
 .categorias {
-  display: block;
   width: 100%;
-  overflow-x: auto;
   border-collapse: collapse;
   background: var(--blanco);
   border: 1px solid var(--gris-borde);
   border-radius: var(--radio);
+}
+
+/* El rótulo de cada celda solo existe en la presentación apilada. */
+.categorias__rotulo {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .categorias,
+  .categorias caption,
+  .categorias thead,
+  .categorias tbody,
+  .categorias tr,
+  .categorias th,
+  .categorias td {
+    display: block;
+  }
+
+  /* El encabezado se va: su contenido lo lleva ahora cada celda. Se oculta con
+     «position: absolute» y no con «display: none» por si algún día vuelve a
+     hacer falta anunciarlo; hoy no cambia nada para quien escucha, porque las
+     celdas ya no son celdas. */
+  .categorias thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .categorias tbody tr {
+    padding: 14px;
+    border-bottom: 1px solid var(--gris-borde);
+  }
+
+  .categorias tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  /* Los bordes entre celdas sobran cuando la fila entera es una tarjeta: el
+     nombre de la categoría ya la encabeza y el rótulo separa cada dato. */
+  .categorias tbody th,
+  .categorias tbody td {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .categorias tbody td {
+    margin-top: 10px;
+  }
+
+  .categorias__rotulo {
+    display: block;
+    color: var(--gris-texto);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* La fila de una categoría retirada se distinguía por el fondo de toda la
+     fila; apilada, el fondo se pinta igual y sigue acompañado de la etiqueta
+     escrita «No se ofrece», que es lo que de verdad lo dice (WCAG 1.4.1). */
+  .categorias__fila--inactiva {
+    background: var(--arena);
+  }
 }
 
 .categorias caption {

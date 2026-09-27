@@ -131,6 +131,12 @@ Cuando se repita en HU-33 tiene que recorrerlas **con sesión iniciada en cada u
 roles**, porque el menú —que es lo que más ancho pide de toda la estructura— depende del rol
 y no de la ruta.
 
+> **Cómo terminó (27/09/2026).** [HU-33](32-responsive-final.md) volvió a medir las siete
+> vistas públicas a 360 px y ninguna desborda. **El recorrido con sesión iniciada sigue sin
+> hacerse**: el servidor de desarrollo autentica contra el Firebase real y no se entró con
+> ninguna cuenta. La tabla del panel, que era el riesgo concreto, se midió en un banco de
+> pruebas con su CSS y su marcado reales ([32 §4](32-responsive-final.md)).
+
 ## 2 ter. Tres logotipos en la cabecera (19/09/2026)
 
 La marca pasa de un logotipo a tres: **Tecnológico de Antioquia**, **Universidad Autónoma
@@ -200,9 +206,14 @@ veces la hoja de estilos entera del proyecto**, y viaja en la cabecera de todas 
 RNF-04 pide que la vista principal cargue en **menos de tres segundos en conexión 4G**, así
 que esto no es un detalle estético. No se toca aquí porque no es un defecto de diseño
 responsive y porque sustituir el archivo de una marca institucional no es una decisión de
-maquetación; queda anotado como lo primero que hay que aligerar, y el sitio natural para
-hacerlo es [HU-33](https://github.com/Petulio14/hub-cultural-santa-marta/issues/33), que
-vuelve sobre esta misma cabecera.
+maquetación; queda anotado como lo primero que hay que aligerar.
+
+> **Cómo terminó (27/09/2026).** [HU-33](32-responsive-final.md) lo midió y **no lo tocó**,
+> por la misma razón. Son 357 KB en disco y **131 comprimidos**, con 820 trazos vectoriales
+> —ni una imagen incrustada ni decimales de más que recortar— para dibujarse a 24 píxeles de
+> alto. Es el segundo archivo más pesado del sitio, después del paquete de JavaScript, y se
+> descarga en todas las páginas. Queda como hallazgo para HU-35 con su medida hecha
+> ([32 §5](32-responsive-final.md)); qué hacer con la marca lo decide el autor del trabajo.
 
 ## 2 quater. El fondo de las vistas (19/09/2026)
 
@@ -329,6 +340,11 @@ Las tres comprobaciones, con detalle:
 | --- | --- | --- | --- |
 | Desbordamiento horizontal (RNF-03) | 0 px | 0 px | 0 px |
 | Elementos interactivos visibles bajo 44 × 44 px | 0 | 0 | 0 |
+
+> **Este cero caducó, y conviene saber por qué.** Se midió sobre vistas que todavía eran
+> marcadores de posición. Repetido en [HU-33](32-responsive-final.md) sobre las vistas con
+> contenido real salen **ocho** elementos por debajo del umbral: seis son enlaces dentro de
+> un texto, que WCAG exime, y dos eran los botones de zoom del mapa, corregidos allí.
 | Menú | compacto | completo | completo |
 | Accesos de la página de inicio | 1 columna | 2 columnas | 4 columnas |
 | Separación entre tarjetas | 16 px | 18 px | 20 px |

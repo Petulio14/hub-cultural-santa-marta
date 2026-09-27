@@ -389,10 +389,13 @@ queda pendiente** para cerrar la Definición de Terminado.
   cubre las lecturas, no esto. Quien guarde sin red y cierre la pestaña pierde el cambio sin
   que nada se lo diga. Es un problema real y pide una decisión de producto —avisar, bloquear
   o confiar en la cola— que no cabe en esta historia.
+  **Queda como hallazgo para [HU-35](32-responsive-final.md#5-dos-cosas-que-estaban-mal-apuntadas-a-esta-historia)**;
+  estuvo un tiempo apuntado a HU-33, que es de diseño adaptable y no lo resuelve.
 - **La comprobación de duplicado de `crearCategoria`** lee antes de escribir para no pisar una
   categoría existente. Sin red esa lectura viene de la caché y podría decir que no existe. La
   escritura quedaría encolada y se resolvería contra el servidor, así que el riesgo es el del
   punto anterior y se trata con él.
 - **El aviso de que se está viendo contenido de la caché.** Cuando hay datos guardados se
   enseñan sin decir que pueden estar desfasados. Es lo correcto frente a un error, y
-  etiquetarlo es trabajo de HU-33.
+  etiquetarlo queda como hallazgo para **HU-35**, por lo mismo que el punto de arriba
+  ([32 §5](32-responsive-final.md)).
