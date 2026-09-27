@@ -129,7 +129,7 @@ Colección central del sistema.
 | `imagen` | `string` | No | Imagen reducida como **URI de datos**, igual que en `actoresCulturales` y por el mismo motivo ([03 §6.1](03-arquitectura.md)). La rellena HU-21. |
 | `estadoPublicacion` | `string` | Sí | `pendiente`, `aprobado` o `devuelto`. Nace siempre en `pendiente` (HU-21). |
 | `fechaCreacion` | `timestamp` | Sí | Asignada por el servidor, no por el cliente. |
-| `contadorConsultas` | `number` | Sí | Inicia en `0`. Alimenta los indicadores de RF-15. |
+| `contadorConsultas` | `number` | Sí | Inicia en `0` y **se queda en `0`**: los indicadores de RF-15 acabaron contando los registros de `interacciones`, no este campo. El porqué, en [33 §1](33-indicadores.md). |
 
 ## 7. `categorias`
 
@@ -189,7 +189,7 @@ simples: hay que declararla en `firestore.indexes.json`.
 | `eventos` | `estadoPublicacion` ASC, `fechaInicio` ASC | Se planeó para el catálogo de HU-25 y **no lo usa ninguna de las dos**: HU-26 tampoco, porque el rango de fechas ordena también por `fechaFin` ([25 §9](25-filtros-del-catalogo.md)). Se conserva la fila por lo mismo que la de HU-23. | HU-25, HU-26 |
 | `eventos` | `idActor` ASC, `fechaCreacion` DESC | Publicaciones propias del actor cultural. **No llegó a hacer falta**: `listarMisPublicaciones` filtra en el servidor y ordena en memoria, que no alcanza ningún documento de más porque ya están todos leídos y son los propios ([22 §8](22-edicion-y-eliminacion.md)). Se conserva la fila porque la diferencia entre lo planeado y lo construido es en sí misma un dato. | HU-23 |
 | `eventos` | `estadoPublicacion` ASC, `fechaCreacion` ASC | Cola de moderación ordenada por antigüedad. | HU-24 |
-| `eventos` | `estadoPublicacion` ASC, `contadorConsultas` DESC | Publicaciones más consultadas. | HU-34 |
+| `eventos` | `estadoPublicacion` ASC, `contadorConsultas` DESC | Publicaciones más consultadas. **No llegó a hacer falta**, y por un motivo que no se podía prever al declararlo: un visitante no tiene permiso para escribir en `eventos`, así que el contador que este índice ordena no se puede incrementar al consultar ([27 §8](27-detalle-de-la-publicacion.md)). HU-34 cuenta los registros de `interacciones` y ordena en memoria ([33 §1](33-indicadores.md)). Se conserva la fila por lo mismo que las dos de arriba. | HU-34 |
 | `moderaciones` | `idEvento` ASC, `fecha` DESC | Historial de moderación de una publicación. | HU-24 |
 
 ```json
