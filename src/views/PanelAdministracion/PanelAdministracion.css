@@ -324,3 +324,169 @@
   padding-top: 12px;
   border-top: 1px solid var(--gris-borde);
 }
+
+/* ── Indicadores de uso · HU-34 · RF-15 ──────────────────────────────────── */
+
+.indicadores {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+/* Las cifras gordas: publicaciones por estado. La rejilla se llena sola y cada
+   tarjeta no baja de 140 px, con el «min(100%, ...)» que impide que a 360 px se
+   imponga sobre la pantalla (docs/32 §1). */
+.indicadores__cifras {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-tarjetas);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+}
+
+.indicadores__cifra {
+  padding: 14px 16px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.indicadores__cifra--total {
+  background: var(--arena);
+}
+
+.indicadores__numero {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--negro-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.indicadores__rotulo {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--gris-texto);
+}
+
+/* Reparto por categoría. Es una lista, no una tabla: son dos datos por fila y
+   una tabla de dos columnas a 360 px vuelve a ser el problema de docs/32 §2. */
+.indicadores__barras {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.indicadores__barra {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.indicadores__barra-nombre {
+  font-weight: 600;
+  color: var(--negro-texto);
+}
+
+.indicadores__barra-cifra {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--negro-texto);
+}
+
+/*
+ * La barra dibujada.
+ *
+ * Es decoración y lleva «aria-hidden»: el número está escrito al lado, que es lo
+ * que se lee y lo que se anuncia. Una barra que fuera el único portador del dato
+ * incumpliría WCAG 1.4.1, igual que un estado señalado solo con color.
+ *
+ * «--parte» lo pone el componente en cada fila; es un porcentaje, no un color,
+ * así que no entra en lo que vigila «npm run verificar».
+ */
+.indicadores__barra-pista {
+  grid-column: 1;
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gris-borde);
+  position: relative;
+  overflow: hidden;
+}
+
+.indicadores__barra-pista::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--parte, 0%);
+  background: var(--turquesa-oscuro);
+}
+
+/* Las más consultadas */
+.indicadores__ranking {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.indicadores__fila {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+}
+
+.indicadores__consultas {
+  min-width: 2.5ch;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--turquesa-oscuro);
+}
+
+.indicadores__publicacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.indicadores__categoria {
+  font-size: 0.8125rem;
+  color: var(--gris-texto);
+}
+
+.indicadores__borrada {
+  color: var(--gris-texto);
+}
+
+.indicadores__borrada code {
+  font-size: 0.8125rem;
+}
+
+/* La letra pequeña de los indicadores: lo que el número NO dice, junto al
+   número. No es un pie de página que nadie lee. */
+.indicadores__letra-pequena {
+  max-width: 70ch;
+  font-size: 0.9375rem;
+  color: var(--gris-texto);
+}
+
+.indicadores__acciones {
+  margin-bottom: 16px;
+}

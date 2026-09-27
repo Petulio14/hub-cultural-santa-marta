@@ -10,6 +10,7 @@ import {
 import { mensajeDe } from '../../utils/errores.js';
 import { hayErrores, validarCategoria } from '../../utils/validaciones.js';
 import FilaDeCategoria from './FilaDeCategoria.jsx';
+import Indicadores from './Indicadores.jsx';
 import HubsPendientes from './HubsPendientes.jsx';
 import PerfilesDeActores from './PerfilesDeActores.jsx';
 import PublicacionesPendientes from './PublicacionesPendientes.jsx';
@@ -18,9 +19,9 @@ import './PanelAdministracion.css';
 /**
  * V-7 · Panel de administración — HU-17, HU-18, HU-20, HU-24.
  *
- * Gestiona el catálogo de categorías y las tres colas de aprobación: perfiles de
- * actores culturales, hubs de innovación y publicaciones. Los indicadores de uso
- * llegan con HU-34 y añadirán su sección a esta misma vista.
+ * Gestiona el catálogo de categorías, las tres colas de aprobación —perfiles de
+ * actores culturales, hubs de innovación y publicaciones— y, desde HU-34, los
+ * indicadores de uso.
  *
  * Las publicaciones van **al final** a propósito. Es la cola que más se usa —una
  * publicación por evento, frente a un perfil por actor— y la que más crece, así
@@ -193,6 +194,13 @@ export default function PanelAdministracion() {
       <PerfilesDeActores />
       <HubsPendientes />
       <PublicacionesPendientes />
+
+      {/* Los indicadores van al final y no arriba, por lo mismo que las
+          publicaciones pendientes van después de las otras dos colas: esta es
+          una pantalla de trabajo, y lo que se hace a diario tiene que quedar
+          antes que lo que se mira de vez en cuando. Además son cuatro lecturas
+          que no deben retrasar lo que sí hay que atender. */}
+      <Indicadores categorias={categorias} cargandoCategorias={cargando} />
     </section>
   );
 }
