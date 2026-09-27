@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { esPuntoValido, textoDeCoordenadas } from '../utils/coordenadas.js';
-import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas } from './mapa.js';
+import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas, rotularEnEspanol } from './mapa.js';
 import './MapaDeUbicacion.css';
 
 /**
@@ -55,6 +55,7 @@ export default function MapaDeUbicacion({ punto, titulo }) {
       dragging: !L.Browser.mobile,
     });
 
+    rotularEnEspanol(instancia);
     capaDeTeselas().addTo(instancia);
     L.marker([punto.lat, punto.lon], { icon: MARCADOR, keyboard: false }).addTo(instancia);
 

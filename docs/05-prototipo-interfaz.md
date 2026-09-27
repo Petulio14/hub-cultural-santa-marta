@@ -81,6 +81,11 @@ Contrastes calculados según la fórmula de luminancia relativa de la WCAG 2.1. 
 pares de uso previsto superan la relación mínima de 4,5 : 1** exigida por el tercer
 criterio de aceptación de HU-06 y por HU-32.
 
+Desde HU-32 los números de esta tabla no se calculan a mano: los mide
+[`herramientas/medir-contraste.py`](../herramientas/medir-contraste.py) sobre los 21 pares
+que de verdad se pintan juntos, y sale con código 1 si alguno baja de su mínimo
+([31 §1](31-accesibilidad.md)).
+
 | Token | Valor | Uso | Contraste sobre blanco | Contraste sobre arena |
 | --- | --- | --- | --- | --- |
 | `azul-profundo` | `#0B3C5D` | Encabezados, barra de navegación, texto sobre fondos claros. | **11,55 : 1** ✅ | **10,44 : 1** ✅ |
@@ -92,10 +97,23 @@ criterio de aceptación de HU-06 y por HU-32.
 | `negro-texto` | `#14181C` | Títulos. | **17,84 : 1** ✅ | **16,13 : 1** ✅ |
 | `arena` | `#F7F3EC` | Fondo de página. | — | — |
 | `blanco` | `#FFFFFF` | Fondo de tarjetas y formularios. | — | — |
-| `gris-borde` | `#D5CFC4` | Bordes y separadores (elemento no textual, umbral 3 : 1 sobre azul: **7,45 : 1** ✅). | — | — |
+| `gris-borde` | `#D5CFC4` | **Solo decoración**: bordes de tarjeta, de tabla y separadores. Ver la nota de abajo. | 1,55 : 1 | 1,40 : 1 |
+| `gris-control` | `#8E8778` | Borde de lo que se puede tocar: campos de formulario y botones secundarios (umbral 3 : 1). | **3,57 : 1** ✅ | **3,23 : 1** ✅ |
 
 > El color nunca es el único portador de información: cada estado de publicación lleva
 > además una etiqueta de texto (`Pendiente`, `Aprobado`, `Devuelto`).
+
+> **`gris-control` es de HU-32, y sustituye a una medida mal planteada.** Esta tabla decía
+> de `gris-borde` que cumplía el umbral de 3 : 1 «sobre azul, 7,45 : 1», y el número es
+> cierto y no viene al caso: ese borde **nunca se pinta sobre la barra azul**. Se pinta
+> sobre blanco y sobre arena, donde da 1,55 : 1 y 1,40 : 1.
+>
+> Para una tarjeta eso vale —WCAG 1.4.11 le pide 3 : 1 a lo que hace falta *para
+> identificar un control*, no a lo que agrupa—, pero el borde de un campo de texto sí es lo
+> que dice dónde empieza el campo, y el relleno no ayuda: blanco sobre arena son 1,11 : 1.
+> De ahí el color nuevo, y de ahí que la comprobación dejara de ser una frase en un
+> documento para ser [`herramientas/medir-contraste.py`](../herramientas/medir-contraste.py)
+> ([31 §1](31-accesibilidad.md)).
 
 ## 4. Rejilla y puntos de corte
 

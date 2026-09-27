@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { textoDelPeriodo } from '../utils/fechas.js';
-import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas } from './mapa.js';
+import { MARCADOR, RECUADRO, ZOOM_MAXIMO, capaDeTeselas, rotularEnEspanol } from './mapa.js';
 import './MapaDeMarcadores.css';
 
 /**
@@ -120,6 +120,7 @@ export default function MapaDeMarcadores({ publicaciones, nombreDeCategoria, alA
       dragging: !enTelefono,
     });
 
+    rotularEnEspanol(instancia);
     capaDeTeselas().addTo(instancia);
     grupo.current = L.layerGroup().addTo(instancia);
     mapa.current = instancia;

@@ -16,6 +16,24 @@
   --arena: #f7f3ec;
   --blanco: #ffffff;
   --gris-borde: #d5cfc4;
+  /*
+   * El borde de lo que se puede tocar — HU-32.
+   *
+   * «--gris-borde» da 1,55 : 1 sobre blanco y 1,40 : 1 sobre arena. Para una
+   * tarjeta o una tabla eso vale: son decoración, y WCAG 1.4.11 pide 3 : 1 a lo
+   * que hace falta **para identificar un control**, no a lo que agrupa. Pero el
+   * borde de un campo de texto sí es lo que dice dónde empieza el campo, y el
+   * relleno no ayuda: blanco sobre arena son 1,11 : 1.
+   *
+   * Este es el mismo gris cálido, oscurecido hasta 3,57 : 1 sobre blanco y
+   * 3,23 : 1 sobre arena. Se eligió con margen y no justo en el 3,0 por lo que
+   * enseñó «--terracota» sobre las imágenes de fondo (docs/10 §2 quater): un
+   * valor al filo se cae en cuanto algo cambia debajo.
+   *
+   * Solo lo usan el campo de formulario y el botón secundario; todo lo demás
+   * sigue con «--gris-borde». Medido en «herramientas/medir-contraste.py».
+   */
+  --gris-control: #8e8778;
 
   /* Realces sobre la barra azul: no son colores nuevos, son el blanco atenuado */
   --realce-suave: rgba(255, 255, 255, 0.12);
