@@ -1,0 +1,29 @@
+{
+  "leeme": "Resultados de las sesiones de usabilidad — HU-36. Una entrada por participante. El archivo nace vacío a propósito: las sesiones las ejecuta una persona con ocho participantes reales, y rellenarlo con datos de ejemplo sería inventar la medida que la historia viene a tomar. Lo procesa «node herramientas/calcular-sus.js».",
+  "comoSeRellena": {
+    "participante": "P1, P2, P3… El número no se asocia a ningún nombre: la hoja de consentimiento se archiva aparte y sin él.",
+    "rol": "visitante | actor | administrador",
+    "fecha": "AAAA-MM-DD",
+    "dispositivo": "escritorio | telefono",
+    "tareas": "una entrada por tarea intentada, con su identificador del guion (T1 a T6)",
+    "completada": "true solo si llegó sin ayuda. Abandonar es false, y es un resultado.",
+    "segundos": "desde que se termina de leer la tarea hasta que se completa o se abandona",
+    "dificultades": "lo que se observó, no lo que se interpretó: «pulsó tres veces el logotipo», no «no entendió la navegación»",
+    "sus": "las diez respuestas del cuestionario, de 1 a 5, en el orden del instrumento",
+    "loMasIncomodo": "la respuesta a la única pregunta abierta, entre comillas y tal cual se dijo"
+  },
+  "ejemploDeUnaEntrada": {
+    "participante": "P0 (ejemplo, no cuenta: el guion descarta las entradas cuyo participante empieza por P0)",
+    "rol": "visitante",
+    "fecha": "2026-10-05",
+    "dispositivo": "telefono",
+    "tareas": [
+      { "id": "T1", "completada": true, "segundos": 48, "dificultades": [] },
+      { "id": "T2", "completada": true, "segundos": 71, "dificultades": ["buscó el contacto arriba antes de desplazarse"] },
+      { "id": "T3", "completada": false, "segundos": 130, "dificultades": ["arrastró el mapa con un dedo tres veces sin leer el aviso"] }
+    ],
+    "sus": [4, 2, 4, 2, 4, 1, 5, 2, 4, 2],
+    "loMasIncomodo": "«el mapa no se movía y no supe por qué»"
+  },
+  "sesiones": []
+}
