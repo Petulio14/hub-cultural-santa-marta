@@ -79,6 +79,12 @@ jobs:
       - name: Reglas estructurales
         run: npm run verificar
 
+      # La matriz de trazabilidad de HU-35: que ningun criterio de aceptacion se
+      # quede sin caso, que la cobertura de las historias «Debe» no baje del
+      # umbral y que todo caso sin superar tenga su hallazgo registrado.
+      - name: Matriz de trazabilidad criterios-casos
+        run: npm run verificar:casos
+
       - name: Funciones puras
         run: npm run probar
 

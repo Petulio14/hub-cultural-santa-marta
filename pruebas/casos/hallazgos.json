@@ -1,0 +1,77 @@
+{
+  "leeme": "Registro de hallazgos — HU-35, cuarto criterio de aceptación. Un hallazgo es algo que se encontró y no se resolvió donde se encontró. Los que vienen de un caso de prueba que no pasa llevan su criterio en «criterio»; los que vienen de una observación, no.",
+  "severidades": {
+    "critica": "impide usar la plataforma o expone datos. Ninguna abierta.",
+    "alta": "el sistema hace algo incorrecto sin avisar, y quien lo usa no puede saberlo",
+    "media": "el sistema hace algo correcto de forma incompleta, o cuesta más de lo debido",
+    "baja": "no afecta al funcionamiento: falta constancia, peso de más, trabajo futuro"
+  },
+  "hallazgos": [
+    {
+      "id": "H-01",
+      "titulo": "Sin conexión, una escritura responde que sí y se pierde",
+      "severidad": "alta",
+      "criterio": null,
+      "origen": "HU-31, al probar el tercer criterio con la red cortada",
+      "descripcion": "Firestore encola las escrituras y las resuelve de forma optimista. «Guardar» sin red responde que sí, la promesa se cumple y la vista enseña el aviso de éxito. Quien cierre la pestaña antes de que vuelva la red pierde el cambio sin que nada se lo diga. Las lecturas sí lo distinguen desde HU-31, con «exigirRespuesta»; las escrituras no.",
+      "donde": "docs/30 §7",
+      "estado": "abierto",
+      "propuesta": "Decidir entre avisar de que hay escrituras sin confirmar, bloquear el envío sin red, o confiar en la cola y decirlo. Es una decisión de producto, no de código."
+    },
+    {
+      "id": "H-02",
+      "titulo": "Lo servido desde la caché no se distingue de lo recién leído",
+      "severidad": "media",
+      "criterio": null,
+      "origen": "HU-31, del mismo hallazgo que H-01",
+      "descripcion": "Cuando hay datos guardados en la caché local, se enseñan sin decir que pueden estar desfasados. Frente a un error es lo correcto —enseñar lo último que se supo es mejor que no enseñar nada— pero quien mira no tiene forma de saber que está viendo una copia.",
+      "donde": "docs/31 §7",
+      "estado": "abierto",
+      "propuesta": "Etiquetar la vista cuando la instantánea venga de la caché, usando el mismo «metadata.fromCache» que ya lee «exigirRespuesta»."
+    },
+    {
+      "id": "H-03",
+      "titulo": "El escudo de la UAEMex pesa 131 KB comprimidos y se dibuja a 24 px",
+      "severidad": "media",
+      "criterio": null,
+      "origen": "HU-33, midiendo lo que descarga un teléfono",
+      "descripcion": "357 KB en disco y 131 comprimidos, con 820 trazos vectoriales, para rendirse a 24 píxeles de alto en la cabecera. Es el segundo archivo más pesado del sitio después del paquete de JavaScript y se descarga en todas las páginas. Afecta a RNF-04, no a RNF-03, y por eso no se tocó en HU-33.",
+      "donde": "docs/32 §5 y docs/10 §2 ter",
+      "estado": "abierto",
+      "propuesta": "Servir un PNG del tamaño en que se dibuja y conservar el SVG en «recursos/», como se hizo con las imágenes de fondo. Sustituir o rasterizar una marca institucional es decisión del autor del trabajo."
+    },
+    {
+      "id": "H-04",
+      "titulo": "Falta la constancia de la aprobación del asesor del Sprint 1",
+      "severidad": "baja",
+      "criterio": "HU-01.4",
+      "origen": "HU-35, al montar la matriz de trazabilidad",
+      "descripcion": "El pie de docs/01 afirma que el documento fue aprobado por el asesor, y la única validación registrada en el repositorio es la del otro integrante, que dice que se cumplen «los primeros tres criterios». El cuarto criterio pide precisamente la aprobación del asesor, y no hay fecha ni observaciones.",
+      "donde": "docs/01, pie del documento",
+      "estado": "abierto",
+      "propuesta": "Registrar fecha y observaciones de la revisión, o retirar la afirmación del pie si no la hubo."
+    },
+    {
+      "id": "H-05",
+      "titulo": "El alcance del MVP no tiene registrada su aceptación",
+      "severidad": "baja",
+      "criterio": "HU-03.3",
+      "origen": "HU-35, al montar la matriz de trazabilidad",
+      "descripcion": "docs/02 §6 tiene la tabla de constancia preparada y la fila «Revisado con el asesor» dice, literalmente, «pendiente de registrar fecha y observaciones». El tercer criterio de HU-03 pide que quede constancia de la aceptación.",
+      "donde": "docs/02 §6",
+      "estado": "abierto",
+      "propuesta": "Rellenar la fila. Es el único dato que le falta a esa tabla."
+    },
+    {
+      "id": "H-06",
+      "titulo": "Las cuatro vistas privadas no se han recorrido con sesión iniciada",
+      "severidad": "media",
+      "criterio": null,
+      "origen": "HU-31, HU-32, HU-33 y HU-34: las cuatro lo dejaron anotado",
+      "descripcion": "«MiPerfil», «MiHub», el formulario de publicación y el panel de administración exigen sesión, y el servidor de desarrollo autentica contra el Firebase real. Lo que cambió en esas vistas durante el Sprint 7 se comprobó leyendo el código y, cuando era CSS, en un banco de pruebas con las hojas de estilo reales. El recorrido con cuenta de actor cultural y de administrador sigue sin hacerse.",
+      "donde": "docs/30 §6, docs/31 §6, docs/32 §4 y docs/33 §6",
+      "estado": "abierto",
+      "propuesta": "Recorrerlas con las dos cuentas sobre el sitio publicado, que es donde ya se comprobaron los sprints 4 y 5."
+    }
+  ]
+}
