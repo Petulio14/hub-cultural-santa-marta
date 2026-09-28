@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ImagenDeActor from '../../components/ImagenDeActor.jsx';
 import MapaDeUbicacion from '../../components/MapaDeUbicacion.jsx';
+import { registrarInteraccion } from '../../services/interaccionesService.js';
 import { mensajeDe } from '../../utils/errores.js';
 import ContactoDelActor from './ContactoDelActor.jsx';
 import { useNombresDeCategoria } from '../../hooks/useNombresDeCategoria.js';
@@ -43,6 +44,24 @@ export default function DetalleEvento() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
+  /*
+   * De qué publicaciones ya se anotó la consulta — HU-34 · segundo criterio.
+   *
+   * Hace falta por dos motivos, y el segundo es el que obliga:
+   *
+   * 1. El efecto se vuelve a ejecutar cuando cambia «id», y sin la marca una
+   *    vuelta atrás del navegador contaría otra consulta de algo que ya se
+   *    contó en esta misma visita.
+   * 2. **React monta y desmonta cada efecto dos veces en desarrollo** —es lo que
+   *    hace «StrictMode», y está encendido en «main.jsx»— así que sin esto todo
+   *    número del panel saldría el doble mientras se desarrolla. Un indicador
+   *    que miente solo en desarrollo es peor que uno que miente siempre: nadie
+   *    lo mira dos veces.
+   *
+   * Es un «ref» y no un estado porque cambiarlo no tiene que repintar nada.
+   */
+  const consultasAnotadas = useRef(new Set());
+
   useEffect(() => {
     let vigente = true;
     setCargando(true);
@@ -52,6 +71,22 @@ export default function DetalleEvento() {
       .then((leida) => {
         if (!vigente) return null;
         setPublicacion(leida);
+
+        /*
+         * La consulta se anota **solo si la publicación existe**. Una dirección
+         * mal escrita no es una consulta de nada, y contarla metería en los
+         * indicadores identificadores de evento que no corresponden a ninguno.
+         *
+         * Se dispara y no se espera, igual que el contacto de HU-29 (docs/28 §6):
+         * quien abre una ficha quiere leerla, no esperar a que se anote que la
+         * abrió. La contrapartida está dicha en el panel: el número es una cota
+         * inferior.
+         */
+        if (leida && !consultasAnotadas.current.has(id)) {
+          consultasAnotadas.current.add(id);
+          registrarInteraccion({ idEvento: id, tipo: 'consulta' }).catch(() => {});
+        }
+
         // Sin publicación no hay a quién buscar, y pedir el perfil igualmente
         // sería una lectura pagada para no enseñar nada.
         return leida ? leerActor(leida.idActor) : null;

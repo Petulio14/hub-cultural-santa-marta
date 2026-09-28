@@ -152,6 +152,12 @@ Cuenta los contactos que se pudieron registrar, no todos los que hubo. Un indica
 anuncia como aproximado y lo es vale más que uno exacto que cuesta segundos a cada
 visitante.
 
+> **Dónde se anuncia (27/09/2026).** [HU-34](33-indicadores.md) hereda esta decisión para las
+> consultas, que se anotan igual, y la escribe **en el panel y junto al número**, no en un
+> documento. Un indicador que se interpreta mal hace más daño que no tenerlo: si el
+> administrador retira una categoría porque «casi no se consulta» y el número estaba corto, la
+> decisión fue mala con datos que parecían buenos.
+
 Por eso el `catch` del componente está vacío. No hay nada que la persona pueda hacer con ese
 error, y enseñárselo sería contarle un problema que no es suyo justo cuando está saliendo de
 la página.

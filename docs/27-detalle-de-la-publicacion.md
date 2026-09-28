@@ -173,6 +173,14 @@ existían por separado (§3).
 > visitante no es ninguno de los dos. Quien lo resuelva en HU-34 tendrá que decidir entre
 > abrir esa escritura con mucho cuidado o contar las consultas por otra vía. Queda dicho
 > aquí para que no se descubra entonces.
+>
+> **Cómo se decidió (27/09/2026).** Por la otra vía.
+> [HU-34](33-indicadores.md#1-la-decisión-de-la-historia-de-dónde-salen-las-consultas) cuenta
+> los registros de `interacciones`, que ya aceptaban que cualquiera añadiera uno. Abrir la
+> escritura de `eventos` se podía expresar en una regla y se descartó: el precio de un
+> indicador no puede ser una puerta abierta en la colección donde vive el trabajo de los
+> actores culturales. `contadorConsultas` y su índice se quedan sin uso, anotados en
+> [04 §6 y §10](04-modelo-datos.md).
 
 ## 9. Verificación
 

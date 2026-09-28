@@ -2638,3 +2638,65 @@ describe('el registro de un contacto (HU-29)', () => {
     });
   });
 });
+
+/**
+ * Los indicadores de uso — HU-34 · RF-15, RNF-06.
+ *
+ * HU-29 escribió el tipo «contacto»; esta historia escribe el otro, «consulta»,
+ * cada vez que se abre la ficha de una publicación. La regla ya admitía los dos
+ * desde HU-11, así que **«firestore.rules» no cambia en esta historia**.
+ *
+ * Lo que sí faltaba son dos casos, y el primero es el que sostiene el tercer
+ * criterio de aceptación entero.
+ *
+ * «hasOnly» acota por los dos lados: rechaza las claves que no enumera. Eso es
+ * lo que de verdad garantiza que un registro de interacción **no pueda** llevar
+ * datos del visitante, y no la buena voluntad del cliente: aunque alguien
+ * escribiera a mano una petición con la dirección IP, el navegador o un
+ * identificador de sesión, el servidor la rechaza. Estaba escrito en la regla y
+ * en la cabecera del servicio desde HU-29, y no lo comprobaba ningún caso.
+ */
+describe('los indicadores de uso (HU-34)', () => {
+  const consultaDe = (idInteraccion, cambios = {}) => ({
+    idInteraccion,
+    idEvento: 'evento-aprobado',
+    tipo: 'consulta',
+    fecha: serverTimestamp(),
+    ...cambios,
+  });
+
+  const registrar = (idInteraccion, cambios) =>
+    setDoc(doc(visitante(), 'interacciones', idInteraccion), consultaDe(idInteraccion, cambios));
+
+  describe('el segundo criterio: se anota que se abrió una ficha', () => {
+    it('un visitante sin sesión registra una consulta', async () => {
+      await assertSucceeds(registrar('cons-1'));
+    });
+  });
+
+  describe('el tercer criterio: no hay dónde meter un dato del visitante', () => {
+    it('un campo de más se rechaza, aunque los cuatro obligatorios estén bien', async () => {
+      await assertFails(registrar('cons-2', { ip: '190.85.0.1' }));
+    });
+
+    it('tampoco cabe el navegador', async () => {
+      await assertFails(registrar('cons-3', { navegador: 'Chrome 141 en Android' }));
+    });
+
+    it('ni un identificador de sesión, que es lo que permitiría seguir a alguien', async () => {
+      // Sin «uid» ni nada que haga de él, dos consultas de la misma persona son
+      // indistinguibles de dos consultas de dos personas. Es lo que RNF-06 pide
+      // y lo que hace que el indicador cuente visitas y no visitantes.
+      await assertFails(registrar('cons-4', { idSesion: 'sesion-abc-123' }));
+    });
+
+    it('ni el uid de quien tenga sesión abierta', async () => {
+      await assertFails(
+        setDoc(doc(comoUsuario(UID_ACTOR), 'interacciones', 'cons-5'), {
+          ...consultaDe('cons-5'),
+          uid: UID_ACTOR,
+        })
+      );
+    });
+  });
+});
