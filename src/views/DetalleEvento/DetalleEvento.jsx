@@ -176,7 +176,14 @@ export default function DetalleEvento() {
         {/* Se dice, en lugar de esconder la actividad. Al catálogo no llega lo
             que ya terminó, pero un enlace guardado o compartido sí llega aquí, y
             una ficha que calla la fecha pasada hace perder el viaje. */}
-        {terminada && <span className="detalle__pasada"> · ya terminó</span>}
+        {/* El separador va fuera del «span» porque el «span» lleva fondo propio:
+            dentro, la pildora empezaria por un punto medio suelto. */}
+        {terminada && (
+          <>
+            {' · '}
+            <span className="detalle__pasada">ya terminó</span>
+          </>
+        )}
       </p>
 
       <h2>Sobre la actividad</h2>

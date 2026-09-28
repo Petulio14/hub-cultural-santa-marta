@@ -21,7 +21,7 @@ export default function Fondo() {
   const { pathname } = useLocation();
   const imagen = fondoDeRuta(pathname);
 
-  // Las vistas sin fondo no pintan una capa transparente: no pintan nada.
+  // Solo si lo que llegó no es una ruta. Ninguna vista se queda sin fondo.
   if (imagen === null) return null;
 
   return (

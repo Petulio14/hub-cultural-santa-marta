@@ -25,11 +25,24 @@
   color: var(--terracota);
 }
 
+/*
+ * La caja es la misma que la de «/mi-perfil» y «/mi-hub», con las mismas cinco
+ * declaraciones: este era el unico formulario de la plataforma sin ella. Desde
+ * que todas las vistas tienen imagen de fondo la caja ya no es solo estetica.
+ * El mensaje de error de un campo y el contador excedido son «--terracota», y
+ * terracota sobre el peor pixel de la imagen se queda en 3,43 : 1 cuando WCAG
+ * 1.4.3 pide 4,5. Sobre blanco son 5,43 (docs/10 §2 quinquies).
+ */
 .publicacion__formulario {
   display: flex;
   flex-direction: column;
   gap: 4px;
   max-width: 62ch;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 18px;
 }
 
 .publicacion__fechas {
@@ -321,8 +334,15 @@
 }
 
 /* El formulario de edición vive dentro de la tarjeta, que ya tiene su relleno. */
+/* Editando dentro de una tarjeta el formulario ya esta sobre blanco: repetir la
+   caja seria un borde dentro de otro a cuatro pixeles de distancia. */
 .tarjeta-publicacion__cuerpo .publicacion__formulario {
   margin-top: 4px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 

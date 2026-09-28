@@ -323,6 +323,112 @@ Al reescribir `Fondo.css` con el servidor en marcha, Vite siguió sirviendo la h
 era el CSS, era la caché; se arregla reiniciando `npm run dev`. Se anota porque la primera
 sospecha fue la opacidad, y se habría corregido algo que estaba bien.
 
+> Esta sección describe el fondo de **tres** vistas. El 27/09 pasó a estar en todas: lo que
+> cambia, y los tres defectos de contraste que ese cambio destapó, en §2 quinquies.
+> Lo que no cambia es nada de lo medido aquí: mismas imágenes, mismo 12 %, mismo peor píxel.
+
+## 2 quinquies. El fondo, en todas las vistas (27/09/2026)
+
+El 19/09 tres vistas pasaron a tener imagen de fondo y las demás se quedaron en arena lisa.
+El 27/09 se invierte la regla: **la imagen de inicio es el fondo de la plataforma**, y solo
+`/actores` y `/mapa` la cambian por la suya.
+
+No es un retoque estético, o no solo. La tabla anterior tenía un modo de fallo silencioso:
+una vista nueva llegaba sin fondo y nadie lo notaba, porque una vista en arena lisa **no
+parece un olvido**, parece una decisión. Con un valor por omisión, olvidarse es imposible;
+lo que hay que justificar es la excepción, que es el caso raro. Eso además acerca lo
+implementado a lo que [`docs/05` §4 bis](05-prototipo-interfaz.md) especificaba desde HU-06:
+un fondo común a todas las vistas.
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| Vistas con imagen | 3 de 14 | **14 de 14** |
+| Cómo se decide | tabla de tres entradas | un valor por omisión y dos excepciones |
+| Una vista nueva | sin fondo, sin aviso | con el fondo general |
+
+La ficha de un actor y la de un evento llevan el fondo general y no el del directorio del
+que vienen. La coincidencia de las excepciones sigue siendo exacta y no por prefijo: con
+prefijo, `/actores/abc` se llevaría detrás la imagen de *varios* actores puesta bajo la
+portada de uno.
+
+### Lo que el cambio destapó
+
+Poner imagen donde había arena lisa cambia el peor fondo posible de todo lo que no está
+dentro de una caja: de `#F7F3EC` al peor píxel de las imágenes, `#D5CCC3`. Recorriendo las
+vistas públicas en el navegador y midiendo el color efectivo de cada texto —no leyendo la
+hoja de estilos, sino preguntándole al navegador qué hay detrás de cada elemento— salieron
+**tres defectos**, y los tres existían ya; lo que hizo el fondo fue ponerlos donde se ven.
+
+| | Dónde | Antes | Ahora | Umbral |
+| --- | --- | --- | --- | --- |
+| `--terracota` | «· ya terminó» en la ficha de un evento | 4,91 sobre arena | **3,43** sobre la imagen | 4,5 (1.4.3) |
+| `--terracota` | errores del formulario de publicación | 4,91 sobre arena | **3,43** sobre la imagen | 4,5 (1.4.3) |
+| `--gris-control` | borde de «Limpiar los filtros» | 3,23 sobre arena | **2,25** sobre la imagen | 3,0 (1.4.11) |
+
+Se corrigen de dos maneras distintas, y la diferencia importa:
+
+**Al terracota se le da una caja.** No se puede aclarar la imagen —el 12 % ya está medido al
+límite del enlace— ni oscurecer el terracota sin sacarlo de la paleta. Así que lo que lo
+lleva se mete en algo opaco, que es donde estaba medido:
+
+- El formulario de publicación recibe **la misma caja blanca** que `/mi-perfil` y `/mi-hub`,
+  con las mismas cinco declaraciones. Era el único formulario de la plataforma sin ella:
+  el fondo no creó la inconsistencia, la hizo visible. Terracota sobre blanco son 5,43 : 1.
+- El «ya terminó» de una ficha pasa a ser una píldora sobre arena, la misma forma que la
+  etiqueta de categoría que ya está encima. Terracota sobre arena son 4,91 : 1.
+
+**Al gris de los controles se le cambia el número**, de `#8E8778` a `#6F695E`. Aquí la caja
+no sirve: un botón secundario puede aparecer en cualquier sitio, y el siguiente que se
+escriba volvería a caer fuera. El valor nuevo da 5,44 sobre blanco, 4,92 sobre arena y
+**3,44 sobre la imagen**, con margen y no al filo.
+
+Lo que hace a este caso digno de contarse es que el comentario del propio color, escrito en
+HU-32 ocho días antes, decía: *«Se eligió con margen y no justo en el 3,0 […]: un valor al
+filo se cae en cuanto algo cambia debajo»*. Cambió algo debajo y se cayó igual, porque el
+margen se había medido contra los fondos de entonces. **El margen se mide contra lo que
+puede llegar a haber debajo, no contra lo que hay hoy** ([`docs/31` §1](31-accesibilidad.md)).
+
+### La comprobación que faltaba
+
+`medir-fondos.py` medía **texto** sobre la imagen, y bastaba mientras los controles cayeran
+sobre arena. Ahora mide dos listas: texto a 4,5 : 1 (WCAG 1.4.3) y lo que identifica un
+control a 3 : 1 (WCAG 1.4.11), y **sale con código 1** cuando algo no llega.
+
+```
+python herramientas/medir-fondos.py
+```
+
+Se comprobó que falla antes de darla por buena, como pide `CLAUDE.md`, por los dos caminos
+que tiene de fallar:
+
+| Qué se hizo | Qué dijo | Código |
+| --- | --- | --- |
+| Nada: la paleta como está | todo llega a su mínimo | 0 |
+| Devolver `--gris-control` a `#8E8778` | `--gris-control 2,25 : 1 NO LLEGA` | **1** |
+| Renombrar `--gris-control` en la paleta | `NO ESTÁ EN LA PALETA` | **1** |
+
+El tercero es el que de verdad importa: un color que se renombre desaparecería de la
+medición sin que nada lo dijera, y el informe seguiría diciendo que todo pasa. Una
+herramienta que mide una lista de nombres tiene que quejarse cuando un nombre no aparece,
+porque si no, borrar la lista es la forma más rápida de aprobar.
+
+### Por qué `--terracota` no se añade a la lista
+
+La herramienta mide los colores que caen sobre la imagen, y terracota ya no cae: lleva caja.
+Añadirlo la haría fallar para siempre por un caso que no existe. Queda dicho en su
+cabecera, que es donde se mira: si algún día un texto en terracota queda sobre el fondo,
+**no se añade ahí, se le pone una caja**.
+
+### Lo que no se pudo recorrer
+
+Las cuatro vistas privadas —`/admin`, `/mi-perfil`, `/mi-hub`, `/mis-publicaciones`— no se
+recorrieron con sesión iniciada, por lo mismo de siempre (hallazgo H-06). Su revisión fue
+sobre la hoja de estilos: se localizó cada declaración de color y se siguió su elemento
+hasta el primer antepasado con fondo opaco. Las tres de `--ocre` y `--terracota` del panel
+de administración están dentro de `.tarjeta` o de `.panel__aviso`, que son blancas; el
+formulario de publicación era la excepción y por eso se le dio la caja. Es una comprobación
+más débil que la del navegador y se anota como tal.
+
 ## 3. Verificación en los tres anchos
 
 Recorriendo las nueve direcciones públicas del enrutador en cada ancho:
@@ -387,6 +493,45 @@ Hay que ejecutarla en cada ancho, con el navegador redimensionado a 360, 768 y 1
 repetirá en **HU-33**, cuando las vistas tengan contenido real: un texto largo o una imagen
 sin límite de ancho son las causas habituales de que aparezca un desbordamiento donde antes
 no lo había.
+
+### Qué hay detrás de cada texto (27/09/2026)
+
+La segunda medición es la de §2 quinquies y responde a otra pregunta: **qué elementos no
+están dentro de ninguna caja**, y por tanto caen sobre la imagen de fondo. No se contesta
+leyendo la hoja de estilos —un elemento hereda su fondo de un antepasado cualquiera, no del
+selector que tiene al lado—, sino preguntando al navegador:
+
+```js
+const opaco = (c) => c && c !== 'transparent' && !/rgba\(\s*0,\s*0,\s*0,\s*0\s*\)/.test(c);
+const encima = new Map();
+
+for (const el of document.querySelectorAll('body *')) {
+  if (el.closest('.fondo')) continue;
+  // Solo los elementos con texto propio: si no, cuenta el párrafo y también su <strong>.
+  if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+
+  const estilo = getComputedStyle(el);
+  if (estilo.visibility === 'hidden' || estilo.display === 'none') continue;
+
+  let a = el, caja = null;
+  while (a && a !== document.documentElement) {
+    const s = getComputedStyle(a);
+    if (opaco(s.backgroundColor) || s.backgroundImage !== 'none') { caja = a; break; }
+    a = a.parentElement;
+  }
+  // Si la primera caja opaca es el propio body, el texto está sobre la imagen.
+  if (caja && caja !== document.body) continue;
+
+  encima.set(estilo.color, el.textContent.trim().slice(0, 45));
+}
+
+console.log([...encima]);
+```
+
+Cambiando el selector por `'.boton--secundario, .campo__control'` responde lo mismo para los
+controles, que es como apareció el botón «Limpiar los filtros». Hay que ejecutarla **en cada
+estado**, no solo al cargar: el botón que la destapó no existe hasta que hay un filtro
+puesto, y los mensajes de error no existen hasta que algo falla.
 
 ## 5. Lo que aún no se puede verificar
 

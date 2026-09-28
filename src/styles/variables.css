@@ -25,15 +25,20 @@
    * borde de un campo de texto sí es lo que dice dónde empieza el campo, y el
    * relleno no ayuda: blanco sobre arena son 1,11 : 1.
    *
-   * Este es el mismo gris cálido, oscurecido hasta 3,57 : 1 sobre blanco y
-   * 3,23 : 1 sobre arena. Se eligió con margen y no justo en el 3,0 por lo que
-   * enseñó «--terracota» sobre las imágenes de fondo (docs/10 §2 quater): un
-   * valor al filo se cae en cuanto algo cambia debajo.
+   * Este es el mismo gris cálido, oscurecido hasta 5,44 : 1 sobre blanco,
+   * 4,92 : 1 sobre arena y 3,44 : 1 sobre el peor píxel de las imágenes de
+   * fondo. Ese tercer número es de ahora: el valor anterior, #8e8778, se eligió
+   * con margen sobre blanco y sobre arena, y aun así se caía a 2,25 en cuanto
+   * debajo había una imagen en lugar de arena lisa. Es exactamente lo que su
+   * propio comentario advertiía que pasaría, y lo que pasó al poner fondo en
+   * todas las vistas: el botón «Limpiar los filtros» del catálogo no está
+   * dentro de ninguna caja (docs/10 §2 quinquies).
    *
    * Solo lo usan el campo de formulario y el botón secundario; todo lo demás
-   * sigue con «--gris-borde». Medido en «herramientas/medir-contraste.py».
+   * sigue con «--gris-borde». Medido en «herramientas/medir-contraste.py»
+   * contra blanco y arena, y en «herramientas/medir-fondos.py» contra la imagen.
    */
-  --gris-control: #8e8778;
+  --gris-control: #6f695e;
 
   /* Realces sobre la barra azul: no son colores nuevos, son el blanco atenuado */
   --realce-suave: rgba(255, 255, 255, 0.12);

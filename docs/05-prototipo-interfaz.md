@@ -98,7 +98,7 @@ que de verdad se pintan juntos, y sale con código 1 si alguno baja de su mínim
 | `arena` | `#F7F3EC` | Fondo de página. | — | — |
 | `blanco` | `#FFFFFF` | Fondo de tarjetas y formularios. | — | — |
 | `gris-borde` | `#D5CFC4` | **Solo decoración**: bordes de tarjeta, de tabla y separadores. Ver la nota de abajo. | 1,55 : 1 | 1,40 : 1 |
-| `gris-control` | `#8E8778` | Borde de lo que se puede tocar: campos de formulario y botones secundarios (umbral 3 : 1). | **3,57 : 1** ✅ | **3,23 : 1** ✅ |
+| `gris-control` | `#6F695E` | Borde de lo que se puede tocar: campos de formulario y botones secundarios (umbral 3 : 1). | **5,44 : 1** ✅ | **4,92 : 1** ✅ |
 
 > El color nunca es el único portador de información: cada estado de publicación lleva
 > además una etiqueta de texto (`Pendiente`, `Aprobado`, `Devuelto`).
@@ -182,12 +182,18 @@ Lo de arriba describe **un** fondo, vectorial, igual en las nueve vistas y al 8 
 se implementó es otra cosa y conviene que quede dicho, porque es una decisión distinta y
 no el cumplimiento de la de arriba:
 
-| | Lo especificado | Lo implementado |
-| --- | --- | --- |
-| Cuántos | uno, común a todas las vistas | **tres**, uno por vista |
-| Dónde | las nueve vistas | `/`, `/actores` y `/mapa`; las demás siguen en arena lisa |
-| Qué es | silueta vectorial de la Sierra sobre el Caribe | **ilustración figurativa**, nítida |
-| Cuánto se ve | 8 % de opacidad | 12 %, fundida con el color de arena |
+| | Lo especificado | Lo implementado el 19/09 | Lo implementado el 27/09 |
+| --- | --- | --- | --- |
+| Cuántos | uno, común a todas las vistas | **tres**, uno por vista | **uno común y dos excepciones** |
+| Dónde | las nueve vistas | `/`, `/actores` y `/mapa`; las demás en arena lisa | **todas**; `/actores` y `/mapa` con el suyo |
+| Qué es | silueta vectorial de la Sierra sobre el Caribe | **ilustración figurativa**, nítida | igual |
+| Cuánto se ve | 8 % de opacidad | 12 %, fundida con el color de arena | igual |
+
+La tercera columna es del 27/09 y acerca lo implementado a lo especificado en lo único
+donde de verdad discrepaban: **ninguna vista se queda sin fondo**. Lo que sigue siendo
+distinto es que hay dos imágenes más, y eso no es un resto: `/actores` y `/mapa` tratan de
+algo que su imagen retrata. El detalle, y los dos defectos de contraste que el cambio
+destapó, en [`docs/10` §2 quinquies](10-responsive.md).
 
 Lo que **no** cambia es lo único que la sección 3 y WCAG exigen: el fondo sigue siendo
 decorativo, sigue sin llevar texto alternativo y el contraste del texto que cae encima está
