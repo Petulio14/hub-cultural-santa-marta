@@ -72,6 +72,22 @@
       "donde": "docs/30 §6, docs/31 §6, docs/32 §4 y docs/33 §6",
       "estado": "abierto",
       "propuesta": "Recorrerlas con las dos cuentas sobre el sitio publicado, que es donde ya se comprobaron los sprints 4 y 5."
+    },
+    {
+      "id": "H-07",
+      "titulo": "Las ocho sesiones de usabilidad no se han ejecutado",
+      "severidad": "alta",
+      "criterio": [
+        "HU-36.1",
+        "HU-36.2",
+        "HU-36.3",
+        "HU-36.4"
+      ],
+      "origen": "HU-36, que entrega el instrumento y no la medida",
+      "descripcion": "El consentimiento, el guion de seis tareas, el cuestionario SUS y el guion que lo procesa están escritos y probados. Lo que no existe es una sola sesión con una persona real: «sesiones.json» está vacío. Los cuatro criterios de HU-36 dependen de eso y ninguno se puede evaluar sin ello. Inventar ocho cuestionarios para que el promedio saliera por encima de 68 falsificaría el único dato del trabajo que mide si la plataforma sirve para alguien que no la construyó.",
+      "donde": "docs/35 §1 y §7",
+      "estado": "abierto",
+      "propuesta": "Citar a ocho participantes que no hayan construido la plataforma —cuatro visitantes, tres actores culturales y un administrador—, al menos la mitad en teléfono, y volcar cada sesión a «pruebas/usabilidad/sesiones.json»."
     }
   ]
 }

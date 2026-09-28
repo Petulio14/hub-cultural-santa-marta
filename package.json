@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "verificar": "node herramientas/verificar-capas.js",
     "verificar:casos": "node herramientas/verificar-casos.js",
+    "usabilidad": "node herramientas/calcular-sus.js",
     "probar": "node --test \"pruebas/unidad/**/*.test.js\"",
     "probar:reglas": "firebase emulators:exec --only firestore \"node --test pruebas/reglas/**/*.test.js\""
   },

@@ -162,7 +162,12 @@ for (const h of abiertos) {
   console.log(`    ${h.id} [${h.severidad}] ${h.titulo}`);
 }
 
-const conHallazgo = new Set(registro.hallazgos.map((h) => h.criterio).filter(Boolean));
+// Un hallazgo puede cubrir varios criterios: «las sesiones de usabilidad no se
+// han ejecutado» es uno solo y deja sin evaluar los cuatro de HU-36. Partirlo en
+// cuatro entradas iguales sería ruido, no precisión.
+const conHallazgo = new Set(
+  registro.hallazgos.flatMap((h) => (Array.isArray(h.criterio) ? h.criterio : [h.criterio])).filter(Boolean)
+);
 for (const h of hallazgos) {
   if (!conHallazgo.has(h.clave)) {
     fallos.push(`${h.clave} no supera su caso y no tiene hallazgo registrado`);

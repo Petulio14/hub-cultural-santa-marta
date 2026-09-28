@@ -92,6 +92,12 @@ haga falta.
 
 **29 historias «Debe» construidas. 27 superan todos sus casos. 93,1 %.**
 
+> **Actualizado el 28/09/2026.** [HU-36](35-usabilidad.md) entregó el instrumento de las
+> pruebas de usabilidad y no la medida, así que sus cuatro criterios entraron en la matriz
+> como «pendiente»; y esta misma historia entró con los suyos, que sí pasan. La cifra viva es
+> **90,3 % sobre 31 construidas**, tres décimas por encima del umbral. Los números de esta
+> sección son los del día en que se midieron, y el guion siempre dice los de hoy.
+
 El denominador merece explicarse, porque es donde se puede hacer trampa sin querer. Hay **35**
 historias «Debe» en el backlog; seis no se han construido. Medir sobre 35 daría 27/35 = 77,1 %
 y estaría contando como fallado lo que todavía no existe. Medir sobre las 29 construidas es lo

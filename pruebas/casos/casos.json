@@ -725,6 +725,54 @@
       "tipo": "reglas",
       "evidencia": "pruebas/reglas: «los indicadores de uso (HU-34)»: un campo de más se rechaza",
       "resultado": "pasa"
+    },
+    "HU-36.1": {
+      "caso": "CP-36.1",
+      "tipo": "documental",
+      "evidencia": "pruebas/usabilidad/consentimiento.md: el instrumento está escrito; no hay ninguna sesión que lo haya usado",
+      "resultado": "pendiente"
+    },
+    "HU-36.2": {
+      "caso": "CP-36.2",
+      "tipo": "documental",
+      "evidencia": "pruebas/usabilidad/guion.md y sesiones.json: las seis tareas están definidas; «sesiones» está vacío",
+      "resultado": "pendiente"
+    },
+    "HU-36.3": {
+      "caso": "CP-36.3",
+      "tipo": "herramienta",
+      "evidencia": "node herramientas/calcular-sus.js: 0 participantes de los 8 que pide el criterio",
+      "resultado": "pendiente"
+    },
+    "HU-36.4": {
+      "caso": "CP-36.4",
+      "tipo": "herramienta",
+      "evidencia": "node herramientas/calcular-sus.js: no hay puntaje que juzgar",
+      "resultado": "pendiente"
+    },
+    "HU-35.1": {
+      "caso": "CP-35.1",
+      "tipo": "herramienta",
+      "evidencia": "npm run verificar:casos: los criterios de las historias construidas tienen caso; el guion señala el que falte",
+      "resultado": "pasa"
+    },
+    "HU-35.2": {
+      "caso": "CP-35.2",
+      "tipo": "herramienta",
+      "evidencia": "npm run verificar:casos: la cobertura de las «Debe» construidas, con el umbral comprobado por los dos lados",
+      "resultado": "pasa"
+    },
+    "HU-35.3": {
+      "caso": "CP-35.3",
+      "tipo": "herramienta",
+      "evidencia": "npm run verificar:casos: los criterios verificados por la suite de reglas, al 100 %",
+      "resultado": "pasa"
+    },
+    "HU-35.4": {
+      "caso": "CP-35.4",
+      "tipo": "herramienta",
+      "evidencia": "npm run verificar:casos: el guion falla si un caso sin superar no tiene hallazgo en pruebas/casos/hallazgos.json",
+      "resultado": "pasa"
     }
   }
 }
