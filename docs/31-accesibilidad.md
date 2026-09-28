@@ -146,7 +146,7 @@ pide 3 : 1. Para quien tiene poca visión, el formulario era una página con eti
 La corrección es un color nuevo en la paleta, el mismo gris cálido oscurecido:
 
 ```css
---gris-control: #8e8778;   /* 3,57 : 1 sobre blanco · 3,23 : 1 sobre arena */
+--gris-control: #6f695e;   /* 5,44 sobre blanco · 4,92 sobre arena · 3,44 sobre la imagen */
 ```
 
 **Solo lo usan el campo y el botón secundario.** El resto de los bordes —tarjetas, tablas,
@@ -157,6 +157,21 @@ para que la decisión se vea y no parezca que se olvidaron.
 
 Se eligió con margen y no justo en el 3,0 por lo que enseñó `--terracota` sobre las imágenes
 de fondo (docs/10 §2 quater): un valor al filo se cae en cuanto algo cambia debajo.
+
+### El margen no era bastante (27/09/2026)
+
+El valor de HU-32 era `#8E8778`, con 3,57 : 1 sobre blanco y 3,23 : 1 sobre arena. Ocho días
+después cambió algo debajo: el fondo dejó de ser arena lisa en las vistas que no lo tenían
+([`docs/10` §2 quinquies](10-responsive.md)). Sobre el peor píxel de las imágenes ese gris
+se queda en **2,25 : 1**, y el botón «Limpiar los filtros» del catálogo no está dentro de
+ninguna caja.
+
+Es literalmente lo que el párrafo de arriba advertía, contado por el propio caso que lo
+inspiró. La lección que queda escrita no es «elegir con más margen», que es un consejo sin
+número: es que **el margen se mide contra lo que puede llegar a haber debajo, no contra lo
+que hay hoy**. Por eso la medición contra la imagen ya no es un cálculo a mano en un
+documento, sino la segunda lista de
+[`herramientas/medir-fondos.py`](../herramientas/medir-fondos.py), que sale con código 1.
 
 ### Los veintiún pares
 

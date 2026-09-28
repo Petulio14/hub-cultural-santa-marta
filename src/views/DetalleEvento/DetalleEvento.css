@@ -55,7 +55,14 @@
   color: var(--negro-texto);
 }
 
+/* Es el unico texto en terracota de la plataforma que no cae dentro de una caja,
+   asi que lleva la suya. Sobre el peor pixel de la imagen de fondo el terracota
+   se queda en 3,43 : 1; sobre arena son 4,91 (docs/10 §2 quinquies). La pildora
+   es la misma forma que «.detalle__categoria», que ya esta ahi arriba. */
 .detalle__pasada {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--arena);
   font-weight: 400;
   color: var(--terracota);
 }
