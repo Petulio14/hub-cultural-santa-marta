@@ -1,0 +1,730 @@
+{
+  "generado": "2026-09-27",
+  "leeme": "Un caso por criterio de aceptacion. La clave apunta a pruebas/casos/criterios.json.",
+  "tipos": {
+    "unidad": "npm run probar - funciones puras, sin emulador ni navegador",
+    "reglas": "npm run probar:reglas - contra el emulador de Firestore, en integracion continua",
+    "estructura": "npm run verificar - reglas estructurales del repositorio",
+    "herramienta": "un guion de herramientas/ que mide y sale con codigo 1 si no llega",
+    "navegador": "recorrido manual en el navegador, con la medida anotada en su documento",
+    "produccion": "comprobado sobre el sitio publicado, con cuentas reales",
+    "documental": "la evidencia es un documento: el criterio pide que exista y diga algo",
+    "asesor": "depende de una aprobacion externa al repositorio"
+  },
+  "casos": {
+    "HU-01.1": {
+      "caso": "CP-01.1",
+      "tipo": "documental",
+      "evidencia": "docs/01 §1 y §2: cada limitación asociada a su necesidad y a su requisito",
+      "resultado": "pasa"
+    },
+    "HU-01.2": {
+      "caso": "CP-01.2",
+      "tipo": "documental",
+      "evidencia": "docs/01 §3: 15 RF con código, redacción verificable y prioridad MoSCoW",
+      "resultado": "pasa"
+    },
+    "HU-01.3": {
+      "caso": "CP-01.3",
+      "tipo": "documental",
+      "evidencia": "docs/01 §4: 10 RNF, cada uno con su criterio de verificación medible",
+      "resultado": "pasa"
+    },
+    "HU-01.4": {
+      "caso": "CP-01.4",
+      "tipo": "asesor",
+      "evidencia": "docs/01: la validación registrada es del otro integrante y dice que se cumplen «los primeros tres criterios»",
+      "resultado": "pendiente"
+    },
+    "HU-02.1": {
+      "caso": "CP-02.1",
+      "tipo": "documental",
+      "evidencia": "los 40 issues del repositorio: formato «como / necesito / para» con criterios de aceptación",
+      "resultado": "pasa"
+    },
+    "HU-02.2": {
+      "caso": "CP-02.2",
+      "tipo": "documental",
+      "evidencia": "los 40 issues llevan etiqueta «puntos:n» de la escala Fibonacci adoptada",
+      "resultado": "pasa"
+    },
+    "HU-02.3": {
+      "caso": "CP-02.3",
+      "tipo": "documental",
+      "evidencia": "backlog/ y las etiquetas «prioridad:debe»: cubren publicar, moderar, descubrir y contactar",
+      "resultado": "pasa"
+    },
+    "HU-02.4": {
+      "caso": "CP-02.4",
+      "tipo": "documental",
+      "evidencia": "tablero de GitHub Projects con las 40 historias y los 8 hitos",
+      "resultado": "pasa"
+    },
+    "HU-03.1": {
+      "caso": "CP-03.1",
+      "tipo": "documental",
+      "evidencia": "docs/02 §3: exclusiones, cada una con su justificación",
+      "resultado": "pasa"
+    },
+    "HU-03.2": {
+      "caso": "CP-03.2",
+      "tipo": "documental",
+      "evidencia": "docs/02 §5: registro de trabajo futuro",
+      "resultado": "pasa"
+    },
+    "HU-03.3": {
+      "caso": "CP-03.3",
+      "tipo": "asesor",
+      "evidencia": "docs/02 §6: la fila «Revisado con el asesor» dice «pendiente de registrar fecha y observaciones»",
+      "resultado": "pendiente"
+    },
+    "HU-04.1": {
+      "caso": "CP-04.1",
+      "tipo": "documental",
+      "evidencia": "docs/03 §1: diagrama de las cuatro capas y sus relaciones",
+      "resultado": "pasa"
+    },
+    "HU-04.2": {
+      "caso": "CP-04.2",
+      "tipo": "estructura",
+      "evidencia": "npm run verificar, regla 1: ningún archivo fuera de src/services/ importa el SDK de Firebase",
+      "resultado": "pasa"
+    },
+    "HU-04.3": {
+      "caso": "CP-04.3",
+      "tipo": "documental",
+      "evidencia": "docs/03 §2: qué tecnología resuelve cada capa",
+      "resultado": "pasa"
+    },
+    "HU-05.1": {
+      "caso": "CP-05.1",
+      "tipo": "documental",
+      "evidencia": "docs/04 §3 a §9: las 7 colecciones con sus campos y tipos",
+      "resultado": "pasa"
+    },
+    "HU-05.2": {
+      "caso": "CP-05.2",
+      "tipo": "documental",
+      "evidencia": "docs/04 §2: las relaciones se resuelven por identificador de referencia",
+      "resultado": "pasa"
+    },
+    "HU-05.3": {
+      "caso": "CP-05.3",
+      "tipo": "documental",
+      "evidencia": "docs/04 §3 a §9: columna «Obligatorio» en cada colección",
+      "resultado": "pasa"
+    },
+    "HU-05.4": {
+      "caso": "CP-05.4",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «los filtros del catálogo (HU-26)»",
+      "resultado": "pasa"
+    },
+    "HU-06.1": {
+      "caso": "CP-06.1",
+      "tipo": "documental",
+      "evidencia": "docs/05 §2: inventario de las 9 vistas",
+      "resultado": "pasa"
+    },
+    "HU-06.2": {
+      "caso": "CP-06.2",
+      "tipo": "documental",
+      "evidencia": "prototipo publicado en Figma: 27 pantallas y 151 enlaces (docs/07)",
+      "resultado": "pasa"
+    },
+    "HU-06.3": {
+      "caso": "CP-06.3",
+      "tipo": "herramienta",
+      "evidencia": "python herramientas/medir-contraste.py: 21 pares, ninguno por debajo de su mínimo",
+      "resultado": "pasa"
+    },
+    "HU-06.4": {
+      "caso": "CP-06.4",
+      "tipo": "asesor",
+      "evidencia": "docs/README §Sprint 2: prototipo publicado en Figma y aprobado por el asesor",
+      "resultado": "pasa"
+    },
+    "HU-07.1": {
+      "caso": "CP-07.1",
+      "tipo": "navegador",
+      "evidencia": "docs/08 §1 y la revisión de docs/32 §4: las 7 vistas sin errores en consola",
+      "resultado": "pasa"
+    },
+    "HU-07.2": {
+      "caso": "CP-07.2",
+      "tipo": "estructura",
+      "evidencia": "docs/08 §2 y npm run verificar: components, views, services y utils separados",
+      "resultado": "pasa"
+    },
+    "HU-07.3": {
+      "caso": "CP-07.3",
+      "tipo": "navegador",
+      "evidencia": "docs/08 §4: una ruta inexistente lleva a la página de error controlada",
+      "resultado": "pasa"
+    },
+    "HU-08.1": {
+      "caso": "CP-08.1",
+      "tipo": "produccion",
+      "evidencia": "docs/12 §4: cada integración en master se publica sola en Vercel",
+      "resultado": "pasa"
+    },
+    "HU-08.2": {
+      "caso": "CP-08.2",
+      "tipo": "produccion",
+      "evidencia": "docs/12 §1: hub-cultural-santa-marta.vercel.app, accesible",
+      "resultado": "pasa"
+    },
+    "HU-08.3": {
+      "caso": "CP-08.3",
+      "tipo": "produccion",
+      "evidencia": "rama master protegida: exige pull request con una aprobación",
+      "resultado": "pasa"
+    },
+    "HU-09.1": {
+      "caso": "CP-09.1",
+      "tipo": "navegador",
+      "evidencia": "docs/09 §2: la página de inicio presenta el propósito y los cuatro accesos",
+      "resultado": "pasa"
+    },
+    "HU-09.2": {
+      "caso": "CP-09.2",
+      "tipo": "navegador",
+      "evidencia": "docs/09 §4: cambio de vista sin recarga, medido",
+      "resultado": "pasa"
+    },
+    "HU-09.3": {
+      "caso": "CP-09.3",
+      "tipo": "navegador",
+      "evidencia": "docs/09 §3: el nombre del sitio en la cabecera y el enlace del pie",
+      "resultado": "pasa"
+    },
+    "HU-10.1": {
+      "caso": "CP-10.1",
+      "tipo": "navegador",
+      "evidencia": "docs/32 §1: las 7 vistas a 360 px, scrollWidth igual a clientWidth",
+      "resultado": "pasa"
+    },
+    "HU-10.2": {
+      "caso": "CP-10.2",
+      "tipo": "navegador",
+      "evidencia": "docs/10 §2: el menú compacto entra en el punto exacto de 768 px",
+      "resultado": "pasa"
+    },
+    "HU-10.3": {
+      "caso": "CP-10.3",
+      "tipo": "navegador",
+      "evidencia": "docs/32 §3: 8 elementos bajo 44 px; 6 exentos por WCAG y 2 corregidos",
+      "resultado": "pasa"
+    },
+    "HU-11.1": {
+      "caso": "CP-11.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «escritura sin sesión»",
+      "resultado": "pasa"
+    },
+    "HU-11.2": {
+      "caso": "CP-11.2",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «propiedad del documento»",
+      "resultado": "pasa"
+    },
+    "HU-11.3": {
+      "caso": "CP-11.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «eventos · lectura pública»",
+      "resultado": "pasa"
+    },
+    "HU-12.1": {
+      "caso": "CP-12.1",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5: registro comprobado en el sitio publicado con cuenta real",
+      "resultado": "pasa"
+    },
+    "HU-12.2": {
+      "caso": "CP-12.2",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §3 y §5: correo ya registrado, mensaje propio y sin cuenta duplicada",
+      "resultado": "pasa"
+    },
+    "HU-12.3": {
+      "caso": "CP-12.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «registro · campos obligatorios (HU-12, tercer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-12.4": {
+      "caso": "CP-12.4",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5: tras registrarse, sesión iniciada y redirección al perfil",
+      "resultado": "pasa"
+    },
+    "HU-13.1": {
+      "caso": "CP-13.1",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5: cada rol entra a su vista, comprobado con cuentas reales",
+      "resultado": "pasa"
+    },
+    "HU-13.2": {
+      "caso": "CP-13.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «ingreso · qué se valida al entrar (HU-13)», y docs/13 §3",
+      "resultado": "pasa"
+    },
+    "HU-13.3": {
+      "caso": "CP-13.3",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5: al cerrar sesión se pierde el acceso a las vistas privadas",
+      "resultado": "pasa"
+    },
+    "HU-13.4": {
+      "caso": "CP-13.4",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5: la sesión sobrevive a la recarga",
+      "resultado": "pasa"
+    },
+    "HU-14.1": {
+      "caso": "CP-14.1",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5 bis y §5 ter: correo de restablecimiento recibido, con dos hallazgos anotados",
+      "resultado": "pasa"
+    },
+    "HU-14.2": {
+      "caso": "CP-14.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «recuperación de contraseña (HU-14)»; el mensaje no distingue",
+      "resultado": "pasa"
+    },
+    "HU-14.3": {
+      "caso": "CP-14.3",
+      "tipo": "produccion",
+      "evidencia": "docs/13 §5 bis: contraseña nueva definida y sesión iniciada con ella",
+      "resultado": "pasa"
+    },
+    "HU-15.1": {
+      "caso": "CP-15.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «roles y permisos (HU-15)»",
+      "resultado": "pasa"
+    },
+    "HU-15.2": {
+      "caso": "CP-15.2",
+      "tipo": "produccion",
+      "evidencia": "docs/15 §6: el administrador entra al panel, comprobado en el sitio publicado",
+      "resultado": "pasa"
+    },
+    "HU-15.3": {
+      "caso": "CP-15.3",
+      "tipo": "navegador",
+      "evidencia": "docs/15 §1 y docs/32 §1: las 7 vistas públicas se recorren sin cuenta",
+      "resultado": "pasa"
+    },
+    "HU-15.4": {
+      "caso": "CP-15.4",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «roles y permisos (HU-15)» y «propiedad del documento»",
+      "resultado": "pasa"
+    },
+    "HU-16.1": {
+      "caso": "CP-16.1",
+      "tipo": "navegador",
+      "evidencia": "docs/14 §6: el enlace a la política está en el formulario de registro",
+      "resultado": "pasa"
+    },
+    "HU-16.2": {
+      "caso": "CP-16.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «consentimiento · sin aceptación no hay registro (HU-16, segundo criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-16.3": {
+      "caso": "CP-16.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «usuarios · alta de la cuenta (HU-12, HU-16)»",
+      "resultado": "pasa"
+    },
+    "HU-16.4": {
+      "caso": "CP-16.4",
+      "tipo": "documental",
+      "evidencia": "docs/14 §5: canal de supresión documentado en la política publicada",
+      "resultado": "pasa"
+    },
+    "HU-17.1": {
+      "caso": "CP-17.1",
+      "tipo": "produccion",
+      "evidencia": "docs/16 §5: una categoría nueva queda disponible sin volver a desplegar",
+      "resultado": "pasa"
+    },
+    "HU-17.2": {
+      "caso": "CP-17.2",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «categorías · el catálogo no se borra (HU-17)»",
+      "resultado": "pasa"
+    },
+    "HU-17.3": {
+      "caso": "CP-17.3",
+      "tipo": "produccion",
+      "evidencia": "docs/16 §3 y §5: el listado enseña el recuento, contado en el servidor",
+      "resultado": "pasa"
+    },
+    "HU-18.1": {
+      "caso": "CP-18.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «perfil de actor · formulario completo (HU-18, primer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-18.2": {
+      "caso": "CP-18.2",
+      "tipo": "produccion",
+      "evidencia": "docs/17 §5: editar no devuelve el perfil a la cola, comprobado en el sitio publicado",
+      "resultado": "pasa"
+    },
+    "HU-18.3": {
+      "caso": "CP-18.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «perfil de actor · límite de la descripción (HU-18, tercer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-18.4": {
+      "caso": "CP-18.4",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «perfil de actor cultural (HU-18)»",
+      "resultado": "pasa"
+    },
+    "HU-18.5": {
+      "caso": "CP-18.5",
+      "tipo": "produccion",
+      "evidencia": "docs/17 §7: el perfil aprobado figura en /actores y se abre",
+      "resultado": "pasa"
+    },
+    "HU-19.1": {
+      "caso": "CP-19.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «archivo elegido · formato y peso (HU-19, primer y segundo criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-19.2": {
+      "caso": "CP-19.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «archivo elegido · formato y peso (HU-19, primer y segundo criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-19.3": {
+      "caso": "CP-19.3",
+      "tipo": "navegador",
+      "evidencia": "docs/18 §6: sin imagen se dibuja la predeterminada, que es código y no un archivo",
+      "resultado": "pasa"
+    },
+    "HU-20.1": {
+      "caso": "CP-20.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «hub de innovación · formulario completo (HU-20, primer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-20.2": {
+      "caso": "CP-20.2",
+      "tipo": "produccion",
+      "evidencia": "docs/19 §7: el directorio lista los hubs aprobados",
+      "resultado": "pasa"
+    },
+    "HU-20.3": {
+      "caso": "CP-20.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «hub · el punto en el mapa (HU-20, tercer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-21.1": {
+      "caso": "CP-21.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «publicación · el formulario completo (HU-21, primer criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-21.2": {
+      "caso": "CP-21.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «publicación · las dos fechas (HU-21, segundo criterio)»",
+      "resultado": "pasa"
+    },
+    "HU-21.3": {
+      "caso": "CP-21.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «eventos · lectura pública» y «publicación de un evento (HU-21)»",
+      "resultado": "pasa"
+    },
+    "HU-21.4": {
+      "caso": "CP-21.4",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «publicación de un evento (HU-21)»: idActor y fechaCreacion del servidor",
+      "resultado": "pasa"
+    },
+    "HU-22.1": {
+      "caso": "CP-22.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «el punto de una publicación (HU-22)»",
+      "resultado": "pasa"
+    },
+    "HU-22.2": {
+      "caso": "CP-22.2",
+      "tipo": "navegador",
+      "evidencia": "docs/21 §4: el primer envío no guarda, enseña el aviso y pide una segunda pulsación",
+      "resultado": "pasa"
+    },
+    "HU-22.3": {
+      "caso": "CP-22.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «el punto de una publicación (HU-22)» y docs/21 §6",
+      "resultado": "pasa"
+    },
+    "HU-23.1": {
+      "caso": "CP-23.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «editar y eliminar una publicación (HU-23)»: vuelve a pendiente",
+      "resultado": "pasa"
+    },
+    "HU-23.2": {
+      "caso": "CP-23.2",
+      "tipo": "navegador",
+      "evidencia": "docs/22 §3: la confirmación vive en la tarjeta; revisada en docs/31 §4.1",
+      "resultado": "pasa"
+    },
+    "HU-23.3": {
+      "caso": "CP-23.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «editar y eliminar una publicación (HU-23)»",
+      "resultado": "pasa"
+    },
+    "HU-24.1": {
+      "caso": "CP-24.1",
+      "tipo": "produccion",
+      "evidencia": "docs/23 §6: la cola lista las pendientes por antigüedad",
+      "resultado": "pasa"
+    },
+    "HU-24.2": {
+      "caso": "CP-24.2",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «moderación de publicaciones (HU-24)»",
+      "resultado": "pasa"
+    },
+    "HU-24.3": {
+      "caso": "CP-24.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «moderación · la observación al devolver (HU-24)» y docs/23 §3",
+      "resultado": "pasa"
+    },
+    "HU-24.4": {
+      "caso": "CP-24.4",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «moderación de publicaciones (HU-24)»: la constancia en el mismo lote",
+      "resultado": "pasa"
+    },
+    "HU-25.1": {
+      "caso": "CP-25.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «el catálogo público (HU-25)»",
+      "resultado": "pasa"
+    },
+    "HU-25.2": {
+      "caso": "CP-25.2",
+      "tipo": "navegador",
+      "evidencia": "docs/24 §6: cada tarjeta con imagen, título, categoría, fecha y lugar",
+      "resultado": "pasa"
+    },
+    "HU-25.3": {
+      "caso": "CP-25.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «el tamaño de página», «partirPagina» y «anadirPagina»",
+      "resultado": "pasa"
+    },
+    "HU-25.4": {
+      "caso": "CP-25.4",
+      "tipo": "navegador",
+      "evidencia": "docs/24 §6 y docs/32: mensaje orientador, comprobado a 360 y 1280 px",
+      "resultado": "pasa"
+    },
+    "HU-26.1": {
+      "caso": "CP-26.1",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «los filtros del catálogo (HU-26)»",
+      "resultado": "pasa"
+    },
+    "HU-26.2": {
+      "caso": "CP-26.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «el rango de días (HU-26)» y «limitesDeConsulta»",
+      "resultado": "pasa"
+    },
+    "HU-26.3": {
+      "caso": "CP-26.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «los filtros del catálogo (HU-26)»: categoría y fechas a la vez",
+      "resultado": "pasa"
+    },
+    "HU-26.4": {
+      "caso": "CP-26.4",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «hayFiltros»; y docs/25 §6",
+      "resultado": "pasa"
+    },
+    "HU-27.1": {
+      "caso": "CP-27.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «el primer criterio: título o descripción»",
+      "resultado": "pasa"
+    },
+    "HU-27.2": {
+      "caso": "CP-27.2",
+      "tipo": "navegador",
+      "evidencia": "docs/26 §5: mensaje y sugerencia de limpiar los filtros",
+      "resultado": "pasa"
+    },
+    "HU-27.3": {
+      "caso": "CP-27.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «el tercer criterio: tildes y mayúsculas»",
+      "resultado": "pasa"
+    },
+    "HU-28.1": {
+      "caso": "CP-28.1",
+      "tipo": "navegador",
+      "evidencia": "docs/27 §9: la ficha con descripción, fechas, lugar, categoría e imagen",
+      "resultado": "pasa"
+    },
+    "HU-28.2": {
+      "caso": "CP-28.2",
+      "tipo": "navegador",
+      "evidencia": "docs/27 §9: acceso al perfil del actor desde la ficha",
+      "resultado": "pasa"
+    },
+    "HU-28.3": {
+      "caso": "CP-28.3",
+      "tipo": "navegador",
+      "evidencia": "docs/27 §9: mapa reducido cuando la publicación tiene coordenadas",
+      "resultado": "pasa"
+    },
+    "HU-29.1": {
+      "caso": "CP-29.1",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «enlaces de contacto (RF-12)»",
+      "resultado": "pasa"
+    },
+    "HU-29.2": {
+      "caso": "CP-29.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «los enlaces con mensaje (HU-29)» y «el mensaje inicial (HU-29)»",
+      "resultado": "pasa"
+    },
+    "HU-29.3": {
+      "caso": "CP-29.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «el registro de un contacto (HU-29)»",
+      "resultado": "pasa"
+    },
+    "HU-30.1": {
+      "caso": "CP-30.1",
+      "tipo": "navegador",
+      "evidencia": "docs/29 §9: un marcador por publicación aprobada con coordenadas",
+      "resultado": "pasa"
+    },
+    "HU-30.2": {
+      "caso": "CP-30.2",
+      "tipo": "navegador",
+      "evidencia": "docs/29 §9: la ficha del marcador con título, categoría y acceso al detalle",
+      "resultado": "pasa"
+    },
+    "HU-30.3": {
+      "caso": "CP-30.3",
+      "tipo": "navegador",
+      "evidencia": "docs/29 §9: el filtro de categoría deja solo esos marcadores",
+      "resultado": "pasa"
+    },
+    "HU-30.4": {
+      "caso": "CP-30.4",
+      "tipo": "navegador",
+      "evidencia": "docs/29 §9: un dedo desplaza la página y dos mueven el mapa, medido",
+      "resultado": "pasa"
+    },
+    "HU-31.1": {
+      "caso": "CP-31.1",
+      "tipo": "navegador",
+      "evidencia": "docs/30 §6: foco y desplazamiento al primer campo señalado, medido",
+      "resultado": "pasa"
+    },
+    "HU-31.2": {
+      "caso": "CP-31.2",
+      "tipo": "navegador",
+      "evidencia": "docs/30 §6: correo, contraseña y casilla intactos tras el rechazo",
+      "resultado": "pasa"
+    },
+    "HU-31.3": {
+      "caso": "CP-31.3",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «mensajeDe» y «exigirRespuesta»; y docs/30 §4.2 en el navegador",
+      "resultado": "pasa"
+    },
+    "HU-31.4": {
+      "caso": "CP-31.4",
+      "tipo": "navegador",
+      "evidencia": "docs/30 §5: los seis formularios deshabilitan su botón al enviar",
+      "resultado": "pasa"
+    },
+    "HU-32.1": {
+      "caso": "CP-32.1",
+      "tipo": "estructura",
+      "evidencia": "npm run verificar, regla 4: toda img con alt y todo svg oculto o nombrado",
+      "resultado": "pasa"
+    },
+    "HU-32.2": {
+      "caso": "CP-32.2",
+      "tipo": "navegador",
+      "evidencia": "docs/31 §6: catálogo (26 controles) y mapa (27), ninguno sin nombre accesible",
+      "resultado": "pasa"
+    },
+    "HU-32.3": {
+      "caso": "CP-32.3",
+      "tipo": "herramienta",
+      "evidencia": "python herramientas/medir-contraste.py: los 13 pares de texto sobre 4,5 : 1",
+      "resultado": "pasa"
+    },
+    "HU-32.4": {
+      "caso": "CP-32.4",
+      "tipo": "navegador",
+      "evidencia": "docs/31 §2: el anillo blanco sobre la barra azul da 11,55 : 1, medido en la página",
+      "resultado": "pasa"
+    },
+    "HU-33.1": {
+      "caso": "CP-33.1",
+      "tipo": "navegador",
+      "evidencia": "docs/32 §1: las 7 vistas públicas a 360 px, sin desbordamiento",
+      "resultado": "pasa"
+    },
+    "HU-33.2": {
+      "caso": "CP-33.2",
+      "tipo": "navegador",
+      "evidencia": "docs/32 §2: la tabla apilada, de 531 px a 326 en una caja de 326",
+      "resultado": "pasa"
+    },
+    "HU-33.3": {
+      "caso": "CP-33.3",
+      "tipo": "navegador",
+      "evidencia": "docs/32 §3: el lienzo ocupa el 60 % de la ventana; visible al abrir, de 107 a 160 px",
+      "resultado": "pasa"
+    },
+    "HU-34.1": {
+      "caso": "CP-34.1",
+      "tipo": "navegador",
+      "evidencia": "docs/33 §6: banco de pruebas del panel a 360 y 1280 px",
+      "resultado": "pasa"
+    },
+    "HU-34.2": {
+      "caso": "CP-34.2",
+      "tipo": "unidad",
+      "evidencia": "pruebas/unidad: «masConsultadas» y «conTitulo»",
+      "resultado": "pasa"
+    },
+    "HU-34.3": {
+      "caso": "CP-34.3",
+      "tipo": "reglas",
+      "evidencia": "pruebas/reglas: «los indicadores de uso (HU-34)»: un campo de más se rechaza",
+      "resultado": "pasa"
+    }
+  }
+}

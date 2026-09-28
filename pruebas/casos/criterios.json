@@ -1,0 +1,386 @@
+{
+  "generado": "2026-09-28",
+  "fuente": "issues del repositorio, que son la fuente de los criterios (CLAUDE.md)",
+  "historias": {
+    "HU-01": {
+      "titulo": "Especificación de requisitos del sistema",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado que se ha realizado la revisión documental del contexto, cuando se consolide el análisis, entonces cada limitación identificada debe estar asociada al menos a un requisito.",
+        "Dado el catálogo de requisitos, cuando se revise, entonces cada requisito funcional debe tener un código único, una redacción verificable y una prioridad asignada.",
+        "Dado el catálogo de requisitos no funcionales, cuando se revise, entonces cada uno debe contar con un criterio de verificación medible.",
+        "Dado el documento finalizado, cuando se presente al asesor, entonces debe recibir su aprobación antes de iniciar el diseño."
+      ]
+    },
+    "HU-02": {
+      "titulo": "Construcción y priorización del Product Backlog",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el catálogo de requisitos, cuando se redacten las historias, entonces cada una debe seguir el formato «como / necesito / para» y contar con criterios de aceptación.",
+        "Dado el conjunto de historias, cuando se estime en planning poker, entonces cada historia debe tener un valor en puntos de la escala de Fibonacci adoptada.",
+        "Dado el backlog, cuando se priorice con el método MoSCoW, entonces las historias clasificadas como «Debe» deben cubrir el ciclo completo de publicar, moderar, descubrir y contactar.",
+        "Dado el backlog priorizado, cuando se cierre el Sprint 1, entonces debe estar publicado en el tablero de GitHub Projects."
+      ]
+    },
+    "HU-03": {
+      "titulo": "Delimitación del alcance del producto mínimo viable",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el backlog priorizado, cuando se defina el alcance, entonces debe existir una lista escrita de funcionalidades excluidas con su justificación.",
+        "Dado el alcance definido, cuando se identifique una funcionalidad fuera de él, entonces debe registrarse como trabajo futuro y no incorporarse a ningún sprint.",
+        "Dado el alcance, cuando se revise con el asesor, entonces debe quedar constancia de su aceptación."
+      ]
+    },
+    "HU-04": {
+      "titulo": "Diseño de la arquitectura de la solución",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el alcance aprobado, cuando se diseñe la arquitectura, entonces debe quedar documentada en un diagrama con sus capas y las relaciones entre ellas.",
+        "Dada la arquitectura, cuando se revise, entonces la capa de presentación no debe acceder a datos sin pasar por la capa de servicios.",
+        "Dada la arquitectura, cuando se documente, entonces debe indicar explícitamente qué tecnología resuelve cada capa."
+      ]
+    },
+    "HU-05": {
+      "titulo": "Diseño del modelo de datos en Cloud Firestore",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el catálogo de requisitos, cuando se diseñe el modelo, entonces cada entidad debe tener su colección con los campos necesarios y sus tipos definidos.",
+        "Dado el modelo, cuando se revise, entonces las relaciones entre colecciones deben resolverse mediante identificadores de referencia.",
+        "Dado el modelo, cuando se documente, entonces debe indicar qué campos son obligatorios y cuáles admiten valor nulo.",
+        "Dado el modelo, cuando se implemente, entonces debe permitir consultar los eventos filtrando por categoría y por rango de fechas."
+      ]
+    },
+    "HU-06": {
+      "titulo": "Prototipo de interfaz en Figma",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el alcance funcional, cuando se diseñe el prototipo, entonces deben existir las vistas de inicio, catálogo, detalle de evento, perfil de actor, directorio de hubs, mapa y panel de administración.",
+        "Dado el prototipo, cuando se revise, entonces debe ser navegable entre pantallas mediante enlaces.",
+        "Dado el prototipo, cuando se defina la paleta, entonces los contrastes de color deben cumplir la relación mínima exigida por las pautas WCAG 2.1.",
+        "Dado el prototipo, cuando se presente en la Sprint Review, entonces debe recibir la retroalimentación del asesor antes de iniciar la construcción."
+      ]
+    },
+    "HU-07": {
+      "titulo": "Configuración del proyecto y estructura de rutas",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el proyecto creado, cuando se ejecute en local, entonces debe iniciar sin errores en consola.",
+        "Dada la estructura de carpetas, cuando se revise, entonces debe separar componentes, vistas, servicios y utilidades.",
+        "Dado el enrutador, cuando se navegue a una ruta inexistente, entonces debe mostrarse una página de error controlada."
+      ]
+    },
+    "HU-08": {
+      "titulo": "Repositorio versionado y despliegue continuo",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el repositorio, cuando se integre un cambio en la rama principal, entonces Vercel debe generar un despliegue sin intervención manual.",
+        "Dado un despliegue, cuando finalice, entonces debe existir una dirección pública accesible desde cualquier navegador.",
+        "Dada la rama principal, cuando se intente integrar sin revisión del otro integrante, entonces la integración debe quedar bloqueada."
+      ]
+    },
+    "HU-09": {
+      "titulo": "Estructura base de navegación y página de inicio",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la página de inicio, cuando se cargue, entonces debe presentar el propósito de la plataforma y los cuatro accesos principales.",
+        "Dado el menú de navegación, cuando se seleccione una opción, entonces debe conducir a la vista correspondiente en menos de dos segundos.",
+        "Dada cualquier vista interna, cuando se consulte, entonces debe existir siempre una forma visible de regresar al inicio."
+      ]
+    },
+    "HU-10": {
+      "titulo": "Diseño responsive de la estructura base",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la interfaz, cuando se visualice en anchos de 360, 768 y 1366 píxeles, entonces el contenido debe permanecer legible y sin desbordamiento horizontal.",
+        "Dado el menú, cuando el ancho sea inferior a 768 píxeles, entonces debe presentarse en su versión compacta.",
+        "Dados los elementos interactivos, cuando se visualicen en móvil, entonces su área de toque no debe ser inferior a 44 por 44 píxeles."
+      ]
+    },
+    "HU-11": {
+      "titulo": "Reglas de seguridad iniciales de la base de datos",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada una sesión no autenticada, cuando se intente escribir en cualquier colección, entonces la operación debe ser rechazada.",
+        "Dado un usuario autenticado, cuando intente modificar un documento que no le pertenece, entonces la operación debe ser rechazada.",
+        "Dada la colección de eventos, cuando se consulte sin autenticación, entonces solo deben ser legibles los documentos con estado aprobado."
+      ]
+    },
+    "HU-12": {
+      "titulo": "Registro de actor cultural",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario de registro, cuando ingrese un correo válido y una contraseña de al menos ocho caracteres, entonces la cuenta debe crearse y quedar asociada al rol de actor cultural.",
+        "Dado el formulario, cuando ingrese un correo ya registrado, entonces debe mostrarse un mensaje claro y no crearse una cuenta duplicada.",
+        "Dado el formulario, cuando algún campo obligatorio esté vacío, entonces el envío debe bloquearse indicando el campo faltante.",
+        "Dado un registro exitoso, cuando finalice, entonces debe iniciarse la sesión automáticamente y redirigirse al perfil."
+      ]
+    },
+    "HU-13": {
+      "titulo": "Inicio y cierre de sesión",
+      "prioridad": "debe",
+      "criterios": [
+        "Dadas credenciales correctas, cuando inicie sesión, entonces debe accederse a la vista correspondiente a mi rol.",
+        "Dadas credenciales incorrectas, cuando intente iniciar sesión, entonces debe mostrarse un mensaje de error que no revele si el correo existe.",
+        "Dada una sesión activa, cuando cierre sesión, entonces debe perderse el acceso a las vistas privadas.",
+        "Dada una sesión activa, cuando recargue la página, entonces la sesión debe mantenerse."
+      ]
+    },
+    "HU-14": {
+      "titulo": "Recuperación de contraseña",
+      "prioridad": "deberia",
+      "criterios": [
+        "Dado un correo registrado, cuando solicite el restablecimiento, entonces debe recibirse un mensaje con el enlace correspondiente.",
+        "Dado un correo no registrado, cuando se solicite, entonces la respuesta visible debe ser la misma para no revelar la existencia de la cuenta.",
+        "Dado el enlace recibido, cuando se defina una nueva contraseña válida, entonces debe poderse iniciar sesión con ella."
+      ]
+    },
+    "HU-15": {
+      "titulo": "Diferenciación de roles y permisos",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada una cuenta con rol de actor cultural, cuando intente acceder al panel de administración, entonces el acceso debe ser denegado.",
+        "Dada una cuenta con rol de administrador, cuando inicie sesión, entonces debe acceder al panel de moderación.",
+        "Dado un visitante sin cuenta, cuando navegue por la plataforma, entonces debe poder consultar el contenido aprobado sin registrarse.",
+        "Dado cualquier intento de acceso indebido, cuando se produzca, entonces debe ser rechazado también por las reglas de la base de datos y no solo por la interfaz."
+      ]
+    },
+    "HU-16": {
+      "titulo": "Consentimiento de tratamiento de datos personales",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario de registro, cuando se presente, entonces debe incluir un enlace visible a la política de tratamiento de datos.",
+        "Dado el formulario, cuando no se marque la casilla de aceptación, entonces el registro no debe completarse.",
+        "Dada una cuenta creada, cuando se consulte en la base de datos, entonces debe existir el registro de la aceptación con su fecha.",
+        "Dada una solicitud de supresión, cuando el usuario la presente, entonces debe existir un canal documentado para atenderla."
+      ]
+    },
+    "HU-17": {
+      "titulo": "Gestión de categorías culturales",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el panel de administración, cuando cree una categoría, entonces debe quedar disponible de inmediato en los formularios de publicación.",
+        "Dada una categoría con publicaciones asociadas, cuando intente eliminarla, entonces el sistema debe advertirlo e impedir la pérdida de la clasificación.",
+        "Dado el listado de categorías, cuando se consulte, entonces debe mostrar el número de publicaciones asociadas a cada una."
+      ]
+    },
+    "HU-18": {
+      "titulo": "Creación y edición del perfil de actor cultural",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario de perfil, cuando complete nombre, manifestación, descripción, categoría y datos de contacto, entonces el perfil debe guardarse y quedar asociado a mi cuenta.",
+        "Dado mi perfil guardado, cuando lo edite, entonces los cambios deben reflejarse en la vista pública sin requerir una nueva aprobación de la cuenta.",
+        "Dado el campo de descripción, cuando supere el límite establecido, entonces debe advertirse antes del envío.",
+        "Dado el perfil de otro actor, cuando intente editarlo, entonces la operación debe ser rechazada.",
+        "Dado un perfil guardado, cuando un visitante sin cuenta abra `/actores`, entonces el perfil debe figurar en el directorio público y poder abrirse en su propia dirección `/actores/:id`."
+      ]
+    },
+    "HU-19": {
+      "titulo": "Carga de imagen en el perfil",
+      "prioridad": "deberia",
+      "criterios": [
+        "Dado el formulario, cuando cargue una imagen en formato JPG o PNG de hasta dos megabytes, entonces debe almacenarse y mostrarse en el perfil.",
+        "Dado un archivo de formato o tamaño no permitido, cuando se intente cargar, entonces debe rechazarse con un mensaje explicativo.",
+        "Dado un perfil sin imagen, cuando se consulte, entonces debe mostrarse una imagen predeterminada."
+      ]
+    },
+    "HU-20": {
+      "titulo": "Perfil y directorio de hubs de innovación",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario del hub, cuando complete nombre, descripción, líneas de trabajo, dirección y contacto, entonces el perfil debe guardarse.",
+        "Dado el directorio público, cuando se consulte, entonces deben listarse todos los hubs aprobados con su información básica.",
+        "Dado un hub con dirección registrada, cuando se guarde, entonces deben almacenarse sus coordenadas para su representación en el mapa."
+      ]
+    },
+    "HU-21": {
+      "titulo": "Publicación de un evento o experiencia cultural",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario de publicación, cuando complete título, descripción, categoría, fecha, lugar e imagen, entonces la publicación debe guardarse con estado «pendiente de aprobación».",
+        "Dado el formulario, cuando la fecha de inicio sea posterior a la de finalización, entonces el envío debe bloquearse con un mensaje explicativo.",
+        "Dada una publicación guardada, cuando se consulte el catálogo público, entonces no debe aparecer hasta ser aprobada.",
+        "Dada una publicación creada, cuando se revise en la base de datos, entonces debe conservar el identificador del actor que la creó y la fecha de creación."
+      ]
+    },
+    "HU-22": {
+      "titulo": "Georreferenciación de la publicación",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el formulario de publicación, cuando seleccione un punto en el mapa, entonces deben capturarse y guardarse su latitud y longitud.",
+        "Dada una publicación sin coordenadas, cuando se intente guardar, entonces debe advertirse que no aparecerá en el mapa.",
+        "Dadas unas coordenadas guardadas, cuando se edite la publicación, entonces debe poder modificarse el punto seleccionado."
+      ]
+    },
+    "HU-23": {
+      "titulo": "Edición y eliminación de publicaciones propias",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada una publicación propia, cuando la edite, entonces los cambios deben guardarse y la publicación debe volver a estado «pendiente de aprobación».",
+        "Dada una publicación propia, cuando la elimine, entonces debe solicitarse confirmación antes de proceder.",
+        "Dada una publicación de otro actor, cuando intente editarla o eliminarla, entonces la operación debe ser rechazada tanto por la interfaz como por las reglas de seguridad."
+      ]
+    },
+    "HU-24": {
+      "titulo": "Moderación de publicaciones",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el panel de moderación, cuando se cargue, entonces deben listarse todas las publicaciones pendientes ordenadas por fecha de creación.",
+        "Dada una publicación pendiente, cuando la apruebe, entonces debe pasar a estado «aprobada» y hacerse visible en el catálogo y en el mapa.",
+        "Dada una publicación pendiente, cuando la devuelva, entonces debe exigirse una observación escrita y notificarse al actor cultural.",
+        "Dada cualquier decisión de moderación, cuando se registre, entonces debe quedar constancia del administrador, la decisión, la observación y la fecha."
+      ]
+    },
+    "HU-25": {
+      "titulo": "Exploración del catálogo público",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el catálogo, cuando se cargue, entonces deben listarse únicamente las publicaciones aprobadas.",
+        "Dado el listado, cuando se presente cada elemento, entonces debe mostrar imagen, título, categoría, fecha y lugar.",
+        "Dado un catálogo con más de doce elementos, cuando se recorra, entonces debe existir paginación o carga progresiva.",
+        "Dado un catálogo vacío tras aplicar criterios, cuando se muestre, entonces debe presentarse un mensaje orientador y no una pantalla en blanco."
+      ]
+    },
+    "HU-26": {
+      "titulo": "Filtrado por categoría cultural y por fecha",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el catálogo, cuando aplique un filtro de categoría, entonces deben mostrarse únicamente las publicaciones de esa categoría.",
+        "Dado el catálogo, cuando aplique un rango de fechas, entonces deben mostrarse solo las publicaciones vigentes en ese rango.",
+        "Dados dos filtros aplicados simultáneamente, cuando se combinen, entonces el resultado debe satisfacer ambas condiciones.",
+        "Dados filtros aplicados, cuando los limpie, entonces debe restituirse el catálogo completo."
+      ]
+    },
+    "HU-27": {
+      "titulo": "Búsqueda por palabra clave",
+      "prioridad": "deberia",
+      "criterios": [
+        "Dado el campo de búsqueda, cuando escriba un término, entonces deben mostrarse las publicaciones cuyo título o descripción lo contengan.",
+        "Dada una búsqueda sin resultados, cuando se ejecute, entonces debe informarse con un mensaje y sugerirse limpiar los filtros.",
+        "Dada una búsqueda, cuando se escriba con o sin tildes y en mayúsculas o minúsculas, entonces el resultado debe ser equivalente."
+      ]
+    },
+    "HU-28": {
+      "titulo": "Consulta del detalle de una publicación",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado un elemento del catálogo, cuando lo seleccione, entonces debe abrirse su vista de detalle con descripción, fechas, lugar, categoría, imagen y actor responsable.",
+        "Dada la vista de detalle, cuando se cargue, entonces debe incluir un acceso al perfil del actor cultural.",
+        "Dada una publicación con coordenadas, cuando se consulte su detalle, entonces debe mostrarse su ubicación en un mapa reducido."
+      ]
+    },
+    "HU-29": {
+      "titulo": "Contacto directo con el actor cultural",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la vista de detalle, cuando seleccione la opción de contacto, entonces deben mostrarse los canales que el actor cultural haya autorizado.",
+        "Dado un canal de contacto, cuando lo seleccione, entonces debe abrirse la aplicación correspondiente con el mensaje inicial prellenado.",
+        "Dado un contacto realizado, cuando se produzca, entonces debe registrarse la interacción de forma anonimizada para los indicadores de uso."
+      ]
+    },
+    "HU-30": {
+      "titulo": "Mapa interactivo de la oferta cultural",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el mapa, cuando se cargue, entonces debe mostrar un marcador por cada publicación aprobada con coordenadas registradas.",
+        "Dado un marcador, cuando lo seleccione, entonces debe desplegarse una ficha con el título, la categoría y el acceso al detalle.",
+        "Dado el mapa, cuando aplique un filtro de categoría, entonces deben mostrarse únicamente los marcadores correspondientes.",
+        "Dado el mapa, cuando se abra en un teléfono, entonces debe permitir desplazamiento y acercamiento táctil sin bloquear el desplazamiento de la página."
+      ]
+    },
+    "HU-31": {
+      "titulo": "Validación de formularios y manejo de errores",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado cualquier formulario, cuando un campo obligatorio esté vacío, entonces debe señalarse el campo específico y no mostrarse un error genérico.",
+        "Dado un formulario con error, cuando se muestre el mensaje, entonces la información ya ingresada debe conservarse.",
+        "Dado un fallo de conexión con el servicio de datos, cuando ocurra, entonces debe mostrarse un mensaje comprensible y no un error técnico.",
+        "Dado un envío en curso, cuando se procese, entonces el botón debe deshabilitarse para evitar envíos duplicados."
+      ]
+    },
+    "HU-32": {
+      "titulo": "Accesibilidad conforme a las pautas WCAG 2.1",
+      "prioridad": "deberia",
+      "criterios": [
+        "Dada cualquier imagen de contenido, cuando se inspeccione, entonces debe contar con texto alternativo descriptivo.",
+        "Dada la navegación, cuando se recorra únicamente con teclado, entonces debe poderse completar el registro, la publicación y la consulta del catálogo.",
+        "Dado cualquier texto sobre su fondo, cuando se mida, entonces la relación de contraste no debe ser inferior a 4,5 a 1.",
+        "Dado un elemento con foco, cuando se navegue con teclado, entonces el foco debe ser visualmente identificable."
+      ]
+    },
+    "HU-33": {
+      "titulo": "Optimización final del diseño responsive",
+      "prioridad": "debe",
+      "criterios": [
+        "Dadas todas las vistas del sistema, cuando se recorran en 360 píxeles de ancho, entonces ninguna debe presentar desbordamiento horizontal.",
+        "Dadas las tablas del panel de administración, cuando se visualicen en móvil, entonces deben adaptarse a un formato legible.",
+        "Dado el mapa, cuando se abra en móvil, entonces debe ocupar una altura útil que permita su manipulación."
+      ]
+    },
+    "HU-34": {
+      "titulo": "Indicadores básicos de uso de la plataforma",
+      "prioridad": "podria",
+      "criterios": [
+        "Dado el panel de indicadores, cuando se cargue, entonces debe mostrar el total de publicaciones por estado y por categoría.",
+        "Dado el panel, cuando se consulte, entonces debe listar las publicaciones con mayor número de consultas.",
+        "Dados los registros de interacción, cuando se almacenen, entonces no deben contener datos personales identificables del visitante."
+      ]
+    },
+    "HU-35": {
+      "titulo": "Ejecución de las pruebas funcionales y de permisos",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el conjunto de historias, cuando se diseñen los casos de prueba, entonces cada criterio de aceptación debe tener al menos un caso asociado.",
+        "Dada la ejecución de las pruebas, cuando concluya, entonces la cobertura de historias de prioridad «Debe» que superan todos sus casos no debe ser inferior al 90 %.",
+        "Dadas las pruebas de permisos, cuando se ejecuten con cada rol, entonces el 100 % de los accesos no autorizados debe ser rechazado.",
+        "Dado cualquier caso fallido, cuando se registre, entonces debe crearse el hallazgo correspondiente con su severidad."
+      ]
+    },
+    "HU-36": {
+      "titulo": "Pruebas de usabilidad con usuarios representativos",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la sesión de prueba, cuando se inicie, entonces debe obtenerse el consentimiento informado del participante.",
+        "Dado el conjunto de tareas guiadas, cuando se ejecuten sin asistencia, entonces debe registrarse si se completan, el tiempo empleado y las dificultades observadas.",
+        "Dado el cuestionario SUS, cuando se aplique a al menos ocho participantes, entonces el puntaje promedio debe ser igual o superior a 68.",
+        "Dado un puntaje inferior al umbral, cuando se obtenga, entonces los hallazgos deben incorporarse al backlog y repetirse la medición tras su corrección."
+      ]
+    },
+    "HU-37": {
+      "titulo": "Despliegue de la versión final del prototipo",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la versión final, cuando se despliegue, entonces debe existir una dirección pública estable y documentada.",
+        "Dado el prototipo desplegado, cuando se consulte desde un dispositivo externo, entonces debe cargar sin errores y con datos de demostración cargados.",
+        "Dada la versión desplegada, cuando se contraste con el repositorio, entonces debe corresponder a una etiqueta de versión identificada."
+      ]
+    },
+    "HU-38": {
+      "titulo": "Manual de usuario",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el manual, cuando se elabore, entonces debe cubrir el registro, la creación del perfil, la publicación de un evento y la consulta del catálogo.",
+        "Dado cada procedimiento, cuando se describa, entonces debe acompañarse de capturas de pantalla numeradas.",
+        "Dado el manual, cuando se valide con un usuario ajeno al equipo, entonces este debe completar las tareas siguiéndolo sin ayuda adicional."
+      ]
+    },
+    "HU-39": {
+      "titulo": "Documentación técnica del prototipo",
+      "prioridad": "debe",
+      "criterios": [
+        "Dada la documentación, cuando se elabore, entonces debe incluir el diagrama de arquitectura, la estructura de colecciones y las reglas de seguridad aplicadas.",
+        "Dada la documentación, cuando se revise, entonces debe describir el procedimiento completo para desplegar el proyecto desde cero.",
+        "Dado el repositorio, cuando se consulte, entonces debe contener el archivo de documentación actualizado a la versión final."
+      ]
+    },
+    "HU-40": {
+      "titulo": "Informe de validación del prototipo",
+      "prioridad": "debe",
+      "criterios": [
+        "Dado el informe, cuando se elabore, entonces debe presentar la cobertura funcional alcanzada, el puntaje SUS obtenido y la verificación frente a las características de calidad.",
+        "Dado el informe, cuando se revise, entonces debe incluir la matriz de trazabilidad entre requisitos, historias de usuario y casos de prueba.",
+        "Dado el registro de hallazgos, cuando se cierre el proyecto, entonces no debe existir ningún hallazgo de severidad alta sin resolver.",
+        "Dado el informe finalizado, cuando se entregue, entonces debe alimentar directamente el capítulo de resultados y discusión del trabajo de grado."
+      ]
+    }
+  }
+}
