@@ -43,6 +43,33 @@
  */
 
 /*
+ * El rótulo del botón dentro de un globo — HU-22.
+ *
+ * Es el mismo tropiezo que los botones de zoom de aquí arriba con otro disfraz,
+ * y por eso se cuenta igual. Leaflet trae una regla «.leaflet-container a» con
+ * su propio azul, y con dos componentes le gana a «.enlace-boton». El botón del
+ * globo salía con el relleno turquesa del proyecto y el rótulo en ese azul:
+ * **1,51 : 1**, cuando WCAG 1.4.3 pide 4,5. No era un detalle de
+ * estilo, era un rótulo que no se leía —y encima de un color que no está en la
+ * paleta—. En blanco son 7,47 : 1, que es lo que ya mide
+ * «herramientas/medir-contraste.py» para cualquier botón principal.
+ *
+ * Se arregla igualando la especificidad, no con «!important»: el elemento es un
+ * enlace y lleva la clase, así que «a.enlace-boton» dentro del contenedor suma
+ * tres componentes y gana por lo que dice, no por gritar más fuerte.
+ */
+.leaflet-container a.enlace-boton {
+  color: var(--blanco);
+}
+
+/* El secundario lleva relleno blanco: con la regla de arriba sola quedaría
+   blanco sobre blanco. Hoy ningún globo usa uno, y justo por eso va escrito:
+   quien añada el primero no va a venir a leer este archivo. */
+.leaflet-container a.enlace-boton--secundario {
+  color: var(--turquesa-oscuro);
+}
+
+/*
  * Los botones de zoom, con área de toque — HU-33 · tercer criterio.
  *
  * Leaflet los dibuja de 26 px, que en pantalla son 30 con el borde. El proyecto
