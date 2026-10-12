@@ -33,8 +33,29 @@ export const TIPOS_ACEPTADOS = ['image/jpeg', 'image/png'];
 /** Lo que puede pesar el resultado guardado. El mismo número que firestore.rules. */
 export const LIMITE_GUARDADO = 120000;
 
-/** Lado mayor de la imagen reducida, en píxeles. */
-export const LADO_MAXIMO = 480;
+/**
+ * Lado mayor de la imagen reducida, en píxeles.
+ *
+ * Estuvo en 480 hasta el 11/10/2026 y sube a 720 porque 480 se quedaba corto
+ * **en un sitio concreto**: la ficha de un evento, donde la imagen es un
+ * estándarte ancho y no una miniatura. En el catálogo nunca se notó, porque
+ * allí cada tarjeta se dibuja a unos 330 px y 480 le sobra.
+ *
+ * 720 es el máximo que cabe sin tocar «firestore.rules». Medido sobre
+ * fotografías de verdad, codificadas como se codifican aquí:
+ *
+ *   480 px al 72 %   53.000 a 58.000 caracteres
+ *   720 px al 72 %  110.000 a 127.000   ← una de cada tres se pasa
+ *   720 px al 60 %   89.000 a 103.000   ← y por eso existe CALIDADES
+ *   960 px al 60 %  147.000 a 219.000   ← no cabe de ninguna manera
+ *
+ * O sea que 720 no entra holgado: entra **gracias a la escalera de calidades**,
+ * que baja un escalón cuando la foto trae mucho detalle. Pasar de aquí obliga a
+ * subir el límite de las reglas, y entonces el catálogo —que lee doce
+ * publicaciones de una vez— paga por una imagen que solo necesita la ficha.
+ * Ese es otro cambio: separar la imagen grande en su propio documento.
+ */
+export const LADO_MAXIMO = 720;
 
 /** Calidades que se prueban, de mejor a peor, hasta bajar del límite guardado. */
 export const CALIDADES = [0.72, 0.6, 0.5, 0.4, 0.3];
@@ -167,9 +188,9 @@ function cargarImagen(dataUri) {
 /**
  * Reduce la imagen y devuelve la URI de datos que se guarda.
  *
- * Se prueba una calidad tras otra hasta bajar del límite del documento. La
- * primera suele bastar —un JPEG de 480 px al 72 % ronda los 40 KB—, y las demás
- * están por si llega una fotografía con mucho detalle.
+ * Se prueba una calidad tras otra hasta bajar del límite del documento. A 720 px
+ * la primera ronda los 110.000 caracteres y entra por poco, así que el segundo
+ * escalón ya no es un por si acaso: con una fotografía de mucho detalle se usa.
  *
  * **Siempre sale JPEG, también si entró un PNG.** Un PNG fotográfico de 480 px
  * pesa varias veces lo que el JPEG equivalente, y aquí el peso es el límite. La

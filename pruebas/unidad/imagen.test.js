@@ -144,9 +144,18 @@ describe('forma de la URI de datos', () => {
 });
 
 describe('medida de la imagen reducida', () => {
+  // Lo que se comprueba aquí es la aritmética, no cuánto vale el máximo, así que
+  // va escrito con la constante: subirla no debería obligar a reescribir esto.
+  // Su valor se fija aparte, abajo, que es donde cambiarlo cuesta una decisión.
   it('encoge el lado mayor hasta el máximo y conserva la proporción', () => {
-    assert.deepEqual(medidaReducida(4000, 3000), { ancho: 480, alto: 360 });
-    assert.deepEqual(medidaReducida(3000, 4000), { ancho: 360, alto: 480 });
+    assert.deepEqual(medidaReducida(4000, 3000), {
+      ancho: LADO_MAXIMO,
+      alto: Math.round(LADO_MAXIMO * 0.75),
+    });
+    assert.deepEqual(medidaReducida(3000, 4000), {
+      ancho: Math.round(LADO_MAXIMO * 0.75),
+      alto: LADO_MAXIMO,
+    });
   });
 
   it('una imagen pequeña NO se agranda', () => {
@@ -159,10 +168,33 @@ describe('medida de la imagen reducida', () => {
   });
 
   it('una panorámica extrema no se queda en cero píxeles de alto', () => {
-    // 5000 × 20 daría 480 × 1,92, y redondear hacia abajo dejaría un lienzo de
-    // altura cero, que no se puede dibujar.
+    // 5000 × 20 daría el lado mayor × 2,88, y redondear hacia abajo dejaría un
+    // lienzo de altura cero, que no se puede dibujar.
     const medida = medidaReducida(5000, 20);
-    assert.equal(medida.ancho, 480);
+    assert.equal(medida.ancho, LADO_MAXIMO);
     assert.ok(medida.alto >= 1);
+  });
+});
+
+describe('cuánto mide el lado mayor', () => {
+  it('son 720 píxeles', () => {
+    // Está fijado a propósito y no leído de la propia constante: es el único
+    // número del módulo que no se puede subir sin comprobar que la imagen
+    // sigue cabiendo en «firestore.rules». A 720 entra gracias al segundo
+    // escalón de CALIDADES; a 960 no entra con ninguno.
+    assert.equal(LADO_MAXIMO, 720);
+  });
+
+  it('la hoja de la ficha dibuja el estándarte a ese mismo ancho', () => {
+    // «DetalleEvento.css» topa la imagen en «max-width: 720px» para no
+    // estirarla. Son dos lenguajes y la constante no se puede compartir, así
+    // que al menos el desajuste se descubre aquí y no mirando la pantalla.
+    const hoja = readFileSync(
+      new URL('../../src/views/DetalleEvento/DetalleEvento.css', import.meta.url),
+      'utf8'
+    );
+    const tope = hoja.match(/\.detalle__imagen\.imagen-actor\s*\{[^}]*max-width:\s*(\d+)px/);
+    assert.ok(tope, 'la ficha ya no topa el ancho del estándarte');
+    assert.equal(Number(tope[1]), LADO_MAXIMO);
   });
 });

@@ -31,8 +31,39 @@
 /* A todo el ancho de la ficha, al contrario que en el directorio de actores:
    aquí ya se ha decidido mirar esta actividad, y la fotografía es lo que la
    describe antes que ninguna palabra. */
-.detalle__imagen {
+/*
+ * El estándarte de la ficha. Dos arreglos del 11/10/2026, y conviene separarlos
+ * porque son problemas distintos que se sumaban.
+ *
+ * ## 1. Llevaba las dos clases y ganaba la otra
+ *
+ * «ImagenDeActor» pinta «class="imagen-actor detalle__imagen"», y global.css
+ * dice «.imagen-actor { aspect-ratio: 1 }». Las dos son una sola clase, empatan
+ * en especificidad y decide el orden en que Vite junta las hojas: ganaba el
+ * cuadrado. La ficha pedía 16/9 desde que se escribió y nunca lo tuvo, y eso no
+ * se ve leyendo esta hoja —solo midiendo el elemento en el navegador—.
+ *
+ * Es la tercera vez que pasa lo mismo: el directorio de actores y la tarjeta de
+ * «mis publicaciones» ya lo documentan, y los dos lo resolvieron metiendo la
+ * clase del padre delante. Aquí se dobla la clase **del propio elemento**, que
+ * suma igual y además no depende de que el padre exista ni conserve su nombre.
+ *
+ * ## 2. Se dibujaba a 1136 px desde un archivo de 480
+ *
+ * La imagen guardada mide como mucho LADO_MAXIMO por su lado mayor
+ * (src/utils/imagen.js). Con «width: 100 %» y nada que lo frenara, en escritorio
+ * se estiraba hasta los 1136 px de la columna: **3,33 veces**, que es justo el
+ * aspecto emborronado que se veía. Estirar no añade un detalle; solo reparte los
+ * que hay entre más píxeles.
+ *
+ * De ahí el tope. **720 px es el mismo número que LADO_MAXIMO**, y la regla que
+ * lo explica es «no dibujar nunca más ancho de lo más ancho que guardamos». Si
+ * ese valor cambia allí, este tiene que cambiar aquí: son dos lenguajes y no hay
+ * forma de compartir la constante.
+ */
+.detalle__imagen.imagen-actor {
   width: 100%;
+  max-width: 720px;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
