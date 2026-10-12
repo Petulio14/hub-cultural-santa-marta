@@ -19,10 +19,26 @@ quedar distinto en un sitio y en el otro.
 
 | Acceso | Ruta | Qué ofrece |
 | --- | --- | --- |
-| Eventos | `/eventos` | Qué pasa y cuándo |
-| Actores culturales | `/actores` | Quién está detrás |
-| Hubs | `/hubs` | Espacios de innovación |
-| Mapa | `/mapa` | Qué hay cerca de ti |
+| Eventos | `/eventos` | ¿Qué pasa y cuándo? |
+| Actores culturales | `/actores` | ¿Quién está detrás? |
+| Hubs | `/hubs` | ¿Dónde se innova? |
+| Mapa | `/mapa` | ¿Qué hay cerca de ti? |
+
+### Las cuatro preguntan (11/10/2026)
+
+Las descripciones pedían los signos de interrogación que en español **abren** y cierran la
+pregunta. Tres de las cuatro ya eran preguntas y se quedaban sin marcar.
+
+La cuarta no lo era: «Espacios de innovación» describía qué es un hub en lugar de decirle a
+quien llega qué va a encontrar. Una afirmación en medio de tres preguntas rompe la lista, así
+que pasa a **«¿Dónde se innova?»**. Las cuatro empiezan ahora por un interrogativo distinto
+—qué, quién, dónde, qué—, que es lo que hace que se lean de un vistazo y no una por una.
+
+> **La maqueta de HU-06 conserva el texto anterior a propósito.** Ni
+> [`prototipo/index.html`](prototipo/index.html) ni el plugin de Figma se tocan: son el
+> entregable del Sprint 2 **tal como lo aprobó el asesor**, y reescribirlos ahora haría que
+> el expediente dijera que se aprobó algo distinto de lo que se aprobó. La divergencia
+> queda anotada aquí, que es el sitio donde se mira qué dice hoy la plataforma.
 
 La vista activa se señala en el menú con fondo y **subrayado**: el color no puede ser el
 único portador de la información (WCAG 2.1, criterio 1.4.1, y HU-32).
