@@ -783,7 +783,7 @@
     "HU-37.2": {
       "caso": "CP-37.2",
       "tipo": "produccion",
-      "evidencia": "docs/36 §5: sobre la v1.0.0 publicada, 12 eventos, 4 actores, 13 marcadores en el mapa, cero errores de consola y 375 px sin desbordamiento",
+      "evidencia": "docs/36 §5: sobre la v1.0.0 publicada, 12 eventos, 5 perfiles de actor, 13 marcadores en el mapa, cero errores de consola y 375 px sin desbordamiento",
       "resultado": "pasa"
     },
     "HU-37.3": {
