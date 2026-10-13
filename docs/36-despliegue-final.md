@@ -211,7 +211,7 @@ servidor de desarrollo en marcha, es la respuesta real de Vercel.
 | --- | --- |
 | Portada | Carga; título `Inicio · Hub Cultural Santa Marta` |
 | `/eventos` pedido **directamente** | **12 tarjetas**: la reescritura de rutas sigue viva |
-| `/actores` pedido directamente | **4 fichas**, las cuatro con su imagen |
+| `/actores` pedido directamente | **5 perfiles publicados**, cuatro de ellos con fotografía |
 | `/hubs` y `/mapa` pedidos directamente | Cargan; **13 marcadores** sobre el mapa |
 | Errores en consola | **ninguno**, en las cuatro rutas |
 | A 375 px de ancho | 12 tarjetas, **0 px de desbordamiento** |
@@ -237,7 +237,7 @@ móvil, el teclado que tapa media pantalla y el dedo.
 | Criterio de aceptación | Evidencia |
 | --- | --- |
 | Dirección pública **estable y documentada** | §1 y [12 §4](12-despliegue-continuo.md): la misma dirección desde el Sprint 3, con sus cabeceras verificadas. |
-| Carga **desde fuera**, sin errores y con datos de demostración | §5: 12 eventos, 4 actores, consola limpia, enlaces profundos. |
+| Carga **desde fuera**, sin errores y con datos de demostración | §5: 12 eventos, 5 perfiles de actor, 13 marcadores, consola limpia, enlaces profundos. |
 | Corresponde a una **etiqueta de versión identificada** | §2 y §3: lo desplegado contiene `v1.0.0` y entre la etiqueta y la compilación publicada no cambia ni un archivo de la aplicación. |
 
 Los tres casos están en la matriz (`CP-37.1` a `CP-37.3`, de tipo `produccion`) y el issue
