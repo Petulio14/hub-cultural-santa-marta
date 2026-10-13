@@ -1,5 +1,5 @@
 {
-  "generado": "2026-09-27",
+  "generado": "2026-10-12",
   "leeme": "Un caso por criterio de aceptacion. La clave apunta a pruebas/casos/criterios.json.",
   "tipos": {
     "unidad": "npm run probar - funciones puras, sin emulador ni navegador",
@@ -772,6 +772,24 @@
       "caso": "CP-35.4",
       "tipo": "herramienta",
       "evidencia": "npm run verificar:casos: el guion falla si un caso sin superar no tiene hallazgo en pruebas/casos/hallazgos.json",
+      "resultado": "pasa"
+    },
+    "HU-37.1": {
+      "caso": "CP-37.1",
+      "tipo": "produccion",
+      "evidencia": "docs/36 §1: la misma dirección pública desde el Sprint 3, documentada en docs/12, con sus cabeceras verificadas sobre la respuesta real",
+      "resultado": "pasa"
+    },
+    "HU-37.2": {
+      "caso": "CP-37.2",
+      "tipo": "produccion",
+      "evidencia": "docs/36 §5: sobre la v1.0.0 publicada, 12 eventos, 4 actores, 13 marcadores en el mapa, cero errores de consola y 375 px sin desbordamiento",
+      "resultado": "pasa"
+    },
+    "HU-37.3": {
+      "caso": "CP-37.3",
+      "tipo": "produccion",
+      "evidencia": "docs/36 §3: el pie del sitio publicado dice dc45887 y «git rev-list -n 1 --abbrev-commit v1.0.0» da dc45887",
       "resultado": "pasa"
     }
   }

@@ -56,7 +56,7 @@ que miente es peor que no tener sello, porque se le cree.
 El pie de página los enseña, en todas las vistas:
 
 ```
-Versión 1.0.0 · compilación 32a8dba
+Versión 1.0.0 · compilación dc45887
 ```
 
 Es letra pequeña a propósito. No es información para quien viene a buscar un evento; es la
@@ -96,17 +96,43 @@ git tag -a v1.0.0 -m "Version final del prototipo - HU-37"
 git push origin v1.0.0
 ```
 
-Y el contraste, que es el criterio literal:
+Hecho el 12/10/2026. La etiqueta señala el commit de fusión del pull request #111,
+`dc45887`, y el sitio publicado dice:
+
+```
+Versión 1.0.0 · compilación dc45887
+```
+
+### El comando del contraste no es el que parece
+
+Aquí había escrito `git rev-parse --short v1.0.0`, y **da el valor equivocado**. Se descubrió
+al ejecutarlo:
+
+```
+git rev-parse --short v1.0.0          → c8b4477   ← no es un commit
+git rev-parse --short v1.0.0^{commit} → dc45887
+git rev-list -n 1 --abbrev-commit v1.0.0 → dc45887
+```
+
+`v1.0.0` es una **etiqueta anotada**: un objeto propio del repositorio, con su autor, su
+fecha y su mensaje, que a su vez apunta al commit. `git rev-parse` resuelve el nombre y
+devuelve *ese* objeto, no el commit, y `git cat-file -t v1.0.0` lo confirma diciendo `tag`.
+Con una etiqueta ligera no habría pasado, porque una etiqueta ligera **es** el commit.
+
+El fallo era de los peores: no da error, imprime siete caracteres con toda la pinta de ser un
+commit, y quien los compare con el pie concluirá que **lo desplegado no coincide con lo
+etiquetado** cuando sí coincide. El contraste correcto es cualquiera de estos dos:
 
 ```bash
-git rev-parse --short v1.0.0
+git rev-list -n 1 --abbrev-commit v1.0.0
+git rev-parse --short v1.0.0^{commit}
 ```
 
 Si eso imprime lo mismo que el pie de la página publicada, la versión desplegada **es** la
-etiquetada. Si imprime otra cosa, hay un despliegue posterior a la etiqueta, y entonces lo
-que hay que mirar no es el documento sino cuál de los dos va por delante.
+etiquetada. Si imprime otra cosa, hay un despliegue posterior a la etiqueta, y lo que hay que
+mirar no es este documento sino cuál de los dos va por delante.
 
-## 4. Por qué la matriz de trazabilidad todavía no tiene a HU-37
+## 4. Por qué la matriz de trazabilidad no admitía media historia
 
 Esto no es un olvido y conviene dejarlo explicado, porque la aritmética es bonita.
 
@@ -120,10 +146,18 @@ baje del 90 %, y una historia cuenta como construida en cuanto tiene un solo cas
 | con uno solo sin superar | 28 / 32 = **87,5 %** | **la integración continua falla** |
 
 O sea que **la matriz no admite media historia**: anotar HU-37 antes de que su tercer
-criterio esté comprobado de verdad rompería la compilación de todo el mundo. No es un efecto
-secundario molesto, es la herramienta haciendo su trabajo —lo que HU-35 quería de ella—, y
-la consecuencia práctica es que los tres casos de HU-37 se añaden cuando los tres pasan, no
-antes.
+criterio estuviera comprobado de verdad habría roto la compilación de todo el mundo. No es un
+efecto secundario molesto, es la herramienta haciendo su trabajo —lo que HU-35 quería de
+ella—, y la consecuencia práctica fue que los tres casos de HU-37 entraron cuando los tres
+pasaron, no antes.
+
+Comprobado al añadirlos, y sale el número previsto:
+
+```
+Historias «Debe» construidas    32
+De ellas, superan todos sus casos 29
+Cobertura                       90.6 %   (umbral 90.0 %)
+```
 
 Por eso esta historia se cierra en dos tiempos, que es además lo que mandan las
 [convenciones del repositorio](../CLAUDE.md) para una historia que falta comprobar sobre el
@@ -135,18 +169,27 @@ con el issue— y **el issue se reabre** hasta terminar la comprobación.
 > *Dado el prototipo desplegado, cuando se consulte desde un dispositivo externo, entonces
 > debe cargar sin errores y con datos de demostración cargados.*
 
-Medido el 12/10/2026 contra `https://hub-cultural-santa-marta.vercel.app`, desde un
-navegador ajeno al entorno de desarrollo —no es `localhost`, no hay servidor de desarrollo
-en marcha, es la respuesta real de Vercel—:
+Medido el 12/10/2026 contra `https://hub-cultural-santa-marta.vercel.app` **ya sirviendo la
+v1.0.0**, desde un navegador ajeno al entorno de desarrollo: no es `localhost`, no hay
+servidor de desarrollo en marcha, es la respuesta real de Vercel.
 
 | Qué | Resultado |
 | --- | --- |
 | Portada | Carga; título `Inicio · Hub Cultural Santa Marta` |
 | `/eventos` pedido **directamente** | **12 tarjetas**: la reescritura de rutas sigue viva |
 | `/actores` pedido directamente | **4 fichas**, las cuatro con su imagen |
-| Errores en consola | **ninguno** |
+| `/hubs` y `/mapa` pedidos directamente | Cargan; **13 marcadores** sobre el mapa |
+| Errores en consola | **ninguno**, en las cuatro rutas |
+| A 375 px de ancho | 12 tarjetas, **0 px de desbordamiento** |
+| Cabeceras de `vercel.json` | `nosniff`, `DENY` y `strict-origin-when-cross-origin`, las tres |
 
 Los datos de demostración, por tanto, están cargados y son los que el jurado va a ver.
+
+Dos cosas que se dicen en lugar de redondear. La cabecera `Strict-Transport-Security`, que
+[12 §3](12-despliegue-continuo.md) verificó en su día con `curl`, **no se vio en esta
+medición**: se leyó desde `fetch`, y ahí no aparece. No se afirma nada sobre ella aquí. Y lo
+que se midió a 375 px es una **ventana** de 375 px, no un teléfono; sigue siendo cierto lo
+que dice el párrafo de abajo.
 
 Queda fuera de lo que puede medir quien escribe esto, y se dice en lugar de darlo por
 hecho: la Definición de Terminado pide la comprobación **en un dispositivo móvil real**, no
@@ -161,7 +204,12 @@ móvil, el teclado que tapa media pantalla y el dedo.
 | --- | --- |
 | Dirección pública **estable y documentada** | §1 y [12 §4](12-despliegue-continuo.md): la misma dirección desde el Sprint 3, con sus cabeceras verificadas. |
 | Carga **desde fuera**, sin errores y con datos de demostración | §5: 12 eventos, 4 actores, consola limpia, enlaces profundos. |
-| Corresponde a una **etiqueta de versión identificada** | §2 y §3: el pie publica versión y compilación; **pendiente de etiquetar y contrastar tras la fusión**. |
+| Corresponde a una **etiqueta de versión identificada** | §2 y §3: `v1.0.0` señala `dc45887` y el pie del sitio publicado dice `dc45887`. |
+
+Los tres casos están en la matriz (`CP-37.1` a `CP-37.3`, de tipo `produccion`) y el issue
+[#37](https://github.com/Petulio14/hub-cultural-santa-marta/issues/37) quedó cerrado por la
+fusión del pull request #111, sin necesidad de reabrirlo: la comprobación sobre el sitio
+publicado se terminó el mismo día.
 
 ---
 
