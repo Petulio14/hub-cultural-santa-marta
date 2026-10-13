@@ -346,9 +346,9 @@ el navegador sabe codificarlo. **No compensa**, y queda escrito para no volver a
 ### Por qué no se fue a 960 px
 
 Porque el límite deja de ser el de la imagen y pasa a ser el del catálogo. `/eventos` lee
-doce publicaciones de una sola consulta y **cada documento trae su imagen dentro**: el
-`loading="lazy"` del `img` no ahorra nada, porque los bytes llegaron con la consulta, no con
-la etiqueta. Subir el límite de las reglas multiplicaría lo que descarga esa vista por una
+doce publicaciones de una sola consulta y **cada documento trae su imagen dentro**: aplazar
+la carga del `img` no ahorra nada, porque los bytes llegaron con la consulta y no con la
+etiqueta —de ahí que el `loading="lazy"` acabara quitándose del todo (§12)—. Subir el límite de las reglas multiplicaría lo que descarga esa vista por una
 imagen que solo necesita la ficha.
 
 La salida existe y es otro cambio: **sacar la imagen grande a su propio documento**
@@ -393,3 +393,100 @@ estilos y comprueba que el `max-width` de `.detalle__imagen.imagen-actor` coinci
 `LADO_MAXIMO`. Se comprobó que falla por sus dos caminos antes de darla por buena —cambiando
 el tope a 900 px y quitándolo del todo—, y hay además una prueba que **fija el valor 720**
 escrito a mano, para que subirlo sea una decisión y no un descuido.
+
+## 12. La caja dejó de mandar sobre la imagen (12/10/2026)
+
+La §11 quitó el estiramiento y dejó el recorte. Y resultó que el recorte era lo peor de los
+dos, por una razón que no se ve mirando código: **lo que la gente sube no son fotografías de
+un sitio, son carteles**. El cartel del *V Festival Internacional La Universidad de la
+Felicidad* lleva escritos dentro los dos días y las dos horas. Recortarlo no quita adorno:
+quita información que no está en ninguna otra parte de la ficha.
+
+### Lo que había guardado, medido una por una
+
+Las doce publicaciones del catálogo, leídas en el navegador con `naturalWidth` y
+`naturalHeight`:
+
+| Forma | Medidas |
+| --- | --- |
+| Vertical | 480 × 720, 320 × 480, 360 × 480 |
+| Cuadrada | 480 × 480 |
+| Apaisada | 318 × 182, 273 × 209, 273 × 182, 269 × 169, 241 × 169 (×2), 233 × 169, 205 × 144 |
+
+Dos cosas que no se esperaban. **Cuatro de doce no son apaisadas**, así que una banda 16/9 no
+es «la forma normal» de nada. Y **ocho de doce son diminutas**: la mayor de ellas mide 318 px
+de ancho, muy por debajo de los 480 de entonces y de los 720 de ahora. Son imágenes que
+entraron ya pequeñas; `medidaReducida` nunca las agrandó, y hace bien.
+
+Con eso, lo que hacía cada caja de proporción fija:
+
+| Dónde | Caja | Imagen | Qué le hacía |
+| --- | --- | --- | --- |
+| Ficha | 720 × 405 | 480 × 720 | **1,5 × estirada y recortada al 37 % de su alto** |
+| Tarjeta | 327 × 327 | 205 × 144 | **2,27 × estirada y recortada al 70 % de su ancho** |
+
+La tarjeta, además, salía **cuadrada**: `.tarjeta-evento__imagen` declaraba `aspect-ratio:
+16 / 9` desde que se escribió y perdía contra `.imagen-actor { aspect-ratio: 1 }` de
+`global.css` exactamente igual que la ficha. **Es la cuarta vez que ocurre lo mismo con esa
+clase**, y las cuatro se descubrieron midiendo el elemento, nunca leyendo la hoja.
+
+### Tres palabras, y ninguna recorta
+
+```css
+width: auto;
+height: auto;
+object-fit: scale-down;
+```
+
+`auto` y `auto` dibujan la imagen a su tamaño real. `scale-down` es la única de las cinco
+formas de `object-fit` que **ni agranda ni recorta**: encoge lo que no quepa y deja lo demás
+como está. El tope sigue siendo `min(100%, 720px)`, o sea lo que mida la columna o lo máximo
+que se guarda, lo que sea menor.
+
+En la ficha desaparece la caja: la fotografía manda y la página se acomoda. En la tarjeta la
+caja se queda —doce tarjetas tienen que formar filas rectas— pero pasa a ser el límite y no
+el molde: dentro va la imagen entera, con el arena que `.imagen-actor` ya pinta de fondo
+alrededor. Una miniatura pequeña y nítida dice más de la actividad que un trozo grande y
+borroso de esa misma foto.
+
+### Lo que apareció al medir: `loading="lazy"` no cargaba nunca
+
+La primera medición después del cambio dio `complete: false`, y lo seguía dando cuatro
+segundos más tarde. La ficha se quedaba **sin fotografía**.
+
+Es un círculo cerrado, y vale la pena dejarlo escrito porque no es evidente: sin caja de
+proporción fija, un `img` que todavía no ha cargado **mide 0 × 0**; el navegador decide qué
+imágenes aplazadas cargar según si se acercan a la pantalla, y algo que mide 0 × 0 nunca
+llega a acercarse; al no cargar, sigue midiendo 0 × 0. La caja era lo que rompía el círculo,
+y la caja es justo lo que se acaba de quitar.
+
+El atributo se retira de `ImagenDeActor`, y no es un apaño: **aquí nunca ahorró un solo
+byte**. La imagen viaja dentro del documento de Firestore, así que cuando la etiqueta existe
+sus bytes ya se descargaron con la consulta (§11). Aplazaba la descodificación de algo que ya
+estaba en memoria, y a cambio escondía esta trampa.
+
+### Lo que cuesta
+
+La ficha ya no tiene una franja de altura fija: un cartel vertical ocupa más que una foto
+apaisada. En una ficha, que se lee de arriba abajo y de una en una, no hay ninguna fila que
+cuadrar, así que no molesta. **En el catálogo sí se nota**: un cartel vertical se dibuja a
+123 × 184 dentro de una caja de 327 × 184 y deja arena a los lados. Es el precio de verlo
+entero, y es reversible en una línea si alguna vez se decide al revés.
+
+Y hay una tercera cosa que conviene no perder de vista: **ocho de doce imágenes se ven ahora
+más pequeñas que antes**, porque antes se agrandaban para llenar la caja. Se ven pequeñas y
+nítidas en lugar de grandes y borrosas. Quien quiera que la suya se vea grande tiene el
+camino abierto desde la §11: volver a elegir la foto y guardar, y se reduce a 720 px en vez
+de a 480.
+
+### Comprobado
+
+Las dos reglas llevan prueba en `pruebas/unidad/imagen.test.js`, y se comprobó que fallan
+antes de darlas por buenas —devolviendo `cover` a la ficha y quitándole a la tarjeta la clase
+doblada—:
+
+| Sitio | Antes | Después |
+| --- | --- | --- |
+| Ficha, 1366 px | 720 × 405 de un original 480 × 720 | **480 × 720**, entera y 1:1 |
+| Ficha, 375 px | 343 × 193 | **343 × 515**, encogida sin recortar |
+| Tarjeta | 327 × 327, cuadrada | **327 × 184**, con la imagen entera dentro |

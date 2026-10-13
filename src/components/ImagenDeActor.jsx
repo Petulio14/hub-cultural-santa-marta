@@ -33,7 +33,17 @@ export default function ImagenDeActor({ imagen, nombre, alt, className = '' }) {
         // dibujo de respaldo y las tres razones de arriba valen igual para las
         // dos, así que la pieza es la misma.
         alt={alt ?? `Imagen del perfil de ${nombre}`}
-        loading="lazy"
+        // Llevó «loading="lazy"» hasta el 12/10/2026, y quitarlo no es un
+        // descuido. Aquí la imagen viaja **dentro** del documento de Firestore:
+        // cuando esta etiqueta existe, sus bytes ya se descargaron con la
+        // consulta, así que aplazar la carga no ahorra ni uno (docs/18 §11).
+        //
+        // No ahorrar nada era inofensivo hasta que la ficha del evento pasó a
+        // dibujar la fotografía a su tamaño, sin caja de proporción fija.
+        // Entonces el elemento mide 0 × 0 mientras no haya imagen, y una imagen
+        // aplazada que mide 0 × 0 nunca llega a entrar en la pantalla: no
+        // cargaba, y al no cargar seguía midiendo 0 × 0. Medido en el navegador:
+        // «complete: false» indefinidamente, y la ficha sin fotografía.
       />
     );
   }

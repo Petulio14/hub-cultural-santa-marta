@@ -48,26 +48,42 @@
  * clase del padre delante. Aquí se dobla la clase **del propio elemento**, que
  * suma igual y además no depende de que el padre exista ni conserve su nombre.
  *
- * ## 2. Se dibujaba a 1136 px desde un archivo de 480
+ * ## 2. Se dibujaba estirada y, encima, recortada
  *
  * La imagen guardada mide como mucho LADO_MAXIMO por su lado mayor
- * (src/utils/imagen.js). Con «width: 100 %» y nada que lo frenara, en escritorio
- * se estiraba hasta los 1136 px de la columna: **3,33 veces**, que es justo el
- * aspecto emborronado que se veía. Estirar no añade un detalle; solo reparte los
- * que hay entre más píxeles.
+ * (src/utils/imagen.js) y muchas miden bastante menos. Con «width: 100 %»
+ * dentro de una caja de proporción fija pasaban las dos cosas a la vez: una
+ * fotografía vertical de 480 × 720 se dibujaba en una banda de 720 × 405, o sea
+ * **estirada 1,5 × a lo ancho y recortada al 37 % de su alto**. Lo que se veía
+ * era una tira del centro, y borrosa.
  *
- * De ahí el tope. **720 px es el mismo número que LADO_MAXIMO**, y la regla que
- * lo explica es «no dibujar nunca más ancho de lo más ancho que guardamos». Si
- * ese valor cambia allí, este tiene que cambiar aquí: son dos lenguajes y no hay
- * forma de compartir la constante.
+ * Así que aquí la caja no manda sobre la imagen: manda la imagen. «width» y
+ * «height» en auto la dibujan a su tamaño real, el tope la frena en los 720 px
+ * que como mucho se guardan —el mismo número que LADO_MAXIMO, y si cambia allí
+ * tiene que cambiar aquí— y «scale-down» cierra el trato: encoge lo que no
+ * quepa y no agranda nunca nada. Ninguna de las tres recorta.
+ *
+ * El precio es que la ficha ya no tiene una franja de altura fija: una foto
+ * vertical ocupa más que una apaisada. Es lo que se pidió —verla entera y a su
+ * resolución— y en una ficha, que se lee de arriba abajo y de una en una, no
+ * hay ninguna fila que cuadrar.
  */
 .detalle__imagen.imagen-actor {
-  width: 100%;
-  max-width: 720px;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
   display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 720px);
+  aspect-ratio: auto;
+  object-fit: scale-down;
   border-radius: var(--radio);
+}
+
+/* El dibujo de respaldo no es una fotografía: no tiene resolución que respetar
+   ni nada que recortar. Conserva la banda ancha, que es lo que mejor dice «aquí
+   iba una imagen» sin fingir que hay una. */
+.detalle__imagen.imagen-actor--vacia {
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
 
 .detalle__categoria {
