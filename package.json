@@ -1,7 +1,7 @@
 {
   "name": "hub-cultural-santa-marta",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Plataforma cultural de Santa Marta — trabajo de grado, Tecnologico de Antioquia.",
   "scripts": {
