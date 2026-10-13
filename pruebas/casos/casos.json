@@ -789,7 +789,7 @@
     "HU-37.3": {
       "caso": "CP-37.3",
       "tipo": "produccion",
-      "evidencia": "docs/36 §3: el pie del sitio publicado dice dc45887 y «git rev-list -n 1 --abbrev-commit v1.0.0» da dc45887",
+      "evidencia": "docs/36 §3: lo desplegado contiene v1.0.0 —«git merge-base --is-ancestor» sale con 0— y «git diff v1.0.0..compilación» sobre src, index.html, vite.config.js, package.json y vercel.json no imprime nada",
       "resultado": "pasa"
     }
   }

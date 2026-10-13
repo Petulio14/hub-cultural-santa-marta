@@ -128,9 +128,43 @@ git rev-list -n 1 --abbrev-commit v1.0.0
 git rev-parse --short v1.0.0^{commit}
 ```
 
-Si eso imprime lo mismo que el pie de la página publicada, la versión desplegada **es** la
-etiquetada. Si imprime otra cosa, hay un despliegue posterior a la etiqueta, y lo que hay que
-mirar no es este documento sino cuál de los dos va por delante.
+### Y la igualdad era demasiado estricta
+
+Lo demostró **el propio commit que escribió este documento**. Al fusionar el pull request
+#112 —que no toca ni una línea de la aplicación: añade los tres casos a la matriz y corrige
+estas páginas— Vercel volvió a desplegar, y el pie pasó a decir `2852c49` mientras la
+etiqueta seguía en `dc45887`.
+
+Según la regla que había aquí escrita, eso significaba que la versión desplegada **ya no era
+la etiquetada**, y el tercer criterio de aceptación quedaba incumplido media hora después de
+darlo por bueno. Pero la aplicación publicada no había cambiado en absoluto: lo que cambió
+fue la documentación que viaja en el mismo repositorio.
+
+El error estaba en confundir dos cosas distintas:
+
+| | Qué identifica |
+| --- | --- |
+| La **compilación** del pie | De qué commit salió exactamente este paquete |
+| La **etiqueta** | Qué versión de la aplicación es |
+
+No tienen por qué coincidir carácter a carácter, y exigirlo convierte cada corrección de una
+coma en un incumplimiento. Lo que sí tiene que ser cierto son dos cosas, y las dos se
+comprueban:
+
+```bash
+# 1 · lo desplegado contiene la etiqueta
+git merge-base --is-ancestor v1.0.0 2852c49
+
+# 2 · y la aplicación no ha cambiado desde ella
+git diff --stat v1.0.0..2852c49 -- src index.html vite.config.js package.json package-lock.json vercel.json
+```
+
+La primera sale con código 0 y la segunda **no imprime nada**: lo único que cambió entre la
+etiqueta y lo desplegado son `docs/` y `pruebas/casos/`. Es decir, **la aplicación publicada
+es exactamente la etiquetada**, y ahora se puede demostrar en lugar de afirmarlo.
+
+Si la segunda sí imprimiera algo, entonces sí: hay aplicación desplegada que ninguna etiqueta
+señala, y lo que toca es etiquetar, no discutir con el documento.
 
 ## 4. Por qué la matriz de trazabilidad no admitía media historia
 
@@ -204,7 +238,7 @@ móvil, el teclado que tapa media pantalla y el dedo.
 | --- | --- |
 | Dirección pública **estable y documentada** | §1 y [12 §4](12-despliegue-continuo.md): la misma dirección desde el Sprint 3, con sus cabeceras verificadas. |
 | Carga **desde fuera**, sin errores y con datos de demostración | §5: 12 eventos, 4 actores, consola limpia, enlaces profundos. |
-| Corresponde a una **etiqueta de versión identificada** | §2 y §3: `v1.0.0` señala `dc45887` y el pie del sitio publicado dice `dc45887`. |
+| Corresponde a una **etiqueta de versión identificada** | §2 y §3: lo desplegado contiene `v1.0.0` y entre la etiqueta y la compilación publicada no cambia ni un archivo de la aplicación. |
 
 Los tres casos están en la matriz (`CP-37.1` a `CP-37.3`, de tipo `produccion`) y el issue
 [#37](https://github.com/Petulio14/hub-cultural-santa-marta/issues/37) quedó cerrado por la
