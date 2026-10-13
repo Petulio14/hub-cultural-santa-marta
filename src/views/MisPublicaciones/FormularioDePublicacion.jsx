@@ -234,7 +234,12 @@ export default function FormularioDePublicacion({
         errorDePunto={errores.punto}
       />
 
+      {/* El rótulo y la ayuda se dicen aquí: la pieza es la misma que la del
+          perfil, pero esta imagen es la de la actividad. Sin esto el formulario
+          decía «Imagen del perfil» a quien estaba publicando un taller. */}
       <CampoDeImagen
+        etiqueta="Imagen de la actividad"
+        ayuda="JPG o PNG, hasta 2 MB. Se reduce automáticamente antes de guardarse, así que el catálogo no tarda en abrirse. Si subes el cartel, se verá entero."
         imagen={formulario.imagen}
         nombre={formulario.titulo}
         alElegir={elegirImagen}
