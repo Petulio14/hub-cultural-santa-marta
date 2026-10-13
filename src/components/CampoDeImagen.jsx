@@ -14,6 +14,13 @@ import ImagenDeActor from './ImagenDeActor.jsx';
  * columna y no cumple el área mínima de toque de HU-10. El botón sí, y el
  * «input» sigue siendo el que hace el trabajo, con su etiqueta asociada, de modo
  * que el teclado y el lector de pantalla lo encuentran igual.
+ *
+ * El rótulo y la ayuda vienen de fuera desde el 12/10/2026. Estaban escritos
+ * aquí dentro —«Imagen del perfil», «para quien te visite»— y la pieza se
+ * reutiliza desde HU-21 en el formulario de publicar una actividad, así que
+ * quien publicaba un taller leía que estaba eligiendo la imagen de su perfil.
+ * Lo encontró el manual de usuario (HU-38) al describir la pantalla: escribir
+ * qué ve una persona que no conoce el código es una forma de probarlo.
  */
 export default function CampoDeImagen({
   imagen,
@@ -22,6 +29,8 @@ export default function CampoDeImagen({
   alQuitar,
   error = null,
   ocupado = false,
+  etiqueta = 'Imagen del perfil',
+  ayuda = 'JPG o PNG, hasta 2 MB. Se reduce automáticamente antes de guardarse, así que la página no tarda en abrirse para quien te visite.',
 }) {
   const id = useId();
   const idError = `${id}-error`;
@@ -31,12 +40,11 @@ export default function CampoDeImagen({
   return (
     <div className="campo campo-imagen">
       <span className="campo__etiqueta" id={`${id}-etiqueta`}>
-        Imagen del perfil
+        {etiqueta}
       </span>
 
       <span className="campo__ayuda" id={idAyuda}>
-        JPG o PNG, hasta 2 MB. Se reduce automáticamente antes de guardarse, así que la
-        página no tarda en abrirse para quien te visite.
+        {ayuda}
       </span>
 
       <div className="campo-imagen__cuerpo">
