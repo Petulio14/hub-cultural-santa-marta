@@ -42,3 +42,18 @@
   opacity: 0.85;
   font-size: 0.85rem;
 }
+
+/* La versión y el commit (HU-37). Letra pequeña, como la nota de arriba: tiene
+   que estar siempre y no tiene que competir con nada. Blanco al 85 % sobre el
+   azul profundo son 8,81 : 1, de sobra para texto pequeño. */
+.pie__version {
+  flex: 1 1 100%;
+  opacity: 0.85;
+  font-size: 0.85rem;
+}
+
+/* El identificador se lee carácter a carácter para compararlo con el del
+   repositorio, y ahí una «l» y un «1» tienen que distinguirse. */
+.pie__version code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

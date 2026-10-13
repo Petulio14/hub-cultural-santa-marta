@@ -4,6 +4,9 @@ Plataforma web que conecta actores culturales, hubs de innovación y visitantes 
 
 **Prototipo publicado:** https://hub-cultural-santa-marta.vercel.app
 
+El pie de cada página dice qué versión y qué compilación se está viendo, para poder
+contrastarla con la etiqueta del repositorio: [`docs/36-despliegue-final.md`](docs/36-despliegue-final.md).
+
 ## Contenido del repositorio
 
 | Carpeta | Contenido |

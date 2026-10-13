@@ -27,6 +27,13 @@ export default function PieDePagina() {
           Prototipo académico en construcción. Los datos publicados se tratan conforme a la
           Ley 1581 de 2012.
         </p>
+        {/* HU-37, tercer criterio: para contrastar lo que se está viendo con el
+            repositorio hace falta que la página diga de dónde salió. Los dos
+            valores los escribe «vite.config.js» al compilar, así que no pueden
+            desfasarse de lo publicado; el commit es el que la etiqueta señala. */}
+        <p className="pie__version">
+          Versión {__VERSION__} · compilación <code>{__COMMIT__}</code>
+        </p>
       </div>
     </footer>
   );

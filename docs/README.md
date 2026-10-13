@@ -47,6 +47,7 @@ en el tablero.
 | [`../pruebas/casos/`](../pruebas/casos/) | [HU-35](https://github.com/Petulio14/hub-cultural-santa-marta/issues/35) | 7 | La matriz en sí: los criterios volcados de los issues, el caso de cada uno y el registro de hallazgos. La comprueba `npm run verificar:casos` en cada integración. |
 | [35-usabilidad.md](35-usabilidad.md) | [HU-36](https://github.com/Petulio14/hub-cultural-santa-marta/issues/36) | 7 | El instrumento completo —consentimiento, seis tareas y cuestionario SUS— y la aritmética del puntaje con sus casos de prueba. **Las ocho sesiones con personas reales están por ejecutar.** |
 | [`../pruebas/usabilidad/`](../pruebas/usabilidad/) | [HU-36](https://github.com/Petulio14/hub-cultural-santa-marta/issues/36) | 7 | Lo que se lleva a la sesión: la hoja de consentimiento, el guion de quien acompaña, el cuestionario listo para imprimir y el archivo donde se vuelca cada sesión. |
+| [36-despliegue-final.md](36-despliegue-final.md) | [HU-37](https://github.com/Petulio14/hub-cultural-santa-marta/issues/37) | 8 | La versión publicada se identifica a sí misma: versión y compilación selladas al compilar y enseñadas en el pie; por qué en Vercel no se le puede preguntar a git, y por qué la matriz de trazabilidad no admite media historia. |
 
 **HU-02 — Construcción y priorización del Product Backlog** no tiene documento propio: su
 evidencia son los [40 issues](https://github.com/Petulio14/hub-cultural-santa-marta/issues)
