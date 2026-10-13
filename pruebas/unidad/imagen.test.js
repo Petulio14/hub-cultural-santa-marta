@@ -176,6 +176,13 @@ describe('medida de la imagen reducida', () => {
   });
 });
 
+/** La hoja de la ficha, que tres pruebas de aquí abajo leen como texto. */
+const hojaDeLaFicha = () =>
+  readFileSync(
+    new URL('../../src/views/DetalleEvento/DetalleEvento.css', import.meta.url),
+    'utf8'
+  );
+
 describe('cuánto mide el lado mayor', () => {
   it('son 720 píxeles', () => {
     // Está fijado a propósito y no leído de la propia constante: es el único
@@ -185,16 +192,43 @@ describe('cuánto mide el lado mayor', () => {
     assert.equal(LADO_MAXIMO, 720);
   });
 
-  it('la hoja de la ficha dibuja el estándarte a ese mismo ancho', () => {
-    // «DetalleEvento.css» topa la imagen en «max-width: 720px» para no
-    // estirarla. Son dos lenguajes y la constante no se puede compartir, así
-    // que al menos el desajuste se descubre aquí y no mirando la pantalla.
-    const hoja = readFileSync(
-      new URL('../../src/views/DetalleEvento/DetalleEvento.css', import.meta.url),
-      'utf8'
+  it('la hoja de la ficha topa el estándarte en ese mismo ancho', () => {
+    // «DetalleEvento.css» topa la imagen en 720 px para no estirarla. Son dos
+    // lenguajes y la constante no se puede compartir, así que al menos el
+    // desajuste se descubre aquí y no mirando la pantalla. El tope va dentro de
+    // un «min()» con el ancho de la columna, de ahí que no se exija que el
+    // número venga pegado a los dos puntos.
+    const tope = hojaDeLaFicha().match(
+      /\.detalle__imagen\.imagen-actor\s*\{[^}]*max-width:[^;]*?(\d+)px/
     );
-    const tope = hoja.match(/\.detalle__imagen\.imagen-actor\s*\{[^}]*max-width:\s*(\d+)px/);
     assert.ok(tope, 'la ficha ya no topa el ancho del estándarte');
     assert.equal(Number(tope[1]), LADO_MAXIMO);
+  });
+});
+
+describe('la fotografía de un evento se ve entera', () => {
+  // Lo que se guarda es lo máximo que hay: no existe el original, se reduce en
+  // el navegador de quien lo sube. Así que recortar con «cover» es perder lo
+  // único que hay, y agrandar para llenar una caja es repartir los píxeles que
+  // hay entre más sitio. «scale-down» es la única de las cinco que no hace ni
+  // lo uno ni lo otro, y por eso está escrita en las dos hojas.
+
+  it('la ficha no la recorta ni la agranda', () => {
+    const regla = hojaDeLaFicha().match(/\.detalle__imagen\.imagen-actor\s*\{([^}]*)\}/);
+    assert.ok(regla, 'la ficha ya no tiene regla propia para la imagen');
+    assert.match(regla[1], /object-fit:\s*scale-down/);
+  });
+
+  it('la tarjeta del catálogo tampoco', () => {
+    const hoja = readFileSync(
+      new URL('../../src/views/Catalogo/Catalogo.css', import.meta.url),
+      'utf8'
+    );
+    // Con la clase doblada: «.tarjeta-evento__imagen» a secas empata con
+    // «.imagen-actor» de global.css y pierde por el orden de las hojas, que es
+    // justo lo que tuvo a las tarjetas cuadradas sin que nadie lo viera.
+    const regla = hoja.match(/\.tarjeta-evento__imagen\.imagen-actor\s*\{([^}]*)\}/);
+    assert.ok(regla, 'la tarjeta ya no gana a «.imagen-actor» doblando la clase');
+    assert.match(regla[1], /object-fit:\s*scale-down/);
   });
 });

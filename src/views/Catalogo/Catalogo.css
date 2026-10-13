@@ -60,12 +60,27 @@
    caras; aquí la imagen es el reclamo: quien recorre un catálogo de planes mira
    antes la fotografía que el título.
 
-   Proporción fija y recorte centrado para que doce tarjetas formen filas rectas
-   sin depender de cómo venga cada imagen. */
-.tarjeta-evento__imagen {
+   Proporción fija para que doce tarjetas formen filas rectas sin depender de
+   cómo venga cada imagen, pero con la imagen entera dentro de esa caja.
+
+   Dos arreglos del 12/10/2026, y son problemas distintos que se sumaban.
+
+   El primero: esta regla declara su 16/9 desde que se escribió y **nunca lo
+   tuvo**. «.imagen-actor { aspect-ratio: 1 }» de global.css es también una sola
+   clase, empata en especificidad y ganaba por el orden en que Vite junta las
+   hojas, así que las tarjetas salían cuadradas. Se arregla doblando la clase
+   del propio elemento, como en la ficha. Es la cuarta vez que pasa lo mismo.
+
+   El segundo: «cover» recortaba. Una fotografía apaisada de 205 × 144 se
+   agrandaba 2,3 × para llenar el cuadrado de 327 px y encima perdía el 30 % de
+   su ancho: borrosa y mochada a la vez. «scale-down» no agranda ni recorta
+   —encoge lo que no quepa y deja lo demás a su tamaño—, y alrededor queda el
+   arena que «.imagen-actor» ya pinta de fondo. Una miniatura pequeña y nítida
+   dice más de la actividad que un trozo grande y borroso de esa misma foto. */
+.tarjeta-evento__imagen.imagen-actor {
   width: 100%;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
+  object-fit: scale-down;
   display: block;
   border-radius: 0;
 }
