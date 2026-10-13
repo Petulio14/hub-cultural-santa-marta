@@ -125,9 +125,9 @@ secundario molesto, es la herramienta haciendo su trabajo —lo que HU-35 querí
 la consecuencia práctica es que los tres casos de HU-37 se añaden cuando los tres pasan, no
 antes.
 
-Por eso esta historia se cierra en dos tiempos, que es además lo que
-[CLAUDE.md](../CLAUDE.md) manda para una historia que falta comprobar sobre el sitio
-publicado: el pull request lleva `Closes #37` desde que se abre —si no, se pierde el enlace
+Por eso esta historia se cierra en dos tiempos, que es además lo que mandan las
+[convenciones del repositorio](../CLAUDE.md) para una historia que falta comprobar sobre el
+sitio publicado: el pull request lleva `Closes #37` desde que se abre —si no, se pierde el enlace
 con el issue— y **el issue se reabre** hasta terminar la comprobación.
 
 ## 5. Lo comprobado sobre el sitio publicado
