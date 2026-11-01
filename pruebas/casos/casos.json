@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-12",
+  "generado": "2026-11-01",
   "leeme": "Un caso por criterio de aceptacion. La clave apunta a pruebas/casos/criterios.json.",
   "tipos": {
     "unidad": "npm run probar - funciones puras, sin emulador ni navegador",
@@ -790,6 +790,24 @@
       "caso": "CP-37.3",
       "tipo": "produccion",
       "evidencia": "docs/36 §3: lo desplegado contiene v1.0.0 —«git merge-base --is-ancestor» sale con 0— y «git diff v1.0.0..compilación» sobre src, index.html, vite.config.js, package.json y vercel.json no imprime nada",
+      "resultado": "pasa"
+    },
+    "HU-39.1": {
+      "caso": "CP-39.1",
+      "tipo": "documental",
+      "evidencia": "docs/38 §2, §3 y §5: diagrama del sistema en ejecución, las 7 colecciones con sus 10 índices, y lo que permite cada regla colección por colección",
+      "resultado": "pasa"
+    },
+    "HU-39.2": {
+      "caso": "CP-39.2",
+      "tipo": "documental",
+      "evidencia": "docs/38 §4: ocho pasos de «git clone» a la comprobación sobre el sitio publicado, con el orden índices-antes-que-reglas y la cuenta de administrador",
+      "resultado": "pasa"
+    },
+    "HU-39.3": {
+      "caso": "CP-39.3",
+      "tipo": "estructura",
+      "evidencia": "docs/38 describe la versión 1.0.0, y «npm run verificar» falla si las colecciones con reglas o el número de índices dejan de coincidir con lo documentado en docs/04",
       "resultado": "pasa"
     }
   }

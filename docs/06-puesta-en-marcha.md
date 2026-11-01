@@ -10,6 +10,13 @@ sobre la marcha.
 
 Tiempo estimado: **35 minutos** las dos plataformas.
 
+> **Este documento es del Sprint 3 y se escribió antes de que existiera la aplicación.** Se
+> conserva porque es el paso a paso con las capturas mentales de cada pantalla de Firebase y
+> de Vercel, y se corrigió el 01/11/2026 donde se había quedado atrás. El procedimiento
+> completo **para la versión final**, con el repositorio ya construido, está en
+> [38 · documentación técnica](38-documentacion-tecnica.md) §4, que es el que hay que seguir
+> para levantar el proyecto desde cero hoy.
+
 ---
 
 ## Qué hay ya resuelto en el repositorio
@@ -17,8 +24,8 @@ Tiempo estimado: **35 minutos** las dos plataformas.
 | Archivo | Para qué |
 | --- | --- |
 | `firestore.rules` | Reglas de seguridad completas de las 7 colecciones. Es el entregable de **HU-11**. |
-| `firestore.indexes.json` | Los 6 índices compuestos. Se genera desde `docs/04-modelo-datos.md` §10, así que no pueden divergir. |
-| `storage.rules` | Lectura pública, escritura solo del propietario, JPG/PNG de hasta 2 MB (**HU-19**). |
+| `firestore.indexes.json` | Los **10** índices compuestos, con su porqué en `docs/04-modelo-datos.md` §10. |
+| `storage.rules` | Escritas y **sin publicar**: Storage nunca se activó (ver abajo). Se conservan por si algún día hay presupuesto. |
 | `firebase.json` | Enlaza las reglas y los índices, y configura los emuladores locales. |
 | `.firebaserc.ejemplo` | Plantilla del identificador de proyecto. |
 | `.env.example` | Las seis variables del SDK que hay que rellenar. |
@@ -117,10 +124,23 @@ Elige el proyecto de la lista y ponle el alias `default`. Eso genera `.firebaser
 paso se puede saltar. Después:
 
 ```bash
-firebase deploy --only firestore:rules,firestore:indexes,storage
+firebase deploy --only firestore:indexes
 ```
 
-Los índices tardan unos minutos en construirse; el estado se ve en *Firestore → Índices*.
+```bash
+firebase deploy --only firestore:rules
+```
+
+**Primero los índices y después las reglas**, y en dos comandos y no en uno: un índice de más
+no le estorba a nadie, mientras que una regla nueva rechaza al cliente que todavía está vivo
+([12 §5.1 y §5.2](12-despliegue-continuo.md)). Los índices tardan unos minutos en
+construirse; el estado se ve en *Firestore → Índices*, o con `firebase firestore:indexes`,
+que es lo que permite comprobar que el despliegue ocurrió de verdad.
+
+> **Aquí decía `,storage` al final (corregido el 01/11/2026).** En un proyecto donde Storage
+> nunca se habilitó —que es el caso, y a propósito: RNF-10— ese comando **falla** y deja sin
+> publicar también lo que sí iba en la misma orden. Las `storage.rules` se quedan escritas y
+> sin publicar.
 
 > **Sobre la validación de las reglas.** `firestore.rules` y `storage.rules` pasaron una
 > revisión estructural (balanceo, funciones declaradas y usadas, cobertura de las 7
@@ -238,36 +258,24 @@ emulador, así que sirve también para probar los rechazos de HU-35 sin ensuciar
 
 ---
 
-## Cuando exista el proyecto de React (HU-07)
+## El archivo que inicializa el SDK
 
 `src/services/firebase.js` es el único archivo del proyecto que puede importar el SDK
-(regla de `docs/03-arquitectura.md` §3):
+(regla de `docs/03-arquitectura.md` §3). Lo que exporta son **dos** cosas:
 
 ```js
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-
-const configuracion = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
-
-const app = initializeApp(configuracion);
-
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
 ```
 
-El resto de servicios (`eventosService`, `authService`…) importan `db`, `auth` y `storage`
-**de este archivo**, nunca de `firebase/*` directamente. La comprobación está en
-`docs/03-arquitectura.md` §3.
+El resto de servicios (`eventosService`, `authService`…) importan `db` y `auth` **de este
+archivo**, nunca de `firebase/*` directamente. La comprobación está en `npm run verificar`.
+
+> Aquí se mostraba un tercer export, `storage`, con su `getStorage(app)`. El archivo real lo
+> llegó a tener —con el nombre `almacenamiento`— y **nadie lo importó nunca**; se retiró el
+> 01/11/2026 ([03 §1](03-arquitectura.md)). La variable `VITE_FIREBASE_STORAGE_BUCKET` sí
+> sigue haciendo falta: es uno de los seis valores que la consola entrega juntos y el
+> arranque los exige los seis.
 
 ---
 
@@ -278,11 +286,11 @@ Marca aquí conforme avances; sirve de evidencia en la Sprint Review.
 | # | Paso | Estado |
 | --- | --- | --- |
 | 1 | Proyecto de Firebase creado | ✅ 22/08/2026 |
-| 2 | Authentication, Firestore y Storage habilitados | ◨ Firestore sí; **Storage sin configurar** |
+| 2 | Authentication y Firestore habilitados | ✅ 22/08/2026 · **Storage no se habilita**: no hace falta (RNF-10) |
 | 3 | Aplicación web registrada y `.env.local` relleno | ✅ 22/08/2026 |
-| 4 | Reglas e índices publicados | ✅ 22/08/2026 · Firestore: reglas compiladas y 6 índices |
+| 4 | Reglas e índices publicados | ✅ 22/08/2026 · reglas compiladas; los índices acabaron siendo **10** ([12 §5.2](12-despliegue-continuo.md)) |
 | 5 | Las seis simulaciones de §1.6 dan el resultado esperado | ✅ 22/08/2026 · automatizadas: 21 casos en verde ([11](11-reglas-de-seguridad.md)) |
-| 6 | Cuenta de administrador creada | ⬜ |
+| 6 | Cuenta de administrador creada | ✅ · comprobada el 12/10/2026 entrando al panel de administración en el sitio publicado |
 | 7 | Proyecto de Vercel conectado con sus variables | ✅ 22/08/2026 |
 | 8 | Dirección pública anotada en HU-08 y en el README | ✅ 22/08/2026 |
 | 9 | Dominio de Vercel autorizado en Firebase | ✅ 22/08/2026 |
