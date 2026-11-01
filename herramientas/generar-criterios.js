@@ -47,10 +47,23 @@ for (const issue of issues) {
   const prioridad =
     issue.labels.map((l) => l.name).find((n) => n.startsWith('prioridad:'))?.split(':')[1] ?? null;
 
+  // La ficha de cada issue trae los requisitos que la historia realiza y el
+  // objetivo específico al que responde. Se vuelcan desde HU-40: la matriz de
+  // trazabilidad que pide su segundo criterio cruza requisitos, historias y
+  // casos, y sin esto el primero de los tres habría que escribirlo a mano en el
+  // informe, que es justo la copia que acaba divergiendo.
+  const celda = (campo) =>
+    cuerpo.match(new RegExp(`\\|\\s*${campo}\\s*\\|([^|]*)\\|`))?.[1]?.trim() ?? '';
+
+  const requisitos = [...celda('Requisitos asociados').matchAll(/R(?:F|NF)-\d+/g)].map((m) => m[0]);
+  const objetivo = celda('Objetivo específico').match(/\d+/)?.[0] ?? null;
+
   const codigo = `HU-${String(issue.number).padStart(2, '0')}`;
   historias[codigo] = {
     titulo: issue.title.replace(/^HU-\d+ · /, ''),
     prioridad,
+    requisitos,
+    objetivo,
     criterios,
   };
 }

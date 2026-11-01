@@ -1,10 +1,17 @@
 {
-  "generado": "2026-09-28",
+  "generado": "2026-11-01",
   "fuente": "issues del repositorio, que son la fuente de los criterios (CLAUDE.md)",
   "historias": {
     "HU-01": {
       "titulo": "Especificación de requisitos del sistema",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-01",
+        "RF-15",
+        "RNF-01",
+        "RNF-10"
+      ],
+      "objetivo": "1",
       "criterios": [
         "Dado que se ha realizado la revisión documental del contexto, cuando se consolide el análisis, entonces cada limitación identificada debe estar asociada al menos a un requisito.",
         "Dado el catálogo de requisitos, cuando se revise, entonces cada requisito funcional debe tener un código único, una redacción verificable y una prioridad asignada.",
@@ -15,6 +22,11 @@
     "HU-02": {
       "titulo": "Construcción y priorización del Product Backlog",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-01",
+        "RF-15"
+      ],
+      "objetivo": "1",
       "criterios": [
         "Dado el catálogo de requisitos, cuando se redacten las historias, entonces cada una debe seguir el formato «como / necesito / para» y contar con criterios de aceptación.",
         "Dado el conjunto de historias, cuando se estime en planning poker, entonces cada historia debe tener un valor en puntos de la escala de Fibonacci adoptada.",
@@ -25,6 +37,8 @@
     "HU-03": {
       "titulo": "Delimitación del alcance del producto mínimo viable",
       "prioridad": "debe",
+      "requisitos": [],
+      "objetivo": "1",
       "criterios": [
         "Dado el backlog priorizado, cuando se defina el alcance, entonces debe existir una lista escrita de funcionalidades excluidas con su justificación.",
         "Dado el alcance definido, cuando se identifique una funcionalidad fuera de él, entonces debe registrarse como trabajo futuro y no incorporarse a ningún sprint.",
@@ -34,6 +48,10 @@
     "HU-04": {
       "titulo": "Diseño de la arquitectura de la solución",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el alcance aprobado, cuando se diseñe la arquitectura, entonces debe quedar documentada en un diagrama con sus capas y las relaciones entre ellas.",
         "Dada la arquitectura, cuando se revise, entonces la capa de presentación no debe acceder a datos sin pasar por la capa de servicios.",
@@ -43,6 +61,11 @@
     "HU-05": {
       "titulo": "Diseño del modelo de datos en Cloud Firestore",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-03",
+        "RF-11"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el catálogo de requisitos, cuando se diseñe el modelo, entonces cada entidad debe tener su colección con los campos necesarios y sus tipos definidos.",
         "Dado el modelo, cuando se revise, entonces las relaciones entre colecciones deben resolverse mediante identificadores de referencia.",
@@ -53,6 +76,12 @@
     "HU-06": {
       "titulo": "Prototipo de interfaz en Figma",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-01",
+        "RNF-03",
+        "RNF-07"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el alcance funcional, cuando se diseñe el prototipo, entonces deben existir las vistas de inicio, catálogo, detalle de evento, perfil de actor, directorio de hubs, mapa y panel de administración.",
         "Dado el prototipo, cuando se revise, entonces debe ser navegable entre pantallas mediante enlaces.",
@@ -63,6 +92,10 @@
     "HU-07": {
       "titulo": "Configuración del proyecto y estructura de rutas",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el proyecto creado, cuando se ejecute en local, entonces debe iniciar sin errores en consola.",
         "Dada la estructura de carpetas, cuando se revise, entonces debe separar componentes, vistas, servicios y utilidades.",
@@ -72,6 +105,11 @@
     "HU-08": {
       "titulo": "Repositorio versionado y despliegue continuo",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-08",
+        "RNF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el repositorio, cuando se integre un cambio en la rama principal, entonces Vercel debe generar un despliegue sin intervención manual.",
         "Dado un despliegue, cuando finalice, entonces debe existir una dirección pública accesible desde cualquier navegador.",
@@ -81,6 +119,10 @@
     "HU-09": {
       "titulo": "Estructura base de navegación y página de inicio",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada la página de inicio, cuando se cargue, entonces debe presentar el propósito de la plataforma y los cuatro accesos principales.",
         "Dado el menú de navegación, cuando se seleccione una opción, entonces debe conducir a la vista correspondiente en menos de dos segundos.",
@@ -90,6 +132,10 @@
     "HU-10": {
       "titulo": "Diseño responsive de la estructura base",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-03"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada la interfaz, cuando se visualice en anchos de 360, 768 y 1366 píxeles, entonces el contenido debe permanecer legible y sin desbordamiento horizontal.",
         "Dado el menú, cuando el ancho sea inferior a 768 píxeles, entonces debe presentarse en su versión compacta.",
@@ -99,6 +145,11 @@
     "HU-11": {
       "titulo": "Reglas de seguridad iniciales de la base de datos",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-05",
+        "RNF-08"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada una sesión no autenticada, cuando se intente escribir en cualquier colección, entonces la operación debe ser rechazada.",
         "Dado un usuario autenticado, cuando intente modificar un documento que no le pertenece, entonces la operación debe ser rechazada.",
@@ -108,6 +159,10 @@
     "HU-12": {
       "titulo": "Registro de actor cultural",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-01"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario de registro, cuando ingrese un correo válido y una contraseña de al menos ocho caracteres, entonces la cuenta debe crearse y quedar asociada al rol de actor cultural.",
         "Dado el formulario, cuando ingrese un correo ya registrado, entonces debe mostrarse un mensaje claro y no crearse una cuenta duplicada.",
@@ -118,6 +173,10 @@
     "HU-13": {
       "titulo": "Inicio y cierre de sesión",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-02"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dadas credenciales correctas, cuando inicie sesión, entonces debe accederse a la vista correspondiente a mi rol.",
         "Dadas credenciales incorrectas, cuando intente iniciar sesión, entonces debe mostrarse un mensaje de error que no revele si el correo existe.",
@@ -128,6 +187,10 @@
     "HU-14": {
       "titulo": "Recuperación de contraseña",
       "prioridad": "deberia",
+      "requisitos": [
+        "RF-02"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado un correo registrado, cuando solicite el restablecimiento, entonces debe recibirse un mensaje con el enlace correspondiente.",
         "Dado un correo no registrado, cuando se solicite, entonces la respuesta visible debe ser la misma para no revelar la existencia de la cuenta.",
@@ -137,6 +200,11 @@
     "HU-15": {
       "titulo": "Diferenciación de roles y permisos",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-01",
+        "RNF-08"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada una cuenta con rol de actor cultural, cuando intente acceder al panel de administración, entonces el acceso debe ser denegado.",
         "Dada una cuenta con rol de administrador, cuando inicie sesión, entonces debe acceder al panel de moderación.",
@@ -147,6 +215,10 @@
     "HU-16": {
       "titulo": "Consentimiento de tratamiento de datos personales",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-06"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario de registro, cuando se presente, entonces debe incluir un enlace visible a la política de tratamiento de datos.",
         "Dado el formulario, cuando no se marque la casilla de aceptación, entonces el registro no debe completarse.",
@@ -157,6 +229,11 @@
     "HU-17": {
       "titulo": "Gestión de categorías culturales",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-07",
+        "RF-14"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el panel de administración, cuando cree una categoría, entonces debe quedar disponible de inmediato en los formularios de publicación.",
         "Dada una categoría con publicaciones asociadas, cuando intente eliminarla, entonces el sistema debe advertirlo e impedir la pérdida de la clasificación.",
@@ -166,6 +243,11 @@
     "HU-18": {
       "titulo": "Creación y edición del perfil de actor cultural",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-03",
+        "RF-06"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario de perfil, cuando complete nombre, manifestación, descripción, categoría y datos de contacto, entonces el perfil debe guardarse y quedar asociado a mi cuenta.",
         "Dado mi perfil guardado, cuando lo edite, entonces los cambios deben reflejarse en la vista pública sin requerir una nueva aprobación de la cuenta.",
@@ -177,6 +259,10 @@
     "HU-19": {
       "titulo": "Carga de imagen en el perfil",
       "prioridad": "deberia",
+      "requisitos": [
+        "RF-03"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario, cuando cargue una imagen en formato JPG o PNG de hasta dos megabytes, entonces debe almacenarse y mostrarse en el perfil.",
         "Dado un archivo de formato o tamaño no permitido, cuando se intente cargar, entonces debe rechazarse con un mensaje explicativo.",
@@ -186,6 +272,11 @@
     "HU-20": {
       "titulo": "Perfil y directorio de hubs de innovación",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-04",
+        "RF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario del hub, cuando complete nombre, descripción, líneas de trabajo, dirección y contacto, entonces el perfil debe guardarse.",
         "Dado el directorio público, cuando se consulte, entonces deben listarse todos los hubs aprobados con su información básica.",
@@ -195,6 +286,11 @@
     "HU-21": {
       "titulo": "Publicación de un evento o experiencia cultural",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-05",
+        "RF-07"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario de publicación, cuando complete título, descripción, categoría, fecha, lugar e imagen, entonces la publicación debe guardarse con estado «pendiente de aprobación».",
         "Dado el formulario, cuando la fecha de inicio sea posterior a la de finalización, entonces el envío debe bloquearse con un mensaje explicativo.",
@@ -205,6 +301,10 @@
     "HU-22": {
       "titulo": "Georreferenciación de la publicación",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-08"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el formulario de publicación, cuando seleccione un punto en el mapa, entonces deben capturarse y guardarse su latitud y longitud.",
         "Dada una publicación sin coordenadas, cuando se intente guardar, entonces debe advertirse que no aparecerá en el mapa.",
@@ -214,6 +314,10 @@
     "HU-23": {
       "titulo": "Edición y eliminación de publicaciones propias",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-06"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada una publicación propia, cuando la edite, entonces los cambios deben guardarse y la publicación debe volver a estado «pendiente de aprobación».",
         "Dada una publicación propia, cuando la elimine, entonces debe solicitarse confirmación antes de proceder.",
@@ -223,6 +327,10 @@
     "HU-24": {
       "titulo": "Moderación de publicaciones",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-13"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el panel de moderación, cuando se cargue, entonces deben listarse todas las publicaciones pendientes ordenadas por fecha de creación.",
         "Dada una publicación pendiente, cuando la apruebe, entonces debe pasar a estado «aprobada» y hacerse visible en el catálogo y en el mapa.",
@@ -233,6 +341,10 @@
     "HU-25": {
       "titulo": "Exploración del catálogo público",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-09"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el catálogo, cuando se cargue, entonces deben listarse únicamente las publicaciones aprobadas.",
         "Dado el listado, cuando se presente cada elemento, entonces debe mostrar imagen, título, categoría, fecha y lugar.",
@@ -243,6 +355,10 @@
     "HU-26": {
       "titulo": "Filtrado por categoría cultural y por fecha",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-10"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el catálogo, cuando aplique un filtro de categoría, entonces deben mostrarse únicamente las publicaciones de esa categoría.",
         "Dado el catálogo, cuando aplique un rango de fechas, entonces deben mostrarse solo las publicaciones vigentes en ese rango.",
@@ -253,6 +369,10 @@
     "HU-27": {
       "titulo": "Búsqueda por palabra clave",
       "prioridad": "deberia",
+      "requisitos": [
+        "RF-10"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el campo de búsqueda, cuando escriba un término, entonces deben mostrarse las publicaciones cuyo título o descripción lo contengan.",
         "Dada una búsqueda sin resultados, cuando se ejecute, entonces debe informarse con un mensaje y sugerirse limpiar los filtros.",
@@ -262,6 +382,11 @@
     "HU-28": {
       "titulo": "Consulta del detalle de una publicación",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-09",
+        "RF-11"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado un elemento del catálogo, cuando lo seleccione, entonces debe abrirse su vista de detalle con descripción, fechas, lugar, categoría, imagen y actor responsable.",
         "Dada la vista de detalle, cuando se cargue, entonces debe incluir un acceso al perfil del actor cultural.",
@@ -271,6 +396,11 @@
     "HU-29": {
       "titulo": "Contacto directo con el actor cultural",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-12",
+        "RF-15"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dada la vista de detalle, cuando seleccione la opción de contacto, entonces deben mostrarse los canales que el actor cultural haya autorizado.",
         "Dado un canal de contacto, cuando lo seleccione, entonces debe abrirse la aplicación correspondiente con el mensaje inicial prellenado.",
@@ -280,6 +410,11 @@
     "HU-30": {
       "titulo": "Mapa interactivo de la oferta cultural",
       "prioridad": "debe",
+      "requisitos": [
+        "RF-11",
+        "RF-10"
+      ],
+      "objetivo": "2",
       "criterios": [
         "Dado el mapa, cuando se cargue, entonces debe mostrar un marcador por cada publicación aprobada con coordenadas registradas.",
         "Dado un marcador, cuando lo seleccione, entonces debe desplegarse una ficha con el título, la categoría y el acceso al detalle.",
@@ -290,6 +425,10 @@
     "HU-31": {
       "titulo": "Validación de formularios y manejo de errores",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-01"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dado cualquier formulario, cuando un campo obligatorio esté vacío, entonces debe señalarse el campo específico y no mostrarse un error genérico.",
         "Dado un formulario con error, cuando se muestre el mensaje, entonces la información ya ingresada debe conservarse.",
@@ -300,6 +439,10 @@
     "HU-32": {
       "titulo": "Accesibilidad conforme a las pautas WCAG 2.1",
       "prioridad": "deberia",
+      "requisitos": [
+        "RNF-07"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dada cualquier imagen de contenido, cuando se inspeccione, entonces debe contar con texto alternativo descriptivo.",
         "Dada la navegación, cuando se recorra únicamente con teclado, entonces debe poderse completar el registro, la publicación y la consulta del catálogo.",
@@ -310,6 +453,10 @@
     "HU-33": {
       "titulo": "Optimización final del diseño responsive",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-03"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dadas todas las vistas del sistema, cuando se recorran en 360 píxeles de ancho, entonces ninguna debe presentar desbordamiento horizontal.",
         "Dadas las tablas del panel de administración, cuando se visualicen en móvil, entonces deben adaptarse a un formato legible.",
@@ -319,6 +466,11 @@
     "HU-34": {
       "titulo": "Indicadores básicos de uso de la plataforma",
       "prioridad": "podria",
+      "requisitos": [
+        "RF-15",
+        "RNF-06"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dado el panel de indicadores, cuando se cargue, entonces debe mostrar el total de publicaciones por estado y por categoría.",
         "Dado el panel, cuando se consulte, entonces debe listar las publicaciones con mayor número de consultas.",
@@ -328,6 +480,10 @@
     "HU-35": {
       "titulo": "Ejecución de las pruebas funcionales y de permisos",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-08"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dado el conjunto de historias, cuando se diseñen los casos de prueba, entonces cada criterio de aceptación debe tener al menos un caso asociado.",
         "Dada la ejecución de las pruebas, cuando concluya, entonces la cobertura de historias de prioridad «Debe» que superan todos sus casos no debe ser inferior al 90 %.",
@@ -338,6 +494,10 @@
     "HU-36": {
       "titulo": "Pruebas de usabilidad con usuarios representativos",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-01"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dada la sesión de prueba, cuando se inicie, entonces debe obtenerse el consentimiento informado del participante.",
         "Dado el conjunto de tareas guiadas, cuando se ejecuten sin asistencia, entonces debe registrarse si se completan, el tiempo empleado y las dificultades observadas.",
@@ -348,6 +508,10 @@
     "HU-37": {
       "titulo": "Despliegue de la versión final del prototipo",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-08"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dada la versión final, cuando se despliegue, entonces debe existir una dirección pública estable y documentada.",
         "Dado el prototipo desplegado, cuando se consulte desde un dispositivo externo, entonces debe cargar sin errores y con datos de demostración cargados.",
@@ -357,6 +521,10 @@
     "HU-38": {
       "titulo": "Manual de usuario",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-01"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dado el manual, cuando se elabore, entonces debe cubrir el registro, la creación del perfil, la publicación de un evento y la consulta del catálogo.",
         "Dado cada procedimiento, cuando se describa, entonces debe acompañarse de capturas de pantalla numeradas.",
@@ -366,6 +534,10 @@
     "HU-39": {
       "titulo": "Documentación técnica del prototipo",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-09"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dada la documentación, cuando se elabore, entonces debe incluir el diagrama de arquitectura, la estructura de colecciones y las reglas de seguridad aplicadas.",
         "Dada la documentación, cuando se revise, entonces debe describir el procedimiento completo para desplegar el proyecto desde cero.",
@@ -375,6 +547,11 @@
     "HU-40": {
       "titulo": "Informe de validación del prototipo",
       "prioridad": "debe",
+      "requisitos": [
+        "RNF-01",
+        "RNF-10"
+      ],
+      "objetivo": "3",
       "criterios": [
         "Dado el informe, cuando se elabore, entonces debe presentar la cobertura funcional alcanzada, el puntaje SUS obtenido y la verificación frente a las características de calidad.",
         "Dado el informe, cuando se revise, entonces debe incluir la matriz de trazabilidad entre requisitos, historias de usuario y casos de prueba.",
