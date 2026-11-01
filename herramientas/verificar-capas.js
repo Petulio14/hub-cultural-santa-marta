@@ -14,6 +14,12 @@
  * 4. Texto alternativo — toda «img» lleva «alt» y todo «svg» escrito a mano lleva
  *    o «aria-hidden» o un nombre accesible. Es el primer criterio de aceptación de
  *    HU-32, y hasta ahora solo existía como un grep escrito en docs/31 §2.
+ * 5. Documentación al día — las colecciones con reglas en «firestore.rules» son
+ *    exactamente las descritas en docs/04 §1, y los índices declarados en
+ *    «firestore.indexes.json» son tantos como las filas de docs/04 §10. Es de
+ *    HU-39: un tercero que audite el proyecto lee la documentación y se fía de
+ *    ella. Nació de encontrar que docs/06 decía «6 índices» cuando ya eran diez,
+ *    y lo decía justo debajo de la frase «así que no pueden divergir».
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -108,14 +114,74 @@ for (const archivo of archivos.filter((a) => a.endsWith('.jsx'))) {
   }
 }
 
+// 5 · La documentación no se queda atrás
+//
+// Las dos comprobaciones son del mismo tipo y miden lo mismo: que el documento
+// que un tercero va a leer siga describiendo lo que el repositorio tiene. Se
+// comparan contra los archivos de configuración y no contra el código, porque
+// son esos los que el servidor aplica.
+const ARCHIVO_REGLAS = join(RAIZ, 'firestore.rules');
+const ARCHIVO_INDICES = join(RAIZ, 'firestore.indexes.json');
+const ARCHIVO_MODELO = join(RAIZ, 'docs', '04-modelo-datos.md');
+
+/** El texto de una sección de un documento, hasta el siguiente encabezado de su nivel. */
+function seccion(texto, titulo) {
+  const desde = texto.indexOf(titulo);
+  if (desde === -1) return '';
+  const hasta = texto.indexOf('\n## ', desde + titulo.length);
+  return hasta === -1 ? texto.slice(desde) : texto.slice(desde, hasta);
+}
+
+/** Los nombres entre acentos graves de la primera columna de una tabla. */
+const FILA_CON_NOMBRE = /^\|\s*`([a-zA-Z]+)`\s*\|/gm;
+const nombresDeTabla = (texto) => [...texto.matchAll(FILA_CON_NOMBRE)].map((f) => f[1]);
+
+const reglas = readFileSync(ARCHIVO_REGLAS, 'utf8');
+const modelo = readFileSync(ARCHIVO_MODELO, 'utf8');
+
+// «databases» es el contenedor de Firestore, no una colección del proyecto.
+const conReglas = [...reglas.matchAll(/match \/([a-zA-Z]+)\/\{/g)]
+  .map((m) => m[1])
+  .filter((c) => c !== 'databases');
+const documentadas = nombresDeTabla(seccion(modelo, '## 1. Resumen de colecciones'));
+
+for (const coleccion of conReglas) {
+  if (!documentadas.includes(coleccion)) {
+    fallos.push(
+      `la colección ${coleccion} tiene reglas en firestore.rules y no aparece en docs/04 §1`
+    );
+  }
+}
+for (const coleccion of documentadas) {
+  if (!conReglas.includes(coleccion)) {
+    fallos.push(
+      `docs/04 §1 describe la colección ${coleccion} y firestore.rules no la protege`
+    );
+  }
+}
+
+const indicesDeclarados = JSON.parse(readFileSync(ARCHIVO_INDICES, 'utf8')).indexes.length;
+const indicesDocumentados = nombresDeTabla(
+  seccion(modelo, '## 10. Índices compuestos requeridos')
+).length;
+if (indicesDeclarados !== indicesDocumentados) {
+  fallos.push(
+    `firestore.indexes.json declara ${indicesDeclarados} índice(s) y docs/04 §10 documenta ${indicesDocumentados}`
+  );
+}
+
 const total = archivos.length;
-console.log(`Verificación estructural · ${total} archivos en src/, ${vistas.length} vistas`);
+console.log(
+  `Verificación estructural · ${total} archivos en src/, ${vistas.length} vistas, ` +
+    `${conReglas.length} colecciones, ${indicesDeclarados} índices`
+);
 
 if (fallos.length === 0) {
   console.log('  acceso a datos solo por src/services/ : correcto');
   console.log('  todas las vistas enrutadas             : correcto');
   console.log('  colores solo en variables.css          : correcto');
   console.log('  toda imagen con texto alternativo      : correcto');
+  console.log('  docs/04 al día con reglas e índices    : correcto');
   console.log('\nSin incidencias.');
   process.exit(0);
 }

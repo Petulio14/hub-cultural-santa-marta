@@ -36,8 +36,7 @@ flowchart TB
     subgraph L3["CAPA 3 · Servicios — Firebase (BaaS)"]
         direction LR
         A["Firebase Authentication<br/>identidad y roles"]
-        F["Cloud Firestore<br/>colecciones documentales"]
-        St["Firebase Storage<br/>imágenes"]
+        F["Cloud Firestore<br/>colecciones documentales<br/>las imágenes van dentro"]
         Rg["Reglas de seguridad<br/>control de acceso por rol"]
     end
 
@@ -56,15 +55,23 @@ flowchart TB
     C -->|"invoca"| S
     S -->|"Firebase SDK sobre HTTPS"| A
     S -->|"Firebase SDK sobre HTTPS"| F
-    S -->|"Firebase SDK sobre HTTPS"| St
     A -.->|"valida rol"| Rg
     Rg -.->|"autoriza o rechaza"| F
-    Rg -.->|"autoriza o rechaza"| St
     Gh -->|"despliegue automático"| Ve
     Ve -->|"sirve la SPA"| L1
     S -->|"teselas vía Leaflet"| Os
     Fi -.->|"insumo de diseño"| V
 ```
+
+> **El diagrama tenía un cuarto servicio y no existía (corregido el 01/11/2026).** La capa 3
+> dibujaba **Firebase Storage** para las imágenes, con su flecha desde los servicios y su
+> flecha desde las reglas. Se dibujó así en el Sprint 2, cuando era el plan; el §6.1 de este
+> mismo documento explica desde HU-19 por qué no se activó, pero **el diagrama se quedó sin
+> corregir** y durante seis sprints fue lo primero que leía cualquiera que abriera la
+> arquitectura. Lo encontró HU-39 al documentar el proyecto para alguien de fuera, y de paso
+> apareció el resto del rastro: `src/services/firebase.js` seguía inicializando Storage en un
+> export que **no importaba nadie**, y se retiró. Las imágenes viajan reducidas dentro del
+> documento de Firestore ([18 §11](18-imagen-del-perfil.md)).
 
 ## 2. Responsabilidad de cada capa
 
