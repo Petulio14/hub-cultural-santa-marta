@@ -72,4 +72,4 @@ tablero del proyecto.
 
 ## Equipo
 
-Juan Pablo Vásquez y Sebastián Rojas.
+Sebastián Rojas Gómez y Juan Pablo Vásquez
