@@ -88,6 +88,28 @@
       "donde": "docs/35 §1 y §7",
       "estado": "abierto",
       "propuesta": "Citar a ocho participantes que no hayan construido la plataforma —cuatro visitantes, tres actores culturales y un administrador—, al menos la mitad en teléfono, y volcar cada sesión a «pruebas/usabilidad/sesiones.json»."
+    },
+    {
+      "id": "H-08",
+      "titulo": "RNF-02 no lo reclama ninguna historia y no hay constancia de prueba en varios navegadores",
+      "severidad": "media",
+      "criterio": null,
+      "origen": "HU-40, al cruzar los 25 requisitos declarados con las fichas de las 40 historias",
+      "descripcion": "RNF-02 pide que el sistema funcione en los navegadores de mayor uso. Ninguna ficha de historia lo declara entre sus requisitos asociados, y ningún documento recoge una comprobación: todos los recorridos manuales del trabajo se hicieron en un único navegador. Las dos menciones a navegadores concretos que hay en docs/ son incidentales —el aviso de Chrome al abrir varios diálogos seguidos y un nombre de campo rechazado— y no comprueban nada. Es el único requisito declarado del que el trabajo no puede enseñar una verificación.",
+      "donde": "docs/39 §5",
+      "estado": "abierto",
+      "propuesta": "Recorrer las siete rutas públicas y las cuatro privadas en los navegadores que fije el criterio de RNF-02, anotar versión y sistema, y asociar el requisito a las historias que lo sostienen. Es una tarde de trabajo y cierra el último requisito sin evidencia."
+    },
+    {
+      "id": "H-09",
+      "titulo": "RNF-04 está medido pero ninguna historia lo declara",
+      "severidad": "baja",
+      "criterio": null,
+      "origen": "HU-40, del mismo cruce que H-08",
+      "descripcion": "El presupuesto de RNF-04 —la vista principal por debajo de tres segundos en 4G— está medido y discutido en docs/10, docs/18 §11 y docs/32, y hasta se usó para decidir cuánto podía crecer una imagen. Pero ninguna ficha de historia lo declara entre sus requisitos, así que en la matriz de trazabilidad aparece sin historias y sin casos: la trazabilidad hacia él se sostiene en la prosa.",
+      "donde": "docs/39 §5",
+      "estado": "abierto",
+      "propuesta": "Añadir RNF-04 a los requisitos asociados de HU-09 y HU-25, que son las historias que lo sostienen según docs/32, y volver a generar la instantánea de criterios. No se hace desde HU-40 porque cambiar la ficha de un issue cerrado para que la matriz cuadre es reescribir el expediente."
     }
   ]
 }
