@@ -8,8 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "verificar": "node herramientas/verificar-capas.js && node herramientas/generar-informe.js --comprobar",
+    "verificar": "node herramientas/verificar-capas.js && node herramientas/generar-informe.js --comprobar && node herramientas/generar-anexo-d.js --comprobar",
     "informe": "node herramientas/generar-informe.js",
+    "anexo": "node herramientas/generar-anexo-d.js",
+    "anexo:word": "node herramientas/a-word.js docs/anexo-d.md \"Anexo D - Casos de prueba, hallazgos y usabilidad.docx\"",
     "verificar:casos": "node herramientas/verificar-casos.js",
     "usabilidad": "node herramientas/calcular-sus.js",
     "probar": "node --test \"pruebas/unidad/**/*.test.js\"",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.2",
     "@vitejs/plugin-react": "^6.1.0",
+    "docx": "^9.5.1",
     "vite": "^8.2.2"
   }
 }
