@@ -32,6 +32,12 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
+# documentos armados para el trabajo escrito
+# Se generan desde el Markdown versionado con «npm run anexo:word» y similares,
+# asi que versionarlos seria guardar una copia binaria de algo que ya esta aqui
+# y que ademas envejece en cuanto cambian los datos de los que sale.
+*.docx
+
 # logs
 npm-debug.log*
 yarn-debug.log*
