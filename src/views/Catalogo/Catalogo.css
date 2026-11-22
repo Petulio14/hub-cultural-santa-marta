@@ -19,8 +19,6 @@
   padding: 12px 16px;
 }
 
-/* Cuarto criterio: el catálogo vacío ocupa sitio y ofrece a dónde ir. Un
-   párrafo suelto en medio de la página se lee como un fallo de carga. */
 .catalogo__vacio {
   max-width: 60ch;
   border: 1px dashed var(--gris-borde);
@@ -36,8 +34,6 @@
   margin-bottom: 0;
 }
 
-/* La misma rejilla del directorio de actores: una columna a 360 px, dos a 768 y
-   tres a 1366 (docs/10 §2). Doce por página son filas completas en las tres. */
 .catalogo__rejilla {
   list-style: none;
   margin: 0;
@@ -55,28 +51,6 @@
   overflow: hidden;
 }
 
-/* La fotografía encabeza la tarjeta a todo lo ancho, al revés que en el
-   directorio de actores. Allí una franja de retratos se leía como un muro de
-   caras; aquí la imagen es el reclamo: quien recorre un catálogo de planes mira
-   antes la fotografía que el título.
-
-   Proporción fija para que doce tarjetas formen filas rectas sin depender de
-   cómo venga cada imagen, pero con la imagen entera dentro de esa caja.
-
-   Dos arreglos del 12/10/2026, y son problemas distintos que se sumaban.
-
-   El primero: esta regla declara su 16/9 desde que se escribió y **nunca lo
-   tuvo**. «.imagen-actor { aspect-ratio: 1 }» de global.css es también una sola
-   clase, empata en especificidad y ganaba por el orden en que Vite junta las
-   hojas, así que las tarjetas salían cuadradas. Se arregla doblando la clase
-   del propio elemento, como en la ficha. Es la cuarta vez que pasa lo mismo.
-
-   El segundo: «cover» recortaba. Una fotografía apaisada de 205 × 144 se
-   agrandaba 2,3 × para llenar el cuadrado de 327 px y encima perdía el 30 % de
-   su ancho: borrosa y mochada a la vez. «scale-down» no agranda ni recorta
-   —encoge lo que no quepa y deja lo demás a su tamaño—, y alrededor queda el
-   arena que «.imagen-actor» ya pinta de fondo. Una miniatura pequeña y nítida
-   dice más de la actividad que un trozo grande y borroso de esa misma foto. */
 .tarjeta-evento__imagen.imagen-actor {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -103,9 +77,6 @@
   color: var(--gris-texto);
 }
 
-/* Se recorta a dos líneas: un título largo no puede empujar la fecha y el lugar
-   fuera de la altura que comparten las tarjetas de una misma fila. El texto
-   sigue completo en el documento, así que un lector de pantalla lo lee entero. */
 .tarjeta-evento__titulo {
   margin: 0;
   font-size: 1.15rem;
@@ -133,11 +104,6 @@
   margin-top: 8px;
 }
 
-/* Los filtros — HU-26.
-
-   Van entre la introducción y la rejilla, no en una columna lateral: a 360 px
-   una columna lateral se convierte igualmente en una franja arriba, y tener dos
-   disposiciones para lo mismo son dos sitios donde arreglar cada cosa. */
 .filtros {
   margin: 18px 0;
 }
@@ -150,17 +116,10 @@
   margin: 0;
 }
 
-/* La palabra clave ocupa su propia línea — HU-27. No entra en la rejilla de
-   abajo: en una fila de cuatro quedaría del ancho de un desplegable, y un campo
-   de texto tan estrecho como un «Desde» invita a escribir una palabra cuando lo
-   que se busca cabe en varias. */
 .filtros__busqueda {
   max-width: 42ch;
 }
 
-/* Los tres campos de afinar caben en fila desde que hay sitio, y se apilan solos
-   por debajo. «auto-fit» y no «auto-fill»: con dos campos visibles no se debe
-   reservar el hueco de un tercero que no está. */
 .filtros__afinar {
   display: grid;
   gap: 0 var(--espacio-tarjetas);
@@ -180,9 +139,6 @@
   margin: 12px 0 0;
 }
 
-/* El aviso de que la búsqueda tocó su tope — HU-27.
-   No es un error: la búsqueda funcionó, solo que no lo miró todo. Por eso no
-   lleva el rojo de «.catalogo__aviso» sino el borde discontinuo de las notas. */
 .catalogo__tope {
   max-width: 65ch;
   border: 1px dashed var(--gris-borde);

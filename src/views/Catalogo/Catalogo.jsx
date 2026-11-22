@@ -63,9 +63,7 @@ export default function Catalogo() {
 
       {cargando && <p>Leyendo el catálogo…</p>}
 
-      {/* El aviso de error va debajo de lo que ya se leyó, no en su lugar. Si
-          falla la tercera página, las veinticuatro tarjetas anteriores siguen
-          siendo verdad y quitarlas de la pantalla sería mentir por prudencia. */}
+      {}
       {error && (
         <p className="catalogo__aviso" role="alert">
           {error}
@@ -120,15 +118,11 @@ export default function Catalogo() {
 
       {publicaciones.length > 0 && (
         <>
-          {/* «aria-live» para que quien usa un lector de pantalla se entere de
-              que la lista cambió: ni al pulsar «Ver más» ni al aplicar un filtro
-              se mueve el foco, y sin esto la página cambiaría en silencio. */}
+          {}
           <p className="catalogo__recuento" aria-live="polite">
             {publicaciones.length}{' '}
             {publicaciones.length === 1 ? 'actividad' : 'actividades'}
-            {/* Al buscar se dice también sobre cuántas se buscó. Enseñar «3
-                actividades» a secas cuando se han mirado cuarenta y siete
-                sugiere que el catálogo tiene tres. */}
+            {}
             {buscando
               ? ` de ${revisadas} revisadas.`
               : `${filtrado ? ' con estos filtros' : ''}${hayMas ? ' hasta ahora.' : ' en total.'}`}
@@ -156,10 +150,7 @@ export default function Catalogo() {
             ))}
           </ul>
 
-          {/* Tercer criterio de HU-25: un botón y no un desplazamiento infinito.
-              El desplazamiento infinito deja el pie de página inalcanzable
-              —donde están la política de datos y el contacto— y quita a quien
-              navega con teclado el control de cuándo llega más contenido. */}
+          {}
           {hayMas && (
             <p className="catalogo__mas">
               <button

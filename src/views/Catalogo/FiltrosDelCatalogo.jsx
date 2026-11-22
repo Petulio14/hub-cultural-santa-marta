@@ -4,31 +4,6 @@ import Seleccion from '../../components/Seleccion.jsx';
 import { useCategoriasActivas } from '../../hooks/useCategoriasActivas.js';
 import { FILTROS_VACIOS, hayFiltros, rangoInvertido } from '../../utils/filtros.js';
 
-/**
- * Buscar y filtrar el catálogo — HU-26 · RF-10, ampliado en HU-27.
- *
- * Un formulario con botón, no campos que consultan al escribir. Con dos fechas
- * que se rellenan de una en una, aplicar al vuelo dispararía una consulta con el
- * rango a medias —«desde el 1» y nada más— y enseñaría un resultado que nadie
- * pidió antes de terminar de pedirlo. El botón marca cuándo la pregunta está
- * completa.
- *
- * La búsqueda de HU-27 se une a esa misma regla, y ahí hay una decisión: buscar
- * al escribir es lo habitual y aquí **cada tecla cuesta una consulta al
- * servidor**, porque con término se pide de una vez todo lo que cumple los
- * filtros (docs/26 §2). Escribir «tambora» serían siete consultas de hasta
- * doscientos documentos. Un botón lo deja en una.
- *
- * Guarda su propio borrador y solo lo entrega al enviar. Lo que está aplicado
- * vive en el gancho; lo que se está escribiendo, aquí. Mezclarlo obligaría a
- * consultar en cada tecla, que es justo lo que se acaba de descartar.
- *
- * Las categorías que ofrece son **las activas**, que es lo contrario de lo que
- * hace la tarjeta al escribir el nombre de una (docs/24 §4). No es incoherencia:
- * ofrecer una categoría retirada sería invitar a filtrar por algo que la
- * plataforma ya no clasifica, mientras que **leer** el nombre de la que una
- * publicación tiene escrita sigue haciendo falta aunque se haya retirado.
- */
 export default function FiltrosDelCatalogo({ filtros, alAplicar, alLimpiar, filtrado }) {
   const [borrador, setBorrador] = useState(filtros);
   const { categorias, cargando } = useCategoriasActivas();

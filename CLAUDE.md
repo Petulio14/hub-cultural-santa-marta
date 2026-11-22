@@ -1,15 +1,9 @@
 # Convenciones del repositorio
 
-Trabajo de grado de Ingeniería en Software, Tecnológico de Antioquia. La plataforma
-cultural de Santa Marta. La documentación de cada historia vive en [`docs/`](docs/) y es
-la evidencia que respalda su cierre en el tablero.
-
-## Autoría
-
-**Los commits y los pull request no llevan atribución a herramientas de asistencia.** Sin
-`Co-Authored-By` de ningún asistente y sin pie de «Generated with…» en las descripciones.
-Es un requisito del asesor: la autoría del trabajo académico es del estudiante.
-
+- Trabajo de grado de Ingeniería en Software, Tecnológico de Antioquia. La plataforma
+  cultural de Santa Marta. La documentación de cada historia vive en [`docs/`](docs/) y es
+  la evidencia que respalda su cierre en el tablero.
+- se usará como asistente para documentar los procesos y mantener buenas practicas en el codigo en Github
 ## Commits
 
 - Mensaje en español, en imperativo, explicando **por qué** y no solo qué.
